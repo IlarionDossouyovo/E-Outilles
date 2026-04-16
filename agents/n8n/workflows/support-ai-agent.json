@@ -1,0 +1,107 @@
+{
+  "name": "E-Outilles Support AI Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "webhookId": "eoutilles-support",
+        "webhookPath": "webhooks/support/ticket",
+        "httpMethod": "POST"
+      },
+      "id": "ticket-trigger",
+      "name": "New Support Ticket",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "const ticket = $input.first().json;\n\n// Classify ticket type\nlet category = 'general';\nlet priority = 'normal';\nlet autoReply = '';\n\nconst message = ticket.message.toLowerCase();\n\nif (message.includes('commande') || message.includes('order')) {\n  category = 'order';\n  priority = 'high';\n  autoReply = 'Votre demande concernant votre commande a ete enregistree. Notre equipe va vous repondre sous 2h.';\n} else if (message.includes('remboursement') || message.includes('retour')) {\n  category = 'refund';\n  priority = 'high';\n  autoReply = 'Nous avons recu votre demande de remboursement. Le traitement prend 5-10 jours ouvres.';\n} else if (message.includes('livraison') || message.includes('shipping')) {\n  category = 'shipping';\n  autoReply = 'Pour le suivi de votre livraison, rendez-vous sur notre page de suivi avec votre numero de commande.';\n} else if (message.includes('produit') || message.includes('defectueux')) {\n  category = 'product';\n  autoReply = 'Nous sommes desoles pour ce probleme. Envoyez-nous des photos du produit et nous trouverons une solution.';\n}\n\nreturn [{json: {...ticket, category, priority, autoReply, agent: 'support'}}];"
+      },
+      "id": "classify-ticket",
+      "name": "Classify Ticket",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "table": "support_tickets",
+        "columns": "customer_id, category, subject, message, priority, status, source, created_at",
+        "values": "={{$json.customerId}}, ='{{$json.category}}', ='{{$json.subject}}', ='{{$json.message}}', ='{{$json.priority}}', ='open', ='whatsapp', =NOW()"
+      },
+      "id": "save-ticket",
+      "name": "Save Ticket",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.phone}}@c.us",
+        "text": "Merci pour votre message! 🎧\n\n{{$json.autoReply}}\n\nTicket N°: {{$json.id}}\n\nEquipe E-Outilles"
+      },
+      "id": "auto-reply",
+      "name": "Auto Reply WhatsApp",
+      "type": "n8n-nodes-base.whatsapp",
+      "typeVersion": 1,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "table": "tasks",
+        "columns": "type, description, priority, assigned_to, status, ticket_id, due_date",
+        "values": "='support_reply', ='Traiter ticket: '||=$json.subject, ='{{$json.priority}}', ='support', ='pending', ='{{$json.id}}', =DATE_ADD(NOW(), '1 day')"
+      },
+      "id": "create-task",
+      "name": "Create Task",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [1050, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [{
+            "value1": "={{$json.priority}}",
+            "value2": "high"
+          }]
+        }
+      },
+      "id": "urgent-check",
+      "name": "Urgent?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [850, 150]
+    },
+    {
+      "parameters": {
+        "chatId": "22500000000@c.us",
+        "text": "🚨 URGENT - Nouveau ticket\n\nClient: {{$json.name}}\nSujet: {{$json.subject}}\nCategorie: {{$json.category}}\nPriorite: {{$json.priority}}"
+      },
+      "id": "alert-admin",
+      "name": "Alert Admin",
+      "type": "n8n-nodes-base.whatsapp",
+      "typeVersion": 1,
+      "position": [1050, 150]
+    }
+  ],
+  "connections": {
+    "New Support Ticket": {
+      "main": [[{"node": "Classify Ticket", "type": "main", "index": 0}]]
+    },
+    "Classify Ticket": {
+      "main": [[{"node": "Save Ticket", "type": "main", "index": 0}]]
+    },
+    "Save Ticket": {
+      "main": [[{"node": "Auto Reply WhatsApp", "type": "main", "index": 0}], [{"node": "Urgent?", "type": "main", "index": 0}]]
+    },
+    "Urgent?": {
+      "main": [[{"node": "Alert Admin", "type": "main", "index": 0}]]
+    },
+    "Auto Reply WhatsApp": {
+      "main": [[{"node": "Create Task", "type": "main", "index": 0}]]
+    }
+  }
+}

@@ -1,0 +1,110 @@
+{
+  "name": "E-Outilles Operations AI Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{"field": "minutes", "minutes": 15}]
+        }
+      },
+      "id": "order-poller",
+      "name": "Check New Orders",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "table": "orders",
+        "filters": "status='pending'"
+      },
+      "id": "get-orders",
+      "name": "Get Pending Orders",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [{
+            "value1": "={{$json.length}}",
+            "operation": "greater",
+            "value2": 0
+          }]
+        }
+      },
+      "id": "has-orders",
+      "name": "Has Orders?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "const orders = $input.all();\nconst results = [];\n\nfor (const order of orders) {\n  // Calculate total\n  let total = 0;\n  for (const item of order.items) {\n    total += item.price * item.quantity;\n  }\n  \n  // Check inventory\n  const stockOk = order.items.every(item => item.stock >= item.quantity);\n  \n  // Determine next step\n  let nextStep = 'stock_check';\n  let status = 'processing';\n  let note = '';\n  \n  if (!stockOk) {\n    nextStep = 'notify_supplier';\n    status = 'stock_issue';\n    note = 'Stock insuffisant - Commande fournisseur necessaire';\n  } else if (order.payment_status === 'confirmed') {\n    nextStep = 'ship_order';\n    note = 'Pret pour expedition';\n  } else {\n    nextStep = 'await_payment';\n    note = 'En attente de paiement';\n  }\n  \n  results.push({...order, total, stockOk, nextStep, status, note});\n}\n\nreturn results.map(json => ({json}));"
+      },
+      "id": "process-orders",
+      "name": "Process Orders",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "table": "orders",
+        "updateColumns": "status, notes, processed_at",
+        "filters": "id='={{$json.id}}'",
+        "values": "='{{$json.status}}', ='{{$json.note}}', =NOW()"
+      },
+      "id": "update-order",
+      "name": "Update Order Status",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [1050, 300]
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "table": "supplier_orders",
+        "columns": "order_id, supplier_id, items, status, created_at",
+        "values": "={{$json.id}}, ='{{$json.supplierId}}', ='{{JSON.stringify($json.items)}}', ='pending', =NOW()"
+      },
+      "id": "create-supplier-order",
+      "name": "Supplier Order",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [1250, 150]
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.customerPhone}}@c.us",
+        "text": "Commande N°{{$json.id}} recue! ✅\n\nStatut: {{$json.status}}\n{{$json.note}}\n\nMerci de votre confiance - E-Outilles"
+      },
+      "id": "notify-customer",
+      "name": "Notify Customer",
+      "type": "n8n-nodes-base.whatsapp",
+      "typeVersion": 1,
+      "position": [1250, 450]
+    }
+  ],
+  "connections": {
+    "Check New Orders": {
+      "main": [[{"node": "Get Pending Orders", "type": "main", "index": 0}]]
+    },
+    "Get Pending Orders": {
+      "main": [[{"node": "Has Orders?", "type": "main", "index": 0}]]
+    },
+    "Has Orders?": {
+      "main": [[{"node": "Process Orders", "type": "main", "index": 0}]]
+    },
+    "Process Orders": {
+      "main": [[{"node": "Update Order Status", "type": "main", "index": 0}]]
+    },
+    "Update Order Status": {
+      "main": [[{"node": "Supplier Order", "type": "main", "index": 0}], [{"node": "Notify Customer", "type": "main", "index": 0}]]
+    }
+  }
+}

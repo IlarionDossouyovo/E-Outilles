@@ -1,0 +1,111 @@
+{
+  "name": "E-Outilles Sales AI Agent",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "webhook-trigger",
+      "name": "Webhook - New Lead",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "eoutilles-new-lead",
+      "webhookPath": "webhooks/sales/new-lead",
+      "httpMethod": "POST"
+    },
+    {
+      "parameters": {
+        "functionCode": "const lead = $input.first().json;\n\n// Qualify lead score\nlet score = 0;\nif (lead.country && ['SN', 'CI', 'CM'].includes(lead.country)) score += 30;\nif (lead.businessType === 'reseller') score += 25;\nif (lead.budget > 1000) score += 20;\nif (lead.interest === 'wholesale') score += 25;\n\nconst qualification = score >= 50 ? 'hot' : score >= 30 ? 'warm' : 'cold';\nconst nextAction = qualification === 'hot' ? 'direct_to_sales' : 'nurture_sequence';\n\nreturn [{json: {...lead, score, qualification, nextAction, agent: 'sales'}}];"
+      },
+      "id": "qualify-lead",
+      "name": "Qualify Lead",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "table": "leads",
+        "columns": "name, email, phone, country, business_type, budget, interest, score, qualification, source, created_at",
+        "values": "={{$json.name}},={{$json.email}},={{$json.phone}},={{$json.country}},={{$json.businessType}},={{$json.budget}},={{$json.interest}},={{$json.score}},={{$json.qualification}},='website',=NOW()"
+      },
+      "id": "save-lead",
+      "name": "Save to Supabase",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "emailType": " lead_quality",
+        "toEmail": "={{$json.email}}",
+        "subject": "={{$json.qualification === 'hot' ? '🎯 Votre projet dropshipping' : 'Bienvenue chez E-Outilles'}}",
+        "html": true,
+        "body": "Bonjour {{$json.name}},\n\n{{$json.qualification === 'hot' ? \n  'Merci pour votre interesse! Notre equipe va vous contacter sous 24h pour discuter de votre projet.' : \n  'Merci de votre inscription. Nous vous envoyons nos guides gratuits pour bien debuter.'}}\n\nL'equipe E-Outilles"
+      },
+      "id": "send-email",
+      "name": "Send Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 1,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": []
+        },
+        "options": {}
+      },
+      "id": "check-hot",
+      "name": "Hot Lead?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [850, 150],
+      "conditions": {
+        "boolean": [{
+          "value1": "={{$json.qualification}}",
+          "value2": "hot"
+        }]
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.phone}}@c.us",
+        "text": "Bonjour {{$json.name}}! 🎉\n\nMerci pour votre interet. Notre equipe va vous contacter tres vite pour votre projet dropshipping."
+      },
+      "id": "notify-whatsapp",
+      "name": "WhatsApp Alert",
+      "type": "n8n-nodes-base.whatsapp",
+      "typeVersion": 1,
+      "position": [1050, 150]
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "table": "tasks",
+        "columns": "type, description, priority, assigned_to, status, lead_id, due_date",
+        "values": "='follow_up', ='Contacter nouveau lead: '||=$json.name, ='{{$json.qualification}}', ='sales', ='pending', ={{$json.id}}, =DATE_ADD(NOW(), '7 days')"
+      },
+      "id": "create-task",
+      "name": "Create Task",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [1050, 300]
+    }
+  ],
+  "connections": {
+    "Webhook - New Lead": {
+      "main": [[{"node": "Qualify Lead", "type": "main", "index": 0}]]
+    },
+    "Qualify Lead": {
+      "main": [[{"node": "Save to Supabase", "type": "main", "index": 0}]]
+    },
+    "Save to Supabase": {
+      "main": [[{"node": "Send Email", "type": "main", "index": 0}], [{"node": "Hot Lead?", "type": "main", "index": 0}]]
+    },
+    "Hot Lead?": {
+      "main": [[{"node": "WhatsApp Alert", "type": "main", "index": 0}]],
+      "false": [[{"node": "Create Task", "type": "main", "index": 0}]]
+    }
+  }
+}
