@@ -204,26 +204,30 @@ export default function CheckoutPage() {
                 <>
                   <h2 className="text-xl font-bold text-white mb-6">Mode de paiement</h2>
                   <div className="space-y-3">
-                    <label className="flex items-center gap-4 p-4 bg-ingco-black rounded-xl cursor-pointer hover:bg-ingco-dark">
-                      <input type="radio" name="payment" defaultChecked className="w-5 h-5" />
-                      <div>
-                        <p className="text-white font-bold">Paiement à la livraison (COD)</p>
-                        <p className="text-gray-400 text-sm">Payez lorsque vous recevez votre commande</p>
+                    <label className="flex items-center gap-4 p-4 bg-ingco-black rounded-xl cursor-pointer hover:bg-ingco-dark border-2 border-ingco-yellow">
+                      <input type="radio" name="payment" defaultChecked className="w-5 h-5 accent-ingco-yellow" />
+                      <div className="flex-1">
+                        <p className="text-white font-bold">Paiement à la livraison</p>
+                        <p className="text-gray-400 text-sm">Payez cuando vous recevez votre commande</p>
+                        <span className="inline-block mt-2 text-xs bg-ingco-yellow/20 text-ingco-yellow px-2 py-1 rounded">Recommandé</span>
                       </div>
+                      <span className="text-2xl">📦</span>
                     </label>
-                    <label className="flex items-center gap-4 p-4 bg-ingco-black rounded-xl cursor-pointer hover:bg-ingco-dark opacity-50">
+                    <label className="flex items-center gap-4 p-4 bg-ingco-black rounded-xl cursor-not-allowed opacity-50">
                       <input type="radio" name="payment" disabled className="w-5 h-5" />
-                      <div>
-                        <p className="text-white font-bold">Mobile Money (bientôt)</p>
+                      <div className="flex-1">
+                        <p className="text-white font-bold">Mobile Money</p>
                         <p className="text-gray-400 text-sm">MTN, Moov, Orange</p>
                       </div>
+                      <span className="text-2xl">📱</span>
                     </label>
-                    <label className="flex items-center gap-4 p-4 bg-ingco-black rounded-xl cursor-pointer hover:bg-ingco-dark opacity-50">
+                    <label className="flex items-center gap-4 p-4 bg-ingco-black rounded-xl cursor-not-allowed opacity-50">
                       <input type="radio" name="payment" disabled className="w-5 h-5" />
-                      <div>
-                        <p className="text-white font-bold">Carte bancaire (bientôt)</p>
+                      <div className="flex-1">
+                        <p className="text-white font-bold">Carte bancaire</p>
                         <p className="text-gray-400 text-sm">Visa, Mastercard</p>
                       </div>
+                      <span className="text-2xl">💳</span>
                     </label>
                   </div>
                 </>
@@ -236,31 +240,31 @@ export default function CheckoutPage() {
           </div>
 
           {/* Summary */}
-          <div className="bg-ingco-gray rounded-2xl p-6 h-fit">
-            <h2 className="text-xl font-bold text-white mb-4">Résumé</h2>
-            <div className="space-y-3 mb-4">
+          <div className="bg-ingco-gray rounded-2xl p-6 h-fit sticky top-24">
+            <h2 className="text-xl font-bold text-white mb-4">Votre commande</h2>
+            <div className="space-y-3 mb-4 max-h-40 overflow-y-auto">
               {items.map((item) => (
                 <div key={item.id} className="flex justify-between text-sm">
-                  <span className="text-gray-400">{item.name} x{item.quantity}</span>
-                  <span className="text-white">{(item.price * item.quantity).toFixed(2)}€</span>
+                  <span className="text-gray-300 truncate flex-1 mr-2">{item.name} x{item.quantity}</span>
+                  <span className="text-ingco-yellow font-medium">{(item.price * item.quantity).toFixed(2)}€</span>
                 </div>
               ))}
             </div>
             <div className="border-t border-ingco-dark pt-3 space-y-2">
               <div className="flex justify-between text-gray-400">
                 <span>Sous-total</span>
-                <span>{getTotal().toFixed(2)}€</span>
+                <span className="text-white">{getTotal().toFixed(2)}€</span>
               </div>
               <div className="flex justify-between text-gray-400">
                 <span>Livraison</span>
                 <span className="text-green-500">Gratuit</span>
               </div>
-              <div className="flex justify-between text-white font-bold text-xl">
+              <div className="flex justify-between text-white font-bold text-xl pt-2 border-t border-ingco-dark">
                 <span>Total</span>
                 <span className="text-ingco-yellow">{getTotal().toFixed(2)}€</span>
               </div>
             </div>
-            <Link href="/cart" className="block text-center text-ingco-yellow mt-4 text-sm hover:underline">
+            <Link href="/cart" className="block text-center text-gray-400 mt-4 text-sm hover:text-ingco-yellow transition-colors">
               ← Retour au panier
             </Link>
           </div>
