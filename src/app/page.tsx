@@ -148,12 +148,12 @@ export default function Home() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-ingco-yellow text-ingco-black px-8 py-4 rounded-xl font-bold text-lg hover:bg-yellow-400 transition-all hover:scale-105 hover:shadow-lg hover:shadow-ingco-yellow/30">
+              <Link href="/search" className="bg-ingco-yellow text-ingco-black px-8 py-4 rounded-xl font-bold text-lg hover:bg-yellow-400 transition-all hover:scale-105 hover:shadow-lg hover:shadow-ingco-yellow/30 inline-block text-center">
                 Découvrir le catalogue
-              </button>
-              <button className="border border-ingco-gray text-white px-8 py-4 rounded-xl font-bold text-lg hover:border-ingco-yellow hover:text-ingco-yellow transition-all">
+              </Link>
+              <Link href="/auth/register" className="border border-ingco-gray text-white px-8 py-4 rounded-xl font-bold text-lg hover:border-ingco-yellow hover:text-ingco-yellow transition-all inline-block text-center">
                 Devenir revendeur
-              </button>
+              </Link>
             </div>
 
             {/* Stats */}
@@ -194,9 +194,10 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {categories.map((category) => (
-              <div 
+              <Link 
                 key={category.id}
-                className="group bg-ingco-gray rounded-2xl p-6 hover:bg-ingco-gray/80 transition-all hover:-translate-y-2 hover:shadow-xl hover:shadow-ingco-yellow/10 cursor-pointer"
+                href={`/search?category=${category.id}`}
+                className="group bg-ingco-gray rounded-2xl p-6 hover:bg-ingco-gray/80 transition-all hover:-translate-y-2 hover:shadow-xl hover:shadow-ingco-yellow/10 cursor-pointer block"
               >
                 <div className="text-4xl mb-4">{category.icon}</div>
                 <h3 className="text-xl font-bold text-white mb-2 group-hover:text-ingco-yellow transition-colors">
@@ -219,7 +220,7 @@ export default function Home() {
                   <span>Blog: {category.blog}</span>
                   <span className="group-hover:translate-x-1 transition-transform">→</span>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
@@ -254,9 +255,9 @@ export default function Home() {
                   <h3 className="text-lg font-bold text-white mb-2">{product.name}</h3>
                   <div className="flex items-center justify-between">
                     <span className="text-2xl font-bold text-ingco-yellow">{product.price}€</span>
-                    <button className="bg-ingco-yellow text-ingco-black px-4 py-2 rounded-lg font-semibold text-sm hover:bg-yellow-400 transition-colors">
+                    <Link href="/cart" className="bg-ingco-yellow text-ingco-black px-4 py-2 rounded-lg font-semibold text-sm hover:bg-yellow-400 transition-colors">
                       Ajouter
-                    </button>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -264,9 +265,9 @@ export default function Home() {
           </div>
 
           <div className="text-center mt-12">
-            <button className="border border-ingco-yellow text-ingco-yellow px-8 py-3 rounded-xl font-semibold hover:bg-ingco-yellow hover:text-ingco-black transition-all">
+            <Link href="/search" className="border border-ingco-yellow text-ingco-yellow px-8 py-3 rounded-xl font-semibold hover:bg-ingco-yellow hover:text-ingco-black transition-all inline-block">
               Voir tous les produits
-            </button>
+            </Link>
           </div>
         </div>
       </section>
