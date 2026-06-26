@@ -11,7 +11,7 @@ const agents = [
     status: 'actif',
     color: 'bg-blue-500',
     icon: '📦',
-    tasks: ['Nouvelle commande', 'Suivi livraison', 'Facturation']
+    tasks: ['Nouvelle commande', 'Suivi livraison', 'Facturation', 'Emballage', 'Expédition']
   },
   {
     id: 'support',
@@ -20,7 +20,7 @@ const agents = [
     status: 'actif',
     color: 'bg-green-500',
     icon: '💬',
-    tasks: ['Questions produits', 'Retours', 'Remboursements']
+    tasks: ['Questions produits', 'Retours', 'Remboursements', 'Réclamations', 'SAV']
   },
   {
     id: 'marketing',
@@ -29,7 +29,7 @@ const agents = [
     status: 'actif',
     color: 'bg-purple-500',
     icon: '📢',
-    tasks: ['Newsletter', 'Réseaux sociaux', 'SEO']
+    tasks: ['Newsletter', 'Réseaux sociaux', 'SEO', 'Google Ads', 'Facebook Ads']
   },
   {
     id: 'inventory',
@@ -38,7 +38,7 @@ const agents = [
     status: 'actif',
     color: 'bg-orange-500',
     icon: '📊',
-    tasks: ['Stock', 'Alertes', 'Prévisions']
+    tasks: ['Stock', 'Alertes', 'Prévisions', 'Commande fournisseur', 'Entrepôt']
   },
   {
     id: 'payment',
@@ -47,14 +47,41 @@ const agents = [
     status: 'inactif',
     color: 'bg-yellow-500',
     icon: '💳',
-    tasks: ['Paiements', 'Récupération', 'Comptabilité']
+    tasks: ['Paiements', 'Récupération', 'Comptabilité', 'Facturation']
+  },
+  {
+    id: 'delivery',
+    name: 'Agent Livraison',
+    description: 'Coordonne les livraisons avec les transporteurs',
+    status: 'actif',
+    color: 'bg-red-500',
+    icon: '🚚',
+    tasks: ['Suivi colis', 'Retours', 'Délais', 'Transporteurs', 'Preuve livraison']
+  },
+  {
+    id: 'customer',
+    name: 'Agent Clients',
+    description: 'Gère la relation client et la fidélité',
+    status: 'actif',
+    color: 'bg-pink-500',
+    icon: '👥',
+    tasks: ['VIP', 'Fidélité', 'Birthday', 'Satisfaction', 'Avis clients']
+  },
+  {
+    id: 'analytics',
+    name: 'Agent Analytique',
+    description: 'Analyse les données et génère des rapports',
+    status: 'actif',
+    color: 'bg-cyan-500',
+    icon: '📈',
+    tasks: ['Rapports', 'Tableaux de bord', 'Prévisions', 'Tendances', 'KPI']
   }
 ]
 
 const integrations = [
-  { name: 'n8n', status: 'connecté', color: 'bg-orange-500' },
   { name: 'WhatsApp Business', status: 'connecté', color: 'bg-green-500' },
-  { name: 'MTN Moov', status: 'connecté', color: 'bg-blue-500' },
+  { name: 'MTN Moov Money', status: 'connecté', color: 'bg-blue-500' },
+  { name: 'Orange Money', status: 'connecté', color: 'bg-orange-500' },
   { name: 'Stripe', status: 'bientôt', color: 'bg-gray-500' },
   { name: 'Mailchimp', status: 'connecté', color: 'bg-yellow-500' },
   { name: 'Google Analytics', status: 'connecté', color: 'bg-red-500' }
