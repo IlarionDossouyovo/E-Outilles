@@ -11,7 +11,7 @@ const agents = [
     status: 'actif',
     color: 'bg-blue-500',
     icon: '📦',
-    tasks: ['Nouvelle commande', 'Suivi livraison', 'Facturation', 'Emballage', 'Expédition']
+    tasks: ['Nouvelle commande', 'Suivi livraison', 'Facturation', 'Emballage', 'Expédition', 'Retours']
   },
   {
     id: 'support',
@@ -20,7 +20,7 @@ const agents = [
     status: 'actif',
     color: 'bg-green-500',
     icon: '💬',
-    tasks: ['Questions produits', 'Retours', 'Remboursements', 'Réclamations', 'SAV']
+    tasks: ['Questions produits', 'Retours', 'Remboursements', 'Réclamations', 'SAV', 'Garantie']
   },
   {
     id: 'marketing',
@@ -29,7 +29,7 @@ const agents = [
     status: 'actif',
     color: 'bg-purple-500',
     icon: '📢',
-    tasks: ['Newsletter', 'Réseaux sociaux', 'SEO', 'Google Ads', 'Facebook Ads']
+    tasks: ['Newsletter', 'Réseaux sociaux', 'SEO', 'Google Ads', 'Facebook Ads', 'Influencers']
   },
   {
     id: 'inventory',
@@ -38,7 +38,7 @@ const agents = [
     status: 'actif',
     color: 'bg-orange-500',
     icon: '📊',
-    tasks: ['Stock', 'Alertes', 'Prévisions', 'Commande fournisseur', 'Entrepôt']
+    tasks: ['Stock', 'Alertes', 'Prévisions', 'Commande fournisseur', 'Entrepôt', 'Codification']
   },
   {
     id: 'payment',
@@ -47,7 +47,7 @@ const agents = [
     status: 'inactif',
     color: 'bg-yellow-500',
     icon: '💳',
-    tasks: ['Paiements', 'Récupération', 'Comptabilité', 'Facturation']
+    tasks: ['Paiements', 'Récupération', 'Comptabilité', 'Facturation', 'Décaissement']
   },
   {
     id: 'delivery',
@@ -56,7 +56,7 @@ const agents = [
     status: 'actif',
     color: 'bg-red-500',
     icon: '🚚',
-    tasks: ['Suivi colis', 'Retours', 'Délais', 'Transporteurs', 'Preuve livraison']
+    tasks: ['Suivi colis', 'Retours', 'Délais', 'Transporteurs', 'Preuve livraison', 'Tracking']
   },
   {
     id: 'customer',
@@ -65,7 +65,7 @@ const agents = [
     status: 'actif',
     color: 'bg-pink-500',
     icon: '👥',
-    tasks: ['VIP', 'Fidélité', 'Birthday', 'Satisfaction', 'Avis clients']
+    tasks: ['VIP', 'Fidélité', 'Birthday', 'Satisfaction', 'Avis clients', 'Parrainage']
   },
   {
     id: 'analytics',
@@ -74,7 +74,79 @@ const agents = [
     status: 'actif',
     color: 'bg-cyan-500',
     icon: '📈',
-    tasks: ['Rapports', 'Tableaux de bord', 'Prévisions', 'Tendances', 'KPI']
+    tasks: ['Rapports', 'Tableaux de bord', 'Prévisions', 'Tendances', 'KPI', 'ROI']
+  },
+  {
+    id: 'supplier',
+    name: 'Agent Fournisseurs',
+    description: 'Gère les relations avec les fournisseurs INGCO',
+    status: 'actif',
+    color: 'bg-indigo-500',
+    icon: '🏭',
+    tasks: ['Commande fournisseur', 'Prix negotiate', 'Livraison', 'Qualité', 'Contrats', 'Délais']
+  },
+  {
+    id: 'pricing',
+    name: 'Agent Tarification',
+    description: 'Optimise les prix pour maximiser les profits',
+    status: 'actif',
+    color: 'bg-emerald-500',
+    icon: '💰',
+    tasks: ['Prix optimal', 'Promotions', 'Marges', 'Concurrence', 'Soldes', 'Bundles']
+  },
+  {
+    id: 'whatsapp',
+    name: 'Agent WhatsApp',
+    description: 'Gère les conversations WhatsApp',
+    status: 'actif',
+    color: 'bg-green-600',
+    icon: '💬',
+    tasks: ['Messages', 'Commandes', 'Suivi', 'Support', 'Automatique', 'Broadcast']
+  },
+  {
+    id: 'refund',
+    name: 'Agent Retours',
+    description: 'Gère les demandes de retour et remboursement',
+    status: 'actif',
+    color: 'bg-rose-500',
+    icon: '🔄',
+    tasks: ['Demandes', 'Vérification', 'Remboursement', 'Stock retour', 'Analyse']
+  },
+  {
+    id: 'shipping',
+    name: 'Agent Expédition',
+    description: 'Automatise la préparation des commandes',
+    status: 'actif',
+    color: 'bg-sky-500',
+    icon: '✈️',
+    tasks: ['Étiquettes', 'Emballage', 'Déclaration', 'Douanes', 'Suivi', 'Facturation']
+  },
+  {
+    id: 'competitor',
+    name: 'Agent Concurrence',
+    description: 'Surveille les concurrents et le marché',
+    status: 'actif',
+    color: 'bg-violet-500',
+    icon: '🔍',
+    tasks: ['Prix concurrence', 'Nouveautés', 'Tendances', 'Alertes', 'Rapport', 'Benchmark']
+  },
+  {
+    id: 'content',
+    name: 'Agent Contenu',
+    description: 'Crée le contenu marketing et produit',
+    status: 'actif',
+    color: 'bg-amber-500',
+    icon: '🎨',
+    tasks: ['Descriptions', 'Photos', 'Vidéos', 'Blog', 'Réseaux', 'Catalogues']
+  },
+  {
+    id: 'quality',
+    name: 'Agent Qualité',
+    description: 'Contrôle la qualité des produits',
+    status: 'actif',
+    color: 'bg-teal-500',
+    icon: '✅',
+    tasks: ['Inspection', 'Standards', 'Photos', 'Retours', 'Notes', 'Amélioration']
   }
 ]
 
@@ -84,7 +156,10 @@ const integrations = [
   { name: 'Orange Money', status: 'connecté', color: 'bg-orange-500' },
   { name: 'Stripe', status: 'bientôt', color: 'bg-gray-500' },
   { name: 'Mailchimp', status: 'connecté', color: 'bg-yellow-500' },
-  { name: 'Google Analytics', status: 'connecté', color: 'bg-red-500' }
+  { name: 'Google Analytics', status: 'connecté', color: 'bg-red-500' },
+  { name: 'DHL Express', status: 'connecté', color: 'bg-yellow-600' },
+  { name: 'FedEx', status: 'connecté', color: 'bg-purple-600' },
+  { name: 'INGCO API', status: 'connecté', color: 'bg-red-700' }
 ]
 
 export default function AgentsPage() {
