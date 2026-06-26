@@ -168,7 +168,7 @@ export default function SettingsPage() {
             <div className="space-y-3">
               <label className="flex items-center justify-between p-4 bg-ingco-dark rounded-xl">
                 <div>
-                  <div className="text-white font-medium">Paiement à la livraison (COD)</div>
+                  <div className="text-white font-medium">Paiement à la livraison</div>
                   <div className="text-gray-500 text-sm">Frais: {settings.codFee}€</div>
                 </div>
                 <input type="checkbox" defaultChecked className="w-5 h-5 accent-ingco-yellow" />
@@ -176,14 +176,14 @@ export default function SettingsPage() {
               <label className="flex items-center justify-between p-4 bg-ingco-dark rounded-xl">
                 <div>
                   <div className="text-white font-medium">Mobile Money</div>
-                  <div className="text-gray-500 text-sm">MTN, Moov, Orange</div>
+                  <div className="text-gray-500 text-sm">MTN, Moov, Orange Money</div>
                 </div>
                 <input type="checkbox" defaultChecked className="w-5 h-5 accent-ingco-yellow" />
               </label>
               <label className="flex items-center justify-between p-4 bg-ingco-dark rounded-xl">
                 <div>
-                  <div className="text-white font-medium">Stripe (Carte)</div>
-                  <div className="text-gray-500 text-sm">Bientôt disponible</div>
+                  <div className="text-white font-medium">Carte bancaire</div>
+                  <div className="text-gray-500 text-sm">Visa, Mastercard - Bientôt</div>
                 </div>
                 <input type="checkbox" disabled className="w-5 h-5 accent-gray-500" />
               </label>
@@ -196,7 +196,7 @@ export default function SettingsPage() {
             <div className="space-y-3">
               <label className="flex items-center justify-between p-4 bg-ingco-dark rounded-xl">
                 <div>
-                  <div className="text-white font-medium">Notifications email</div>
+                  <div className="text-white font-medium">Courriel de notification</div>
                   <div className="text-gray-500 text-sm">Nouvelle commande, contact...</div>
                 </div>
                 <input type="checkbox" defaultChecked className="w-5 h-5 accent-ingco-yellow" />
