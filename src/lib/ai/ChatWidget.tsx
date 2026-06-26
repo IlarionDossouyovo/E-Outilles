@@ -57,7 +57,9 @@ export default function ChatWidget() {
       <button
         onClick={() => {
           console.log('Chat button clicked!')
-          setIsOpen(!isOpen)
+          const newState = !isOpen
+          console.log('Setting isOpen to:', newState)
+          setIsOpen(newState)
         }}
         style={{
           position: 'fixed',
