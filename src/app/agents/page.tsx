@@ -180,18 +180,14 @@ export default function AgentsPage() {
     e.stopPropagation()
     console.log('Configure button clicked for:', selectedAgent.name)
     setConfiguring(true)
-    setToast(`⚙️ Configuration de ${selectedAgent.name}...`)
-    setTimeout(() => {
-      setToast('')
-      alert(`${selectedAgent.name} configuré avec succès!\n\nTâches activées:\n${selectedAgent.tasks.map(t => '✓ ' + t).join('\n')}`)
-    }, 500)
+    setToast(`✅ ${selectedAgent.name} configuré avec succès!\n\nTâches: ${selectedAgent.tasks.length} activées`)
   }
 
   const handleTest = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
     console.log('Test button clicked for:', selectedAgent.name)
-    alert(`🧪 Test de ${selectedAgent.name}\n\nStatut: ${selectedAgent.status === 'actif' ? 'Actif ✅' : 'Inactif ❌'}\n\nTâches: ${selectedAgent.tasks.length}`)
+    setToast(`🧪 Test: ${selectedAgent.name}\n\n📊 Statut: ${selectedAgent.status === 'actif' ? 'Actif ✅' : 'Inactif ❌'}\n\n📋 Tâches: ${selectedAgent.tasks.length}\n\n📝 ${selectedAgent.tasks.join(', ')}`)
   }
 
   const handleToggleStatus = (e: React.MouseEvent) => {
@@ -199,8 +195,8 @@ export default function AgentsPage() {
     e.stopPropagation()
     console.log('Toggle button clicked for:', selectedAgent.name)
     const newStatus = selectedAgent.status === 'actif' ? 'inactif' : 'actif'
-    setToast(`${selectedAgent.name} ${newStatus === 'actif' ? 'activé' : 'désactivé'}`)
-    setTimeout(() => setToast(''), 2000)
+    setToast(`${selectedAgent.name} ${newStatus === 'actif' ? '✅ Activé' : '⏸️ Désactivé'}`)
+    setTimeout(() => setToast(''), 3000)
   }
 
   return (
@@ -226,8 +222,8 @@ export default function AgentsPage() {
       <div className="pt-24 pb-16 max-w-7xl mx-auto px-4">
         {/* Toast */}
         {toast && (
-          <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-ingco-yellow text-ingco-black px-6 py-3 rounded-xl font-bold shadow-lg animate-pulse">
-            {toast}
+          <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-ingco-yellow text-ingco-black px-6 py-4 rounded-xl font-bold shadow-2xl border-2 border-white animate-pulse max-w-md text-center">
+            <div className="whitespace-pre-line">{toast}</div>
           </div>
         )}
 
