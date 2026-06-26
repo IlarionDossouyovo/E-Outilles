@@ -77,7 +77,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <h3 className="text-white font-semibold mb-1">WhatsApp</h3>
-                    <p className="text-gray-400">+33 1 23 45 67 89</p>
+                    <p className="text-gray-400">+229 01 977 003 47</p>
                   </div>
                 </div>
 
@@ -87,7 +87,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <h3 className="text-white font-semibold mb-1">Zone de service</h3>
-                    <p className="text-gray-400">Afrique francophone + Europe</p>
+                    <p className="text-gray-400">Cotonou, Béni</p>
                   </div>
                 </div>
 

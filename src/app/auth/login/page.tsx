@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const router = useRouter()
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -34,15 +35,22 @@ export default function LoginPage() {
               />
             </div>
             
-            <div>
+            <div className="relative">
               <label className="text-gray-400 text-sm mb-2 block">Mot de passe</label>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-ingco-dark border border-ingco-dark rounded-xl px-4 py-3 text-white focus:border-ingco-yellow focus:outline-none"
+                className="w-full bg-ingco-dark border border-ingco-dark rounded-xl px-4 py-3 pr-12 text-white focus:border-ingco-yellow focus:outline-none"
                 required
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-9 text-gray-400 hover:text-ingco-yellow"
+              >
+                {showPassword ? "🙈" : "👁️"}
+              </button>
             </div>
 
             <div className="flex justify-between items-center">

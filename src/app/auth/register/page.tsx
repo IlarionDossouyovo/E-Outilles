@@ -8,6 +8,7 @@ export default function RegisterPage() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [country, setCountry] = useState('')
   const router = useRouter()
 
@@ -65,15 +66,22 @@ export default function RegisterPage() {
               </select>
             </div>
             
-            <div>
+            <div className="relative">
               <label className="text-gray-400 text-sm mb-2 block">Mot de passe</label>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-ingco-dark border border-ingco-dark rounded-xl px-4 py-3 text-white focus:border-ingco-yellow focus:outline-none"
+                className="w-full bg-ingco-dark border border-ingco-dark rounded-xl px-4 py-3 pr-12 text-white focus:border-ingco-yellow focus:outline-none"
                 required
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-9 text-gray-400 hover:text-ingco-yellow"
+              >
+                {showPassword ? "🙈" : "👁️"}
+              </button>
             </div>
 
             <label className="flex items-start gap-2 mt-4">
