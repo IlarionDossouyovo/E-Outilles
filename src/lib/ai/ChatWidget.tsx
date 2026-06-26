@@ -4,8 +4,9 @@ import { useState, useRef, useEffect } from "react"
 import { ChatMessage, quickResponses, generateResponse } from "./chatbot"
 
 export default function ChatWidget() {
-  console.log('ChatWidget rendering...')
+  console.log('ChatWidget rendering...', { isOpen })
   const [isOpen, setIsOpen] = useState(false)
+  console.log('isOpen state:', isOpen)
   const [messages, setMessages] = useState<ChatMessage[]>([
     { id: "1", role: "assistant", content: "Bonjour! Je suis assistant E-Outilles. Comment puis-je vous aider?", timestamp: new Date() }
   ])
@@ -82,7 +83,7 @@ export default function ChatWidget() {
       </button>
 
       {isOpen && (
-        <div style={{
+        <div id="chat-panel" style={{
           position: 'fixed',
           bottom: '100px',
           right: '20px',
@@ -94,7 +95,9 @@ export default function ChatWidget() {
           zIndex: 99998,
           display: 'flex',
           flexDirection: 'column',
-          boxShadow: '0 8px 30px rgba(0,0,0,0.5)'
+          boxShadow: '0 8px 30px rgba(0,0,0,0.5)',
+          visibility: 'visible',
+          opacity: 1
         }}>
           <div style={{padding: '16px', borderBottom: '1px solid #2E2E2E', backgroundColor: '#2E2E2E', borderRadius: '16px 16px 0 0'}}>
             <h3 style={{color: 'white', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px'}}>
