@@ -83,23 +83,24 @@ export default function ChatWidget() {
         💬
       </button>
 
-      {isOpen && (
-        <div id="chat-panel" style={{
-          position: 'fixed',
-          bottom: '100px',
-          right: '20px',
-          width: '350px',
-          height: '450px',
-          backgroundColor: '#1a1a1a',
-          borderRadius: '16px',
-          border: '2px solid #FFC400',
-          zIndex: 99998,
-          display: 'flex',
-          flexDirection: 'column',
-          boxShadow: '0 8px 30px rgba(0,0,0,0.5)',
-          visibility: 'visible',
-          opacity: 1
-        }}>
+      {/* Always render panel, toggle visibility */}
+      <div style={{
+        position: 'fixed',
+        bottom: '100px',
+        right: '20px',
+        width: '350px',
+        height: '450px',
+        backgroundColor: '#1a1a1a',
+        borderRadius: '16px',
+        border: '2px solid #FFC400',
+        zIndex: 99998,
+        display: 'flex',
+        flexDirection: 'column',
+        boxShadow: '0 8px 30px rgba(0,0,0,0.5)',
+        visibility: isOpen ? 'visible' : 'hidden',
+        opacity: isOpen ? 1 : 0,
+        transition: 'all 0.3s ease'
+      }}>
           <div style={{padding: '16px', borderBottom: '1px solid #2E2E2E', backgroundColor: '#2E2E2E', borderRadius: '16px 16px 0 0'}}>
             <h3 style={{color: 'white', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px'}}>
               <span style={{width: '12px', height: '12px', backgroundColor: '#FFC400', borderRadius: '50%', animation: 'pulse 1s infinite'}}></span>
@@ -144,13 +145,13 @@ export default function ChatWidget() {
               onClick={handleSend}
               className="bg-ingco-yellow text-ingco-black p-2 rounded-xl hover:bg-yellow-400 transition-colors"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg style={{width: '20px', height: '20px'}} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
               </svg>
             </button>
           </div>
         </div>
-      )}
+      </div>
     </>
   )
 }
