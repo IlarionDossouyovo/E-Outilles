@@ -168,6 +168,7 @@ export default function AgentsPage() {
   const [toast, setToast] = useState('')
 
   const handleConfigure = () => {
+    console.log('Configure clicked for:', selectedAgent.name)
     setConfiguring(true)
     setToast(`⚙️ Configuration de ${selectedAgent.name}...`)
     setTimeout(() => {
@@ -177,10 +178,12 @@ export default function AgentsPage() {
   }
 
   const handleTest = () => {
+    console.log('Test clicked for:', selectedAgent.name)
     alert(`🧪 Test de ${selectedAgent.name}\n\nStatut: ${selectedAgent.status === 'actif' ? 'Actif ✅' : 'Inactif ❌'}\n\nTâches: ${selectedAgent.tasks.length}`)
   }
 
   const handleToggleStatus = () => {
+    console.log('Toggle clicked for:', selectedAgent.name)
     const newStatus = selectedAgent.status === 'actif' ? 'inactif' : 'actif'
     setToast(`${selectedAgent.name} ${newStatus === 'actif' ? 'activé' : 'désactivé'}`)
     setTimeout(() => setToast(''), 2000)
