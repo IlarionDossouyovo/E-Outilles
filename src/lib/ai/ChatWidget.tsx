@@ -4,9 +4,8 @@ import { useState, useRef, useEffect } from "react"
 import { ChatMessage, quickResponses, generateResponse } from "./chatbot"
 
 export default function ChatWidget() {
-  console.log('ChatWidget rendering...', { isOpen })
+  console.log('ChatWidget rendering...')
   const [isOpen, setIsOpen] = useState(false)
-  console.log('isOpen state:', isOpen)
   const [messages, setMessages] = useState<ChatMessage[]>([
     { id: "1", role: "assistant", content: "Bonjour! Je suis assistant E-Outilles. Comment puis-je vous aider?", timestamp: new Date() }
   ])
