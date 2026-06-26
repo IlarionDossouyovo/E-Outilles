@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 
 // Données des catégories par métier
 const categories = [
@@ -62,24 +63,24 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <div className="flex items-center gap-2">
+            <Link href="/" className="flex items-center gap-2">
               <div className="w-10 h-10 bg-ingco-yellow rounded-lg flex items-center justify-center">
                 <span className="text-ingco-black font-bold text-xl">E</span>
               </div>
               <span className="text-white font-bold text-xl">
                 E-<span className="text-ingco-yellow">Outilles</span>
               </span>
-            </div>
+            </Link>
 
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center gap-8">
-              <a href="#categories" className="text-gray-300 hover:text-ingco-yellow transition-colors">Catégories</a>
-              <a href="#products" className="text-gray-300 hover:text-ingco-yellow transition-colors">Produits</a>
-              <a href="#about" className="text-gray-300 hover:text-ingco-yellow transition-colors">À propos</a>
-              <a href="#contact" className="text-gray-300 hover:text-ingco-yellow transition-colors">Contact</a>
-              <button className="bg-ingco-yellow text-ingco-black px-5 py-2 rounded-lg font-semibold hover:bg-yellow-400 transition-colors">
+              <Link href="/#categories" className="text-gray-300 hover:text-ingco-yellow transition-colors">Catégories</Link>
+              <Link href="/#products" className="text-gray-300 hover:text-ingco-yellow transition-colors">Produits</Link>
+              <Link href="/about" className="text-gray-300 hover:text-ingco-yellow transition-colors">À propos</Link>
+              <Link href="/contact" className="text-gray-300 hover:text-ingco-yellow transition-colors">Contact</Link>
+              <Link href="/cart" className="bg-ingco-yellow text-ingco-black px-5 py-2 rounded-lg font-semibold hover:bg-yellow-400 transition-colors">
                 Commander
-              </button>
+              </Link>
             </div>
 
             {/* Mobile Menu Button */}
@@ -100,13 +101,13 @@ export default function Home() {
         {mobileMenuOpen && (
           <div className="md:hidden bg-ingco-dark border-t border-ingco-gray">
             <div className="px-4 py-4 space-y-3">
-              <a href="#categories" className="block text-gray-300 hover:text-ingco-yellow">Catégories</a>
-              <a href="#products" className="block text-gray-300 hover:text-ingco-yellow">Produits</a>
-              <a href="#about" className="block text-gray-300 hover:text-ingco-yellow">À propos</a>
-              <a href="#contact" className="block text-gray-300 hover:text-ingco-yellow">Contact</a>
-              <button className="w-full bg-ingco-yellow text-ingco-black px-5 py-2 rounded-lg font-semibold">
+              <Link href="/#categories" className="block text-gray-300 hover:text-ingco-yellow">Catégories</Link>
+              <Link href="/#products" className="block text-gray-300 hover:text-ingco-yellow">Produits</Link>
+              <Link href="/about" className="block text-gray-300 hover:text-ingco-yellow">À propos</Link>
+              <Link href="/contact" className="block text-gray-300 hover:text-ingco-yellow">Contact</Link>
+              <Link href="/cart" className="w-full block text-center bg-ingco-yellow text-ingco-black px-5 py-2 rounded-lg font-semibold">
                 Commander
-              </button>
+              </Link>
             </div>
           </div>
         )}
@@ -315,12 +316,12 @@ export default function Home() {
               un catalogue de 500+ produits et un support client dédié.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-ingco-yellow text-ingco-black px-8 py-4 rounded-xl font-bold text-lg hover:bg-yellow-400 transition-all hover:scale-105">
+              <Link href="/auth/register" className="bg-ingco-yellow text-ingco-black px-8 py-4 rounded-xl font-bold text-lg hover:bg-yellow-400 transition-all hover:scale-105">
                 Créer mon compte revendeur
-              </button>
-              <button className="border border-ingco-gray text-white px-8 py-4 rounded-xl font-bold text-lg hover:border-ingco-yellow hover:text-ingco-yellow transition-all">
+              </Link>
+              <Link href="/auth/login" className="border border-ingco-gray text-white px-8 py-4 rounded-xl font-bold text-lg hover:border-ingco-yellow hover:text-ingco-yellow transition-all">
                 Me connecter
-              </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -347,20 +348,20 @@ export default function Home() {
             <div>
               <h4 className="text-white font-semibold mb-4">Catégories</h4>
               <ul className="space-y-2 text-gray-500 text-sm">
-                <li><a href="#" className="hover:text-ingco-yellow transition-colors">Construction & BTP</a></li>
-                <li><a href="#" className="hover:text-ingco-yellow transition-colors">Électricité</a></li>
-                <li><a href="#" className="hover:text-ingco-yellow transition-colors">Garage Auto</a></li>
-                <li><a href="#" className="hover:text-ingco-yellow transition-colors">Jardinage</a></li>
+                <li><Link href="/search?category=construction" className="hover:text-ingco-yellow transition-colors">Construction & BTP</Link></li>
+                <li><Link href="/search?category=electricite" className="hover:text-ingco-yellow transition-colors">Électricité</Link></li>
+                <li><Link href="/search?category=garage" className="hover:text-ingco-yellow transition-colors">Garage Auto</Link></li>
+                <li><Link href="/search?category=jardinage" className="hover:text-ingco-yellow transition-colors">Jardinage</Link></li>
               </ul>
             </div>
             
             <div>
               <h4 className="text-white font-semibold mb-4">Entreprise</h4>
               <ul className="space-y-2 text-gray-500 text-sm">
-                <li><a href="#" className="hover:text-ingco-yellow transition-colors">À propos</a></li>
-                <li><a href="#" className="hover:text-ingco-yellow transition-colors">Devenir revendeur</a></li>
-                <li><a href="#" className="hover:text-ingco-yellow transition-colors">Blog</a></li>
-                <li><a href="#" className="hover:text-ingco-yellow transition-colors">Contact</a></li>
+                <li><Link href="/about" className="hover:text-ingco-yellow transition-colors">À propos</Link></li>
+                <li><Link href="/auth/register" className="hover:text-ingco-yellow transition-colors">Devenir revendeur</Link></li>
+                <li><Link href="/blog" className="hover:text-ingco-yellow transition-colors">Blog</Link></li>
+                <li><Link href="/contact" className="hover:text-ingco-yellow transition-colors">Contact</Link></li>
               </ul>
             </div>
             
@@ -382,9 +383,9 @@ export default function Home() {
               © 2026 E-Outilles. Tous droits réservés. Projet dropshipping INGCO.
             </p>
             <div className="flex gap-4">
-              <a href="#" className="text-gray-500 hover:text-ingco-yellow transition-colors">Mentions légales</a>
-              <a href="#" className="text-gray-500 hover:text-ingco-yellow transition-colors">RGPD</a>
-              <a href="#" className="text-gray-500 hover:text-ingco-yellow transition-colors">CGV</a>
+              <Link href="/legal" className="text-gray-500 hover:text-ingco-yellow transition-colors">Mentions légales</Link>
+              <Link href="/privacy" className="text-gray-500 hover:text-ingco-yellow transition-colors">RGPD</Link>
+              <Link href="/terms" className="text-gray-500 hover:text-ingco-yellow transition-colors">CGV</Link>
             </div>
           </div>
         </div>
