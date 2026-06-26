@@ -164,6 +164,27 @@ const integrations = [
 
 export default function AgentsPage() {
   const [selectedAgent, setSelectedAgent] = useState(agents[0])
+  const [configuring, setConfiguring] = useState(false)
+  const [toast, setToast] = useState('')
+
+  const handleConfigure = () => {
+    setConfiguring(true)
+    setToast(`⚙️ Configuration de ${selectedAgent.name}...`)
+    setTimeout(() => {
+      setToast('')
+      alert(`${selectedAgent.name} configuré avec succès!\n\nTâches activées:\n${selectedAgent.tasks.map(t => '✓ ' + t).join('\n')}`)
+    }, 500)
+  }
+
+  const handleTest = () => {
+    alert(`🧪 Test de ${selectedAgent.name}\n\nStatut: ${selectedAgent.status === 'actif' ? 'Actif ✅' : 'Inactif ❌'}\n\nTâches: ${selectedAgent.tasks.length}`)
+  }
+
+  const handleToggleStatus = () => {
+    const newStatus = selectedAgent.status === 'actif' ? 'inactif' : 'actif'
+    setToast(`${selectedAgent.name} ${newStatus === 'actif' ? 'activé' : 'désactivé'}`)
+    setTimeout(() => setToast(''), 2000)
+  }
 
   return (
     <div className="min-h-screen bg-ingco-black">
@@ -186,6 +207,13 @@ export default function AgentsPage() {
       </nav>
 
       <div className="pt-24 pb-16 max-w-7xl mx-auto px-4">
+        {/* Toast */}
+        {toast && (
+          <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-ingco-yellow text-ingco-black px-6 py-3 rounded-xl font-bold shadow-lg animate-pulse">
+            {toast}
+          </div>
+        )}
+
         {/* Header */}
         <div className="mb-8">
           <Link href="/admin" className="text-ingco-yellow text-sm hover:underline">← Dashboard</Link>
@@ -238,7 +266,7 @@ export default function AgentsPage() {
               <p className="text-gray-400 mb-6">{selectedAgent.description}</p>
 
               <h3 className="text-white font-bold mb-3">Tâches automatisées</h3>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 mb-4">
                 {selectedAgent.tasks.map((task, idx) => (
                   <span key={idx} className="bg-ingco-dark px-4 py-2 rounded-xl text-gray-300">
                     ✓ {task}
@@ -246,9 +274,30 @@ export default function AgentsPage() {
                 ))}
               </div>
 
-              <button className="mt-6 w-full bg-ingco-yellow text-ingco-black py-3 rounded-xl font-bold hover:bg-yellow-400 transition-colors">
-                ⚙️ Configurer l'agent
-              </button>
+              <div className="flex gap-2 mt-4">
+                <button 
+                  onClick={handleConfigure}
+                  className="flex-1 bg-ingco-yellow text-ingco-black py-3 rounded-xl font-bold hover:bg-yellow-400 transition-colors"
+                >
+                  ⚙️ Configurer
+                </button>
+                <button 
+                  onClick={handleTest}
+                  className="flex-1 bg-ingco-dark text-white py-3 rounded-xl font-bold hover:bg-gray-700 transition-colors"
+                >
+                  🧪 Tester
+                </button>
+                <button 
+                  onClick={handleToggleStatus}
+                  className={`px-4 py-3 rounded-xl font-bold transition-colors ${
+                    selectedAgent.status === 'actif' 
+                      ? 'bg-red-500 text-white hover:bg-red-600' 
+                      : 'bg-green-500 text-white hover:bg-green-600'
+                  }`}
+                >
+                  {selectedAgent.status === 'actif' ? '⏸️' : '▶️'}
+                </button>
+              </div>
             </div>
 
             {/* Integrations */}
