@@ -7,6 +7,7 @@ import Link from 'next/link'
 export default function CheckoutPage() {
   const { items, getTotal, clearCart } = useCartStore()
   const [step, setStep] = useState(1) // 1: livraison, 2: paiement, 3: confirmation
+  const [paymentMethod, setPaymentMethod] = useState('cod')
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -204,31 +205,42 @@ export default function CheckoutPage() {
                 <>
                   <h2 className="text-xl font-bold text-white mb-6">Mode de paiement</h2>
                   <div className="space-y-3">
-                    <label className="flex items-center gap-4 p-4 bg-ingco-black rounded-xl cursor-pointer hover:bg-ingco-dark border-2 border-ingco-yellow">
-                      <input type="radio" name="payment" defaultChecked className="w-5 h-5 accent-ingco-yellow" />
+                    <div 
+                      onClick={() => setPaymentMethod('cod')}
+                      className={`flex items-center gap-4 p-4 rounded-xl cursor-pointer border-2 transition-all ${paymentMethod === 'cod' ? 'bg-ingco-black border-ingco-yellow' : 'bg-ingco-black border-ingco-dark hover:border-gray-600'}`}
+                    >
+                      <input type="radio" name="payment" checked={paymentMethod === 'cod'} onChange={() => setPaymentMethod('cod')} className="w-5 h-5 accent-ingco-yellow" />
                       <div className="flex-1">
                         <p className="text-white font-bold">Paiement à la livraison</p>
                         <p className="text-gray-400 text-sm">Payez lorsque vous recevez votre commande</p>
-                        <span className="inline-block mt-2 text-xs bg-ingco-yellow/20 text-ingco-yellow px-2 py-1 rounded">Recommandé</span>
+                        {paymentMethod === 'cod' && <span className="inline-block mt-2 text-xs bg-ingco-yellow/20 text-ingco-yellow px-2 py-1 rounded">Sélectionné</span>}
                       </div>
                       <span className="text-2xl">📦</span>
-                    </label>
-                    <label className="flex items-center gap-4 p-4 bg-ingco-black rounded-xl cursor-not-allowed opacity-60">
-                      <input type="radio" name="payment" disabled className="w-5 h-5" />
+                    </div>
+                    <div 
+                      onClick={() => setPaymentMethod('momo')}
+                      className={`flex items-center gap-4 p-4 rounded-xl cursor-pointer border-2 transition-all ${paymentMethod === 'momo' ? 'bg-ingco-black border-ingco-yellow' : 'bg-ingco-black border-ingco-dark hover:border-gray-600'}`}
+                    >
+                      <input type="radio" name="payment" checked={paymentMethod === 'momo'} onChange={() => setPaymentMethod('momo')} className="w-5 h-5 accent-ingco-yellow" />
                       <div className="flex-1">
-                        <p className="text-gray-400 font-bold">Mobile Money</p>
-                        <p className="text-gray-500 text-sm">MTN, Moov, Orange - Bientôt</p>
+                        <p className="text-white font-bold">Mobile Money</p>
+                        <p className="text-gray-400 text-sm">MTN, Moov, Orange Money</p>
+                        <p className="text-green-400 text-xs mt-1">✓ Disponible</p>
                       </div>
-                      <span className="text-2xl opacity-50">📱</span>
-                    </label>
-                    <label className="flex items-center gap-4 p-4 bg-ingco-black rounded-xl cursor-not-allowed opacity-60">
-                      <input type="radio" name="payment" disabled className="w-5 h-5" />
+                      <span className="text-2xl">📱</span>
+                    </div>
+                    <div 
+                      onClick={() => setPaymentMethod('card')}
+                      className={`flex items-center gap-4 p-4 rounded-xl cursor-pointer border-2 transition-all ${paymentMethod === 'card' ? 'bg-ingco-black border-ingco-yellow' : 'bg-ingco-black border-ingco-dark hover:border-gray-600'}`}
+                    >
+                      <input type="radio" name="payment" checked={paymentMethod === 'card'} onChange={() => setPaymentMethod('card')} className="w-5 h-5 accent-ingco-yellow" />
                       <div className="flex-1">
-                        <p className="text-gray-400 font-bold">Carte bancaire</p>
-                        <p className="text-gray-500 text-sm">Visa, Mastercard - Bientôt</p>
+                        <p className="text-white font-bold">Carte bancaire</p>
+                        <p className="text-gray-400 text-sm">Visa, Mastercard - via Stripe</p>
+                        <p className="text-green-400 text-xs mt-1">✓ Disponible</p>
                       </div>
-                      <span className="text-2xl opacity-50">💳</span>
-                    </label>
+                      <span className="text-2xl">💳</span>
+                    </div>
                   </div>
                 </>
               )}
