@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import ChatWidget from '@/lib/ai/ChatWidget'
 
 export const metadata: Metadata = {
   title: 'E-Outilles | Outillage Professionnel Dropshipping',
@@ -14,7 +15,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr">
-      <body className="bg-ingco-black text-white antialiased">{children}</body>
+      <body className="bg-ingco-black text-white antialiased">
+        {children}
+        <ChatWidget />
+      </body>
     </html>
   )
 }
