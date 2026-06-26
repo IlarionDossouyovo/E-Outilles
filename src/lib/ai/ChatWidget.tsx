@@ -82,13 +82,26 @@ export default function ChatWidget() {
       </button>
 
       {isOpen && (
-        <div className="fixed bottom-24 right-6 w-96 max-w-[90vw] h-[500px] bg-ingco-dark rounded-2xl shadow-2xl border border-ingco-gray z-50 flex flex-col">
-          <div className="p-4 border-b border-ingco-gray bg-ingco-gray rounded-t-2xl">
-            <h3 className="text-white font-bold flex items-center gap-2">
-              <span className="w-3 h-3 bg-ingco-yellow rounded-full animate-pulse"></span>
+        <div style={{
+          position: 'fixed',
+          bottom: '100px',
+          right: '20px',
+          width: '350px',
+          height: '450px',
+          backgroundColor: '#1a1a1a',
+          borderRadius: '16px',
+          border: '2px solid #FFC400',
+          zIndex: 99998,
+          display: 'flex',
+          flexDirection: 'column',
+          boxShadow: '0 8px 30px rgba(0,0,0,0.5)'
+        }}>
+          <div style={{padding: '16px', borderBottom: '1px solid #2E2E2E', backgroundColor: '#2E2E2E', borderRadius: '16px 16px 0 0'}}>
+            <h3 style={{color: 'white', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px'}}>
+              <span style={{width: '12px', height: '12px', backgroundColor: '#FFC400', borderRadius: '50%', animation: 'pulse 1s infinite'}}></span>
               Assistant E-Outilles
             </h3>
-            <p className="text-gray-500 text-xs">Reponse instantanee</p>
+            <p style={{color: '#888', fontSize: '12px'}}>Réponse instantanée</p>
           </div>
 
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
