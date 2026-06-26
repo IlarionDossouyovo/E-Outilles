@@ -1,7 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
+
+// Log at module level
+console.log('Agents page loaded')
 
 const agents = [
   {
@@ -167,8 +170,15 @@ export default function AgentsPage() {
   const [configuring, setConfiguring] = useState(false)
   const [toast, setToast] = useState('')
 
-  const handleConfigure = () => {
-    console.log('Configure clicked for:', selectedAgent.name)
+  // Debug: log when selectedAgent changes
+  useEffect(() => {
+    console.log('Selected agent:', selectedAgent.name)
+  }, [selectedAgent])
+
+  const handleConfigure = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    console.log('Configure button clicked for:', selectedAgent.name)
     setConfiguring(true)
     setToast(`⚙️ Configuration de ${selectedAgent.name}...`)
     setTimeout(() => {
@@ -177,13 +187,17 @@ export default function AgentsPage() {
     }, 500)
   }
 
-  const handleTest = () => {
-    console.log('Test clicked for:', selectedAgent.name)
+  const handleTest = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    console.log('Test button clicked for:', selectedAgent.name)
     alert(`🧪 Test de ${selectedAgent.name}\n\nStatut: ${selectedAgent.status === 'actif' ? 'Actif ✅' : 'Inactif ❌'}\n\nTâches: ${selectedAgent.tasks.length}`)
   }
 
-  const handleToggleStatus = () => {
-    console.log('Toggle clicked for:', selectedAgent.name)
+  const handleToggleStatus = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    console.log('Toggle button clicked for:', selectedAgent.name)
     const newStatus = selectedAgent.status === 'actif' ? 'inactif' : 'actif'
     setToast(`${selectedAgent.name} ${newStatus === 'actif' ? 'activé' : 'désactivé'}`)
     setTimeout(() => setToast(''), 2000)
