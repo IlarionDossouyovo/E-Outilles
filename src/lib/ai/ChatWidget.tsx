@@ -51,16 +51,17 @@ export default function ChatWidget() {
     setMessages(prev => [...prev, response])
   }
 
+  function handleToggle() {
+    console.log('Chat button clicked!')
+    const newState = !isOpen
+    console.log('Setting isOpen to:', newState)
+    setIsOpen(newState)
+  }
+
   return (
     <>
-      {/* Debug: show button always */}
       <button
-        onClick={() => {
-          console.log('Chat button clicked!')
-          const newState = !isOpen
-          console.log('Setting isOpen to:', newState)
-          setIsOpen(newState)
-        }}
+        onClick={handleToggle}
         style={{
           position: 'fixed',
           bottom: '20px',
@@ -151,7 +152,6 @@ export default function ChatWidget() {
             </button>
           </div>
         </div>
-      </div>
     </>
   )
 }
