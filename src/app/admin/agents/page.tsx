@@ -1,0 +1,202 @@
+'use client'
+
+import { useState } from 'react'
+import Link from 'next/link'
+
+const agents = [
+  {
+    id: 'order',
+    name: 'Agent Commandes',
+    description: 'Gère les commandes, suivi, facturation et expéditions',
+    status: 'actif',
+    color: 'bg-blue-500',
+    icon: '📦',
+    tasks: ['Nouvelle commande', 'Suivi livraison', 'Facturation']
+  },
+  {
+    id: 'support',
+    name: 'Agent Support',
+    description: 'Assistant client 24/7 pour toutes vos questions',
+    status: 'actif',
+    color: 'bg-green-500',
+    icon: '💬',
+    tasks: ['Questions produits', 'Retours', 'Remboursements']
+  },
+  {
+    id: 'marketing',
+    name: 'Agent Marketing',
+    description: 'Automatise vos campagnes publicitaires et SEO',
+    status: 'actif',
+    color: 'bg-purple-500',
+    icon: '📢',
+    tasks: ['Newsletter', 'Réseaux sociaux', 'SEO']
+  },
+  {
+    id: 'inventory',
+    name: 'Agent Inventaire',
+    description: 'Surveille le stock et déclenche les réapprovisionnements',
+    status: 'actif',
+    color: 'bg-orange-500',
+    icon: '📊',
+    tasks: ['Stock', 'Alertes', 'Prévisions']
+  },
+  {
+    id: 'payment',
+    name: 'Agent Paiements',
+    description: 'Gère les paiements et les relances',
+    status: 'inactif',
+    color: 'bg-yellow-500',
+    icon: '💳',
+    tasks: ['Paiements', 'Récupération', 'Comptabilité']
+  }
+]
+
+const integrations = [
+  { name: 'n8n', status: 'connecté', color: 'bg-orange-500' },
+  { name: 'WhatsApp Business', status: 'connecté', color: 'bg-green-500' },
+  { name: 'MTN Moov', status: 'connecté', color: 'bg-blue-500' },
+  { name: 'Stripe', status: 'bientôt', color: 'bg-gray-500' },
+  { name: 'Mailchimp', status: 'connecté', color: 'bg-yellow-500' },
+  { name: 'Google Analytics', status: 'connecté', color: 'bg-red-500' }
+]
+
+export default function AgentsPage() {
+  const [selectedAgent, setSelectedAgent] = useState(agents[0])
+
+  return (
+    <div className="min-h-screen bg-ingco-black">
+      {/* Navigation */}
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-ingco-black/95 backdrop-blur-md border-b border-ingco-gray">
+        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+          <Link href="/admin" className="flex items-center gap-2">
+            <div className="w-10 h-10 bg-ingco-yellow rounded-lg flex items-center justify-center">
+              <span className="text-ingco-black font-bold text-xl">E</span>
+            </div>
+            <span className="text-white font-bold text-xl">E-<span className="text-ingco-yellow">Outilles</span></span>
+            <span className="bg-ingco-yellow text-ingco-black text-xs px-2 py-1 rounded ml-2">Admin</span>
+          </Link>
+          <div className="hidden md:flex items-center gap-6">
+            <Link href="/" className="text-gray-300 hover:text-ingco-yellow">Accueil</Link>
+            <Link href="/admin" className="text-gray-300 hover:text-ingco-yellow">Dashboard</Link>
+            <Link href="/admin/agents" className="text-ingco-yellow">Agents</Link>
+          </div>
+        </div>
+      </nav>
+
+      <div className="pt-24 pb-16 max-w-7xl mx-auto px-4">
+        {/* Header */}
+        <div className="mb-8">
+          <Link href="/admin" className="text-ingco-yellow text-sm hover:underline">← Dashboard</Link>
+          <h1 className="text-3xl font-bold text-white mt-2">🤖 Agents IA</h1>
+          <p className="text-gray-400">Automatisez votre boutique avec des agents intelligents</p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Agent List */}
+          <div className="lg:col-span-1 space-y-4">
+            <h2 className="text-xl font-bold text-white">Agents disponibles</h2>
+            {agents.map((agent) => (
+              <button
+                key={agent.id}
+                onClick={() => setSelectedAgent(agent)}
+                className={`w-full p-4 rounded-xl text-left transition-all ${
+                  selectedAgent.id === agent.id
+                    ? 'bg-ingco-yellow border-2 border-ingco-yellow'
+                    : 'bg-ingco-gray border-2 border-transparent hover:border-gray-600'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <span className={`w-12 h-12 ${agent.color} rounded-xl flex items-center justify-center text-2xl`}>
+                    {agent.icon}
+                  </span>
+                  <div className="flex-1">
+                    <div className="text-white font-bold">{agent.name}</div>
+                    <div className="text-gray-400 text-sm">{agent.status === 'actif' ? '✓ Actif' : '○ Inactif'}</div>
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+
+          {/* Agent Detail */}
+          <div className="lg:col-span-2 space-y-6">
+            <div className="bg-ingco-gray rounded-2xl p-6">
+              <div className="flex items-center gap-4 mb-6">
+                <span className={`w-16 h-16 ${selectedAgent.color} rounded-2xl flex items-center justify-center text-3xl`}>
+                  {selectedAgent.icon}
+                </span>
+                <div>
+                  <h2 className="text-2xl font-bold text-white">{selectedAgent.name}</h2>
+                  <span className={`text-sm px-2 py-1 rounded-full ${selectedAgent.status === 'actif' ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-400'}`}>
+                    {selectedAgent.status === 'actif' ? '✓ Actif' : '○ Inactif'}
+                  </span>
+                </div>
+              </div>
+              
+              <p className="text-gray-400 mb-6">{selectedAgent.description}</p>
+
+              <h3 className="text-white font-bold mb-3">Tâches automatisées</h3>
+              <div className="flex flex-wrap gap-2">
+                {selectedAgent.tasks.map((task, idx) => (
+                  <span key={idx} className="bg-ingco-dark px-4 py-2 rounded-xl text-gray-300">
+                    ✓ {task}
+                  </span>
+                ))}
+              </div>
+
+              <button className="mt-6 w-full bg-ingco-yellow text-ingco-black py-3 rounded-xl font-bold hover:bg-yellow-400 transition-colors">
+                ⚙️ Configurer l'agent
+              </button>
+            </div>
+
+            {/* Integrations */}
+            <div className="bg-ingco-gray rounded-2xl p-6">
+              <h2 className="text-xl font-bold text-white mb-4">🔗 Intégrations</h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {integrations.map((integration) => (
+                  <div key={integration.name} className="flex items-center gap-2 p-3 bg-ingco-dark rounded-xl">
+                    <span className={`w-3 h-3 ${integration.color} rounded-full`}></span>
+                    <span className="text-gray-300 text-sm">{integration.name}</span>
+                    <span className={`ml-auto text-xs ${integration.status === 'connecté' ? 'text-green-400' : 'text-gray-500'}`}>
+                      {integration.status === 'connecté' ? '✓' : '○'}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Stats */}
+            <div className="bg-ingco-gray rounded-2xl p-6">
+              <h2 className="text-xl font-bold text-white mb-4">📊 Statistiques</h2>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-ingco-dark p-4 rounded-xl">
+                  <div className="text-gray-400 text-sm">Messages ce mois</div>
+                  <div className="text-2xl font-bold text-white">1,247</div>
+                </div>
+                <div className="bg-ingco-dark p-4 rounded-xl">
+                  <div className="text-gray-400 text-sm">Taux de résolution</div>
+                  <div className="text-2xl font-bold text-green-400">87%</div>
+                </div>
+                <div className="bg-ingco-dark p-4 rounded-xl">
+                  <div className="text-gray-400 text-sm">Temps moyen</div>
+                  <div className="text-2xl font-bold text-white">2min</div>
+                </div>
+                <div className="bg-ingco-dark p-4 rounded-xl">
+                  <div className="text-gray-400 text-sm">Satisfaction</div>
+                  <div className="text-2xl font-bold text-ingco-yellow">4.8/5</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="bg-ingco-dark border-t border-ingco-gray py-6">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <p className="text-gray-500 text-sm">© 2026 E-Outilles Admin.</p>
+        </div>
+      </footer>
+    </div>
+  )
+}
