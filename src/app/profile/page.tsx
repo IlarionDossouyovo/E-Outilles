@@ -3,12 +3,14 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { getSessionAction, logoutAction } from '@/app/actions'
 
 interface User {
+  id: string
   email: string
   name: string
+  role: string
   country?: string
-  joinedAt?: string
 }
 
 interface Order {
@@ -31,7 +33,7 @@ export default function ProfilePage() {
   const router = useRouter()
 
   useEffect(() => {
-    // Check session - first localStorage, then API
+    // Check session
     const stored = localStorage.getItem('eoutilles_session')
     if (stored) {
       try {
@@ -39,19 +41,16 @@ export default function ProfilePage() {
         return
       } catch {}
     }
-    // Fallback to API
-    fetch('/api/auth/session')
-      .then(res => res.ok ? res.json() : Promise.reject())
-      .then(data => {
-        if (data.user) setUser(data.user)
-        else router.push('/auth/login')
-      })
-      .catch(() => router.push('/auth/login'))
+    // Fallback to server action
+    getSessionAction().then(result => {
+      if (result.user) setUser(result.user)
+      else router.push('/auth/login')
+    }).catch(() => router.push('/auth/login'))
   }, [router])
 
   const handleLogout = async () => {
     localStorage.removeItem('eoutilles_session')
-    await fetch('/api/auth/logout', { method: 'POST' })
+    await logoutAction()
     router.push('/auth/login')
   }
 

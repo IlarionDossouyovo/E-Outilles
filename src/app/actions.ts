@@ -40,3 +40,25 @@ export async function loginAction(formData: FormData) {
 
   return { success: true, user }
 }
+
+export async function logoutAction() {
+  const cookieStore = await cookies()
+  cookieStore.delete('session')
+  return { success: true }
+}
+
+export async function getSessionAction() {
+  const cookieStore = await cookies()
+  const sessionCookie = cookieStore.get('session')
+  
+  if (!sessionCookie) {
+    return { user: null }
+  }
+  
+  try {
+    const user = JSON.parse(sessionCookie.value)
+    return { user }
+  } catch {
+    return { user: null }
+  }
+}
