@@ -144,8 +144,8 @@ export default function ServicesPage() {
             <button
               key={service.id}
               onClick={() => setActiveService(service)}
-              className={`bg-ingco-gray rounded-xl p-6 text-left transition-all hover:ring-2 hover:ring-ingco-yellow ${
-                activeService.id === service.id ? 'ring-2 ring-ingco-yellow' : ''
+              className={`bg-ingco-gray rounded-xl p-6 text-left transition-all cursor-pointer hover:bg-ingco-yellow/20 hover:scale-105 ${
+                activeService.id === service.id ? 'ring-2 ring-ingco-yellow bg-ingco-yellow/10' : ''
               }`}
             >
               <div className="text-4xl mb-4">{service.icon}</div>
@@ -155,6 +155,11 @@ export default function ServicesPage() {
                 <span className="text-ingco-yellow font-bold">{service.price}</span>
                 <span className="text-gray-500 text-sm">{service.duration}</span>
               </div>
+              {activeService.id === service.id && (
+                <div className="mt-4 text-center text-ingco-yellow text-sm animate-pulse">
+                  ← Cliquez pour voir les details
+                </div>
+              )}
             </button>
           ))}
         </div>
