@@ -17,10 +17,8 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body className="bg-ingco-black text-white antialiased">
-        <AuthProvider>
-          {children}
-          <ChatWidget />
-        </AuthProvider>
+        {children}
+        <ChatWidget />
       </body>
     </html>
   )
