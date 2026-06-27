@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { SessionProvider } from 'next-auth/react'
+import AuthProvider from '@/components/AuthProvider'
 import './globals.css'
 import ChatWidget from '@/lib/ai/ChatWidget'
 
@@ -17,10 +17,10 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body className="bg-ingco-black text-white antialiased">
-        <SessionProvider>
+        <AuthProvider>
           {children}
           <ChatWidget />
-        </SessionProvider>
+        </AuthProvider>
       </body>
     </html>
   )
