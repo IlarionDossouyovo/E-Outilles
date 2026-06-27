@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import AdminAnalytics from '@/components/AdminAnalytics'
 
 const categories = ['Construction', 'Électricité', 'Garage', 'Jardinage']
 
@@ -53,6 +54,28 @@ export default function AddProductPage() {
           <h1 className="text-3xl font-bold text-white mt-2">Ajouter un produit</h1>
           <p className="text-gray-400">Ajoutez un nouveau produit à votre catalogue</p>
         </div>
+
+        {/* Analytics */}
+        <AdminAnalytics data={{
+          totalOrders: 1247,
+          totalRevenue: 89450,
+          activeProducts: 523,
+          subscribers: 3421,
+          recentOrders: [
+            { id: 'ORD-001', customer: 'Jean Kouassi', amount: 459.99, status: 'pending', date: '16/04/2026' },
+            { id: 'ORD-002', customer: 'Marie Diallo', amount: 189.00, status: 'shipped', date: '15/04/2026' },
+            { id: 'ORD-003', customer: 'Paul Okonkwo', amount: 899.50, status: 'delivered', date: '15/04/2026' },
+            { id: 'ORD-004', customer: 'Anne Mensah', amount: 234.00, status: 'processing', date: '14/04/2026' },
+            { id: 'ORD-005', customer: 'Pierre Ngoma', amount: 567.00, status: 'pending', date: '14/04/2026' },
+          ],
+          topProducts: [
+            { name: 'Perceuse visseuse INGCO 20V', sales: 89, revenue: 8011 },
+            { name: 'Marteau perforateur SDS Max', sales: 45, revenue: 11249 },
+            { name: 'Kit de clés mécaniques 50 pièces', sales: 67, revenue: 5359 },
+            { name: 'Tronçonneuse thermique 45cm', sales: 34, revenue: 10196 },
+            { name: 'Multimètre numérique professionnel', sales: 78, revenue: 4679 },
+          ]
+        }} />
 
         <form onSubmit={handleSubmit} className="bg-ingco-gray rounded-2xl p-6 space-y-6">
           {/* Nom du produit */}

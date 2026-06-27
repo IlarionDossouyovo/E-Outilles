@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import AdminAnalytics from '@/components/AdminAnalytics'
 
 const stats = {
   totalOrders: 1247,

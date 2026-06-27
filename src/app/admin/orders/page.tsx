@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import AdminAnalytics from '@/components/AdminAnalytics'
 
 const allOrders = [
   { id: 'ORD-001', customer: 'Jean Kouassi', email: 'jean@example.com', phone: '+229 01 234 5678', amount: 459.99, status: 'pending', date: '16/04/2026', items: ['Cric hydraulique 3T'] },
@@ -70,6 +71,22 @@ export default function AdminOrdersPage() {
             <p className="text-gray-400">{allOrders.length} commandes</p>
           </div>
         </div>
+
+        {/* Analytics */}
+        <AdminAnalytics data={{
+          totalOrders: allOrders.length,
+          totalRevenue: allOrders.reduce((sum, o) => sum + o.amount, 0),
+          activeProducts: 523,
+          subscribers: 3421,
+          recentOrders: allOrders.slice(0, 5).map(o => ({ ...o, status: o.status })),
+          topProducts: [
+            { name: 'Perceuse visseuse INGCO 20V', sales: 89, revenue: 8011 },
+            { name: 'Marteau perforateur SDS Max', sales: 45, revenue: 11249 },
+            { name: 'Kit de clés mécaniques 50 pièces', sales: 67, revenue: 5359 },
+            { name: 'Tronçonneuse thermique 45cm', sales: 34, revenue: 10196 },
+            { name: 'Multimètre numérique professionnel', sales: 78, revenue: 4679 },
+          ]
+        }} />
 
         {/* Filters */}
         <div className="flex flex-col md:flex-row gap-4 mb-6">
