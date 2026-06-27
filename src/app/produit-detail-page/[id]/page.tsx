@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 
 const products = [
-  { id: '1', name: 'Perceuse visseuse INGCO 20V', price: 89.99, category: 'Construction', image: '🔩', description: 'Perceuse visseuse puissante 20V avec batterie longue duree.', features: ['20V lithium', '2 batteries', 'Chargeur rapide'], stock: 15 },
+  { id: '1', name: 'Perceuse visseuse INGCO 20V', price: 89.99, category: 'Construction', image: '🔩', description: 'Perceuse visseuse puissante 20V.', features: ['20V lithium', '2 batteries'], stock: 15 },
   { id: '2', name: 'Marteau perforateur SDS Max 1500W', price: 249.99, category: 'Construction', image: '⚒️', description: 'Marteau perforateur professionnel.', features: ['1500W', 'SDS Max'], stock: 8 },
   { id: '3', name: 'Meuleuse angulaire 125mm', price: 79.99, category: 'Construction', image: '⚙️', description: 'Meuleuse compacte.', features: ['125mm', '850W'], stock: 20 },
 ]
