@@ -65,6 +65,16 @@ export default function AdminDashboard() {
           <p className="text-gray-400">Gestion de votre boutique E-Outilles</p>
         </div>
 
+        {/* Analytics */}
+        <AdminAnalytics data={{
+          totalOrders: stats.totalOrders,
+          totalRevenue: stats.totalRevenue,
+          activeProducts: stats.activeProducts,
+          subscribers: stats.subscribers,
+          recentOrders: recentOrders,
+          topProducts: topProducts
+        }} />
+
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div className="bg-ingco-gray rounded-2xl p-6">
