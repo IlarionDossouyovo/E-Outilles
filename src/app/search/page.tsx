@@ -31,6 +31,7 @@ export default function SearchPage() {
   const addItem = useCartStore(state => state.addItem)
   const { addItem: addToWishlist, removeItem: removeFromWishlist, isInWishlist } = useWishlistStore()
   const { items: cartItems } = useCartStore()
+  const { items: wishlistItems } = useWishlistStore()
   const showToast = (message: string) => {
     setToast(message)
     setTimeout(() => setToast(''), 2000)
