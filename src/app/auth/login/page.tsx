@@ -1,42 +1,30 @@
 'use client'
 
-import { useState } from 'react'
 import Link from 'next/link'
+import { useState, useEffect } from 'react'
+import { loginAction } from '@/app/actions'
 import { useRouter } from 'next/navigation'
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [redirecting, setRedirecting] = useState(false)
   const router = useRouter()
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setError('')
-    setLoading(true)
-
-    try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      })
-
-      const data = await res.json()
-
-      if (!res.ok) {
-        setError(data.error || 'Erreur de connexion')
-        return
-      }
-
-      // Store session for client-side access
-      localStorage.setItem('eoutilles_session', JSON.stringify(data.user))
+    setRedirecting(true)
+    
+    const formData = new FormData(e.currentTarget)
+    const result = await loginAction(formData)
+    
+    if (result?.error) {
+      setError(result.error)
+      setRedirecting(false)
+    } else if (result?.success) {
+      // Store session and redirect
+      localStorage.setItem('eoutilles_session', JSON.stringify(result.user))
       router.push('/profile')
-    } catch (err) {
-      setError('Erreur de connexion')
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -52,13 +40,18 @@ export default function LoginPage() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          {redirecting && (
+            <div className="bg-ingco-yellow/20 text-ingco-yellow px-4 py-2 rounded-xl mb-4">
+              Redirection...
+            </div>
+          )}
+
+          <form onSubmit={onSubmit} className="space-y-6">
             <div>
               <label className="text-gray-400 text-sm mb-2 block">Email</label>
               <input
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                name="email"
                 className="w-full bg-ingco-dark border border-ingco-dark rounded-xl px-4 py-3 text-white focus:border-ingco-yellow focus:outline-none"
                 required
               />
@@ -68,8 +61,7 @@ export default function LoginPage() {
               <label className="text-gray-400 text-sm mb-2 block">Mot de passe</label>
               <input
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                name="password"
                 className="w-full bg-ingco-dark border border-ingco-dark rounded-xl px-4 py-3 text-white focus:border-ingco-yellow focus:outline-none"
                 required
               />
@@ -87,10 +79,10 @@ export default function LoginPage() {
 
             <button 
               type="submit" 
-              disabled={loading}
+              disabled={redirecting}
               className="w-full bg-ingco-yellow text-ingco-black py-3 rounded-xl font-bold hover:bg-yellow-400 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
             >
-              {loading ? '⏳ Connexion...' : '🔐 Se connecter'}
+              {redirecting ? '⏳ Connexion...' : '🔐 Se connecter'}
             </button>
           </form>
 
