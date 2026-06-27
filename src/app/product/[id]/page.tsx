@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, use } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 
 const products = [
@@ -16,9 +16,8 @@ const products = [
   { id: '10', name: 'Tondeuse thermique autopropulsee', price: 449.99, category: 'Jardinage', image: '🌱', description: 'Tondeuse autopropulsee professionnelle. Coupe precise et uniforme.', features: ['52cm', 'Auto-projetee', 'Bac 60L', 'Reglage hauteur'], stock: 7 },
 ]
 
-export default function ProductPage({ params }: { params: Promise<{ id: string }> }) {
-  const resolvedParams = use(params)
-  const product = products.find(p => p.id === resolvedParams.id)
+export default function ProductPage({ params }: { params: { id: string } }) {
+  const product = products.find(p => p.id === params.id)
   const [quantity, setQuantity] = useState(1)
 
   if (!product) {
