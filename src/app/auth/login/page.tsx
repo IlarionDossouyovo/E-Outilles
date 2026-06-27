@@ -1,6 +1,5 @@
 'use client'
 
-import { signIn } from 'next-auth/react'
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -13,8 +12,21 @@ export default function LoginPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    // Mock login - store user in localStorage
     localStorage.setItem('eoutilles_user', JSON.stringify({ email, name: 'User' }))
     router.push('/profile')
+  }
+
+  const handleGoogleLogin = () => {
+    // Redirect to Google OAuth - will need real credentials
+    const googleAuthUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || 'YOUR_GOOGLE_CLIENT_ID'}&redirect_uri=${encodeURIComponent(window.location.origin + '/api/auth/callback/google')}&response_type=code&scope=openid%20email%20profile`
+    window.location.href = googleAuthUrl
+  }
+
+  const handleFacebookLogin = () => {
+    // Redirect to Facebook OAuth - will need real credentials
+    const fbAuthUrl = `https://www.facebook.com/v18.0/dialog/oauth?client_id=${process.env.NEXT_PUBLIC_FACEBOOK_CLIENT_ID || 'YOUR_FACEBOOK_CLIENT_ID'}&redirect_uri=${encodeURIComponent(window.location.origin + '/api/auth/callback/facebook')}&response_type=code&scope=email,public_profile`
+    window.location.href = fbAuthUrl
   }
 
   return (
@@ -79,13 +91,13 @@ export default function LoginPage() {
             <p className="text-gray-500 text-sm text-center mb-4">Ou se connecter avec</p>
             <div className="flex gap-4">
               <button
-                onClick={() => signIn('google', { callbackUrl: '/' })}
+                onClick={handleGoogleLogin}
                 className="flex-1 bg-red-600 py-2 rounded-xl text-white font-medium hover:bg-red-700 transition-colors flex items-center justify-center gap-2"
               >
                 🔵 Google
               </button>
               <button
-                onClick={() => signIn('facebook', { callbackUrl: '/' })}
+                onClick={handleFacebookLogin}
                 className="flex-1 bg-blue-600 py-2 rounded-xl text-white font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
               >
                 🔷 Facebook
