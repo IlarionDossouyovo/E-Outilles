@@ -1,18 +1,64 @@
+'use client'
+
+import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 export default function LoginPage() {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+    setLoading(true)
+
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        setError(data.error || 'Erreur de connexion')
+        return
+      }
+
+      // Store session for client-side access
+      localStorage.setItem('eoutilles_session', JSON.stringify(data.user))
+      router.push('/profile')
+    } catch (err) {
+      setError('Erreur de connexion')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-ingco-black pt-24 pb-16">
       <div className="max-w-md mx-auto px-4">
         <div className="bg-ingco-gray rounded-2xl p-8">
           <h1 className="text-3xl font-bold text-white text-center mb-8">Connexion</h1>
 
-          <form action="/api/auth/login" method="POST" className="space-y-6">
+          {error && (
+            <div className="bg-red-500/20 border border-red-500 text-red-400 px-4 py-2 rounded-xl mb-4">
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="text-gray-400 text-sm mb-2 block">Email</label>
               <input
                 type="email"
-                name="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full bg-ingco-dark border border-ingco-dark rounded-xl px-4 py-3 text-white focus:border-ingco-yellow focus:outline-none"
                 required
               />
@@ -22,7 +68,8 @@ export default function LoginPage() {
               <label className="text-gray-400 text-sm mb-2 block">Mot de passe</label>
               <input
                 type="password"
-                name="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="w-full bg-ingco-dark border border-ingco-dark rounded-xl px-4 py-3 text-white focus:border-ingco-yellow focus:outline-none"
                 required
               />
@@ -38,8 +85,12 @@ export default function LoginPage() {
               </Link>
             </div>
 
-            <button type="submit" className="w-full bg-ingco-yellow text-ingco-black py-3 rounded-xl font-bold hover:bg-yellow-400 transition-colors flex items-center justify-center gap-2">
-              🔐 Se connecter
+            <button 
+              type="submit" 
+              disabled={loading}
+              className="w-full bg-ingco-yellow text-ingco-black py-3 rounded-xl font-bold hover:bg-yellow-400 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+            >
+              {loading ? '⏳ Connexion...' : '🔐 Se connecter'}
             </button>
           </form>
 
@@ -51,20 +102,10 @@ export default function LoginPage() {
           </div>
 
           <div className="mt-8 border-t border-ingco-dark pt-6">
-            <p className="text-gray-500 text-sm text-center mb-4">Ou se connecter avec</p>
-            <div className="flex gap-4">
-              <a
-                href="https://accounts.google.com/"
-                className="flex-1 bg-red-600 py-2 rounded-xl text-white font-medium hover:bg-red-700 transition-colors flex items-center justify-center gap-2"
-              >
-                🔵 Google
-              </a>
-              <a
-                href="https://www.facebook.com/"
-                className="flex-1 bg-blue-600 py-2 rounded-xl text-white font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
-              >
-                🔷 Facebook
-              </a>
+            <p className="text-gray-500 text-sm text-center mb-4">Compte demo</p>
+            <div className="bg-ingco-dark rounded-xl p-3 text-center">
+              <p className="text-gray-400 text-sm">Email: <span className="text-white">demo@e-outilles.com</span></p>
+              <p className="text-gray-400 text-sm">Mot de passe: <span className="text-white">demo123</span></p>
             </div>
           </div>
         </div>

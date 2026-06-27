@@ -1,4 +1,4 @@
-// Simple auth placeholder - use NextAuth in production
+import { cookies } from 'next/headers'
 
 export interface User {
   id: string
@@ -8,41 +8,22 @@ export interface User {
   country?: string
 }
 
-// Mock user for development
-export const mockUser: User = {
-  id: '1',
-  email: 'demo@e-outilles.com',
-  name: 'Demo User',
-  role: 'customer',
-}
+// Demo users database (same as API)
+export const users = [
+  { id: '1', email: 'demo@e-outilles.com', password: 'demo123', name: 'Demo User', role: 'customer' },
+  { id: '2', email: 'admin@e-outilles.com', password: 'admin123', name: 'Admin', role: 'admin' },
+]
 
-// Check if user is authenticated (placeholder)
-export function getSession(): User | null {
-  if (typeof window === 'undefined') return null
-  const stored = localStorage.getItem('eoutilles_user')
-  if (stored) {
-    try {
-      return JSON.parse(stored)
-    } catch {
-      return null
-    }
+// Get current session (server-side)
+export async function getSession(): Promise<User | null> {
+  try {
+    const cookieStore = await cookies()
+    const sessionCookie = cookieStore.get('session')
+    if (!sessionCookie) return null
+    return JSON.parse(sessionCookie.value)
+  } catch {
+    return null
   }
-  return null
-}
-
-// Login placeholder
-export function login(email: string, password: string): Promise<User> {
-  return new Promise((resolve) => {
-    // In production, call API
-    const user: User = { id: '1', email, role: 'customer' }
-    localStorage.setItem('eoutilles_user', JSON.stringify(user))
-    resolve(user)
-  })
-}
-
-// Logout
-export function logout(): void {
-  localStorage.removeItem('eoutilles_user')
 }
 
 // Check role

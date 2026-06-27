@@ -31,17 +31,28 @@ export default function ProfilePage() {
   const router = useRouter()
 
   useEffect(() => {
-    const stored = localStorage.getItem('eoutilles_user')
+    // Check session - first localStorage, then API
+    const stored = localStorage.getItem('eoutilles_session')
     if (stored) {
-      setUser(JSON.parse(stored))
-    } else {
-      router.push('/auth/login')
+      try {
+        setUser(JSON.parse(stored))
+        return
+      } catch {}
     }
+    // Fallback to API
+    fetch('/api/auth/session')
+      .then(res => res.ok ? res.json() : Promise.reject())
+      .then(data => {
+        if (data.user) setUser(data.user)
+        else router.push('/auth/login')
+      })
+      .catch(() => router.push('/auth/login'))
   }, [router])
 
-  const handleLogout = () => {
-    localStorage.removeItem('eoutilles_user')
-    router.push('/')
+  const handleLogout = async () => {
+    localStorage.removeItem('eoutilles_session')
+    await fetch('/api/auth/logout', { method: 'POST' })
+    router.push('/auth/login')
   }
 
   if (!user) return null
