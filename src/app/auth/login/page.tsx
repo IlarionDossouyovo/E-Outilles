@@ -1,4 +1,5 @@
 'use client'
+import { signIn } from 'next-auth/react'
 
 import { useState } from 'react'
 import Link from 'next/link'
@@ -79,13 +80,13 @@ export default function LoginPage() {
             <p className="text-gray-500 text-sm text-center mb-4">Ou se connecter avec</p>
             <div className="flex gap-4">
               <button 
-                onClick={() => alert('Connexion Google - A configurer avec Firebase/NextAuth')}
+                onClick={() => signIn('google', { callbackUrl: '/' })}
                 className="flex-1 bg-red-600 py-2 rounded-xl text-white font-medium hover:bg-red-700 transition-colors flex items-center justify-center gap-2"
               >
                 🔵 Google
               </button>
               <button 
-                onClick={() => alert('Connexion Facebook - A configurer avec Firebase/NextAuth')}
+                onClick={() => signIn('facebook', { callbackUrl: '/' })}
                 className="flex-1 bg-blue-600 py-2 rounded-xl text-white font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
               >
                 🔷 Facebook
