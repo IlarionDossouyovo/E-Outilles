@@ -91,8 +91,8 @@ export default function RegisterPage() {
               </span>
             </label>
 
-            <button type="submit" className="w-full bg-ingco-yellow text-ingco-black py-3 rounded-xl font-bold hover:bg-yellow-400 transition-colors">
-              Creer mon compte
+            <button type="submit" className="w-full bg-ingco-yellow text-ingco-black py-3 rounded-xl font-bold hover:bg-yellow-400 transition-colors flex items-center justify-center gap-2">
+              🔐 Creer mon compte
             </button>
           </form>
 

@@ -47,7 +47,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-9 text-gray-400 hover:text-ingco-yellow"
+                className="absolute right-3 top-9 text-gray-400 hover:text-ingco-yellow text-xl"
               >
                 {showPassword ? "🙈" : "👁️"}
               </button>
@@ -63,8 +63,8 @@ export default function LoginPage() {
               </Link>
             </div>
 
-            <button type="submit" className="w-full bg-ingco-yellow text-ingco-black py-3 rounded-xl font-bold hover:bg-yellow-400 transition-colors">
-              Se connecter
+            <button type="submit" className="w-full bg-ingco-yellow text-ingco-black py-3 rounded-xl font-bold hover:bg-yellow-400 transition-colors flex items-center justify-center gap-2">
+              🔐 Se connecter
             </button>
           </form>
 
@@ -78,11 +78,11 @@ export default function LoginPage() {
           <div className="mt-8 border-t border-ingco-dark pt-6">
             <p className="text-gray-500 text-sm text-center mb-4">Ou se connecter avec</p>
             <div className="flex gap-4">
-              <button className="flex-1 bg-ingco-dark py-2 rounded-xl text-white font-medium hover:bg-gray-700 transition-colors">
-                Google
+              <button className="flex-1 bg-ingco-dark py-2 rounded-xl text-white font-medium hover:bg-gray-700 transition-colors flex items-center justify-center gap-2">
+                🔵 Google
               </button>
-              <button className="flex-1 bg-ingco-dark py-2 rounded-xl text-white font-medium hover:bg-gray-700 transition-colors">
-                Facebook
+              <button className="flex-1 bg-ingco-dark py-2 rounded-xl text-white font-medium hover:bg-gray-700 transition-colors flex items-center justify-center gap-2">
+                🔷 Facebook
               </button>
             </div>
           </div>
