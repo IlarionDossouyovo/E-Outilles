@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import AuthProvider from '@/components/AuthProvider'
 import './globals.css'
 import ChatWidget from '@/lib/ai/ChatWidget'
 
