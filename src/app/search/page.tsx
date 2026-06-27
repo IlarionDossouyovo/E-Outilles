@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { useCartStore } from '@/lib/store/cart'
 import { useWishlistStore } from '@/lib/store/wishlist'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
 
 const allProducts = [
   { id: '1', name: 'Perceuse visseuse INGCO 20V', price: 89.99, category: 'Construction', image: '🔩' },
@@ -32,17 +31,6 @@ export default function SearchPage() {
   const addItem = useCartStore(state => state.addItem)
   const { addItem: addToWishlist, removeItem: removeFromWishlist, isInWishlist } = useWishlistStore()
   const { items: cartItems } = useCartStore()
-  const { items: wishlistItems } = useWishlistStore()
-  
-  const searchParams = useSearchParams()
-  
-  useEffect(() => {
-    const cat = searchParams.get('category')
-    if (cat && categories.includes(cat)) {
-      setCategory(cat)
-    }
-  }, [searchParams])
-  
   const showToast = (message: string) => {
     setToast(message)
     setTimeout(() => setToast(''), 2000)
