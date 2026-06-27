@@ -139,7 +139,7 @@ export default function CategoriesPage() {
           {currentCategory?.products.map((product) => (
             <Link
               key={product.id}
-              href={`/product/${product.id}`}
+              href={`/produit-detail-page/${product.id}`}
               className="bg-ingco-gray rounded-xl p-6 hover:bg-ingco-gray/80 transition-all group"
             >
               <div className="text-6xl mb-4 text-center">{product.image}</div>

@@ -135,7 +135,7 @@ export default function SearchPage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredProducts.map((product) => (
-            <div key={product.id} className="bg-ingco-gray rounded-2xl overflow-hidden hover:shadow-xl hover:shadow-ingco-yellow/10 transition-all hover:-translate-y-2 group">
+            <Link key={product.id} href={`/produit-detail-page/${product.id}`} className="block bg-ingco-gray rounded-2xl overflow-hidden hover:shadow-xl hover:shadow-ingco-yellow/10 transition-all hover:-translate-y-2 group">
               <div className="h-40 bg-ingco-dark flex items-center justify-center text-5xl">
                 {product.image}
               </div>
@@ -143,7 +143,7 @@ export default function SearchPage() {
                 <span className="text-xs text-ingco-yellow uppercase">{product.category}</span>
                 <h3 className="text-white font-bold mt-1">{product.name}</h3>
                 <p className="text-ingco-yellow font-bold text-xl mt-2">{product.price}€</p>
-                <div className="flex gap-2 mt-4">
+                <div className="flex gap-2 mt-4" onClick={(e) => e.preventDefault()}>
                   <button 
                     onClick={() => handleAddToCart(product)}
                     className="flex-1 bg-ingco-yellow text-ingco-black py-2 rounded-lg font-medium hover:bg-yellow-400"
@@ -158,7 +158,7 @@ export default function SearchPage() {
                   </button>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 
