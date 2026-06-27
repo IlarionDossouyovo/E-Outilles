@@ -87,7 +87,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <h3 className="text-white font-semibold mb-1">Zone de service</h3>
-                    <p className="text-gray-400">Cotonou, Béni</p>
+                    <p className="text-gray-400">Cotonou, Benin</p>
                   </div>
                 </div>
 
