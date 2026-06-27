@@ -78,10 +78,16 @@ export default function LoginPage() {
           <div className="mt-8 border-t border-ingco-dark pt-6">
             <p className="text-gray-500 text-sm text-center mb-4">Ou se connecter avec</p>
             <div className="flex gap-4">
-              <button className="flex-1 bg-ingco-dark py-2 rounded-xl text-white font-medium hover:bg-gray-700 transition-colors flex items-center justify-center gap-2">
+              <button 
+                onClick={() => alert('Connexion Google - A configurer avec Firebase/NextAuth')}
+                className="flex-1 bg-red-600 py-2 rounded-xl text-white font-medium hover:bg-red-700 transition-colors flex items-center justify-center gap-2"
+              >
                 🔵 Google
               </button>
-              <button className="flex-1 bg-ingco-dark py-2 rounded-xl text-white font-medium hover:bg-gray-700 transition-colors flex items-center justify-center gap-2">
+              <button 
+                onClick={() => alert('Connexion Facebook - A configurer avec Firebase/NextAuth')}
+                className="flex-1 bg-blue-600 py-2 rounded-xl text-white font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+              >
                 🔷 Facebook
               </button>
             </div>
