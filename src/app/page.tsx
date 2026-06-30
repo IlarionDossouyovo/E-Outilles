@@ -74,8 +74,8 @@ export default function Home() {
 
             {/* Desktop Menu */}
             <div className="hidden md:flex items-center gap-8">
-              <Link href="/#categories" className="text-gray-300 hover:text-ingco-yellow transition-colors">Catégories</Link>
-              <Link href="/#products" className="text-gray-300 hover:text-ingco-yellow transition-colors">Produits</Link>
+              <a href="#categories" className="text-gray-300 hover:text-ingco-yellow transition-colors">Catégories</a>
+              <a href="#products" className="text-gray-300 hover:text-ingco-yellow transition-colors">Produits</a>
               <Link href="/chat" className="text-gray-300 hover:text-ingco-yellow transition-colors">💬 Assistant</Link>
               <Link href="/about" className="text-gray-300 hover:text-ingco-yellow transition-colors">À propos</Link>
               <Link href="/contact" className="text-gray-300 hover:text-ingco-yellow transition-colors">Contact</Link>
@@ -102,8 +102,8 @@ export default function Home() {
         {mobileMenuOpen && (
           <div className="md:hidden bg-ingco-dark border-t border-ingco-gray">
             <div className="px-4 py-4 space-y-3">
-              <Link href="/#categories" className="block text-gray-300 hover:text-ingco-yellow">Catégories</Link>
-              <Link href="/#products" className="block text-gray-300 hover:text-ingco-yellow">Produits</Link>
+              <a href="#categories" className="block text-gray-300 hover:text-ingco-yellow" onClick={() => setMobileMenuOpen(false)}>Catégories</a>
+              <a href="#products" className="block text-gray-300 hover:text-ingco-yellow" onClick={() => setMobileMenuOpen(false)}>Produits</a>
               <Link href="/chat" className="block text-gray-300 hover:text-ingco-yellow">💬 Assistant</Link>
               <Link href="/about" className="block text-gray-300 hover:text-ingco-yellow">À propos</Link>
               <Link href="/contact" className="block text-gray-300 hover:text-ingco-yellow">Contact</Link>
@@ -182,7 +182,7 @@ export default function Home() {
       </section>
 
       {/* Categories Section */}
-      <section id="categories" className="py-16 md:py-24 bg-ingco-dark">
+      <section id="categories" className="py-24 md:py-32 bg-ingco-dark scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -229,7 +229,7 @@ export default function Home() {
       </section>
 
       {/* Featured Products */}
-      <section id="products" className="py-16 md:py-24">
+      <section id="products" className="py-24 md:py-32 scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
