@@ -1,7 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
+
+// Code secret du fondateur (à changer)
+const FOUNDER_CODE = 'EO2024'
 
 const founder = {
   name: 'Ilarion Dossouyovo',
@@ -13,22 +16,128 @@ const founder = {
   vision: 'Démocratiser l\'accès aux outils professionnels de qualité pour tous les artisans du monde'
 }
 
-const agents = [
-  { id: 1, name: 'Assistant IA', status: 'online', type: 'chat', icon: '🤖', conversations: 156 },
-  { id: 2, name: 'Vendeur Bot', status: 'online', type: 'sales', icon: '💼', conversations: 89 },
-  { id: 3, name: 'Support Client', status: 'online', type: 'support', icon: '🎧', conversations: 234 },
-  { id: 4, name: 'Suivi Commande', status: 'offline', type: 'tracking', icon: '📦', conversations: 0 },
+// Agents IA pour l'entreprise
+const allAgents = [
+  // Agents principaux
+  { id: 1, name: 'Assistant IA', status: 'online', type: 'chat', icon: '🤖', conversations: 156, category: 'principal',
+    description: 'Assistant conversationnel principal pour les clients',
+    features: ['Recommandations produits', 'Questions techniques', 'Conseils utilisation', 'suivi projet'],
+    color: 'from-purple-500 to-indigo-600' },
+  { id: 2, name: 'Vendeur Bot', status: 'online', type: 'sales', icon: '💼', conversations: 89, category: 'principal',
+    description: 'Automatisation des ventes et conversion',
+    features: ['Qualification leads', 'Closing automatique', 'Suivi panier abandonné', 'Promotions personnalisées'],
+    color: 'from-green-500 to-emerald-600' },
+  { id: 3, name: 'Support Client', status: 'online', type: 'support', icon: '🎧', conversations: 234, category: 'principal',
+    description: 'Support client automatisé 24/7',
+    features: ['FAQ automatique', 'Ouverture tickets', 'Suivi résolution', 'Escalade humaine'],
+    color: 'from-blue-500 to-cyan-600' },
+  { id: 4, name: 'Suivi Commande', status: 'offline', type: 'tracking', icon: '📦', conversations: 0, category: 'principal',
+    description: 'Suivi et gestion des commandes',
+    features: ['Tracking temps réel', 'Notifications livraison', 'Retours & échanges', 'Suivi fournisseurs'],
+    color: 'from-orange-500 to-amber-600' },
+  // Nouveaux agents additionnels
+  { id: 5, name: 'Chef de Projet IA', status: 'online', type: 'project', icon: '📋', conversations: 67, category: 'management',
+    description: 'Gestion de projets et planification',
+    features: ['Planification tâches', 'Suivi deadlines', 'Coordination équipe', 'Rapports avance'],
+    color: 'from-indigo-500 to-purple-600' },
+  { id: 6, name: 'Analyste Data', status: 'online', type: 'analytics', icon: '📊', conversations: 45, category: 'management',
+    description: 'Analyse des données бизнес',
+    features: ['Rapports ventes', 'Analyse tendances', 'Prévisions', 'Tableaux de bord'],
+    color: 'from-pink-500 to-rose-600' },
+  { id: 7, name: 'Marketing Bot', status: 'online', type: 'marketing', icon: '📢', conversations: 123, category: 'marketing',
+    description: 'Automatisation marketing digital',
+    features: ['Campagnes email', 'SEO optimisation', 'Gestion réseaux sociaux', 'Contenu automatique'],
+    color: 'from-red-500 to-orange-600' },
+  { id: 8, name: 'Assistant RH', status: 'offline', type: 'hr', icon: '👥', conversations: 0, category: 'management',
+    description: 'Gestion des ressources humaines',
+    features: ['Recrutement', 'Onboarding', 'Gestion congès', 'Formation'],
+    color: 'from-teal-500 to-cyan-600' },
+  { id: 9, name: 'Comptable IA', status: 'offline', type: 'finance', icon: '💳', conversations: 0, category: 'finance',
+    description: 'Gestion financière et comptable',
+    features: ['Facturation', 'Suivi trésorerie', 'Rapports financiers', 'Prévisions budétaires'],
+    color: 'from-yellow-500 to-amber-600' },
+  { id: 10, name: 'Legal Bot', status: 'offline', type: 'legal', icon: '⚖️', conversations: 0, category: 'finance',
+    description: 'Assistant juridique et conformité',
+    features: ['Contrats types', 'CGU/RGPD', 'Mentions légales', 'Conseils juridiques'],
+    color: 'from-slate-500 to-gray-600' },
 ]
 
+const agents = allAgents.filter(a => a.category === 'principal')
+const extraAgents = allAgents.filter(a => a.category !== 'principal')
+
 const stats = {
-  totalConversations: 479,
-  activeAgents: 3,
+  totalConversations: 714,
+  activeAgents: 7,
+  totalAgents: 10,
+  offlineAgents: 3,
   messagesToday: 1247,
   satisfaction: 94.5
 }
 
 export default function AgentDashboard() {
   const [activeTab, setActiveTab] = useState('overview')
+  const [accessGranted, setAccessGranted] = useState(false)
+  const [codeInput, setCodeInput] = useState('')
+  const [error, setError] = useState('')
+
+  const verifyCode = () => {
+    if (codeInput === FOUNDER_CODE) {
+      setAccessGranted(true)
+      setError('')
+    } else {
+      setError('Code incorrect')
+    }
+  }
+
+  // Auto-redirect si pas de code
+  useEffect(() => {
+    const stored = localStorage.getItem('founder_access')
+    if (stored === 'granted') {
+      setAccessGranted(true)
+    }
+  }, [])
+
+  const grantAccess = () => {
+    if (codeInput === FOUNDER_CODE) {
+      localStorage.setItem('founder_access', 'granted')
+      setAccessGranted(true)
+      setError('')
+    } else {
+      setError('Code secret incorrect')
+    }
+  }
+
+  // Page d'accès si pas autorisé
+  if (!accessGranted) {
+    return (
+      <div className="min-h-screen bg-ingco-black flex items-center justify-center p-4">
+        <div className="bg-ingco-gray rounded-2xl p-8 max-w-md w-full">
+          <div className="text-center mb-6">
+            <div className="text-5xl mb-4">🔐</div>
+            <h1 className="text-2xl font-bold text-white">Accès Réservé</h1>
+            <p className="text-gray-400 mt-2">Entrez votre code secret pour accéder aux agents IA</p>
+          </div>
+          <input
+            type="password"
+            value={codeInput}
+            onChange={(e) => setCodeInput(e.target.value)}
+            placeholder="Code secret..."
+            className="w-full bg-ingco-dark text-white px-4 py-3 rounded-xl mb-4 border border-ingco-gray focus:border-ingco-yellow outline-none"
+          />
+          {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+          <button
+            onClick={grantAccess}
+            className="w-full bg-ingco-yellow text-ingco-black py-3 rounded-xl font-bold hover:bg-yellow-400"
+          >
+            Valider
+          </button>
+          <Link href="/" className="block text-center text-gray-500 text-sm mt-4 hover:text-ingco-yellow">
+            ← Retour à l'accueil
+          </Link>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-ingco-black">
@@ -91,11 +200,11 @@ export default function AgentDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div className="bg-ingco-gray rounded-2xl p-6">
             <div className="flex items-center justify-between mb-4">
-              <span className="text-gray-400 text-sm">Conversations totales</span>
-              <span className="w-10 h-10 bg-purple-500/20 rounded-xl flex items-center justify-center">💬</span>
+              <span className="text-gray-400 text-sm">Total Agents</span>
+              <span className="w-10 h-10 bg-purple-500/20 rounded-xl flex items-center justify-center">🤖</span>
             </div>
-            <div className="text-3xl font-bold text-white">{stats.totalConversations}</div>
-            <div className="text-green-500 text-sm mt-1">+23% ce mois</div>
+            <div className="text-3xl font-bold text-white">{stats.totalAgents}</div>
+            <div className="text-gray-500 text-sm mt-1">Configurés</div>
           </div>
 
           <div className="bg-ingco-gray rounded-2xl p-6">
@@ -103,26 +212,26 @@ export default function AgentDashboard() {
               <span className="text-gray-400 text-sm">Agents actifs</span>
               <span className="w-10 h-10 bg-green-500/20 rounded-xl flex items-center justify-center">✓</span>
             </div>
-            <div className="text-3xl font-bold text-green-500">{stats.activeAgents}/4</div>
+            <div className="text-3xl font-bold text-green-500">{stats.activeAgents}/{stats.totalAgents}</div>
             <div className="text-gray-500 text-sm mt-1">En ligne</div>
           </div>
 
           <div className="bg-ingco-gray rounded-2xl p-6">
             <div className="flex items-center justify-between mb-4">
-              <span className="text-gray-400 text-sm">Messages aujourd'hui</span>
-              <span className="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center">📝</span>
+              <span className="text-gray-400 text-sm">Conversations</span>
+              <span className="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center">💬</span>
             </div>
-            <div className="text-3xl font-bold text-white">{stats.messagesToday}</div>
-            <div className="text-green-500 text-sm mt-1">+15% vs hier</div>
+            <div className="text-3xl font-bold text-white">{stats.totalConversations}</div>
+            <div className="text-green-500 text-sm mt-1">+23% ce mois</div>
           </div>
 
           <div className="bg-ingco-gray rounded-2xl p-6">
             <div className="flex items-center justify-between mb-4">
-              <span className="text-gray-400 text-sm">Satisfaction</span>
-              <span className="w-10 h-10 bg-yellow-500/20 rounded-xl flex items-center justify-center">⭐</span>
+              <span className="text-gray-400 text-sm">Hors ligne</span>
+              <span className="w-10 h-10 bg-gray-500/20 rounded-xl flex items-center justify-center">💤</span>
             </div>
-            <div className="text-3xl font-bold text-ingco-yellow">{stats.satisfaction}%</div>
-            <div className="text-green-500 text-sm mt-1">Excellent</div>
+            <div className="text-3xl font-bold text-gray-400">{stats.offlineAgents}</div>
+            <div className="text-gray-500 text-sm mt-1">À activer</div>
           </div>
         </div>
 
@@ -161,24 +270,58 @@ export default function AgentDashboard() {
           </div>
         </div>
 
+        {/* Extra Agents - Management & Marketing */}
+        <div className="bg-ingco-gray rounded-2xl p-6 mt-8">
+          <h2 className="text-xl font-bold text-white mb-6">⚙️ Agents Avancés (Management & Marketing)</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {extraAgents.map((agent) => (
+              <div key={agent.id} className={`bg-gradient-to-r ${agent.color} p-4 rounded-xl`}>
+                <div className="flex items-start gap-3">
+                  <div className="text-2xl">{agent.icon}</div>
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-white font-semibold">{agent.name}</h3>
+                      <span className={`text-xs px-2 py-1 rounded bg-white/20 ${agent.status === 'online' ? 'text-green-300' : 'text-gray-300'}`}>
+                        {agent.status === 'online' ? '🟢' : '⚪'}
+                      </span>
+                    </div>
+                    <p className="text-white/80 text-sm mt-1">{agent.description}</p>
+                    <div className="mt-2 flex flex-wrap gap-1">
+                      {agent.features.slice(0, 2).map((f, i) => (
+                        <span key={i} className="text-xs bg-white/20 px-2 py-1 rounded text-white">{f}</span>
+                      ))}
+                    </div>
+                    <div className="mt-2 flex items-center justify-between">
+                      <span className="text-white/60 text-xs">{agent.conversations} conv.</span>
+                      <button className="text-xs text-white underline">Config →</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-          <Link href="/chat" className="bg-ingco-gray rounded-2xl p-6 hover:bg-gray-700 transition-colors block">
-            <div className="text-3xl mb-4">🤖</div>
-            <h3 className="text-white font-bold mb-2">Assistant Principal</h3>
-            <p className="text-gray-400 text-sm">Accéder au chat Ollama</p>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
+          <Link href="/chat" className="bg-ingco-gray rounded-2xl p-6 hover:bg-gray-700 transition-colors block text-center">
+            <div className="text-3xl mb-2">🤖</div>
+            <h3 className="text-white font-bold text-sm">Assistant</h3>
           </Link>
 
-          <Link href="/admin" className="bg-ingco-gray rounded-2xl p-6 hover:bg-gray-700 transition-colors block">
-            <div className="text-3xl mb-4">📊</div>
-            <h3 className="text-white font-bold mb-2">Dashboard Admin</h3>
-            <p className="text-gray-400 text-sm">Voir les statistiques</p>
+          <Link href="/admin" className="bg-ingco-gray rounded-2xl p-6 hover:bg-gray-700 transition-colors block text-center">
+            <div className="text-3xl mb-2">📊</div>
+            <h3 className="text-white font-bold text-sm">Dashboard</h3>
           </Link>
 
-          <Link href="/admin/orders" className="bg-ingco-gray rounded-2xl p-6 hover:bg-gray-700 transition-colors block">
-            <div className="text-3xl mb-4">📦</div>
-            <h3 className="text-white font-bold mb-2">Suivi Commandes</h3>
-            <p className="text-gray-400 text-sm">Gérer les commandes</p>
+          <Link href="/admin/orders" className="bg-ingco-gray rounded-2xl p-6 hover:bg-gray-700 transition-colors block text-center">
+            <div className="text-3xl mb-2">📦</div>
+            <h3 className="text-white font-bold text-sm">Commandes</h3>
+          </Link>
+
+          <Link href="/" className="bg-ingco-gray rounded-2xl p-6 hover:bg-gray-700 transition-colors block text-center">
+            <div className="text-3xl mb-2">🏠</div>
+            <h3 className="text-white font-bold text-sm">Accueil</h3>
           </Link>
         </div>
       </div>
