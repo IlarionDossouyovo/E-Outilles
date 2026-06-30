@@ -128,39 +128,35 @@ export default function AgentDashboard() {
 
         {/* Agents List */}
         <div className="bg-ingco-gray rounded-2xl p-6">
-          <h2 className="text-xl font-bold text-white mb-6">Agents IA Configurés</h2>
+          <h2 className="text-xl font-bold text-white mb-6">🤖 Agents IA Disponibles</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {agents.map((agent) => (
-              <Link 
-                key={agent.id} 
-                href={agent.type === 'chat' ? '/chat' : '#'}
-                className="flex items-center justify-between bg-ingco-dark p-4 rounded-xl hover:bg-gray-800 transition-colors"
-              >
-                <div className="flex items-center gap-4">
+              <div key={agent.id} className="bg-ingco-dark p-4 rounded-xl">
+                <div className="flex items-start gap-4">
                   <div className="text-3xl">{agent.icon}</div>
-                  <div>
-                    <h3 className="text-white font-semibold">{agent.name}</h3>
-                    <p className="text-gray-500 text-sm">Type: {agent.type}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="text-right">
-                    <div className="text-gray-400 text-sm">{agent.conversations} conv.</div>
-                    <div className={`text-sm ${agent.status === 'online' ? 'text-green-500' : 'text-gray-500'}`}>
-                      {agent.status === 'online' ? '🟢 En ligne' : '⚪ Hors ligne'}
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-white font-semibold">{agent.name}</h3>
+                      <span className={`text-xs px-2 py-1 rounded ${agent.status === 'online' ? 'bg-green-500/20 text-green-500' : 'bg-gray-500/20 text-gray-500'}`}>
+                        {agent.status === 'online' ? '🟢 En ligne' : '⚪ Hors ligne'}
+                      </span>
+                    </div>
+                    <p className="text-purple-400 text-sm font-medium mt-1">{agent.type === 'chat' ? 'Assistant conversationnel' : agent.type === 'sales' ? 'Vente automatisée' : agent.type === 'support' ? 'Support client' : 'Suivi commandes'}</p>
+                    <p className="text-gray-500 text-sm mt-2">
+                      {agent.type === 'chat' && '• Recommandations produits\n• Réponses aux questions techniques\n• Conseils d\'utilisation'}
+                      {agent.type === 'sales' && '• Qualification leads\n• Closing automatique\n• Suivi panier abandonné'}
+                      {agent.type === 'support' && '• FAQ automatique\n• Ouverture tickets\n• Suivi résolution'}
+                      {agent.type === 'tracking' && '• Tracking commandes\n• Notifications livraison\n• Retours & échanges'}
+                    </p>
+                    <div className="flex items-center justify-between mt-3">
+                      <span className="text-gray-400 text-sm">{agent.conversations} conversations</span>
+                      <Link href={agent.type === 'chat' ? '/chat' : '#'} className="text-ingco-yellow text-sm hover:underline">
+                        Tester →
+                      </Link>
                     </div>
                   </div>
-                  <button 
-                    onClick={(e) => {
-                      e.preventDefault()
-                      alert(`Configuration de ${agent.name}`)
-                    }}
-                    className="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 text-sm"
-                  >
-                    Configurer
-                  </button>
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         </div>
