@@ -79,6 +79,7 @@ export default function Home() {
               <Link href="/chat" className="text-gray-300 hover:text-ingco-yellow transition-colors">💬 Assistant</Link>
               <Link href="/about" className="text-gray-300 hover:text-ingco-yellow transition-colors">À propos</Link>
               <Link href="/contact" className="text-gray-300 hover:text-ingco-yellow transition-colors">Contact</Link>
+              <Link href="/admin" className="text-gray-300 hover:text-ingco-yellow transition-colors">Tableau de bord</Link>
               <Link href="/cart" className="bg-ingco-yellow text-ingco-black px-5 py-2 rounded-lg font-semibold hover:bg-yellow-400 transition-colors">
                 Commander
               </Link>
@@ -107,6 +108,7 @@ export default function Home() {
               <Link href="/chat" className="block text-gray-300 hover:text-ingco-yellow">💬 Assistant</Link>
               <Link href="/about" className="block text-gray-300 hover:text-ingco-yellow">À propos</Link>
               <Link href="/contact" className="block text-gray-300 hover:text-ingco-yellow">Contact</Link>
+              <Link href="/admin" className="block text-gray-300 hover:text-ingco-yellow">Tableau de bord</Link>
               <Link href="/cart" className="w-full block text-center bg-ingco-yellow text-ingco-black px-5 py-2 rounded-lg font-semibold">
                 Commander
               </Link>
