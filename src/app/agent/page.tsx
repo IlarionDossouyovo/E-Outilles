@@ -179,15 +179,28 @@ export default function AgentDashboard() {
           <p className="text-gray-400">Gestion des assistants virtuels et automatisations</p>
         </div>
 
-        {/* Founder Section */}
-        <div className="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl p-6 mb-8">
-          <div className="flex flex-col md:flex-row items-center gap-6">
-            <div className="text-6xl">{founder.avatar}</div>
+        {/* Founder Section with Logo */}
+        <div className="bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 rounded-2xl p-8 mb-8 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 animate-pulse"></div>
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2 animate-pulse" style={{ animationDelay: '1s' }}></div>
+          <div className="flex flex-col md:flex-row items-center gap-8 relative z-10">
+            <div className="relative">
+              <div className="w-32 h-32 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-2xl flex items-center justify-center shadow-2xl shadow-yellow-500/30 animate-pulse">
+                <span className="text-6xl font-bold text-black">E</span>
+              </div>
+              <div className="absolute -bottom-2 -right-2 bg-purple-500 text-white text-xs px-2 py-1 rounded">CEO</div>
+            </div>
             <div className="flex-1 text-center md:text-left">
-              <h2 className="text-2xl font-bold text-white">{founder.name}</h2>
-              <p className="text-purple-200 font-semibold">{founder.role}</p>
-              <p className="text-purple-100 text-sm mt-2">📧 {founder.email}</p>
-              <p className="text-purple-100 text-sm">📞 {founder.phone}</p>
+              <h2 className="text-3xl font-bold text-white">{founder.name}</h2>
+              <p className="text-purple-200 font-semibold text-lg">{founder.role}</p>
+              <div className="flex flex-wrap justify-center md:justify-start gap-4 mt-3">
+                <a href={`mailto:${founder.email}`} className="flex items-center gap-2 text-purple-100 hover:text-white transition-colors">
+                  <span>📧</span> {founder.email}
+                </a>
+                <a href={`tel:${founder.phone}`} className="flex items-center gap-2 text-purple-100 hover:text-white transition-colors">
+                  <span>📞</span> {founder.phone}
+                </a>
+              </div>
             </div>
             <div className="text-center md:text-right">
               <p className="text-purple-200 text-sm">Fondé en {founder.since}</p>
@@ -235,17 +248,21 @@ export default function AgentDashboard() {
           </div>
         </div>
 
-        {/* Agents List */}
+        {/* Agents List with Animation */}
         <div className="bg-ingco-gray rounded-2xl p-6">
           <h2 className="text-xl font-bold text-white mb-6">🤖 Agents IA Disponibles</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {agents.map((agent) => (
-              <div key={agent.id} className="bg-ingco-dark p-4 rounded-xl">
+            {agents.map((agent, index) => (
+              <div 
+                key={agent.id} 
+                className="bg-ingco-dark p-4 rounded-xl hover:scale-105 hover:shadow-xl hover:shadow-purple-500/20 transition-all duration-300 cursor-pointer group"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
                 <div className="flex items-start gap-4">
-                  <div className="text-3xl">{agent.icon}</div>
+                  <div className="text-3xl group-hover:scale-110 transition-transform duration-300">{agent.icon}</div>
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-white font-semibold">{agent.name}</h3>
+                      <h3 className="text-white font-semibold group-hover:text-ingco-yellow transition-colors">{agent.name}</h3>
                       <span className={`text-xs px-2 py-1 rounded ${agent.status === 'online' ? 'bg-green-500/20 text-green-500' : 'bg-gray-500/20 text-gray-500'}`}>
                         {agent.status === 'online' ? '🟢 En ligne' : '⚪ Hors ligne'}
                       </span>
@@ -277,13 +294,17 @@ export default function AgentDashboard() {
         <div className="bg-ingco-gray rounded-2xl p-6 mt-8">
           <h2 className="text-xl font-bold text-white mb-6">⚙️ Agents Avancés (Management & Marketing)</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {extraAgents.map((agent) => (
-              <div key={agent.id} className={`bg-gradient-to-r ${agent.color} p-4 rounded-xl`}>
+            {extraAgents.map((agent, index) => (
+              <div 
+                key={agent.id} 
+                className={`bg-gradient-to-r ${agent.color} p-4 rounded-xl hover:scale-105 hover:shadow-2xl transition-all duration-300 cursor-pointer group`}
+                style={{ animationDelay: `${index * 50}ms` }}
+              >
                 <div className="flex items-start gap-3">
-                  <div className="text-2xl">{agent.icon}</div>
+                  <div className="text-2xl group-hover:scale-110 transition-transform duration-300">{agent.icon}</div>
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-white font-semibold">{agent.name}</h3>
+                      <h3 className="text-white font-semibold group-hover:text-white">{agent.name}</h3>
                       <span className={`text-xs px-2 py-1 rounded bg-white/20 ${agent.status === 'online' ? 'text-green-300' : 'text-gray-300'}`}>
                         {agent.status === 'online' ? '🟢' : '⚪'}
                       </span>
@@ -310,9 +331,9 @@ export default function AgentDashboard() {
           </div>
         </div>
 
-        {/* Quick Actions */}
+        {/* Quick Actions with Animation */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-          <Link href="/chat" className="bg-ingco-gray rounded-xl p-4 hover:bg-gray-700 transition-colors block text-center">
+          <Link href="/chat" className="bg-ingco-gray rounded-xl p-4 hover:bg-gray-700 hover:scale-110 transition-all duration-300 block text-center">
             <div className="text-2xl mb-1">🤖</div>
             <h3 className="text-white font-bold text-sm">Assistant</h3>
           </Link>
