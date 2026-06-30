@@ -42,6 +42,18 @@ export default function AgentDashboard() {
       </nav>
 
       <div className="pt-24 pb-16 max-w-7xl mx-auto px-4">
+        {/* Navigation Arrows */}
+        <div className="flex items-center justify-between mb-6">
+          <Link href="/admin" className="flex items-center gap-2 text-gray-400 hover:text-ingco-yellow transition-colors">
+            <span>←</span> Retour Admin
+          </Link>
+          <div className="flex items-center gap-2">
+            <Link href="/chat" className="text-gray-400 hover:text-ingco-yellow text-sm">Chat IA</Link>
+            <span className="text-gray-600">|</span>
+            <Link href="/admin" className="text-gray-400 hover:text-ingco-yellow text-sm">Dashboard</Link>
+          </div>
+        </div>
+
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white">🤖 Tableau de Bord Agents IA</h1>

@@ -59,6 +59,18 @@ export default function AdminDashboard() {
       </nav>
 
       <div className="pt-24 pb-16 max-w-7xl mx-auto px-4">
+        {/* Navigation Arrows */}
+        <div className="flex items-center justify-between mb-6">
+          <Link href="/" className="flex items-center gap-2 text-gray-400 hover:text-ingco-yellow transition-colors">
+            <span>←</span> Retour Accueil
+          </Link>
+          <div className="flex items-center gap-2">
+            <Link href="/agent" className="text-gray-400 hover:text-ingco-yellow text-sm">Agents IA</Link>
+            <span className="text-gray-600">|</span>
+            <Link href="/" className="text-gray-400 hover:text-ingco-yellow text-sm">Accueil</Link>
+          </div>
+        </div>
+
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white">Dashboard Admin</h1>
