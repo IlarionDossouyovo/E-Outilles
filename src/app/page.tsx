@@ -117,20 +117,44 @@ export default function Home() {
         )}
       </nav>
 
-      {/* Hero Section */}
+      {/* Hero Section with Premium Background */}
       <section className="pt-24 pb-16 md:pt-32 md:pb-24 relative overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `repeating-linear-gradient(
-              45deg,
-              transparent,
-              transparent 10px,
-              #FFC400 10px,
-              #FFC400 11px
-            )`
-          }}></div>
+        {/* Premium Animated Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-800">
+          {/* Animated Grid */}
+          <div className="absolute inset-0 opacity-20">
+            <div className="absolute inset-0" style={{
+              backgroundImage: `
+                linear-gradient(rgba(255,196,0,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,196,0,0.03) 1px, transparent 1px)
+              `,
+              backgroundSize: '50px 50px',
+              animation: 'gridMove 20s linear infinite'
+            }}></div>
+          </div>
+          {/* Floating Orbs */}
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-ingco-yellow/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+          <div className="absolute top-1/2 right-1/3 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+          {/* Diagonal Lines */}
+          <div className="absolute inset-0 opacity-5">
+            <div className="absolute inset-0" style={{
+              backgroundImage: `repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 100px,
+                rgba(255,196,0,0.5) 100px,
+                rgba(255,196,0,0.5) 101px
+              )`
+            }}></div>
+          </div>
         </div>
+        <style jsx>{`
+          @keyframes gridMove {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(50px); }
+          }
+        `}</style>
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center">
