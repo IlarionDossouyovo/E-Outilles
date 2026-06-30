@@ -5,28 +5,36 @@ import { useCartStore } from '@/lib/store/cart'
 import { useWishlistStore } from '@/lib/store/wishlist'
 import Link from 'next/link'
 
-const allProducts = [
-  { id: '1', name: 'Perceuse visseuse INGCO 20V', price: 89.99, category: 'Construction', image: '🔩' },
-  { id: '2', name: 'Marteau perforateur SDS Max 1500W', price: 249.99, category: 'Construction', image: '⚒️' },
-  { id: '3', name: 'Meuleuse angulaire 125mm', price: 79.99, category: 'Construction', image: '⚙️' },
-  { id: '4', name: 'Multimetre digital professionnel', price: 59.99, category: 'Electricite', image: '📊' },
-  { id: '5', name: 'Pinces isolees professionnelles', price: 45.99, category: 'Electricite', image: '🔌' },
-  { id: '6', name: 'Testeur de tension sans contact', price: 29.99, category: 'Electricite', image: '📡' },
-  { id: '7', name: 'Kit cles mecaniciennes 50pcs', price: 79.99, category: 'Garage', image: '🔧' },
-  { id: '8', name: 'Cric hydraulique 3T', price: 149.99, category: 'Garage', image: '🚗' },
-  { id: '9', name: 'Compresseur portable 50L', price: 299.99, category: 'Garage', image: '💨' },
-  { id: '10', name: 'Tondeuse thermique pro 160cc', price: 399.99, category: 'Jardinage', image: '🌿' },
-  { id: '11', name: 'Tronconneuse thermique 45cm', price: 299.99, category: 'Jardinage', image: '🪚' },
-  { id: '12', name: 'Systeme irrigation automatique', price: 189.99, category: 'Jardinage', image: '💧' },
-]
+// Force dynamic for SSR
+export const dynamic = 'force-dynamic'
 
-const categories = ['Tous', 'Construction', 'Electricite', 'Garage', 'Jardinage']
+// Category icons
+const categoryIcons: Record<string, string> = {
+  'construction': '🏗️',
+  'electricite': '⚡',
+  'garage': '🚗',
+  'jardinage': '🌿'
+}
 
-export default function SearchPage() {
+const allCategories = ['Tous', 'Construction', 'Électricité', 'Garage', 'Jardinage']
+
+export default function SearchPage({ searchParams }: { searchParams: { category?: string } }) {
+  const [products, setProducts] = useState<any[]>([])
   const [search, setSearch] = useState('')
-  const [category, setCategory] = useState('Tous')
+  const [category, setCategory] = useState(searchParams?.category || 'Tous')
   const [sortBy, setSortBy] = useState('name')
   const [toast, setToast] = useState('')
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    setLoading(true)
+    const categoryParam = category === 'Tous' ? '' : category
+    fetch(`/api/products?category=${encodeURIComponent(categoryParam)}`)
+      .then(res => res.json())
+      .then(data => setProducts(Array.isArray(data) ? data : data.products || []))
+      .catch(() => setProducts([]))
+      .finally(() => setLoading(false))
+  }, [category])
   
   const addItem = useCartStore(state => state.addItem)
   const { addItem: addToWishlist, removeItem: removeFromWishlist, isInWishlist } = useWishlistStore()
@@ -37,8 +45,8 @@ export default function SearchPage() {
     setTimeout(() => setToast(''), 2000)
   }
   
-  const filteredProducts = allProducts
-    .filter(p => (category === 'Tous' || p.category === category) && p.name.toLowerCase().includes(search.toLowerCase()))
+  const filteredProducts = products
+    .filter(p => (category === 'Tous' || p.category?.name === category || p.category?.slug === category?.toLowerCase()) && p.name.toLowerCase().includes(search.toLowerCase()))
     .sort((a, b) => {
       if (sortBy === 'price-asc') return a.price - b.price
       if (sortBy === 'price-desc') return b.price - a.price
@@ -134,15 +142,25 @@ export default function SearchPage() {
         <p className="text-gray-400 mb-6">{filteredProducts.length} produit(s)</p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredProducts.map((product) => (
+          {loading ? (
+            <div className="col-span-full text-center py-12">
+              <div className="animate-spin text-4xl">⏳</div>
+              <p className="text-gray-400 mt-4">Chargement...</p>
+            </div>
+          ) : filteredProducts.map((product) => (
             <Link key={product.id} href={`/produit-detail-page/${product.id}`} className="block bg-ingco-gray rounded-2xl overflow-hidden hover:shadow-xl hover:shadow-ingco-yellow/10 transition-all hover:-translate-y-2 group">
               <div className="h-40 bg-ingco-dark flex items-center justify-center text-5xl">
-                {product.image}
+                {product.category?.icon || '🔧'}
               </div>
               <div className="p-4">
-                <span className="text-xs text-ingco-yellow uppercase">{product.category}</span>
+                <span className="text-xs text-ingco-yellow uppercase">{product.category?.name || 'Catégorie'}</span>
                 <h3 className="text-white font-bold mt-1">{product.name}</h3>
-                <p className="text-ingco-yellow font-bold text-xl mt-2">{product.price}€</p>
+                <div className="flex items-center gap-2 mt-2">
+                  <p className="text-ingco-yellow font-bold text-xl">{product.price}€</p>
+                  {product.comparePrice && (
+                    <p className="text-gray-500 line-through text-sm">{product.comparePrice}€</p>
+                  )}
+                </div>
                 <div className="flex gap-2 mt-4" onClick={(e) => e.preventDefault()}>
                   <button 
                     onClick={() => handleAddToCart(product)}
