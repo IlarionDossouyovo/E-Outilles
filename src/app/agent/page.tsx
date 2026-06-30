@@ -90,9 +90,13 @@ export default function AgentDashboard() {
         {/* Agents List */}
         <div className="bg-ingco-gray rounded-2xl p-6">
           <h2 className="text-xl font-bold text-white mb-6">Agents IA Configurés</h2>
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {agents.map((agent) => (
-              <div key={agent.id} className="flex items-center justify-between bg-ingco-dark p-4 rounded-xl">
+              <Link 
+                key={agent.id} 
+                href={agent.type === 'chat' ? '/chat' : '#'}
+                className="flex items-center justify-between bg-ingco-dark p-4 rounded-xl hover:bg-gray-800 transition-colors"
+              >
                 <div className="flex items-center gap-4">
                   <div className="text-3xl">{agent.icon}</div>
                   <div>
@@ -107,11 +111,17 @@ export default function AgentDashboard() {
                       {agent.status === 'online' ? '🟢 En ligne' : '⚪ Hors ligne'}
                     </div>
                   </div>
-                  <button className="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600">
+                  <button 
+                    onClick={(e) => {
+                      e.preventDefault()
+                      alert(`Configuration de ${agent.name}`)
+                    }}
+                    className="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 text-sm"
+                  >
                     Configurer
                   </button>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
