@@ -1,0 +1,105 @@
+// E-Outilles Prisma Schema - Base de données e-commerce outils professionnels
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Utilisateur
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password     String
+  name          String?
+  phone         String?
+  address      String?
+  city          String?
+  country      String?
+  role          String    @default("customer") // customer, admin
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  orders        Order[]
+  wishlist      WishlistItem[]
+}
+
+// Catégorie de produits
+model Category {
+  id          String     @id @default(cuid())
+  name        String
+  slug        String     @unique
+  description String?
+  icon        String?
+  color       String?
+  image       String?
+  parentId    String?
+  parent     Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children   Category[] @relation("CategoryHierarchy")
+  products   Product[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+}
+
+// Produit
+model Product {
+  id           String   @id @default(cuid())
+  name         String
+  slug         String   @unique
+  description  String?
+  price        Float
+  comparePrice Float?
+  sku          String?  @unique
+  stock        Int      @default(0)
+  images       String   // JSON array of image URLs
+  features     String?  // JSON array of features
+  categoryId   String
+  category     Category @relation(fields: [categoryId], references: [id])
+  orderItems   OrderItem[]
+  wishlistItems WishlistItem[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Article dans une wishlist
+model WishlistItem {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  user      User     @relation(fields: [userId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+}
+
+// Commande
+model Order {
+  id              String      @id @default(cuid())
+  userId          String
+  user            User        @relation(fields: [userId], references: [id])
+  status          String      @default("pending") // pending, paid, shipped, delivered, cancelled
+  total           Float
+  shippingAddress String?
+  shippingCity   String?
+  shippingCountry String?
+  paymentMethod   String?
+  paymentId       String?
+  notes           String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  items           OrderItem[]
+}
+
+// Ligne de commande
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  productId String
+  quantity  Int
+  price     Float
+  order     Order   @relation(fields: [orderId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
+}

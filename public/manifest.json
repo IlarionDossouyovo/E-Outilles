@@ -1,12 +1,18 @@
 {
-  "name": "E-Outilles - Outillage Professionnel",
-  "short_name": "E-Outilles",
-  "description": "Votre partenaire dropshipping international pour outillage professionnel INGCO",
+  "name": "E-Outille By ELECTRON - Outillage Professionnel",
+  "short_name": "E-Outille",
+  "description": "Votre partenaire dropshipping international pour outillage professionnel",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#121212",
   "theme_color": "#FFC400",
   "icons": [
+    {
+      "src": "/logos/logo-icon-only.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
     {
       "src": "/icon-192.png",
       "sizes": "192x192",

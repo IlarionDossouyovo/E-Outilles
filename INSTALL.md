@@ -115,22 +115,42 @@ Le site sera accessible sur: **http://localhost:3000**
 
 ---
 
+## ✅ Phases Implémentées
+
+### Phase 1 - Backend ✅
+- [x] Setup SQLite + Prisma
+- [x] API REST produits/commandes/catégories
+- [x] Base de données avec schéma complet
+
+### Phase 2 - Checkout ✅
+- [x] Page produit détaillée (/produit-detail-page/[id])
+- [x] Flow panier → checkout existant
+- [x] Gestion commandes API
+
+### Phase 3 - Paiements ✅
+- [x] Stripe intégration
+- [ ] Stripe Webhooks (À implémenter)
+- [ ] Intégration MTN/Moov/Orange (Optionnel)
+
+### Phase 4 - Logo & Identité ✅
+- [x] Logo "E-Outille By ELECTRON"
+- [x] Icône avec éclateur (⚡) + engrenage
+- [x] Versions: horizontal, vertical, icône seule
+- [x] Couleurs: yellow (#FFC400), noir (#121212)
+
+---
+
 ## ⚠️ Prochaines Étapes (Roadmap)
 
-### Phase 1 - Backend (À implémenter)
-- [ ] Setup PostgreSQL + Prisma
-- [ ] API REST produits/commandes
-- [ ] Auth JWT complète
+### Phase 5 - Configuration Finale
+- [ ] Configurer .env avec clés Stripe réelles
+- [ ] Lancer `npm run dev`
+- [ ] Tester le site sur http://localhost:3004
 
-### Phase 2 - Checkout
-- [ ] Page produit détaillée
-- [ ] Flow panier → checkout
-- [ ] Gestion commandes
-
-### Phase 3 - Paiements Locaux
-- [ ] Stripe Webhooks
-- [ ] Intégration MTN/Moov/Orange
-- [ ] Calcul livraison
+### Phase 6 - Paiements Locaux (Optionnel)
+- [ ] Stripe Webhooks pour confirmation
+- [ ] Intégration MTN Mobile Money
+- [ ] Intégration Orange Money
 
 ---
 
