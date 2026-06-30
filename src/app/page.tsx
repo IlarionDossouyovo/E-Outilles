@@ -122,40 +122,26 @@ export default function Home() {
         {/* Premium Animated Background */}
         <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-950/20 to-black">
           {/* Animated Grid - Stronger Visibility */}
-          <div className="absolute inset-0 opacity-30">
-            <div className="absolute inset-0" style={{
+          <div className="absolute inset-0 opacity-40">
+            <div className="absolute inset-0 animate-grid" style={{
               backgroundImage: `
-                linear-gradient(rgba(255,196,0,0.15) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,196,0,0.15) 1px, transparent 1px)
+                linear-gradient(rgba(255,196,0,0.2) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,196,0,0.2) 1px, transparent 1px)
               `,
-              backgroundSize: '40px 40px',
-              animation: 'gridMove 15s linear infinite'
+              backgroundSize: '30px 30px'
             }}></div>
           </div>
           {/* Large Floating Orbs */}
-          <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-gradient-to-br from-yellow-400/20 to-transparent rounded-full blur-[100px] animate-pulse"></div>
-          <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-gradient-to-tl from-purple-600/20 to-transparent rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '1.5s' }}></div>
-          <div className="absolute top-1/2 left-1/2 w-[400px] h-[400px] bg-gradient-to-r from-blue-500/15 to-transparent rounded-full blur-[80px] animate-pulse" style={{ animationDelay: '2.5s' }}></div>
-          {/* Animated Rays */}
-          <div className="absolute inset-0" style={{
-            background: `conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(255,196,0,0.03) 60deg, transparent 120deg)`,
-            animation: 'rotate 30s linear infinite'
-          }}></div>
+          <div className="absolute -top-32 -left-32 w-[600px] h-[600px] bg-gradient-to-br from-yellow-500/25 to-transparent rounded-full blur-[120px] animate-pulse"></div>
+          <div className="absolute -bottom-32 -right-32 w-[600px] h-[600px] bg-gradient-to-tl from-purple-600/25 to-transparent rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1.5s' }}></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-r from-blue-500/20 to-transparent rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '2.5s' }}></div>
+          {/* Additional Glow Effects */}
+          <div className="absolute top-1/4 right-1/4 w-[300px] h-[300px] bg-ingco-yellow/10 rounded-full blur-[80px] animate-glow"></div>
           {/* Noise Texture Overlay */}
-          <div className="absolute inset-0 opacity-[0.03]" style={{
+          <div className="absolute inset-0 opacity-[0.04]" style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`
           }}></div>
         </div>
-        <style jsx>{`
-          @keyframes gridMove {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(40px); }
-          }
-          @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-          }
-        `}</style>
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="text-center">
