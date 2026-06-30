@@ -3,6 +3,16 @@
 import { useState } from 'react'
 import Link from 'next/link'
 
+const founder = {
+  name: 'Ilarion Dossouyovo',
+  role: 'Fondateur & PDG',
+  email: 'ilarion@e-outilles.com',
+  phone: '+229 97 12 34 56',
+  avatar: '👨‍💼',
+  since: '2024',
+  vision: 'Démocratiser l\'accès aux outils professionnels de qualité pour tous les artisans du monde'
+}
+
 const agents = [
   { id: 1, name: 'Assistant IA', status: 'online', type: 'chat', icon: '🤖', conversations: 156 },
   { id: 2, name: 'Vendeur Bot', status: 'online', type: 'sales', icon: '💼', conversations: 89 },
@@ -58,6 +68,23 @@ export default function AgentDashboard() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white">🤖 Tableau de Bord Agents IA</h1>
           <p className="text-gray-400">Gestion des assistants virtuels et automatisations</p>
+        </div>
+
+        {/* Founder Section */}
+        <div className="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl p-6 mb-8">
+          <div className="flex flex-col md:flex-row items-center gap-6">
+            <div className="text-6xl">{founder.avatar}</div>
+            <div className="flex-1 text-center md:text-left">
+              <h2 className="text-2xl font-bold text-white">{founder.name}</h2>
+              <p className="text-purple-200 font-semibold">{founder.role}</p>
+              <p className="text-purple-100 text-sm mt-2">📧 {founder.email}</p>
+              <p className="text-purple-100 text-sm">📞 {founder.phone}</p>
+            </div>
+            <div className="text-center md:text-right">
+              <p className="text-purple-200 text-sm">Fondé en {founder.since}</p>
+              <p className="text-white font-medium mt-2 max-w-xs">{founder.vision}</p>
+            </div>
+          </div>
         </div>
 
         {/* Stats Grid */}
