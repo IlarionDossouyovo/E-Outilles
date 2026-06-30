@@ -9,6 +9,11 @@
   --ingco-black: #121212;
   --ingco-gray: #2E2E2E;
   --ingco-dark: #1a1a1a;
+  scroll-behavior: smooth;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 * {
