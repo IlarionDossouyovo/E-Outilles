@@ -76,6 +76,7 @@ export default function Home() {
             <div className="hidden md:flex items-center gap-8">
               <Link href="/#categories" className="text-gray-300 hover:text-ingco-yellow transition-colors">Catégories</Link>
               <Link href="/#products" className="text-gray-300 hover:text-ingco-yellow transition-colors">Produits</Link>
+              <Link href="/chat" className="text-gray-300 hover:text-ingco-yellow transition-colors">💬 Assistant</Link>
               <Link href="/about" className="text-gray-300 hover:text-ingco-yellow transition-colors">À propos</Link>
               <Link href="/contact" className="text-gray-300 hover:text-ingco-yellow transition-colors">Contact</Link>
               <Link href="/cart" className="bg-ingco-yellow text-ingco-black px-5 py-2 rounded-lg font-semibold hover:bg-yellow-400 transition-colors">
@@ -103,6 +104,7 @@ export default function Home() {
             <div className="px-4 py-4 space-y-3">
               <Link href="/#categories" className="block text-gray-300 hover:text-ingco-yellow">Catégories</Link>
               <Link href="/#products" className="block text-gray-300 hover:text-ingco-yellow">Produits</Link>
+              <Link href="/chat" className="block text-gray-300 hover:text-ingco-yellow">💬 Assistant</Link>
               <Link href="/about" className="block text-gray-300 hover:text-ingco-yellow">À propos</Link>
               <Link href="/contact" className="block text-gray-300 hover:text-ingco-yellow">Contact</Link>
               <Link href="/cart" className="w-full block text-center bg-ingco-yellow text-ingco-black px-5 py-2 rounded-lg font-semibold">
@@ -353,6 +355,7 @@ export default function Home() {
                 <li><Link href="/search?category=electricite" className="hover:text-ingco-yellow transition-colors">Électricité</Link></li>
                 <li><Link href="/search?category=garage" className="hover:text-ingco-yellow transition-colors">Garage Auto</Link></li>
                 <li><Link href="/search?category=jardinage" className="hover:text-ingco-yellow transition-colors">Jardinage</Link></li>
+                <li><Link href="/chat" className="hover:text-ingco-yellow transition-colors">💬 Assistant IA</Link></li>
               </ul>
             </div>
             
