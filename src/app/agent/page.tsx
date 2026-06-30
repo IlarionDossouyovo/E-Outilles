@@ -10,7 +10,7 @@ const founder = {
   name: 'Ilarion Dossouyovo',
   role: 'Fondateur & PDG',
   email: 'ilarion@e-outilles.com',
-  phone: '+229 97 12 34 56',
+  phone: '+229 01 977 003 47',
   avatar: '👨‍💼',
   since: '2024',
   vision: 'Démocratiser l\'accès aux outils professionnels de qualité pour tous les artisans du monde'
