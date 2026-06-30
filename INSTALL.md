@@ -23,7 +23,6 @@ E-Outilles/
 │       ├── marketing/       # Newsletter, IA marketing
 │       └── ai/             # Chatbot widget
 ├── public/                  # Assets statiques (PWA)
-├── agents/                  # Automatisations n8n
 ├── package.json             # Dépendances
 ├── tailwind.config.js      # Configuration Tailwind
 ├── next.config.js         # Configuration Next.js
