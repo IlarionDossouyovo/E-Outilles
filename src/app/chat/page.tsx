@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import Link from 'next/link'
 
 interface Message {
   role: 'user' | 'assistant'
@@ -59,10 +60,13 @@ export default function ChatPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 text-white p-4">
       <div className="max-w-3xl mx-auto">
-        {/* Header */}
-        <div className="text-center py-6 border-b border-gray-700 mb-6">
-          <h1 className="text-3xl font-bold text-yellow-400">🤖 E-Outille Assistant</h1>
-          <p className="text-gray-400">Powered by Ollama (llama3.2)</p>
+        {/* Header with Back Button */}
+        <div className="flex items-center justify-between py-6 border-b border-gray-700 mb-6">
+          <Link href="/" className="flex items-center gap-2 text-gray-400 hover:text-yellow-400 transition-colors">
+            <span>←</span> Retour
+          </Link>
+          <h1 className="text-2xl font-bold text-yellow-400">🤖 Assistant</h1>
+          <div className="w-16"></div>
         </div>
 
         {/* Messages */}
