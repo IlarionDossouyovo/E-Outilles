@@ -31,19 +31,18 @@ const categoryIconsMap: Record<string, string> = {
 
 async function getBlogPosts(category?: string) {
   try {
-    // First, get ALL posts to debug
-    const allPosts = await prisma.blogPost.findMany()
-    console.log('Total blog posts in DB:', allPosts.length)
-    
-    const where = category && category !== 'Tous' 
-      ? { published: true, category } 
-      : { published: true }
-    
-    const posts = await prisma.blogPost.findMany({
-      where,
+    // Get ALL posts without filter first
+    const allPosts = await prisma.blogPost.findMany({
       orderBy: { createdAt: 'desc' }
     })
-    console.log('Filtered posts:', posts.length, 'category:', category)
+    
+    // Then filter by category if needed
+    let posts = allPosts
+    if (category && category !== 'Tous') {
+      posts = allPosts.filter(p => p.category === category)
+    }
+    
+    console.log('Total blog posts:', allPosts.length, 'Category:', category || 'Tous')
     return posts
   } catch (error) {
     console.error('Blog fetch error:', error)
@@ -105,7 +104,7 @@ export default async function BlogPage({ searchParams }: { searchParams: { categ
             >
               <Link href={`/blog/${post.slug}`}>
                 <div className="h-48 bg-ingco-dark flex items-center justify-center text-6xl group-hover:scale-110 transition-transform">
-                  {categoryIcons[post.category || 'Conseils'] || '📝'}
+                  {categoryIconsMap[post.category || 'Conseils'] || '📝'}
                 </div>
                 <div className="p-6">
                   <div className="flex items-center gap-3 mb-3">
