@@ -163,11 +163,11 @@ export default function AgentDashboard() {
       <div className="pt-24 pb-16 max-w-7xl mx-auto px-4">
         {/* Navigation Arrows */}
         <div className="flex items-center justify-between mb-6">
-          <Link href="/admin" className="flex items-center gap-2 text-gray-400 hover:text-ingco-yellow transition-colors">
+          <Link href="/admin" className="flex items-center gap-2 text-gray-400 hover:text-ingco-yellow transition-colors bg-ingco-gray px-4 py-2 rounded-lg">
             <span>←</span> Retour Admin
           </Link>
           <div className="flex items-center gap-2">
-            <Link href="/chat" className="text-gray-400 hover:text-ingco-yellow text-sm">Chat IA</Link>
+            <Link href="/chat" className="bg-purple-500 text-white px-3 py-2 rounded-lg text-sm hover:bg-purple-600">Chat IA</Link>
             <span className="text-gray-600">|</span>
             <Link href="/admin" className="text-gray-400 hover:text-ingco-yellow text-sm">Dashboard</Link>
           </div>
@@ -259,9 +259,12 @@ export default function AgentDashboard() {
                     </p>
                     <div className="flex items-center justify-between mt-3">
                       <span className="text-gray-400 text-sm">{agent.conversations} conversations</span>
-                      <Link href={agent.type === 'chat' ? '/chat' : '#'} className="text-ingco-yellow text-sm hover:underline">
-                        Tester →
-                      </Link>
+                      <button 
+                        onClick={() => alert(`🔧 Configuration de ${agent.name}\n\nStatut: ${agent.status}\nType: ${agent.type}\nFonctionnalités:\n${agent.features?.join('\n')}`)}
+                        className="text-ingco-yellow text-sm hover:underline"
+                      >
+                        Config →
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -293,7 +296,12 @@ export default function AgentDashboard() {
                     </div>
                     <div className="mt-2 flex items-center justify-between">
                       <span className="text-white/60 text-xs">{agent.conversations} conv.</span>
-                      <button className="text-xs text-white underline">Config →</button>
+                      <button 
+                        onClick={() => alert(`⚙️ ${agent.name}\n\n${agent.description}\n\nFonctionnalités:\n${agent.features?.join('\n')}`)}
+                        className="text-xs text-white underline"
+                      >
+                        Config →
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -303,24 +311,24 @@ export default function AgentDashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
-          <Link href="/chat" className="bg-ingco-gray rounded-2xl p-6 hover:bg-gray-700 transition-colors block text-center">
-            <div className="text-3xl mb-2">🤖</div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
+          <Link href="/chat" className="bg-ingco-gray rounded-xl p-4 hover:bg-gray-700 transition-colors block text-center">
+            <div className="text-2xl mb-1">🤖</div>
             <h3 className="text-white font-bold text-sm">Assistant</h3>
           </Link>
 
-          <Link href="/admin" className="bg-ingco-gray rounded-2xl p-6 hover:bg-gray-700 transition-colors block text-center">
-            <div className="text-3xl mb-2">📊</div>
+          <Link href="/admin" className="bg-ingco-gray rounded-xl p-4 hover:bg-gray-700 transition-colors block text-center">
+            <div className="text-2xl mb-1">📊</div>
             <h3 className="text-white font-bold text-sm">Dashboard</h3>
           </Link>
 
-          <Link href="/admin/orders" className="bg-ingco-gray rounded-2xl p-6 hover:bg-gray-700 transition-colors block text-center">
-            <div className="text-3xl mb-2">📦</div>
+          <Link href="/admin/orders" className="bg-ingco-gray rounded-xl p-4 hover:bg-gray-700 transition-colors block text-center">
+            <div className="text-2xl mb-1">📦</div>
             <h3 className="text-white font-bold text-sm">Commandes</h3>
           </Link>
 
-          <Link href="/" className="bg-ingco-gray rounded-2xl p-6 hover:bg-gray-700 transition-colors block text-center">
-            <div className="text-3xl mb-2">🏠</div>
+          <Link href="/" className="bg-ingco-gray rounded-xl p-4 hover:bg-gray-700 transition-colors block text-center">
+            <div className="text-2xl mb-1">🏠</div>
             <h3 className="text-white font-bold text-sm">Accueil</h3>
           </Link>
         </div>
