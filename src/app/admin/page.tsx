@@ -181,7 +181,7 @@ export default function AdminDashboard() {
             <span className="text-2xl block mb-2">📧</span>
             <span className="text-white text-sm">Newsletter</span>
           </Link>
-          <Link href="/agents" className="bg-ingco-gray p-4 rounded-xl text-center hover:bg-ingco-dark transition-colors block">
+          <Link href="/agent" className="bg-ingco-gray p-4 rounded-xl text-center hover:bg-ingco-dark transition-colors block">
             <span className="text-2xl block mb-2">🤖</span>
             <span className="text-white text-sm">Agents IA</span>
           </Link>
