@@ -16,7 +16,7 @@ const categoryIcons: Record<string, string> = {
   'jardinage': '🌿'
 }
 
-const allCategories = ['Tous', 'Construction', 'Électricité', 'Garage', 'Jardinage']
+const categories = ['Tous', 'Construction', 'Électricité', 'Garage', 'Jardinage']
 
 export default function SearchPage({ searchParams }: { searchParams: { category?: string } }) {
   const [products, setProducts] = useState<any[]>([])
