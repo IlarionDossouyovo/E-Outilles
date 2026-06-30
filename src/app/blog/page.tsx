@@ -31,6 +31,10 @@ const categoryIconsMap: Record<string, string> = {
 
 async function getBlogPosts(category?: string) {
   try {
+    // First, get ALL posts to debug
+    const allPosts = await prisma.blogPost.findMany()
+    console.log('Total blog posts in DB:', allPosts.length)
+    
     const where = category && category !== 'Tous' 
       ? { published: true, category } 
       : { published: true }
@@ -39,8 +43,10 @@ async function getBlogPosts(category?: string) {
       where,
       orderBy: { createdAt: 'desc' }
     })
+    console.log('Filtered posts:', posts.length, 'category:', category)
     return posts
-  } catch {
+  } catch (error) {
+    console.error('Blog fetch error:', error)
     return []
   }
 }
