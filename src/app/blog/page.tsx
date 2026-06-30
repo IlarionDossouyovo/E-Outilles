@@ -19,10 +19,24 @@ const categoryIcons: Record<string, string> = {
 
 const categories = ['Tous', 'Construction', 'Électricité', 'Garage', 'Jardinage', 'Conseils']
 
-async function getBlogPosts() {
+// Icons for categories
+const categoryIconsMap: Record<string, string> = {
+  'Tous': '🏷️',
+  'Construction': '🏗️',
+  'Électricité': '⚡',
+  'Garage': '🚗',
+  'Jardinage': '🌿',
+  'Conseils': '🛠️'
+}
+
+async function getBlogPosts(category?: string) {
   try {
+    const where = category && category !== 'Tous' 
+      ? { published: true, category } 
+      : { published: true }
+    
     const posts = await prisma.blogPost.findMany({
-      where: { published: true },
+      where,
       orderBy: { createdAt: 'desc' }
     })
     return posts
@@ -31,8 +45,9 @@ async function getBlogPosts() {
   }
 }
 
-export default async function BlogPage() {
-  const blogPosts = await getBlogPosts()
+export default async function BlogPage({ searchParams }: { searchParams: { category?: string } }) {
+  const category = searchParams?.category
+  const blogPosts = await getBlogPosts(category)
 
   return (
     <div className="min-h-screen bg-ingco-black pt-24 pb-20">
@@ -57,19 +72,22 @@ export default async function BlogPage() {
 
         {/* Category Filter */}
         <div className="flex flex-wrap justify-center gap-3 mb-12">
-          {categories.map((cat) => (
-            <Link
-              key={cat}
-              href={cat === 'Tous' ? '/blog' : `/blog?category=${encodeURIComponent(cat)}`}
-              className={`px-5 py-2 rounded-full font-medium transition-colors ${
-                cat === 'Tous' 
-                  ? 'bg-ingco-yellow text-ingco-black' 
-                  : 'bg-ingco-gray text-gray-400 hover:text-ingco-yellow'
-              }`}
-            >
-              {cat === 'Tous' ? '🏷️ ' : ''}{cat}
-            </Link>
-          ))}
+          {categories.map((cat) => {
+            const isActive = (category || 'Tous') === cat
+            return (
+              <Link
+                key={cat}
+                href={cat === 'Tous' ? '/blog' : `/blog?category=${encodeURIComponent(cat)}`}
+                className={`px-5 py-2 rounded-full font-medium transition-colors ${
+                  isActive
+                    ? 'bg-ingco-yellow text-ingco-black' 
+                    : 'bg-ingco-gray text-gray-400 hover:text-ingco-yellow hover:bg-gray-700'
+                }`}
+              >
+                <span className="mr-1">{categoryIconsMap[cat]}</span>{cat}
+              </Link>
+            )
+          })}
         </div>
 
         {/* Blog Grid */}
