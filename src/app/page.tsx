@@ -117,42 +117,43 @@ export default function Home() {
         )}
       </nav>
 
-      {/* Hero Section with Premium Background */}
-      <section className="pt-24 pb-16 md:pt-32 md:pb-24 relative overflow-hidden">
+      {/* Hero Section with Premium Animated Background */}
+      <section className="pt-24 pb-16 md:pt-32 md:pb-24 relative overflow-hidden min-h-screen flex items-center">
         {/* Premium Animated Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-800">
-          {/* Animated Grid */}
-          <div className="absolute inset-0 opacity-20">
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-950/20 to-black">
+          {/* Animated Grid - Stronger Visibility */}
+          <div className="absolute inset-0 opacity-30">
             <div className="absolute inset-0" style={{
               backgroundImage: `
-                linear-gradient(rgba(255,196,0,0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,196,0,0.03) 1px, transparent 1px)
+                linear-gradient(rgba(255,196,0,0.15) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,196,0,0.15) 1px, transparent 1px)
               `,
-              backgroundSize: '50px 50px',
-              animation: 'gridMove 20s linear infinite'
+              backgroundSize: '40px 40px',
+              animation: 'gridMove 15s linear infinite'
             }}></div>
           </div>
-          {/* Floating Orbs */}
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-ingco-yellow/10 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-          <div className="absolute top-1/2 right-1/3 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-          {/* Diagonal Lines */}
-          <div className="absolute inset-0 opacity-5">
-            <div className="absolute inset-0" style={{
-              backgroundImage: `repeating-linear-gradient(
-                45deg,
-                transparent,
-                transparent 100px,
-                rgba(255,196,0,0.5) 100px,
-                rgba(255,196,0,0.5) 101px
-              )`
-            }}></div>
-          </div>
+          {/* Large Floating Orbs */}
+          <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-gradient-to-br from-yellow-400/20 to-transparent rounded-full blur-[100px] animate-pulse"></div>
+          <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-gradient-to-tl from-purple-600/20 to-transparent rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '1.5s' }}></div>
+          <div className="absolute top-1/2 left-1/2 w-[400px] h-[400px] bg-gradient-to-r from-blue-500/15 to-transparent rounded-full blur-[80px] animate-pulse" style={{ animationDelay: '2.5s' }}></div>
+          {/* Animated Rays */}
+          <div className="absolute inset-0" style={{
+            background: `conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(255,196,0,0.03) 60deg, transparent 120deg)`,
+            animation: 'rotate 30s linear infinite'
+          }}></div>
+          {/* Noise Texture Overlay */}
+          <div className="absolute inset-0 opacity-[0.03]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`
+          }}></div>
         </div>
         <style jsx>{`
           @keyframes gridMove {
             0% { transform: translateY(0); }
-            100% { transform: translateY(50px); }
+            100% { transform: translateY(40px); }
+          }
+          @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
           }
         `}</style>
         
