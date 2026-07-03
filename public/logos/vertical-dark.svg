@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 180" width="200" height="180">
+  <defs>
+    <!-- Gradient for metallic effect -->
+    <linearGradient id="metalVert" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#E8E8E8"/>
+      <stop offset="50%" style="stop-color:#B8B8B8"/>
+      <stop offset="100%" style="stop-color:#888888"/>
+    </linearGradient>
+    <!-- Yellow glow -->
+    <linearGradient id="yellowVert" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700"/>
+      <stop offset="100%" style="stop-color:#FFC400"/>
+    </linearGradient>
+    <!-- Lightning gradient -->
+    <linearGradient id="boltVert" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFDD00"/>
+      <stop offset="50%" style="stop-color:#FFC400"/>
+      <stop offset="100%" style="stop-color:#FFAA00"/>
+    </linearGradient>
+    <!-- Drop shadow filter -->
+    <filter id="shadowVert" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="1" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.4"/>
+    </filter>
+    <!-- Glow effect -->
+    <filter id="glowVert">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="200" height="180" fill="#121212"/>
+  
+  <!-- Icon Group - Centered -->
+  <g transform="translate(70, 20)" filter="url(#shadowVert)">
+    <!-- Outer gear ring -->
+    <circle cx="30" cy="30" r="28" fill="none" stroke="url(#metalVert)" stroke-width="3"/>
+    <!-- Gear teeth -->
+    <g fill="url(#metalVert)">
+      <rect x="26" y="0" width="8" height="8" rx="1"/>
+      <rect x="26" y="52" width="8" height="8" rx="1"/>
+      <rect x="0" y="26" width="8" height="8" rx="1"/>
+      <rect x="52" y="26" width="8" height="8" rx="1"/>
+      <rect x="8" y="8" width="7" height="7" rx="1" transform="rotate(45 11.5 11.5)"/>
+      <rect x="45" y="8" width="7" height="7" rx="1" transform="rotate(45 48.5 11.5)"/>
+      <rect x="8" y="45" width="7" height="7" rx="1" transform="rotate(45 11.5 48.5)"/>
+      <rect x="45" y="45" width="7" height="7" rx="1" transform="rotate(45 48.5 48.5)"/>
+    </g>
+    
+    <!-- Inner circle -->
+    <circle cx="30" cy="30" r="18" fill="#121212" stroke="url(#yellowVert)" stroke-width="2"/>
+    
+    <!-- Stylized E -->
+    <path d="M22 20 L40 20 L40 24 L27 24 L27 28 L38 28 L38 32 L27 32 L27 40 L42 40 L42 44 L22 44 Z" fill="url(#yellowVert)" filter="url(#glowVert)"/>
+    
+    <!-- Lightning bolt overlay -->
+    <path d="M36 18 L30 30 L34 30 L28 46 L40 28 L35 28 L38 18 Z" fill="url(#boltVert)" opacity="0.9"/>
+  </g>
+  
+  <!-- Text: E-Outille - Stacked below icon -->
+  <g transform="translate(45, 100)" filter="url(#shadowVert)">
+    <!-- E-Outille -->
+    <text x="55" y="20" text-anchor="middle" font-family="Arial Black, Helvetica, sans-serif" font-size="26" font-weight="900" fill="#FFFFFF" letter-spacing="-1">E-Outille</text>
+  </g>
+  
+  <!-- ELECTRON subtitle -->
+  <g transform="translate(100, 135)">
+    <text x="0" y="0" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="11" fill="#888888" letter-spacing="5" font-weight="500">PAR ELECTRON</text>
+  </g>
+  
+  <!-- Accent line -->
+  <rect x="60" y="145" width="80" height="2" fill="url(#yellowVert)" opacity="0.6"/>
+  
+  <!-- BY line -->
+  <text x="100" y="160" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="8" fill="#666666" letter-spacing="2">BY</text>
+</svg>
