@@ -187,6 +187,250 @@ const products = [
     images: '["/products/echo-001.jpg"]',
     features: '["52V","75cm guide","Sans fil","Coupe multi-angle"]',
     categoryId: 'jardinage'
+  },
+  // Additional Construction products
+  {
+    name: 'Meuleuse angulaire 230V 2200W',
+    slug: 'meuleuse-230v-2200w',
+    description: 'Meuleuse professionnelle 230V 2200W. Disque 230mm. Variateur de vitesse.',
+    price: 159.99,
+    comparePrice: 199.99,
+    sku: 'BOS-MEU-001',
+    stock: 55,
+    images: '["/products/meuleuse-230.jpg"]',
+    features: '["2300W","230mm","Variateur","Protection poussières"]',
+    categoryId: 'construction'
+  },
+  {
+    name: 'Scie circulaire 1900W',
+    slug: 'scie-circulaire-1900w',
+    description: 'Scie circulaire professionnelle 1900W. Profondeur de coupe 66mm à 90°.',
+    price: 129.99,
+    comparePrice: 169.99,
+    sku: 'DEW-SCI-001',
+    stock: 40,
+    images: '["/products/scie-circulaire.jpg"]',
+    features: '["1900W","66mm coupe","190mm disque","Guide parallèle"]',
+    categoryId: 'construction'
+  },
+  {
+    name: 'Escabeau professionnel 8 marches',
+    slug: 'escabeau-8-marches',
+    description: 'Escabeau professionnel aluminium 8 marches. Plateforme antidérapante. Hauteur max 3.5m.',
+    price: 89.99,
+    comparePrice: 119.99,
+    sku: 'HUM-ESC-001',
+    stock: 80,
+    images: '["/products/escabeau.jpg"]',
+    features: '["8 marches","3.5m hauteur","150kg charge","Antidérapant"]',
+    categoryId: 'construction'
+  },
+  {
+    name: 'Disqueuse pneumatique droite',
+    slug: 'disqueuse-pneumatique',
+    description: 'Disqueuse pneumatique droite professionnelle. Vitesse à vide 22000 tr/min.',
+    price: 79.99,
+    comparePrice: 99.99,
+    sku: 'ING-DIS-001',
+    stock: 65,
+    images: '["/products/disqueuse-pneu.jpg"]',
+    features: '["22000 tr/min","50mm disque","Pneumatique","Poignée latérale"]',
+    categoryId: 'construction'
+  },
+  {
+    name: 'Coffret burins SDS-Plus 10 pièces',
+    slug: 'coffret-burins-sds',
+    description: 'Coffret de burins SDS-Plus 10 pièces. Pour béton et pierre.',
+    price: 34.99,
+    comparePrice: 44.99,
+    sku: 'BOS-BUR-001',
+    stock: 120,
+    images: '["/products/burins-sds.jpg"]',
+    features: '["10 pièces","SDS-Plus","Pour béton","Longue durée"]',
+    categoryId: 'construction'
+  },
+  // Additional Electricité products
+  {
+    name: 'Pince à sertir hydraulique',
+    slug: 'pince-sertir-hydraulique',
+    description: 'Pince à sertir hydraulique professionnelle pour cables 16-300mm².',
+    price: 249.99,
+    comparePrice: 319.99,
+    sku: 'KL-SERT-001',
+    stock: 35,
+    images: '["/products/pince-sertir.jpg"]',
+    features: '["16-300mm²","Tête rotative","Hydraulique","Mallette"]',
+    categoryId: 'electricite'
+  },
+  {
+    name: 'Testeur de tension sans contact',
+    slug: 'testeur-tension-ncv',
+    description: 'Testeur de tension sans contact NCV. Détection 12-1000V AC.',
+    price: 19.99,
+    comparePrice: 29.99,
+    sku: 'FLU-NCV-001',
+    stock: 200,
+    images: '["/products/testeur-ncv.jpg"]',
+    features: '["12-1000V","NCV","LED","Bip sonore"]',
+    categoryId: 'electricite'
+  },
+  {
+    name: 'Pince ampèremétrique True-RMS',
+    slug: 'pince-amperemetrique',
+    description: 'Pince ampèremétrique professionnelle True-RMS. Mesure jusqu à 1000A.',
+    price: 149.99,
+    comparePrice: 189.99,
+    sku: 'FLU-PIN-001',
+    stock: 45,
+    images: '["/products/pince-amp.jpg"]',
+    features: '["1000A AC/DC","True-RMS","TRMS","Écran rétro"]',
+    categoryId: 'electricite'
+  },
+  {
+    name: 'Câble de testerman 5m',
+    slug: 'cable-testerman-5m',
+    description: 'Set de cables de testerman 5m. Paires rouge/noir. Fiches bananes 4mm.',
+    price: 24.99,
+    comparePrice: 34.99,
+    sku: 'TEST-CAB-001',
+    stock: 250,
+    images: '["/products/cables-test.jpg"]',
+    features: '["5m","Rouge/Noir","4mm bananes","Qualité pro"]',
+    categoryId: 'electricite'
+  },
+  {
+    name: 'Lampe torche inspection LED',
+    slug: 'lampe-torche-led',
+    description: 'Lampe torche inspection LED rechargeable. 500 lumens. Tête flexible.',
+    price: 39.99,
+    comparePrice: 49.99,
+    sku: 'LED-LAM-001',
+    stock: 150,
+    images: '["/products/lampe-led.jpg"]',
+    features: '["500 lumens","Rechargeable","Tête flexible","Crochet"]',
+    categoryId: 'electricite'
+  },
+  // Additional Garage products
+  {
+    name: 'Presse hydraulique 20T',
+    slug: 'presse-hydraulique-20t',
+    description: 'Presse hydraulique professionnelle 20 tonnes. Course piston 250mm.',
+    price: 599.99,
+    comparePrice: 749.99,
+    sku: 'RAV-PRES-001',
+    stock: 15,
+    images: '["/products/presse-20t.jpg"]',
+    features: '["20 tonnes","250mm course","1500mm largeur","Hydraulique"]',
+    categoryId: 'garage'
+  },
+  {
+    name: 'Démonte-valve pneumatique',
+    slug: 'demonte-valve-pneu',
+    description: 'Kit démonte-valve pneumatique professionnel. Pour tous types de valves.',
+    price: 49.99,
+    comparePrice: 69.99,
+    sku: 'RAV-VAL-001',
+    stock: 90,
+    images: '["/products/demonte-valve.jpg"]',
+    features: '["Pneumatique","Tous valves","Rapide","Complet"]',
+    categoryId: 'garage'
+  },
+  {
+    name: 'Extracteur de roulements 6 pièces',
+    slug: 'extracteur-roulements',
+    description: 'Kit extracteur de roulements 6 pièces. Capacité 30-90mm. Acier forgé.',
+    price: 79.99,
+    comparePrice: 99.99,
+    sku: 'ING-EXT-001',
+    stock: 55,
+    images: '["/products/extracteur.jpg"]',
+    features: '["6 pièces","30-90mm","Acier forgé","3 griffes"]',
+    categoryId: 'garage'
+  },
+  {
+    name: 'Jeu de cales d\'épaisseur 24 pièces',
+    slug: 'cales-epaisseur-24',
+    description: 'Jeu de cales d\'épaisseur métriques 24 pièces. Acier trempé.',
+    price: 44.99,
+    comparePrice: 59.99,
+    sku: 'STA-CAL-001',
+    stock: 100,
+    images: '["/products/cales.jpg"]',
+    features: '["24 pièces","Métriques","Classe 1","Étui bois"]',
+    categoryId: 'garage'
+  },
+  {
+    name: 'Chandelle de sécurité 3T paire',
+    slug: 'chandelle-securite-3t',
+    description: 'Paire de chandelles de sécurité 3 tonnes. Hauteur 280-420mm.',
+    price: 69.99,
+    comparePrice: 89.99,
+    sku: 'RAV-CHAN-001',
+    stock: 75,
+    images: '["/products/chandelles.jpg"]',
+    features: '["3T","280-420mm","Paire","Robuste"]',
+    categoryId: 'garage'
+  },
+  // Additional Jardinage products
+  {
+    name: 'Souffleur de feuilles 2 temps',
+    slug: 'souffleur-2-temps',
+    description: 'Souffleur de feuilles thermique 2 temps 75cc. Débit d\'air 900m³/h.',
+    price: 249.99,
+    comparePrice: 319.99,
+    sku: 'STIH-SOU-001',
+    stock: 30,
+    images: '["/products/souffleur.jpg"]',
+    features: '["75cc","900m³/h","50L sac","2 temps"]',
+    categoryId: 'jardinage'
+  },
+  {
+    name: 'Tronçonneuse thermique 50cm',
+    slug: 'tronconneuse-50cm',
+    description: 'Tronçonneuse professionnelle 50cm. Moteur 55cc. Vitesse chaîne 20m/s.',
+    price: 449.99,
+    comparePrice: 549.99,
+    sku: 'HUS-TRON-001',
+    stock: 20,
+    images: '["/products/tronconneuse.jpg"]',
+    features: '["55cc","50cm","20m/s","EasyStart"]',
+    categoryId: 'jardinage'
+  },
+  {
+    name: 'Motoculteur thermique 7CV',
+    slug: 'motoculteur-7cv',
+    description: 'Motoculteur thermique 7CV. Largeur de travail 80cm. 4 vitesses.',
+    price: 799.99,
+    comparePrice: 999.99,
+    sku: 'BEN-MOTO-001',
+    stock: 10,
+    images: '["/products/motoculteur.jpg"]',
+    features: '["7CV","80cm largeur","4 vitesses","Fraises"]',
+    categoryId: 'jardinage'
+  },
+  {
+    name: 'Pulvérisateur pressurisé 12L',
+    slug: 'pulverisateur-12l',
+    description: 'Pulvérisateur pressurisé 12 litres. Lance telescopique. Buse regulable.',
+    price: 39.99,
+    comparePrice: 49.99,
+    sku: 'GARD-PUL-001',
+    stock: 80,
+    images: '["/products/pulverisateur.jpg"]',
+    features: '["12L","Lance telescopique","Buse regulable","Joints pro"]',
+    categoryId: 'jardinage'
+  },
+  {
+    name: 'Sécateur électrique sur batterie',
+    slug: 'secateur-electrique',
+    description: 'Sécateur électrique professionnel sur batterie 18V. Coupe jusqu à 25mm.',
+    price: 189.99,
+    comparePrice: 239.99,
+    sku: 'STIH-SEC-001',
+    stock: 40,
+    images: '["/products/secateur.jpg"]',
+    features: '["18V","25mm coupe","8h autonomie","Professionnel"]',
+    categoryId: 'jardinage'
   }
 ]
 
@@ -344,6 +588,188 @@ Les marques recommandées: Husqvarna, Stihl, Echo.`,
     published: true,
     featured: true,
     categoryId: 'jardinage'
+  },
+  // Additional blog posts - Services
+  {
+    title: 'Pourquoi choisir la location d\'outils?',
+    slug: 'pourquoi-choisir-location-outils',
+    content: `La location d'outils est une solution intelligente pour les professionnels et particuliers.
+
+## Avantages de la location:
+
+### Économie
+- Pas d'investissement initial important
+- Pas de frais de maintenance
+- Payez uniquement pour l'utilisation
+
+### Flexibilité
+- Accès au matériel最新
+- Changement selon les besoins
+- Pas de stockage
+
+### Services inclus
+- Livraison sur chantier
+- Formation à l'utilisation
+- Support technique
+
+## Quand louer?
+
+- **Projets ponctuels**: Une seule fois
+- **Essai avant achat**: Tester avant d'investir
+- **Pic d'activité**: Besoin temporaire supplémentaire
+- **Travaux spécialisés**: Équipement rare
+
+Chez E-Outilles, nous proposons des tarifs flexibles et un service de livraison gratuit.`,
+    excerpt: 'Découvrez les avantages de la location d\'outils pour vos projets.',
+    image: '/blog/location-outils.jpg',
+    author: 'Équipe E-Outilles',
+    category: 'Services',
+    published: true,
+    featured: false,
+    categoryId: 'construction'
+  },
+  {
+    title: 'Maintenance préventive de vos outils',
+    slug: 'maintenance-preventive-outils',
+    content: `La maintenance préventive prolonge la vie de vos outils et garantit leur performance.
+
+## Entretien régulier:
+
+### Après chaque utilisation
+- Nettoyer les poussières
+- Vérifier l'état des câbles
+- Graisser les parties mobiles
+
+### Hebdomadaire
+- Contrôler les batteries
+- Vérifier les filtre
+- Tester les dispositifs de sécurité
+
+### Mensuel
+- Affûter les lames
+- Vérifier les consommables
+- Contrôler les vitesses
+
+## Signes d'usure:
+- Bruit anormal
+- Perte de puissance
+- Vibration excessive
+- Chauffe anormale
+
+Notre service de maintenance offre un diagnostic gratuit et des pièces authentiques.`,
+    excerpt: 'Guide pour entretenir vos outils et prolonger leur durée de vie.',
+    image: '/blog/maintenance-outils.jpg',
+    author: 'Équipe E-Outilles',
+    category: 'Services',
+    published: true,
+    featured: false,
+    categoryId: 'construction'
+  },
+  {
+    title: 'Guide livraison: Comment ça marche?',
+    slug: 'guide-livraison-e-outilles',
+    content: `Tout savoir sur notre service de livraison rapide au Benin.
+
+## Zones de livraison:
+- **Cotonou**: Livraison le jour même
+- **Sud Benin**: 24-48h
+- **Autres régions**: 3-5 jours
+
+## Options de livraison:
+1. **Standard**: 48-72h, 5€
+2. **Express**: 24h, 10€
+3. **Premium**: Same day, 15€
+
+## Suivi de commande:
+- SMS de confirmation
+- Notification de départ
+- Estimation du créneau
+
+## Emballage:
+- Tous nos colis sont protégés
+- Assurance incluse
+- Signature à réception
+
+Vérifiez votre adresse et téléphone pour une livraison rapide!`,
+    excerpt: 'Découvrez comment fonctionne notre service de livraison.',
+    image: '/blog/livraison.jpg',
+    author: 'Équipe E-Outilles',
+    category: 'Services',
+    published: true,
+    featured: false,
+    categoryId: 'construction'
+  },
+  {
+    title: 'Formation outils: Optimisez vos compétences',
+    slug: 'formation-outils-competences',
+    content: `Nos formations vous aident à maîtriser vos équipements.
+
+## Types de formations:
+
+### Initiation
+- Sécurité de base
+- Manipulation des outils
+- Entretien quotidien
+
+### Avancé
+- Techniques professionnelles
+- Optimisation du rendement
+- Maintenance avancées
+
+### Sur mesure
+- Selon votre métier
+- Sur votre équipement
+- À votre rythme
+
+## Nos formateurs:
+- Experts certifiés
+- 10+ ans d'expérience
+- Pédagogie adaptée
+
+## Attestation:
+Toutes nos formations délivrent un certificat reconnu.`,
+    excerpt: 'Améliorez vos compétences avec nos formations.',
+    image: '/blog/formation.jpg',
+    author: 'Équipe E-Outilles',
+    category: 'Services',
+    published: true,
+    featured: false,
+    categoryId: 'construction'
+  },
+  {
+    title: 'Consultation technique: Besoin d\'avis expert?',
+    slug: 'consultation-technique-expert',
+    content: `Nos experts vous accompagnent dans vos projets.
+
+## Notre service de consultation:
+
+### Gratuit et sans engagement
+- Analyse de vos besoins
+- Recommandations personnalisées
+- Devis détaillé
+
+### Nos domaines d'expertise:
+- Choix d'équipements
+- Optimisation d'atelier
+- Sécurité sur chantier
+- Techniques d'installation
+
+### Comment en bénéficier?
+1. Prenez rendez-vous
+2. Décrivez votre projet
+3. Recevez nos recommandations
+
+## Pourquoi nous faire confiance?
+- 15 ans d'expérience
+- +500 clients satisfaits
+- Partenaires des grandes marques`,
+    excerpt: 'Bénéficiez de nos conseils d\'experts.',
+    image: '/blog/consultation.jpg',
+    author: 'Équipe E-Outilles',
+    category: 'Services',
+    published: true,
+    featured: false,
+    categoryId: 'construction'
   }
 ]
 
