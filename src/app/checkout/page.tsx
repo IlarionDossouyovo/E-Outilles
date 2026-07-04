@@ -232,13 +232,15 @@ export default function CheckoutPage() {
                       <span className="text-2xl">📱</span>
                     </div>
                     <div 
-                      className={`flex items-center gap-4 p-4 rounded-xl border-2 bg-ingco-black/50 border-ingco-dark opacity-60`}
+                      onClick={() => setPaymentMethod('card')}
+                      className={`flex items-center gap-4 p-4 rounded-xl cursor-pointer border-2 transition-all ${paymentMethod === 'card' ? 'bg-ingco-black border-ingco-yellow' : 'bg-ingco-black border-ingco-dark hover:border-gray-600'}`}
                     >
-                      <input type="radio" name="payment" disabled className="w-5 h-5 accent-gray-500" />
+                      <input type="radio" name="payment" checked={paymentMethod === 'card'} onChange={() => setPaymentMethod('card')} className="w-5 h-5 accent-ingco-yellow" />
                       <div className="flex-1">
                         <p className="text-white font-bold">Carte bancaire</p>
                         <p className="text-gray-400 text-sm">Visa, Mastercard</p>
-                        <p className="text-orange-400 text-xs mt-1">Bientôt disponible</p>
+                        <p className="text-green-400 text-xs mt-1">Sécurisé par Stripe</p>
+                        {paymentMethod === 'card' && <span className="inline-block mt-2 text-xs bg-ingco-yellow/20 text-ingco-yellow px-2 py-1 rounded">Sélectionné</span>}
                       </div>
                       <span className="text-2xl">💳</span>
                     </div>
@@ -269,6 +271,56 @@ export default function CheckoutPage() {
                         <p className="text-gray-400 text-sm">
                           📱 Un code de paiement vous sera envoyé sur ce numéro
                         </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Card Payment Form */}
+                  {paymentMethod === 'card' && (
+                    <div className="mt-6 p-4 bg-ingco-black rounded-xl border border-ingco-dark">
+                      <h3 className="text-white font-bold mb-4">Détails de la carte</h3>
+                      <div className="space-y-4">
+                        <div>
+                          <label className="text-gray-400 text-sm mb-2 block">Numéro de carte</label>
+                          <input
+                            type="text"
+                            placeholder="1234 5678 9012 3456"
+                            maxLength={19}
+                            className="w-full bg-ingco-dark border border-ingco-gray rounded-xl px-4 py-3 text-white focus:border-ingco-yellow focus:outline-none"
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <label className="text-gray-400 text-sm mb-2 block">Date d'expiration</label>
+                            <input
+                              type="text"
+                              placeholder="MM/AA"
+                              maxLength={5}
+                              className="w-full bg-ingco-dark border border-ingco-gray rounded-xl px-4 py-3 text-white focus:border-ingco-yellow focus:outline-none"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-gray-400 text-sm mb-2 block">CVC</label>
+                            <input
+                              type="text"
+                              placeholder="123"
+                              maxLength={3}
+                              className="w-full bg-ingco-dark border border-ingco-gray rounded-xl px-4 py-3 text-white focus:border-ingco-yellow focus:outline-none"
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <label className="text-gray-400 text-sm mb-2 block">Nom sur la carte</label>
+                          <input
+                            type="text"
+                            placeholder="JOHN DOE"
+                            className="w-full bg-ingco-dark border border-ingco-gray rounded-xl px-4 py-3 text-white focus:border-ingco-yellow focus:outline-none"
+                          />
+                        </div>
+                        <div className="flex items-center gap-2 mt-2">
+                          <span className="text-green-400">🔒</span>
+                          <span className="text-gray-400 text-sm">Paiement sécurisé par Stripe</span>
+                        </div>
                       </div>
                     </div>
                   )}
