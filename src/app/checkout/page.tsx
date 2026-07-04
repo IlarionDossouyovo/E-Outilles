@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useCartStore } from '@/lib/store/cart'
 import Link from 'next/link'
+import PageNavigation from '@/components/PageNavigation'
 
 export default function CheckoutPage() {
   const { items, getTotal, clearCart } = useCartStore()
@@ -92,6 +93,7 @@ export default function CheckoutPage() {
   return (
     <div className="min-h-screen bg-ingco-black">
       <Nav />
+      <PageNavigation />
       <div className="pt-24 pb-16 max-w-4xl mx-auto px-4">
         <h1 className="text-3xl font-bold text-white mb-8">Checkout</h1>
 
@@ -211,8 +213,9 @@ export default function CheckoutPage() {
                     >
                       <input type="radio" name="payment" checked={paymentMethod === 'cod'} onChange={() => setPaymentMethod('cod')} className="w-5 h-5 accent-ingco-yellow" />
                       <div className="flex-1">
-                        <p className="text-white font-bold">Paiement à la livraison</p>
+                        <p className="text-white font-bold">Paiement à la livraison (COD)</p>
                         <p className="text-gray-400 text-sm">Payez lorsque vous recevez votre commande</p>
+                        <p className="text-green-400 text-xs mt-1">Frais: 0€</p>
                         {paymentMethod === 'cod' && <span className="inline-block mt-2 text-xs bg-ingco-yellow/20 text-ingco-yellow px-2 py-1 rounded">Sélectionné</span>}
                       </div>
                       <span className="text-2xl">📦</span>
@@ -225,23 +228,50 @@ export default function CheckoutPage() {
                       <div className="flex-1">
                         <p className="text-white font-bold">Mobile Money</p>
                         <p className="text-gray-400 text-sm">MTN, Moov, Orange Money</p>
-                        <p className="text-green-400 text-xs mt-1">✓ Disponible</p>
                       </div>
                       <span className="text-2xl">📱</span>
                     </div>
                     <div 
-                      onClick={() => setPaymentMethod('card')}
-                      className={`flex items-center gap-4 p-4 rounded-xl cursor-pointer border-2 transition-all ${paymentMethod === 'card' ? 'bg-ingco-black border-ingco-yellow' : 'bg-ingco-black border-ingco-dark hover:border-gray-600'}`}
+                      className={`flex items-center gap-4 p-4 rounded-xl border-2 bg-ingco-black/50 border-ingco-dark opacity-60`}
                     >
-                      <input type="radio" name="payment" checked={paymentMethod === 'card'} onChange={() => setPaymentMethod('card')} className="w-5 h-5 accent-ingco-yellow" />
+                      <input type="radio" name="payment" disabled className="w-5 h-5 accent-gray-500" />
                       <div className="flex-1">
                         <p className="text-white font-bold">Carte bancaire</p>
-                        <p className="text-gray-400 text-sm">Visa, Mastercard - via Stripe</p>
-                        <p className="text-green-400 text-xs mt-1">✓ Disponible</p>
+                        <p className="text-gray-400 text-sm">Visa, Mastercard</p>
+                        <p className="text-orange-400 text-xs mt-1">Bientôt disponible</p>
                       </div>
                       <span className="text-2xl">💳</span>
                     </div>
                   </div>
+
+                  {/* Mobile Money Form */}
+                  {paymentMethod === 'momo' && (
+                    <div className="mt-6 p-4 bg-ingco-black rounded-xl border border-ingco-dark">
+                      <h3 className="text-white font-bold mb-4">Détails Mobile Money</h3>
+                      <div className="space-y-4">
+                        <div>
+                          <label className="text-gray-400 text-sm mb-2 block">Opérateur</label>
+                          <select className="w-full bg-ingco-dark border border-ingco-gray rounded-xl px-4 py-3 text-white">
+                            <option value="">Sélectionner...</option>
+                            <option value="mtn">MTN Mobile Money</option>
+                            <option value="moov">Moov Money</option>
+                            <option value="orange">Orange Money</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="text-gray-400 text-sm mb-2 block">Numéro Mobile Money</label>
+                          <input
+                            type="tel"
+                            placeholder="+229 XX XXX XX XX"
+                            className="w-full bg-ingco-dark border border-ingco-gray rounded-xl px-4 py-3 text-white focus:border-ingco-yellow focus:outline-none"
+                          />
+                        </div>
+                        <p className="text-gray-400 text-sm">
+                          📱 Un code de paiement vous sera envoyé sur ce numéro
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </>
               )}
 
