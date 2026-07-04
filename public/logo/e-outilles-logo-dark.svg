@@ -1,0 +1,20 @@
+<svg width="200" height="80" viewBox="0 0 200 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Icon -->
+  <g transform="translate(10, 10)">
+    <!-- Circle background -->
+    <circle cx="30" cy="30" r="28" fill="#121212" stroke="#FFC400" stroke-width="1.5"/>
+    
+    <!-- E shape -->
+    <path d="M16 45V19H36L42 24V32L36 40H28V47H36L42 54H16V45Z" fill="#FFC400"/>
+    
+    <!-- Lightning bolt -->
+    <path d="M40 10L32 26H38L35 42L46 22H39L40 10Z" fill="#FFC400"/>
+    
+    <!-- Tool/gear accent -->
+    <circle cx="16" cy="19" r="5" fill="#FFC400" opacity="0.8"/>
+  </g>
+  
+  <!-- Text -->
+  <text x="75" y="40" font-family="Arial Black, sans-serif" font-size="26" font-weight="900" fill="#FFC400">E-OUTIL</text>
+  <text x="75" y="55" font-family="Arial, sans-serif" font-size="9" fill="#FFC400" letter-spacing="3">PAR ELECTRON</text>
+</svg>

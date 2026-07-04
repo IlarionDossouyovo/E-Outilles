@@ -3,9 +3,13 @@ import './globals.css'
 import ChatWidget from '@/lib/ai/ChatWidget'
 
 export const metadata: Metadata = {
-  title: 'E-Outilles | Outillage Professionnel Dropshipping',
-  description: 'E-Outilles - Votre partenaire dropshipping international pour outillage professionnel INGCO.Livraison mondiale, qualité professionnelle.',
+  title: 'E-Outille par ELECTRON | Outillage Professionnel',
+  description: 'E-Outille par ELECTRON - Votre partenaire dropshipping international pour outillage professionnel INGCO. Livraison mondiale, qualité professionnelle.',
   manifest: '/manifest.json',
+  icons: {
+    icon: '/logo/e-outilles-favicon.svg',
+    apple: '/logo/e-outilles-icon.svg',
+  },
 }
 
 export default function RootLayout({
