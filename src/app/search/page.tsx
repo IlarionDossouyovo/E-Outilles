@@ -5,6 +5,7 @@ import { useCartStore } from '@/lib/store/cart'
 import { useWishlistStore } from '@/lib/store/wishlist'
 import Link from 'next/link'
 import PageNavigation from '@/components/PageNavigation'
+import Logo from '@/components/Logo'
 
 // Force dynamic for SSR
 export const dynamic = 'force-dynamic'
@@ -58,10 +59,7 @@ export default function SearchPage({ searchParams }: { searchParams: { category?
     <nav className="fixed top-0 left-0 right-0 z-50 bg-ingco-black/95 backdrop-blur-md border-b border-ingco-gray">
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
-          <div className="w-10 h-10 bg-ingco-yellow rounded-lg flex items-center justify-center">
-            <span className="text-ingco-black font-bold text-xl">E</span>
-          </div>
-          <span className="text-white font-bold text-xl">E-<span className="text-ingco-yellow">Outilles</span></span>
+          <Logo variant="horizontal" size={40} />
         </Link>
         <div className="hidden md:flex items-center gap-8">
           <Link href="/" className="text-gray-300 hover:text-ingco-yellow">Accueil</Link>

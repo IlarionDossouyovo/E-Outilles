@@ -3,6 +3,7 @@
 import { useCartStore } from '@/lib/store/cart'
 import Link from 'next/link'
 import PageNavigation from '@/components/PageNavigation'
+import Logo from '@/components/Logo'
 
 export default function CartPage() {
   const { items, updateQuantity, removeItem, getTotal, clearCart } = useCartStore()
@@ -13,12 +14,7 @@ export default function CartPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-ingco-yellow rounded-lg flex items-center justify-center">
-              <span className="text-ingco-black font-bold text-xl">E</span>
-            </div>
-            <span className="text-white font-bold text-xl">
-              E-<span className="text-ingco-yellow">Outilles</span>
-            </span>
+            <Logo variant="horizontal" size={40} />
           </Link>
           <div className="hidden md:flex items-center gap-8">
             <Link href="/" className="text-gray-300 hover:text-ingco-yellow transition-colors">Accueil</Link>

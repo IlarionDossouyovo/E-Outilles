@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Logo from '@/components/Logo'
 
 // Données des catégories par métier
 const categories = [
@@ -64,12 +65,7 @@ export default function Home() {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-ingco-yellow rounded-lg flex items-center justify-center">
-                <span className="text-ingco-black font-bold text-xl">E</span>
-              </div>
-              <span className="text-white font-bold text-xl">
-                E-<span className="text-ingco-yellow">Outilles</span>
-              </span>
+              <Logo variant="horizontal" size={40} />
             </Link>
 
             {/* Desktop Menu */}
@@ -349,12 +345,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-10 h-10 bg-ingco-yellow rounded-lg flex items-center justify-center">
-                  <span className="text-ingco-black font-bold text-xl">E</span>
-                </div>
-                <span className="text-white font-bold text-xl">
-                  E-<span className="text-ingco-yellow">Outilles</span>
-                </span>
+                <Logo variant="horizontal" size={40} />
               </div>
               <p className="text-gray-500 text-sm">
                 Votre partenaire dropshipping international pour outillage professionnel INGCO.

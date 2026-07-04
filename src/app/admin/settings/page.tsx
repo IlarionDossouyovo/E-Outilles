@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import AdminAnalytics from '@/components/AdminAnalytics'
+import Logo from '@/components/Logo'
 
 export default function SettingsPage() {
   const [settings, setSettings] = useState({
@@ -32,10 +33,7 @@ export default function SettingsPage() {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-ingco-black/95 backdrop-blur-md border-b border-ingco-gray">
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/admin" className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-ingco-yellow rounded-lg flex items-center justify-center">
-              <span className="text-ingco-black font-bold text-xl">E</span>
-            </div>
-            <span className="text-white font-bold text-xl">E-<span className="text-ingco-yellow">Outilles</span></span>
+            <Logo variant="horizontal" size={40} />
             <span className="bg-ingco-yellow text-ingco-black text-xs px-2 py-1 rounded ml-2">Admin</span>
           </Link>
           <div className="hidden md:flex items-center gap-6">
