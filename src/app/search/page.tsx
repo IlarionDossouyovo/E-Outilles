@@ -58,9 +58,7 @@ export default function SearchPage({ searchParams }: { searchParams: { category?
   const Nav = () => (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-ingco-black/95 backdrop-blur-md border-b border-ingco-gray">
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <Logo variant="horizontal" size={40} />
-        </Link>
+        <Logo variant="horizontal" size={40} />
         <div className="hidden md:flex items-center gap-8">
           <Link href="/" className="text-gray-300 hover:text-ingco-yellow">Accueil</Link>
           <Link href="/search" className="text-ingco-yellow">Produits</Link>
