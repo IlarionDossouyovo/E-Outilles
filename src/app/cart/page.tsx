@@ -2,6 +2,7 @@
 
 import { useCartStore } from '@/lib/store/cart'
 import Link from 'next/link'
+import PageNavigation from '@/components/PageNavigation'
 
 export default function CartPage() {
   const { items, updateQuantity, removeItem, getTotal, clearCart } = useCartStore()
@@ -49,6 +50,7 @@ export default function CartPage() {
       <div className="min-h-screen bg-ingco-black">
         <Nav />
         <div className="pt-24 pb-16 max-w-7xl mx-auto px-4 text-center">
+          <PageNavigation />
           <div className="text-6xl mb-6">🛒</div>
           <h1 className="text-3xl font-bold text-white mb-4">Votre panier est vide</h1>
           <p className="text-gray-400 mb-8">Découvrez notre catalogue et ajoutez des produits</p>
@@ -68,6 +70,7 @@ export default function CartPage() {
     <div className="min-h-screen bg-ingco-black">
       <Nav />
       <div className="pt-24 pb-16 max-w-7xl mx-auto px-4">
+        <PageNavigation />
         <h1 className="text-3xl font-bold text-white mb-8">Mon Panier</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

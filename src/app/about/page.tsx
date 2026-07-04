@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import PageNavigation from '@/components/PageNavigation'
 
 export default function About() {
   return (
@@ -26,6 +27,10 @@ export default function About() {
           </div>
         </div>
       </nav>
+
+      <div className="pt-24 max-w-7xl mx-auto px-4">
+        <PageNavigation />
+      </div>
 
       {/* Hero Section */}
       <section className="pt-24 pb-16 md:pt-32 md:pb-24 relative overflow-hidden">

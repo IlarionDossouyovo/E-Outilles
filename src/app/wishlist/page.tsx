@@ -3,6 +3,7 @@
 import { useWishlistStore } from '@/lib/store/wishlist'
 import { useCartStore } from '@/lib/store/cart'
 import Link from 'next/link'
+import PageNavigation from '@/components/PageNavigation'
 
 export default function WishlistPage() {
   const { items, removeItem } = useWishlistStore()
@@ -11,16 +12,19 @@ export default function WishlistPage() {
   if (items.length === 0) {
     return (
       <div className="min-h-screen bg-ingco-black pt-24 pb-16">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <div className="text-6xl mb-6">❤️</div>
-          <h1 className="text-3xl font-bold text-white mb-4">Votre liste de favoris est vide</h1>
-          <p className="text-gray-400 mb-8">Ajoutez des produits pour les retrouver facilement</p>
-          <Link 
-            href="/"
-            className="bg-ingco-yellow text-ingco-black px-8 py-3 rounded-xl font-bold hover:bg-yellow-400 transition-colors inline-block"
-          >
-            Explorer le catalogue
-          </Link>
+        <div className="max-w-7xl mx-auto px-4">
+          <PageNavigation />
+          <div className="text-center">
+            <div className="text-6xl mb-6">❤️</div>
+            <h1 className="text-3xl font-bold text-white mb-4">Votre liste de favoris est vide</h1>
+            <p className="text-gray-400 mb-8">Ajoutez des produits pour les retrouver facilement</p>
+            <Link 
+              href="/"
+              className="bg-ingco-yellow text-ingco-black px-8 py-3 rounded-xl font-bold hover:bg-yellow-400 transition-colors inline-block"
+            >
+              Explorer le catalogue
+            </Link>
+          </div>
         </div>
       </div>
     )
@@ -29,6 +33,7 @@ export default function WishlistPage() {
   return (
     <div className="min-h-screen bg-ingco-black pt-24 pb-16">
       <div className="max-w-7xl mx-auto px-4">
+        <PageNavigation />
         <h1 className="text-3xl font-bold text-white mb-8">Mes Favoris ({items.length})</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

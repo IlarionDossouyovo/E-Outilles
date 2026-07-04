@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import PageNavigation from '@/components/PageNavigation'
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -42,8 +43,12 @@ export default function Contact() {
         </div>
       </nav>
 
+      <div className="pt-24 max-w-7xl mx-auto px-4">
+        <PageNavigation />
+      </div>
+
       {/* Hero Section */}
-      <section className="pt-24 pb-16 md:pt-32 md:pb-24">
+      <section className="pb-16 md:pb-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h1 className="text-4xl md:text-6xl font-bold mb-6">

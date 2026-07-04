@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useCartStore } from '@/lib/store/cart'
 import { useWishlistStore } from '@/lib/store/wishlist'
 import Link from 'next/link'
+import PageNavigation from '@/components/PageNavigation'
 
 // Force dynamic for SSR
 export const dynamic = 'force-dynamic'
@@ -117,6 +118,7 @@ export default function SearchPage({ searchParams }: { searchParams: { category?
       )}
       
       <div className="pt-24 pb-16 max-w-7xl mx-auto px-4">
+        <PageNavigation />
         <h1 className="text-3xl font-bold text-white mb-8">Produits</h1>
 
         <div className="flex flex-col md:flex-row gap-4 mb-8">

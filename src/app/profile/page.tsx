@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { getSessionAction, logoutAction } from '@/app/actions'
+import PageNavigation from '@/components/PageNavigation'
 
 interface User {
   id: string
@@ -65,6 +66,8 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-ingco-black pt-24 pb-16">
       <div className="max-w-7xl mx-auto px-4">
+        <PageNavigation backLabel="Accueil" />
+        
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
