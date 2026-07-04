@@ -3,14 +3,15 @@ import Link from 'next/link'
 interface LogoProps {
   variant?: 'horizontal' | 'icon' | 'stacked'
   size?: number
+  className?: string
 }
 
-export default function Logo({ variant = 'horizontal', size = 40 }: LogoProps) {
+export default function Logo({ variant = 'horizontal', size = 40, className = "" }: LogoProps) {
   const height = variant === 'horizontal' ? size * 0.4 : size
   const width = variant === 'stacked' ? size * 0.85 : size
 
   return (
-    <Link href="/" className="flex items-center gap-2 group">
+    <Link href="/" className={`flex items-center gap-2 group ${className}`}>
       <svg
         width={width}
         height={height}
