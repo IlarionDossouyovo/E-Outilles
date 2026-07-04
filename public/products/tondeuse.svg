@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
   <rect fill="#1a1a2e" width="400" height="300"/>
-  <rect fill="#e74c3c" x="50" y="50" width="300" height="200" rx="20"/>
+  <rect fill="#27ae60" x="50" y="50" width="300" height="200" rx="20"/>
   <rect fill="#fff" opacity="0.2" x="70" y="70" width="260" height="160" rx="10"/>
   <circle fill="#fff" opacity="0.3" cx="200" cy="150" r="60"/>
   <circle fill="#1a1a2e" opacity="0.5" cx="200" cy="150" r="30"/>
-  <text fill="#fff" x="200" y="285" font-family="Arial" font-size="14" text-anchor="middle" font-weight="bold">Chandelles sécurité 3T</text>
+  <text fill="#fff" x="200" y="285" font-family="Arial" font-size="14" text-anchor="middle" font-weight="bold">Tondeuse thermique 45cm</text>
 </svg>

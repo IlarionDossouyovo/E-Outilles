@@ -4,5 +4,5 @@
   <rect fill="#fff" opacity="0.2" x="70" y="70" width="260" height="160" rx="10"/>
   <circle fill="#fff" opacity="0.3" cx="200" cy="150" r="60"/>
   <circle fill="#1a1a2e" opacity="0.5" cx="200" cy="150" r="30"/>
-  <text fill="#fff" x="200" y="285" font-family="Arial" font-size="14" text-anchor="middle" font-weight="bold">Chandelles sécurité 3T</text>
+  <text fill="#fff" x="200" y="285" font-family="Arial" font-size="14" text-anchor="middle" font-weight="bold">Tournevis isolé 1000V</text>
 </svg>
