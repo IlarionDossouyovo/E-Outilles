@@ -68,9 +68,6 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Disable body parsing for webhook
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-}
+// Disable body parsing for webhook (Next.js 14+ syntax)
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
