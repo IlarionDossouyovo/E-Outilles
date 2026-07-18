@@ -84,7 +84,7 @@ npm run build
 npm start
 ```
 
-Le site sera accessible sur: **http://localhost:3000**
+Le site sera accessible sur: **http://localhost:3003**
 
 ---
 
