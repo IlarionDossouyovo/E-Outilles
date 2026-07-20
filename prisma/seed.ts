@@ -109,7 +109,105 @@ const products = [
     features: '["±0.3mm/m","50m portée","Auto-nivellant","Vert"]',
     categoryId: 'power-tools'
   },
-  // Electricité
+  // Hand Tools - Outils à Main
+  {
+    name: 'Clé à pipe 12 pans',
+    slug: 'cle-pipe-12',
+    description: 'Clé à pipe 12 pans professionnelle. Chrome vanadium. 10-24mm. 10 pièces.',
+    price: 49.99,
+    comparePrice: 69.99,
+    sku: 'HT-WREN-001',
+    stock: 120,
+    images: '["/products/cle-pipe.jpg"]',
+    features: '["Chrome vanadium","10-24mm","10 pièces","Poli miroir"]',
+    categoryId: 'hand-tools'
+  },
+  {
+    name: 'Tournevis cruciforme précision',
+    slug: 'tournevis-precision',
+    description: 'Set de tournevis précision 32 pièces. Pour électronique et précision.',
+    price: 29.99,
+    comparePrice: 39.99,
+    sku: 'HT-SCREW-001',
+    stock: 200,
+    images: '["/products/tournevis.jpg"]',
+    features: '["32 pièces","Aimantés","Poignée Soft","Résistance 1000V"]',
+    categoryId: 'hand-tools'
+  },
+  {
+    name: 'Pince multiprise professionnelle',
+    slug: 'pince-multiprise',
+    description: 'Pince multiprise professionnelle REG. 10 положений. Chrome vanadium.',
+    price: 34.99,
+    comparePrice: 44.99,
+    sku: 'HT-PLIER-001',
+    stock: 150,
+    images: '["/products/pince.jpg"]',
+    features: '["10 positions","REG","Chrome vanadium","Grip confortable"]',
+    categoryId: 'hand-tools'
+  },
+  {
+    name: 'Marteau de charpentier 500g',
+    slug: 'marteau-charpentier',
+    description: 'Marteau de charpentier professionnel 500g. Tête forgée. Manche Hickory.',
+    price: 24.99,
+    comparePrice: 34.99,
+    sku: 'HT-HAMM-001',
+    stock: 180,
+    images: '["/products/marteau.jpg"]',
+    features: '["500g","Tête forgée","Manche Hickory","Anti-vibration"]',
+    categoryId: 'hand-tools'
+  },
+  {
+    name: 'Scie à métaux professionnelle',
+    slug: 'scie-metaux',
+    description: 'Scie à métaux professionnelle avec lame bi-métal. Cadre en acier.',
+    price: 19.99,
+    comparePrice: 29.99,
+    sku: 'HT-SAW-001',
+    stock: 100,
+    images: '["/products/scie.jpg"]',
+    features: '["Lame bi-métal","Cadre acier","Lame 300mm","Réglage rapide"]',
+    categoryId: 'hand-tools'
+  },
+  // Drilling - Forage & Découpe
+  {
+    name: 'Kit burins SDS Plus 5 pièces',
+    slug: 'kit-burins-sds',
+    description: 'Kit de burins SDS Plus professionnel. 5 pièces: pointu, plat, crevasse.',
+    price: 39.99,
+    comparePrice: 49.99,
+    sku: 'DRL-CHIS-001',
+    stock: 80,
+    images: '["/products/burins.jpg"]',
+    features: '["SDS Plus","5 pièces","Tungstène","Longue durée"]',
+    categoryId: 'drilling'
+  },
+  {
+    name: 'Disque à tronçonner métal 230mm',
+    slug: 'disque-tronconner',
+    description: 'Disque à tronçonner professionnel métal. Diamètre 230mm. Vitesse max 80m/s.',
+    price: 9.99,
+    comparePrice: 14.99,
+    sku: 'DRL-DISC-001',
+    stock: 500,
+    images: '["/products/disque.jpg"]',
+    features: '["230mm","Métal","80m/s max","Épaisseur 3mm"]',
+    categoryId: 'drilling'
+  },
+  {
+    name: 'Scie trépans Carbure 68mm',
+    slug: 'scie-trepan',
+    description: 'Scie trépans carbure professionnelle. Pour perceuse. Diamètre 68mm.',
+    price: 24.99,
+    comparePrice: 34.99,
+    sku: 'DRL-HOLE-001',
+    stock: 60,
+    images: '["/products/trepan.jpg"]',
+    features: '["68mm","Carbure","Perceuse","Coupe propre"]',
+    categoryId: 'drilling'
+  },
+  // Measuring
   {
     name: 'Multimètre professionnel True-RMS',
     slug: 'multimetre-rms',
