@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Logo from '@/components/Logo'
 
-// Categories data - INGCO Product Categories
+// Categories data - INGCO Product Categories (All trades)
 const demoCategories = [
   { 
     id: 'power-tools', 
@@ -16,6 +16,15 @@ const demoCategories = [
     products: 45
   },
   { 
+    id: 'cordless-tools', 
+    name: 'Outils Sans Fil', 
+    icon: '🔋',
+    description: 'Perceuses, Visseuses, Clé à chocs sans fil',
+    slug: 'cordless-tools',
+    color: 'bg-blue-600',
+    products: 38
+  },
+  { 
     id: 'hand-tools', 
     name: 'Outils à Main', 
     icon: '🔧',
@@ -23,6 +32,15 @@ const demoCategories = [
     slug: 'hand-tools',
     color: 'bg-blue-500',
     products: 120
+  },
+  { 
+    id: 'air-tools', 
+    name: 'Outils à Air', 
+    icon: '💨',
+    description: 'Compresseurs, Pistolets, Clé à chocs pneumatique',
+    slug: 'air-tools',
+    color: 'bg-sky-500',
+    products: 25
   },
   { 
     id: 'measuring', 
@@ -61,6 +79,42 @@ const demoCategories = [
     products: 67
   },
   { 
+    id: 'welding', 
+    name: 'Soudeuse & Welding', 
+    icon: '🔥',
+    description: 'Machines à souder, Electrodes, Masques',
+    slug: 'welding',
+    color: 'bg-red-600',
+    products: 18
+  },
+  { 
+    id: 'generators', 
+    name: 'Générateurs', 
+    icon: '⚙️',
+    description: 'Groupes électrogènes, Convertisseurs',
+    slug: 'generators',
+    color: 'bg-yellow-600',
+    products: 12
+  },
+  { 
+    id: 'construction', 
+    name: 'Construction', 
+    icon: '🏗️',
+    description: 'Vibreurs à béton, Aiguilles vibrantes',
+    slug: 'construction',
+    color: 'bg-amber-600',
+    products: 15
+  },
+  { 
+    id: 'pumps', 
+    name: 'Pompes & Eau', 
+    icon: '💧',
+    description: 'Pompes à eau, Pulvérisateurs',
+    slug: 'pumps',
+    color: 'bg-cyan-500',
+    products: 20
+  },
+  { 
     id: 'safety', 
     name: 'Sécurité', 
     icon: '🦺',
@@ -77,6 +131,15 @@ const demoCategories = [
     slug: 'storage',
     color: 'bg-teal-500',
     products: 32
+  },
+  { 
+    id: 'accessories', 
+    name: 'Accessoires', 
+    icon: '🪛',
+    description: 'Batteries, Chargeurs, Lames, Disques',
+    slug: 'accessories',
+    color: 'bg-indigo-500',
+    products: 85
   }
 ]
 

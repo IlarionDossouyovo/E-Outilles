@@ -7,7 +7,7 @@ dotenv.config({ path: path.join(__dirname, '..', '.env') })
 
 const prisma = new PrismaClient()
 
-// Categories data - INGCO Product Categories
+// Categories data - All INGCO Product Categories
 const categories = [
   {
     id: 'power-tools',
@@ -18,12 +18,28 @@ const categories = [
     color: '#EF4444'
   },
   {
+    id: 'cordless-tools',
+    name: 'Outils Sans Fil',
+    slug: 'cordless-tools',
+    description: 'Perceuses, Visseuses, Clé à chocs sans fil',
+    icon: '🔋',
+    color: '#2563EB'
+  },
+  {
     id: 'hand-tools',
     name: 'Outils à Main',
     slug: 'hand-tools',
     description: 'Clés, Tournevis, Pinces, Marteaux',
     icon: '🔧',
     color: '#3B82F6'
+  },
+  {
+    id: 'air-tools',
+    name: 'Outils à Air',
+    slug: 'air-tools',
+    description: 'Compresseurs, Pistolets, Clé à chocs pneumatique',
+    icon: '💨',
+    color: '#0EA5E9'
   },
   {
     id: 'measuring',
@@ -58,6 +74,38 @@ const categories = [
     color: '#6B7280'
   },
   {
+    id: 'welding',
+    name: 'Soudeuse & Welding',
+    slug: 'welding',
+    description: 'Machines à souder, Electrodes, Masques',
+    icon: '🔥',
+    color: '#DC2626'
+  },
+  {
+    id: 'generators',
+    name: 'Générateurs',
+    slug: 'generators',
+    description: 'Groupes électrogènes, Convertisseurs',
+    icon: '⚙️',
+    color: '#CA8A04'
+  },
+  {
+    id: 'construction',
+    name: 'Construction',
+    slug: 'construction',
+    description: 'Vibreurs à béton, Aiguilles vibrantes',
+    icon: '🏗️',
+    color: '#D97706'
+  },
+  {
+    id: 'pumps',
+    name: 'Pompes & Eau',
+    slug: 'pumps',
+    description: 'Pompes à eau, Pulvérisateurs',
+    icon: '💧',
+    color: '#06B6D4'
+  },
+  {
     id: 'safety',
     name: 'Sécurité',
     slug: 'safety',
@@ -72,6 +120,14 @@ const categories = [
     description: 'Caisses à outils, Armoires, Coffrets',
     icon: '🧰',
     color: '#14B8A6'
+  },
+  {
+    id: 'accessories',
+    name: 'Accessoires',
+    slug: 'accessories',
+    description: 'Batteries, Chargeurs, Lames, Disques',
+    icon: '🪛',
+    color: '#4F46E5'
   }
 ]
 
@@ -712,6 +768,241 @@ const products = [
     images: '["/products/ceinture.jpg"]',
     features: '["Régtable","Multi pochettes","Durable","Confortable"]',
     categoryId: 'storage'
+  },
+  // Cordless Tools - Outils Sans Fil
+  {
+    name: 'Perceuse visseuse sans fil 20V',
+    slug: 'perceuse-sans-fil-20v',
+    description: 'Perceuse visseuse professionnelle sans fil 20V. Moteur brushless. Couple 45Nm.',
+    price: 149.99,
+    comparePrice: 199.99,
+    sku: 'CORD-DRL-001',
+    stock: 80,
+    images: '["/products/cordless-drill.jpg"]',
+    features: '["20V","45Nm","Brushless","2 batteries"]',
+    categoryId: 'cordless-tools'
+  },
+  {
+    name: 'Clé à chocs sans fil 20V',
+    slug: 'cle-chocs-sans-fil',
+    description: 'Clé à chocs professionnelle sans fil. Couple max 400Nm. 3 vitesses.',
+    price: 179.99,
+    comparePrice: 229.99,
+    sku: 'CORD-IMP-001',
+    stock: 50,
+    images: '["/products/cordless-impact.jpg"]',
+    features: '["20V","400Nm","3 vitesses","LED"]',
+    categoryId: 'cordless-tools'
+  },
+  {
+    name: 'Scie circulaire sans fil 185mm',
+    slug: 'scie-circulaire-sans-fil',
+    description: 'Scie circulaire professionnelle sans fil 185mm. Profondeur 65mm à 90°.',
+    price: 159.99,
+    comparePrice: 199.99,
+    sku: 'CORD-SAW-001',
+    stock: 40,
+    images: '["/products/cordless-saw.jpg"]',
+    features: '["185mm","65mm profondeur","Sans fil","Guide parallèle"]',
+    categoryId: 'cordless-tools'
+  },
+  // Air Tools - Outils à Air
+  {
+    name: 'Compresseur d\'air 24L',
+    slug: 'compresseur-24l',
+    description: 'Compresseur d\'air professionnel 24L. Moteur 2HP. Puissance 1500W.',
+    price: 199.99,
+    comparePrice: 279.99,
+    sku: 'AIR-COMP-001',
+    stock: 30,
+    images: '["/products/compressor.jpg"]',
+    features: '["24L","2HP","1500W","Silent"]',
+    categoryId: 'air-tools'
+  },
+  {
+    name: 'Clé à chocs pneumatique 1/2"',
+    slug: 'cle-chocs-pneuma',
+    description: 'Clé à chocs pneumatique professionnelle 1/2". Couple 1500Nm.',
+    price: 89.99,
+    comparePrice: 119.99,
+    sku: 'AIR-WREN-001',
+    stock: 60,
+    images: '["/products/air-wrench.jpg"]',
+    features: '["1/2\"","1500Nm","6 positions","Carross aluminium"]',
+    categoryId: 'air-tools'
+  },
+  {
+    name: 'Pistolet de peinture HVLP',
+    slug: 'pistolet-peinture',
+    description: 'Pistolet de peinture professionnel HVLP. Réservoir 1.3L. Turbine intégrée.',
+    price: 79.99,
+    comparePrice: 109.99,
+    sku: 'AIR-GUN-001',
+    stock: 45,
+    images: '["/products/paint-gun.jpg"]',
+    features: '["HVLP","1.3L","Turbine","Réglage jet"]',
+    categoryId: 'air-tools'
+  },
+  // Welding - Soudeuse
+  {
+    name: 'Machine à souder MMA 200A',
+    slug: 'machine-souder-mma',
+    description: 'Machine à souder professionnelle MMA 200A. Inverseur IGBT. Fonction anti-stick.',
+    price: 249.99,
+    comparePrice: 329.99,
+    sku: 'WELD-MMA-001',
+    stock: 25,
+    images: '["/products/welder.jpg"]',
+    features: '["200A","IGBT","Anti-stick","VRD"]',
+    categoryId: 'welding'
+  },
+  {
+    name: 'Masque de soudure automatique',
+    slug: 'masque-soudure-auto',
+    description: 'Masque de soudure automatique LCD. Nuance 9-13. Temps de réaction 1/30000s.',
+    price: 59.99,
+    comparePrice: 79.99,
+    sku: 'WELD-MASK-001',
+    stock: 100,
+    images: '["/products/weld-mask.jpg"]',
+    features: '["LCD","9-13","1/30000s","Solar"]',
+    categoryId: 'welding'
+  },
+  {
+    name: 'Electrodes de soudure 3.2mm',
+    slug: 'electrodes-soudure',
+    description: 'Boîte d\'électrodes de soudure 3.2mm. 5kg. Rutile pour acier doux.',
+    price: 29.99,
+    comparePrice: 39.99,
+    sku: 'WELD-ROD-001',
+    stock: 200,
+    images: '["/products/electrodes.jpg"]',
+    features: '["3.2mm","5kg","Rutile","Acier doux"]',
+    categoryId: 'welding'
+  },
+  // Generators - Générateurs
+  {
+    name: 'Groupe électrogène 3000W',
+    slug: 'groupe-electrogene-3000',
+    description: 'Groupe électrogène professionnel 3000W. Moteur 7HP. Démarrage électrique.',
+    price: 499.99,
+    comparePrice: 649.99,
+    sku: 'GEN-3000-001',
+    stock: 15,
+    images: '["/products/generator.jpg"]',
+    features: '["3000W","7HP","Electrique","AVR"]',
+    categoryId: 'generators'
+  },
+  {
+    name: 'Groupe électrogène inverter 2000W',
+    slug: 'groupe-inverter-2000',
+    description: 'Groupe électrogène inverter silencieux 2000W. Technologie inverter. Mode Eco.',
+    price: 399.99,
+    comparePrice: 499.99,
+    sku: 'GEN-INV-001',
+    stock: 20,
+    images: '["/products/inverter.jpg"]',
+    features: '["2000W","Inverter","Silencieux","Eco mode"]',
+    categoryId: 'generators'
+  },
+  // Construction
+  {
+    name: 'Vibreur à béton électrique',
+    slug: 'vibreur-beton',
+    description: 'Vibreur à béton professionnel 1500W. Aiguille 35mm. Flexible 6m.',
+    price: 189.99,
+    comparePrice: 249.99,
+    sku: 'CONST-VIB-001',
+    stock: 25,
+    images: '["/products/vibrator.jpg"]',
+    features: '["1500W","35mm","6m flexible","Professionnel"]',
+    categoryId: 'construction'
+  },
+  {
+    name: 'Aiguille vibranteuse 35mm',
+    slug: 'aiguille-vibranteuse',
+    description: 'Aiguille vibranteuse professionnelle 35mm. Pour béton et chape.',
+    price: 89.99,
+    comparePrice: 119.99,
+    sku: 'CONST-AIG-001',
+    stock: 40,
+    images: '["/products/needle.jpg"]',
+    features: '["35mm","Flexible","Manche isolant"]',
+    categoryId: 'construction'
+  },
+  // Pumps - Pompes
+  {
+    name: 'Pompe à eau submersible 750W',
+    slug: 'pompe-eau-submersible',
+    description: 'Pompe submersible professionnelle 750W. Débit 15m3/h. Profondeur 20m.',
+    price: 129.99,
+    comparePrice: 169.99,
+    sku: 'PUMP-SUB-001',
+    stock: 35,
+    images: '["/projects/pump.jpg"]',
+    features: '["750W","15m3/h","20m profondeur","Inox"]',
+    categoryId: 'pumps'
+  },
+  {
+    name: 'Pompe de surface 1300W',
+    slug: 'pompe-surface',
+    description: 'Pompe de surface automatique 1300W. Débit 4.5m3/h. Pression 4 bar.',
+    price: 99.99,
+    comparePrice: 139.99,
+    sku: 'PUMP-SUR-001',
+    stock: 50,
+    images: '["/products/surface-pump.jpg"]',
+    features: '["1300W","4.5m3/h","4 bar","Automatique"]',
+    categoryId: 'pumps'
+  },
+  // Accessories - Accessoires
+  {
+    name: 'Batterie 20V 5Ah',
+    slug: 'batterie-20v-5ah',
+    description: 'Batterie lithium-ion professionnelle 20V 5Ah. Compatible outils INGCO.',
+    price: 59.99,
+    comparePrice: 79.99,
+    sku: 'ACC-BAT-001',
+    stock: 150,
+    images: '["/products/battery.jpg"]',
+    features: '["20V","5Ah","Li-Ion","LED indicateur"]',
+    categoryId: 'accessories'
+  },
+  {
+    name: 'Chargeur rapide 20V',
+    slug: 'chargeur-rapide',
+    description: 'Chargeur rapide professionnel 20V. Temps de charge 45min. Universitél.',
+    price: 39.99,
+    comparePrice: 49.99,
+    sku: 'ACC-CHG-001',
+    stock: 100,
+    images: '["/products/charger.jpg"]',
+    features: '["20V","45min","Universel","Protection"]',
+    categoryId: 'accessories'
+  },
+  {
+    name: 'Disque diamanté 230mm',
+    slug: 'disque-diamante',
+    description: 'Disque diamanté professionnel pour meuleuse. Segment continu. Coupe humide.',
+    price: 24.99,
+    comparePrice: 34.99,
+    sku: 'ACC-DIA-001',
+    stock: 200,
+    images: '["/products/diamond-disc.jpg"]',
+    features: '["230mm","Segment","Humide","Turbo"]',
+    categoryId: 'accessories'
+  },
+  {
+    name: 'Foret SDS Plus 10mm',
+    slug: 'foret-sds-plus',
+    description: 'Foret SDS Plus professionnel 10mm. Carbure tungstène. Longueur 210mm.',
+    price: 14.99,
+    comparePrice: 19.99,
+    sku: 'ACC-DRL-001',
+    stock: 300,
+    images: '["/products/drill-bit.jpg"]',
+    features: '["SDS Plus","10mm","Carbure","210mm"]',
+    categoryId: 'accessories'
   }
 ]
 
@@ -1051,6 +1342,227 @@ Toutes nos formations délivrent un certificat reconnu.`,
     published: true,
     featured: false,
     categoryId: 'power-tools'
+  },
+  // Cordless Tools Blog Posts
+  {
+    title: 'Guide complet des outils sans fil 20V',
+    slug: 'guide-outils-sans-fil-20v',
+    content: `Les outils sans fil ont révolutionné le travail des professionnels. Voici tout ce que vous devez savoir.
+
+## Pourquoi choisir le 20V?
+
+### Avantages principaux:
+- Liberté de mouvement sans cordon
+- Puissance équivalente aux outils filaires
+- Autonomie suffisante pour une journée de travail
+
+## Les essentiels:
+1. Perceuse visseuse
+2. Clé à chocs
+3. Scie circulaire
+4. Meuleuse
+
+## Entretien des batteries:
+- Température de stockage idéale: 15-25°C
+- Ne pas laisser décharger complètement
+- Utiliser le chargeur adapté`,
+    excerpt: 'Tout savoir sur les outils sans fil 20V pour professionnels.',
+    image: '/blog/cordless-tools.jpg',
+    author: 'Équipe E-Outilles',
+    category: 'Outils Sans Fil',
+    published: true,
+    featured: true,
+    categoryId: 'cordless-tools'
+  },
+  // Air Tools Blog Posts
+  {
+    title: 'Compresseur d\'air: Guide d\'achat',
+    slug: 'guide-achat-compresseur',
+    content: `Choisir le bon compresseur d'air est essentiel pour vos travaux.
+
+## Critères de choix:
+
+### Volume du réservoir:
+- 24L: Usage domestique
+- 50L: Usage professionnel intensif
+- 100L+: Atelier professionnel
+
+### Puissance:
+- 2HP: Travaux légers
+- 3HP: Usage professionnel
+- 5HP+: Production industrielle
+
+## Entretien:
+- Vidanger l'eau chaque semaine
+- Vérifier le niveau d'huile (modèles oil-less)
+- Nettoyer les filtres régulièrement`,
+    excerpt: 'Comment choisir votre compresseur d\'air professionnel.',
+    image: '/blog/compressor-guide.jpg',
+    author: 'Équipe E-Outilles',
+    category: 'Outils à Air',
+    published: true,
+    featured: false,
+    categoryId: 'air-tools'
+  },
+  // Welding Blog Posts
+  {
+    title: 'Initiation à la soudure MMA',
+    slug: 'initiation-soudure-mma',
+    content: `La soudure MMA (Manual Metal Arc) est accessible à tous avec le bon équipement.
+
+## Matériel nécessaire:
+- Machine à souder MMA
+- Electrodes rutile
+- Masque à soudure automatique
+- Gants et tablier de soudure
+
+## Paramètres de soudure:
+- Électrode 2.5mm: 60-80A
+- Électrode 3.2mm: 80-120A
+- Électrode 4mm: 120-160A
+
+## Conseils:
+1. Sempre nettoyer les pièces
+2. Maintenir un arc court
+3. Baguette perpendiculaire`,
+    excerpt: 'Guide pour débutants en soudure MMA.',
+    image: '/blog/welding-guide.jpg',
+    author: 'Équipe E-Outilles',
+    category: 'Soudeuse',
+    published: true,
+    featured: false,
+    categoryId: 'welding'
+  },
+  // Generators Blog Posts
+  {
+    title: 'Groupe électrogène: Quelle puissance?',
+    slug: 'choisir-groupe-electrogene',
+    content: `Bien choisir la puissance de votre générateur est crucial.
+
+## Calcul de la puissance:
+1. Lister tous les appareils
+2. Additionner les puissances
+3. Ajouter 20% de marge
+
+## Types de générateurs:
+- Conventionnel: Prix attractif
+- Inverter: Sortie stable pour électronique
+- AVR: Régulation automatique de tension
+
+## Utilisation:
+- Chantier: 3000-5000W
+- Maison: 5000-10000W
+- Professionnel: 10000W+`,
+    excerpt: 'Comment choisir la puissance de votre générateur.',
+    image: '/blog/generator-guide.jpg',
+    author: 'Équipe E-Outilles',
+    category: 'Générateurs',
+    published: true,
+    featured: false,
+    categoryId: 'generators'
+  },
+  // Garden Blog Posts
+  {
+    title: 'Entretien de votre tronçonneuse',
+    slug: 'entretien-tronconneuse',
+    content: `Un bon entretien prolonge la vie de votre tronçonneuse et garantit votre sécurité.
+
+## Entretien régulier:
+- Affûter la chaîne tous les 3-4 usages
+- Vérifier la tension de chaîne
+- Nettoyer le guide-chaîne
+- Contrôler le graissage
+
+## Carburant:
+- MélangeSP 95+E5 (2%)
+- Ne pas utiliser de carburant ancien
+- Vidanger si non utilisation prolongée`,
+    excerpt: 'Conseils pour entretenir votre tronçonneuse.',
+    image: '/blog/tronconneuse.jpg',
+    author: 'Équipe E-Outilles',
+    category: 'Jardinage',
+    published: true,
+    featured: false,
+    categoryId: 'garden'
+  },
+  // Automotive Blog Posts
+  {
+    title: 'Outils essentiels pour mécanicien',
+    slug: 'outils-mecanicien-essentiels',
+    content: `Voici les outils indispensables pour tout mécanicien professionnel.
+
+## Liste des essentiels:
+1. Clé à chocs pneumatique
+2. Douilles 6 pans métriques
+3. Extracteurs de roulements
+4. Crics hydrauliques 3T
+5. Chandelles de sécurité
+
+## Qualité professionnelle:
+- Chrome vanadium
+- Marquage de qualité
+- Garantie fabricante`,
+    excerpt: 'Les outils indispensables pour mécaniciens.',
+    image: '/blog/mecanicien.jpg',
+    author: 'Équipe E-Outilles',
+    category: 'Automobile',
+    published: true,
+    featured: false,
+    categoryId: 'automotive'
+  },
+  // Safety Blog Posts
+  {
+    title: 'Équipements de protection obligatoires',
+    slug: 'epis-obligatoires-chantier',
+    content: `La sécurité sur chantier est primordiale. Voici les EPI obligatoires.
+
+## EPI obligatoires:
+- Casque de sécurité (EN397)
+- Chaussures de sécurité (S1P minimum)
+- Gants adaptés au travail
+- Lunettes de protection
+- Gilet haute visibilité
+
+## Normes à connaître:
+- EN397: Casques
+- EN20345: Chaussures
+- EN388: Gants
+- EN166: Lunettes`,
+    excerpt: 'Les équipements de protection individuelle obligatoires.',
+    image: '/blog/securite.jpg',
+    author: 'Équipe E-Outilles',
+    category: 'Sécurité',
+    published: true,
+    featured: false,
+    categoryId: 'safety'
+  },
+  // Accessories Blog Posts
+  {
+    title: 'Bien choisir ses accessoires d\'outils',
+    slug: 'choisir-accessoires-outils',
+    content: `La qualité des accessoires impacte directement vos résultats.
+
+## Batteries:
+- Choisir la capacité adaptée
+- Privilégier l'original
+- Vérifier la compatibilité
+
+## Disques et forets:
+- Adapter au matériau
+- Vérifier les normes
+- Ne pas négliger la qualité
+
+## Entretien:
+- Stocker dans un endroit sec
+- Protéger des chocs
+- Remplacer quand usé`,
+    excerpt: 'Comment choisir les bons accessoires pour vos outils.',
+    image: '/blog/accessories.jpg',
+    author: 'Équipe E-Outilles',
+    category: 'Accessoires',
+    published: true,
+    featured: false,
+    categoryId: 'accessories'
   }
 ]
 
