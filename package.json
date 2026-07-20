@@ -3,14 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "prisma": {
-    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+    "seed": "dotenv -e .env -- ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   },
   "scripts": {
     "dev": "next dev --port 3003",
     "build": "next build",
     "start": "next start --port 3003",
     "lint": "next lint",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "db:push": "dotenv -e .env -- npx prisma db push",
+    "db:seed": "dotenv -e .env -- npx prisma db seed",
+    "db:reset": "dotenv -e .env -- npx prisma migrate reset --force"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
