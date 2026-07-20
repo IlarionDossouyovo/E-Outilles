@@ -169,10 +169,12 @@ export default function Home() {
             <div className="hidden md:flex items-center gap-8">
               <a href="#categories" className="text-gray-300 hover:text-ingco-yellow transition-colors">Catégories</a>
               <a href="#products" className="text-gray-300 hover:text-ingco-yellow transition-colors">Produits</a>
+              <Link href="/revendeurs" className="text-gray-300 hover:text-ingco-yellow transition-colors">Revendeurs</Link>
+              <Link href="/formations" className="text-gray-300 hover:text-ingco-yellow transition-colors">Formations</Link>
+              <Link href="/vendeur" className="text-gray-300 hover:text-ingco-yellow transition-colors">Vendeur</Link>
               <Link href="/chat" className="text-gray-300 hover:text-ingco-yellow transition-colors">💬 Assistant</Link>
-              <Link href="/about" className="text-gray-300 hover:text-ingco-yellow transition-colors">À propos</Link>
               <Link href="/contact" className="text-gray-300 hover:text-ingco-yellow transition-colors">Contact</Link>
-              <Link href="/admin" className="text-gray-300 hover:text-ingco-yellow transition-colors">Tableau de bord</Link>
+              <Link href="/admin" className="text-gray-300 hover:text-ingco-yellow transition-colors">Admin</Link>
               <Link href="/cart" className="bg-ingco-yellow text-ingco-black px-5 py-2 rounded-lg font-semibold hover:bg-yellow-400 transition-colors">
                 Commander
               </Link>
@@ -198,10 +200,12 @@ export default function Home() {
             <div className="px-4 py-4 space-y-3">
               <a href="#categories" className="block text-gray-300 hover:text-ingco-yellow" onClick={() => setMobileMenuOpen(false)}>Catégories</a>
               <a href="#products" className="block text-gray-300 hover:text-ingco-yellow" onClick={() => setMobileMenuOpen(false)}>Produits</a>
+              <Link href="/revendeurs" className="block text-gray-300 hover:text-ingco-yellow">Revendeurs</Link>
+              <Link href="/formations" className="block text-gray-300 hover:text-ingco-yellow">Formations</Link>
+              <Link href="/vendeur" className="block text-gray-300 hover:text-ingco-yellow">Vendeur</Link>
               <Link href="/chat" className="block text-gray-300 hover:text-ingco-yellow">💬 Assistant</Link>
-              <Link href="/about" className="block text-gray-300 hover:text-ingco-yellow">À propos</Link>
               <Link href="/contact" className="block text-gray-300 hover:text-ingco-yellow">Contact</Link>
-              <Link href="/admin" className="block text-gray-300 hover:text-ingco-yellow">Tableau de bord</Link>
+              <Link href="/admin" className="block text-gray-300 hover:text-ingco-yellow">Admin</Link>
               <Link href="/cart" className="w-full block text-center bg-ingco-yellow text-ingco-black px-5 py-2 rounded-lg font-semibold">
                 Commander
               </Link>
