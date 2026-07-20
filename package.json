@@ -6,10 +6,11 @@
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   },
   "scripts": {
-    "dev": "next dev --port 3003",
-    "build": "next build",
-    "start": "next start --port 3003",
-    "lint": "next lint"
+    "dev": "dotenv -e .env -- next dev --port 3003",
+    "build": "dotenv -e .env -- next build",
+    "start": "dotenv -e .env -- next start --port 3003",
+    "lint": "next lint",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
