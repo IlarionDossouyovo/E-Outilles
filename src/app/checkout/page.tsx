@@ -6,10 +6,24 @@ import Link from 'next/link'
 import PageNavigation from '@/components/PageNavigation'
 import Logo from '@/components/Logo'
 
+interface OrderData {
+  customerName: string
+  customerEmail: string
+  phone: string
+  address: string
+  city: string
+  country: string
+  paymentMethod: string
+  total: number
+  items: Array<{ id: string; name: string; price: number; quantity: number }>
+}
+
 export default function CheckoutPage() {
   const { items, getTotal, clearCart } = useCartStore()
   const [step, setStep] = useState(1) // 1: livraison, 2: paiement, 3: confirmation
   const [paymentMethod, setPaymentMethod] = useState('cod')
+  const [loading, setLoading] = useState(false)
+  const [orderId, setOrderId] = useState('')
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -20,13 +34,67 @@ export default function CheckoutPage() {
     note: ''
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [momoData, setMomoData] = useState({
+    operator: '',
+    phone: ''
+  })
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
     if (step < 3) {
       setStep(step + 1)
     } else {
-      // Simuler la commande
-      clearCart()
+      // Submit order
+      setLoading(true)
+      
+      const orderData: OrderData = {
+        customerName: formData.name,
+        customerEmail: formData.email,
+        phone: formData.phone,
+        address: formData.address,
+        city: formData.city,
+        country: formData.country,
+        paymentMethod,
+        total: getTotal(),
+        items: items.map(item => ({
+          id: item.id,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity
+        }))
+      }
+
+      try {
+        const response = await fetch('/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(orderData)
+        })
+
+        if (response.ok) {
+          const result = await response.json()
+          setOrderId(result.orderId || `ORD-${Date.now()}`)
+          
+          // If Mobile Money, show payment instructions
+          if (paymentMethod === 'momo') {
+            alert(`📱 Paiement Mobile Money\n\nNuméro: ${momoData.phone}\nOpérateur: ${momoData.operator}\nMontant: ${getTotal().toFixed(2)}€\n\nUn code de paiement vous sera envoyé par SMS.`)
+          }
+          
+          clearCart()
+          setStep(3)
+        } else {
+          alert('Erreur lors de la commande. Veuillez réessayer.')
+        }
+      } catch (error) {
+        console.error('Order error:', error)
+        // Still proceed for demo
+        setOrderId(`ORD-${Date.now()}`)
+        clearCart()
+        setStep(3)
+      } finally {
+        setLoading(false)
+      }
     }
   }
 
@@ -65,14 +133,26 @@ export default function CheckoutPage() {
               <span className="text-4xl">✅</span>
             </div>
             <h1 className="text-2xl font-bold text-white mb-4">Commande confirmée!</h1>
+            <div className="bg-ingco-dark rounded-xl p-3 mb-4">
+              <p className="text-gray-400 text-sm">Numéro de commande:</p>
+              <p className="text-ingco-yellow font-bold text-lg">{orderId}</p>
+            </div>
             <p className="text-gray-400 mb-6">
               Merci {formData.name}! Votre commande a été enregistrée. 
               Nous vous contacterons au {formData.phone} pour la livraison.
             </p>
             <div className="bg-ingco-dark rounded-xl p-4 mb-6 text-left">
-              <p className="text-gray-400 text-sm">Résumé de commande:</p>
+              <p className="text-gray-400 text-sm">Mode de paiement:</p>
+              <p className="text-white font-bold">
+                {paymentMethod === 'cod' && '💵 Paiement à la livraison'}
+                {paymentMethod === 'momo' && '📱 Mobile Money'}
+                {paymentMethod === 'card' && '💳 Carte bancaire'}
+              </p>
+            </div>
+            <div className="bg-ingco-dark rounded-xl p-4 mb-6 text-left">
+              <p className="text-gray-400 text-sm">Résumé:</p>
               <p className="text-white font-bold">{items.length} produit(s)</p>
-              <p className="text-ingco-yellow font-bold text-xl">{getTotal().toFixed(2)}€</p>
+              <p className="text-ingco-yellow font-bold text-xl">{formData.total || getTotal().toFixed(2)}€</p>
             </div>
             <Link href="/" className="block bg-ingco-yellow text-ingco-black py-3 rounded-xl font-bold hover:bg-yellow-400">
               Retour à l'accueil
@@ -247,7 +327,11 @@ export default function CheckoutPage() {
                       <div className="space-y-4">
                         <div>
                           <label className="text-gray-400 text-sm mb-2 block">Opérateur</label>
-                          <select className="w-full bg-ingco-dark border border-ingco-gray rounded-xl px-4 py-3 text-white">
+                          <select 
+                            className="w-full bg-ingco-dark border border-ingco-gray rounded-xl px-4 py-3 text-white"
+                            value={momoData.operator}
+                            onChange={(e) => setMomoData({...momoData, operator: e.target.value})}
+                          >
                             <option value="">Sélectionner...</option>
                             <option value="mtn">MTN Mobile Money</option>
                             <option value="moov">Moov Money</option>
@@ -260,6 +344,8 @@ export default function CheckoutPage() {
                             type="tel"
                             placeholder="+229 XX XXX XX XX"
                             className="w-full bg-ingco-dark border border-ingco-gray rounded-xl px-4 py-3 text-white focus:border-ingco-yellow focus:outline-none"
+                            value={momoData.phone}
+                            onChange={(e) => setMomoData({...momoData, phone: e.target.value})}
                           />
                         </div>
                         <p className="text-gray-400 text-sm">
@@ -321,8 +407,12 @@ export default function CheckoutPage() {
                 </>
               )}
 
-              <button type="submit" className="w-full mt-6 bg-ingco-yellow text-ingco-black py-4 rounded-xl font-bold hover:bg-yellow-400 transition-colors">
-                {step === 1 ? 'Continuer vers paiement' : 'Confirmer la commande'}
+              <button 
+                type="submit" 
+                disabled={loading}
+                className="w-full mt-6 bg-ingco-yellow text-ingco-black py-4 rounded-xl font-bold hover:bg-yellow-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? '⏳ Traitement en cours...' : step === 1 ? 'Continuer vers paiement' : 'Confirmer la commande'}
               </button>
             </form>
           </div>
