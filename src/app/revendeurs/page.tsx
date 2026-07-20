@@ -121,8 +121,7 @@ export default function RevendeursPage() {
             <div className="hidden md:flex items-center gap-8">
               <Link href="/" className="text-gray-300 hover:text-ingco-yellow transition-colors">Accueil</Link>
               <Link href="/categories" className="text-gray-300 hover:text-ingco-yellow transition-colors">Catégories</Link>
-              <Link href="/search" className="text-gray-300 hover:text-ingco-yellow transition-colors">Produits</Link>
-              <Link href="/chat" className="text-gray-300 hover:text-ingco-yellow transition-colors">Assistant</Link>
+              <Link href="/formations" className="text-gray-300 hover:text-ingco-yellow transition-colors">Formations</Link>
               <Link href="/cart" className="text-gray-300 hover:text-ingco-yellow transition-colors">🛒</Link>
             </div>
           </div>
@@ -349,12 +348,12 @@ export default function RevendeursPage() {
             Notre équipe commerciale est disponible pour répondre à toutes vos questions
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Link href="/contact" className="bg-ingco-yellow text-ingco-black px-8 py-3 rounded-xl font-bold hover:bg-yellow-400 transition-colors">
+            <Link href="/formations" className="bg-ingco-yellow text-ingco-black px-8 py-3 rounded-xl font-bold hover:bg-yellow-400 transition-colors">
+              Voir les Formations
+            </Link>
+            <Link href="/contact" className="bg-ingco-gray text-white px-8 py-3 rounded-xl font-bold hover:bg-gray-700 transition-colors">
               Nous Contacter
             </Link>
-            <a href="tel:+22900000000" className="bg-ingco-gray text-white px-8 py-3 rounded-xl font-bold hover:bg-gray-700 transition-colors">
-              📞 +229 00 00 00 00
-            </a>
           </div>
         </div>
       </section>
