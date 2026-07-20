@@ -2,39 +2,71 @@ import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
-// Categories data
+// Categories data - INGCO Product Categories
 const categories = [
   {
-    id: 'construction',
-    name: 'Construction & BTP',
-    slug: 'construction',
-    description: 'Outils pour le bâtiment et les travaux publics',
-    icon: '🏗️',
-    color: '#FF6B35'
-  },
-  {
-    id: 'electricite',
-    name: 'Électricité',
-    slug: 'electricite',
-    description: 'Outils et équipements électriques',
+    id: 'power-tools',
+    name: 'Outils Électriques',
+    slug: 'power-tools',
+    description: 'Perceuses, Meuleuses, Scies, Marteau perforateur',
     icon: '⚡',
-    color: '#FFD700'
+    color: '#EF4444'
   },
   {
-    id: 'garage',
-    name: 'Garage Auto',
-    slug: 'garage',
-    description: 'Outils pour garage et automobile',
-    icon: '🚗',
-    color: '#4ECDC4'
+    id: 'hand-tools',
+    name: 'Outils à Main',
+    slug: 'hand-tools',
+    description: 'Clés, Tournevis, Pinces, Marteaux',
+    icon: '🔧',
+    color: '#3B82F6'
   },
   {
-    id: 'jardinage',
+    id: 'measuring',
+    name: 'Mesure & Niveau',
+    slug: 'measuring',
+    description: 'Niveaux laser, Mètres, Détecteurs',
+    icon: '📏',
+    color: '#8B5CF6'
+  },
+  {
+    id: 'garden',
     name: 'Jardinage',
-    slug: 'jardinage',
-    description: 'Outils pour le jardin',
+    slug: 'garden',
+    description: 'Tondeuses, Tronçonneuses, Taille-haies',
     icon: '🌿',
-    color: '#95D5B2'
+    color: '#22C55E'
+  },
+  {
+    id: 'automotive',
+    name: 'Automobile',
+    slug: 'automotive',
+    description: 'Crics, Chandelles, Démonte-valves, Extracteurs',
+    icon: '🚗',
+    color: '#F97316'
+  },
+  {
+    id: 'drilling',
+    name: 'Forage & Découpe',
+    slug: 'drilling',
+    description: 'Burins, Scies trépans, Disques',
+    icon: '🔩',
+    color: '#6B7280'
+  },
+  {
+    id: 'safety',
+    name: 'Sécurité',
+    slug: 'safety',
+    description: 'Casques, Gants, Lunettes, Chaussures',
+    icon: '🦺',
+    color: '#EAB308'
+  },
+  {
+    id: 'storage',
+    name: 'Rangement',
+    slug: 'storage',
+    description: 'Caisses à outils, Armoires, Coffrets',
+    icon: '🧰',
+    color: '#14B8A6'
   }
 ]
 
@@ -51,7 +83,7 @@ const products = [
     stock: 45,
     images: '["/products/hik-001.jpg"]',
     features: '["18V Brushless","SDS-Max","3 modes","Frein électronique"]',
-    categoryId: 'construction'
+    categoryId: 'power-tools'
   },
   {
     name: 'Perceuse visseuse à percussion 20V',
@@ -63,7 +95,7 @@ const products = [
     stock: 120,
     images: '["/products/dew-001.jpg"]',
     features: '["20V Li-Ion","85Nm","Brushless","2 vitesses"]',
-    categoryId: 'construction'
+    categoryId: 'power-tools'
   },
   {
     name: 'Niveau laser automatique',
@@ -75,7 +107,7 @@ const products = [
     stock: 67,
     images: '["/products/bos-001.jpg"]',
     features: '["±0.3mm/m","50m portée","Auto-nivellant","Vert"]',
-    categoryId: 'construction'
+    categoryId: 'power-tools'
   },
   // Electricité
   {
@@ -88,7 +120,7 @@ const products = [
     stock: 200,
     images: '["/products/flu-001.jpg"]',
     features: '["True-RMS","NCV","6000 counts","Température"]',
-    categoryId: 'electricite'
+    categoryId: 'measuring'
   },
   {
     name: 'Pince dénudeuse automatique',
@@ -100,7 +132,7 @@ const products = [
     stock: 150,
     images: '["/products/kn-001.jpg"]',
     features: '["0.2-6mm²","Automatique","Réglage précision"]',
-    categoryId: 'electricite'
+    categoryId: 'measuring'
   },
   {
     name: 'Tournevis isolé 1000V',
@@ -112,7 +144,7 @@ const products = [
     stock: 300,
     images: '["/products/wera-001.jpg"]',
     features: '["1000V","6 pièces","IEC 60900","Garantie à vie"]',
-    categoryId: 'electricite'
+    categoryId: 'measuring'
   },
   // Garage
   {
@@ -125,7 +157,7 @@ const products = [
     stock: 80,
     images: '["/products/ing-001.jpg"]',
     features: '["1/2\"","1500Nm","6 positions","Carross aluminium"]',
-    categoryId: 'garage'
+    categoryId: 'automotive'
   },
   {
     name: 'Cric rouleur 3T',
@@ -137,7 +169,7 @@ const products = [
     stock: 60,
     images: '["/products/rav-001.jpg"]',
     features: '["3 Tonnes","75-510mm","Hydraulique","Roulettes nylon"]',
-    categoryId: 'garage'
+    categoryId: 'automotive'
   },
   {
     name: 'Kit clés mixtes 40 pièces',
@@ -149,7 +181,7 @@ const products = [
     stock: 180,
     images: '["/products/sta-001.jpg"]',
     features: '["40 pièces","CrV","Métriques","Pouces"]',
-    categoryId: 'garage'
+    categoryId: 'automotive'
   },
   // Jardinage
   {
@@ -162,7 +194,7 @@ const products = [
     stock: 35,
     images: '["/products/hus-001.jpg"]',
     features: '["165cc","45cm","60L bac","Autopropulsée"]',
-    categoryId: 'jardinage'
+    categoryId: 'garden'
   },
   {
     name: 'Taille-haie électrique 60cm',
@@ -174,7 +206,7 @@ const products = [
     stock: 70,
     images: '["/products/stih-001.jpg"]',
     features: '["60cm","450W","Lames laser","Double action"]',
-    categoryId: 'jardinage'
+    categoryId: 'garden'
   },
   {
     name: 'Scie de précision GT Max 52V',
@@ -186,7 +218,7 @@ const products = [
     stock: 25,
     images: '["/products/echo-001.jpg"]',
     features: '["52V","75cm guide","Sans fil","Coupe multi-angle"]',
-    categoryId: 'jardinage'
+    categoryId: 'garden'
   },
   // Additional Construction products
   {
@@ -199,7 +231,7 @@ const products = [
     stock: 55,
     images: '["/products/meuleuse-230.jpg"]',
     features: '["2300W","230mm","Variateur","Protection poussières"]',
-    categoryId: 'construction'
+    categoryId: 'power-tools'
   },
   {
     name: 'Scie circulaire 1900W',
@@ -211,7 +243,7 @@ const products = [
     stock: 40,
     images: '["/products/scie-circulaire.jpg"]',
     features: '["1900W","66mm coupe","190mm disque","Guide parallèle"]',
-    categoryId: 'construction'
+    categoryId: 'power-tools'
   },
   {
     name: 'Escabeau professionnel 8 marches',
@@ -223,7 +255,7 @@ const products = [
     stock: 80,
     images: '["/products/escabeau.jpg"]',
     features: '["8 marches","3.5m hauteur","150kg charge","Antidérapant"]',
-    categoryId: 'construction'
+    categoryId: 'power-tools'
   },
   {
     name: 'Disqueuse pneumatique droite',
@@ -235,7 +267,7 @@ const products = [
     stock: 65,
     images: '["/products/disqueuse-pneu.jpg"]',
     features: '["22000 tr/min","50mm disque","Pneumatique","Poignée latérale"]',
-    categoryId: 'construction'
+    categoryId: 'power-tools'
   },
   {
     name: 'Coffret burins SDS-Plus 10 pièces',
@@ -247,7 +279,7 @@ const products = [
     stock: 120,
     images: '["/products/burins-sds.jpg"]',
     features: '["10 pièces","SDS-Plus","Pour béton","Longue durée"]',
-    categoryId: 'construction'
+    categoryId: 'power-tools'
   },
   // Additional Electricité products
   {
@@ -260,7 +292,7 @@ const products = [
     stock: 35,
     images: '["/products/pince-sertir.jpg"]',
     features: '["16-300mm²","Tête rotative","Hydraulique","Mallette"]',
-    categoryId: 'electricite'
+    categoryId: 'measuring'
   },
   {
     name: 'Testeur de tension sans contact',
@@ -272,7 +304,7 @@ const products = [
     stock: 200,
     images: '["/products/testeur-ncv.jpg"]',
     features: '["12-1000V","NCV","LED","Bip sonore"]',
-    categoryId: 'electricite'
+    categoryId: 'measuring'
   },
   {
     name: 'Pince ampèremétrique True-RMS',
@@ -284,7 +316,7 @@ const products = [
     stock: 45,
     images: '["/products/pince-amp.jpg"]',
     features: '["1000A AC/DC","True-RMS","TRMS","Écran rétro"]',
-    categoryId: 'electricite'
+    categoryId: 'measuring'
   },
   {
     name: 'Câble de testerman 5m',
@@ -296,7 +328,7 @@ const products = [
     stock: 250,
     images: '["/products/cables-test.jpg"]',
     features: '["5m","Rouge/Noir","4mm bananes","Qualité pro"]',
-    categoryId: 'electricite'
+    categoryId: 'measuring'
   },
   {
     name: 'Lampe torche inspection LED',
@@ -308,7 +340,7 @@ const products = [
     stock: 150,
     images: '["/products/lampe-led.jpg"]',
     features: '["500 lumens","Rechargeable","Tête flexible","Crochet"]',
-    categoryId: 'electricite'
+    categoryId: 'measuring'
   },
   // Additional Garage products
   {
@@ -321,7 +353,7 @@ const products = [
     stock: 15,
     images: '["/products/presse-20t.jpg"]',
     features: '["20 tonnes","250mm course","1500mm largeur","Hydraulique"]',
-    categoryId: 'garage'
+    categoryId: 'automotive'
   },
   {
     name: 'Démonte-valve pneumatique',
@@ -333,7 +365,7 @@ const products = [
     stock: 90,
     images: '["/products/demonte-valve.jpg"]',
     features: '["Pneumatique","Tous valves","Rapide","Complet"]',
-    categoryId: 'garage'
+    categoryId: 'automotive'
   },
   {
     name: 'Extracteur de roulements 6 pièces',
@@ -345,7 +377,7 @@ const products = [
     stock: 55,
     images: '["/products/extracteur.jpg"]',
     features: '["6 pièces","30-90mm","Acier forgé","3 griffes"]',
-    categoryId: 'garage'
+    categoryId: 'automotive'
   },
   {
     name: 'Jeu de cales d\'épaisseur 24 pièces',
@@ -357,7 +389,7 @@ const products = [
     stock: 100,
     images: '["/products/cales.jpg"]',
     features: '["24 pièces","Métriques","Classe 1","Étui bois"]',
-    categoryId: 'garage'
+    categoryId: 'automotive'
   },
   {
     name: 'Chandelle de sécurité 3T paire',
@@ -369,7 +401,7 @@ const products = [
     stock: 75,
     images: '["/products/chandelles.jpg"]',
     features: '["3T","280-420mm","Paire","Robuste"]',
-    categoryId: 'garage'
+    categoryId: 'automotive'
   },
   // Additional Jardinage products
   {
@@ -382,7 +414,7 @@ const products = [
     stock: 30,
     images: '["/products/souffleur.jpg"]',
     features: '["75cc","900m³/h","50L sac","2 temps"]',
-    categoryId: 'jardinage'
+    categoryId: 'garden'
   },
   {
     name: 'Tronçonneuse thermique 50cm',
@@ -394,7 +426,7 @@ const products = [
     stock: 20,
     images: '["/products/tronconneuse.jpg"]',
     features: '["55cc","50cm","20m/s","EasyStart"]',
-    categoryId: 'jardinage'
+    categoryId: 'garden'
   },
   {
     name: 'Motoculteur thermique 7CV',
@@ -406,7 +438,7 @@ const products = [
     stock: 10,
     images: '["/products/motoculteur.jpg"]',
     features: '["7CV","80cm largeur","4 vitesses","Fraises"]',
-    categoryId: 'jardinage'
+    categoryId: 'garden'
   },
   {
     name: 'Pulvérisateur pressurisé 12L',
@@ -418,7 +450,7 @@ const products = [
     stock: 80,
     images: '["/products/pulverisateur.jpg"]',
     features: '["12L","Lance telescopique","Buse regulable","Joints pro"]',
-    categoryId: 'jardinage'
+    categoryId: 'garden'
   },
   {
     name: 'Sécateur électrique sur batterie',
@@ -430,7 +462,153 @@ const products = [
     stock: 40,
     images: '["/products/secateur.jpg"]',
     features: '["18V","25mm coupe","8h autonomie","Professionnel"]',
-    categoryId: 'jardinage'
+    categoryId: 'garden'
+  },
+  // Safety - Équipements de Protection
+  {
+    name: 'Casque de sécurité ABS',
+    slug: 'casque-securite-abs',
+    description: 'Casque de sécurité professionnel ABS. Protection contre les chocs. Aéré et confortable.',
+    price: 24.99,
+    comparePrice: 34.99,
+    sku: 'SAF-HEL-001',
+    stock: 150,
+    images: '["/products/casque.jpg"]',
+    features: '["ABS","Aéré","Jugulaire","Norme EN397"]',
+    categoryId: 'safety'
+  },
+  {
+    name: 'Gants de travail anti-coupure',
+    slug: 'gants-anti-coupure',
+    description: 'Gants professionnels anti-coupure niveau 5. Protection maximale pour travaux dangereux.',
+    price: 19.99,
+    comparePrice: 29.99,
+    sku: 'SAF-GLO-001',
+    stock: 300,
+    images: '["/products/gants.jpg"]',
+    features: '["Niveau 5","Anti-coupure","Souple","Durable"]',
+    categoryId: 'safety'
+  },
+  {
+    name: 'Lunettes de protection transparentes',
+    slug: 'lunettes-protection',
+    description: 'Lunettes de protection anti-buée traitées. Protection UV et impacts.',
+    price: 12.99,
+    comparePrice: 18.99,
+    sku: 'SAF-GOG-001',
+    stock: 500,
+    images: '["/products/lunettes.jpg"]',
+    features: '["Anti-buée","UV400","Impacts","Légère"]',
+    categoryId: 'safety'
+  },
+  {
+    name: 'Chaussures de sécurité SRC',
+    slug: 'chaussures-securite-src',
+    description: 'Chaussures de sécurité professionnelles SRC. Semelle antidérapante, coque acier.',
+    price: 59.99,
+    comparePrice: 79.99,
+    sku: 'SAF-SHO-001',
+    stock: 100,
+    images: '["/products/chaussures.jpg"]',
+    features: '["SRC","Coque acier","Antidérapante","Semelle coussinée"]',
+    categoryId: 'safety'
+  },
+  {
+    name: 'Gilet réfléchissant haute visibilité',
+    slug: 'gilet-reflechissant',
+    description: 'Gilet haute visibilité jaune fluo avec bandes réfléchissantes. Norme EN471.',
+    price: 14.99,
+    comparePrice: 19.99,
+    sku: 'SAF-VES-001',
+    stock: 200,
+    images: '["/products/gilet.jpg"]',
+    features: '["EN471","2 bandes","Fermeture velcro","Tailles S-3XL"]',
+    categoryId: 'safety'
+  },
+  {
+    name: 'Protection auditive antibruit',
+    slug: 'protection-auditive',
+    description: 'Arceau antibruit SNR 28dB. Réduction du bruit professionnelle.',
+    price: 9.99,
+    comparePrice: 14.99,
+    sku: 'SAF-EAR-001',
+    stock: 250,
+    images: '["/products/ear.jpg"]',
+    features: '["SNR 28dB","Arceau","Régable","Confortable"]',
+    categoryId: 'safety'
+  },
+  // Storage - Rangement et Organisation
+  {
+    name: 'Caisse à outils professionnelle 21 pouces',
+    slug: 'caisse-outils-21',
+    description: 'Caisse à outils robuste 21 pouces. Compartiments ajustables. Résistante aux chocs.',
+    price: 49.99,
+    comparePrice: 69.99,
+    sku: 'STO-BOX-001',
+    stock: 80,
+    images: '["/products/caisse.jpg"]',
+    features: '["21 pouces","Résistante","Compartiments","Fermeture sécurisée"]',
+    categoryId: 'storage'
+  },
+  {
+    name: 'Coffret outils 186 pièces',
+    slug: 'coffret-186-piece',
+    description: 'Coffret complet 186 pièces. Clés, tournevis, pinces. Qualité professionnelle.',
+    price: 129.99,
+    comparePrice: 179.99,
+    sku: 'STO-KIT-001',
+    stock: 45,
+    images: '["/products/coffret.jpg"]',
+    features: '["186 pièces","Chrome vanadium","Sac de transport","Garantie 2 ans"]',
+    categoryId: 'storage'
+  },
+  {
+    name: 'Armoire à outils mobile',
+    slug: 'armoire-mobile',
+    description: 'Armoire à outils sur roulettes. 5 tiroirs. Plateau de travail intégré.',
+    price: 199.99,
+    comparePrice: 279.99,
+    sku: 'STO-CAB-001',
+    stock: 25,
+    images: '["/products/armoire.jpg"]',
+    features: '["5 tiroirs","Roulettes","Plateau","Verrouillable"]',
+    categoryId: 'storage'
+  },
+  {
+    name: 'Valise de transport outils',
+    slug: 'valise-transport',
+    description: 'Valise de transport robuste pour outils électriques. Imperméable et antichoc.',
+    price: 39.99,
+    comparePrice: 54.99,
+    sku: 'STO-CAS-001',
+    stock: 120,
+    images: '["/products/valise.jpg"]',
+    features: '["Imperméable","Antichoc","Poignée","Sangle"]',
+    categoryId: 'storage'
+  },
+  {
+    name: 'Plateau magnétique pour outils',
+    slug: 'plateau-magnetique',
+    description: 'Plateau magnétique puissant pour garder vos outils en place. Surface antidérapante.',
+    price: 29.99,
+    comparePrice: 39.99,
+    sku: 'STO-MAG-001',
+    stock: 90,
+    images: '["/products/magnet.jpg"]',
+    features: '["Magnétique","Antidérapant","Washable","Grand format"]',
+    categoryId: 'storage'
+  },
+  {
+    name: 'Ceinture porte-outils',
+    slug: 'ceinture-porte-outils',
+    description: 'Ceinture professionnelle porte-outils. Multiples pochettes. Réglable.',
+    price: 34.99,
+    comparePrice: 44.99,
+    sku: 'STO-BELT-001',
+    stock: 70,
+    images: '["/products/ceinture.jpg"]',
+    features: '["Régtable","Multi pochettes","Durable","Confortable"]',
+    categoryId: 'storage'
   }
 ]
 
@@ -469,7 +647,7 @@ Chez E-Outille, nous proposons les meilleures marques: Makita, DeWalt, Bosch Pro
     category: 'Construction',
     published: true,
     featured: true,
-    categoryId: 'construction'
+    categoryId: 'power-tools'
   },
   // Electricité
   {
@@ -509,7 +687,7 @@ Nous recommandons les tournevis isolés WERA et les multimètres Fluke pour leur
     category: 'Électricité',
     published: true,
     featured: true,
-    categoryId: 'electricite'
+    categoryId: 'measuring'
   },
   // Garage
   {
@@ -549,7 +727,7 @@ Les marques références: Stanley, Snap-on, Facom.`,
     category: 'Garage',
     published: true,
     featured: true,
-    categoryId: 'garage'
+    categoryId: 'automotive'
   },
   // Jardinage
   {
@@ -587,7 +765,7 @@ Les marques recommandées: Husqvarna, Stihl, Echo.`,
     category: 'Jardinage',
     published: true,
     featured: true,
-    categoryId: 'jardinage'
+    categoryId: 'garden'
   },
   // Additional blog posts - Services
   {
@@ -626,7 +804,7 @@ Chez E-Outilles, nous proposons des tarifs flexibles et un service de livraison 
     category: 'Services',
     published: true,
     featured: false,
-    categoryId: 'construction'
+    categoryId: 'power-tools'
   },
   {
     title: 'Maintenance préventive de vos outils',
@@ -663,7 +841,7 @@ Notre service de maintenance offre un diagnostic gratuit et des pièces authenti
     category: 'Services',
     published: true,
     featured: false,
-    categoryId: 'construction'
+    categoryId: 'power-tools'
   },
   {
     title: 'Guide livraison: Comment ça marche?',
@@ -697,7 +875,7 @@ Vérifiez votre adresse et téléphone pour une livraison rapide!`,
     category: 'Services',
     published: true,
     featured: false,
-    categoryId: 'construction'
+    categoryId: 'power-tools'
   },
   {
     title: 'Formation outils: Optimisez vos compétences',
@@ -734,7 +912,7 @@ Toutes nos formations délivrent un certificat reconnu.`,
     category: 'Services',
     published: true,
     featured: false,
-    categoryId: 'construction'
+    categoryId: 'power-tools'
   },
   {
     title: 'Consultation technique: Besoin d\'avis expert?',
@@ -769,7 +947,7 @@ Toutes nos formations délivrent un certificat reconnu.`,
     category: 'Services',
     published: true,
     featured: false,
-    categoryId: 'construction'
+    categoryId: 'power-tools'
   }
 ]
 

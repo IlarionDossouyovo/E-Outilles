@@ -4,44 +4,84 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Logo from '@/components/Logo'
 
-// Categories data
+// Categories data - INGCO Product Categories
 const demoCategories = [
   { 
-    id: 'construction', 
-    name: 'Construction & BTP', 
-    icon: '🏗️',
-    description: 'Outils pour le bâtiment et travaux publics',
-    slug: 'construction',
-    color: 'bg-orange-500'
-  },
-  { 
-    id: 'electricite', 
-    name: 'Électricité', 
+    id: 'power-tools', 
+    name: 'Outils Électriques', 
     icon: '⚡',
-    description: 'Matériel électrique professionnel',
-    slug: 'electricite',
-    color: 'bg-yellow-500'
+    description: 'Perceuses, Meuleuses, Scies, Marteau perforateur',
+    slug: 'power-tools',
+    color: 'bg-red-500',
+    products: 45
   },
   { 
-    id: 'garage', 
-    name: 'Garage Auto', 
-    icon: '🚗',
-    description: 'Équipement garage et automobile',
-    slug: 'garage',
-    color: 'bg-teal-500'
+    id: 'hand-tools', 
+    name: 'Outils à Main', 
+    icon: '🔧',
+    description: 'Clés, Tournevis, Pinces, Marteaux',
+    slug: 'hand-tools',
+    color: 'bg-blue-500',
+    products: 120
   },
   { 
-    id: 'jardinage', 
+    id: 'measuring', 
+    name: 'Mesure & Niveau', 
+    icon: '📏',
+    description: 'Niveaux laser, Mètres, Détecteurs',
+    slug: 'measuring',
+    color: 'bg-purple-500',
+    products: 28
+  },
+  { 
+    id: 'garden', 
     name: 'Jardinage', 
     icon: '🌿',
-    description: 'Outils pour le jardin',
-    slug: 'jardinage',
-    color: 'bg-green-500'
+    description: 'Tondeuses, Tronçonneuses, Taille-haies',
+    slug: 'garden',
+    color: 'bg-green-500',
+    products: 35
+  },
+  { 
+    id: 'automotive', 
+    name: 'Automobile', 
+    icon: '🚗',
+    description: 'Crics, Chandelles, Démonte-valves, Extracteurs',
+    slug: 'automotive',
+    color: 'bg-orange-500',
+    products: 42
+  },
+  { 
+    id: 'drilling', 
+    name: 'Forage & Découpe', 
+    icon: '🔩',
+    description: 'Burins, Scies trépans, Disques',
+    slug: 'drilling',
+    color: 'bg-gray-500',
+    products: 67
+  },
+  { 
+    id: 'safety', 
+    name: 'Sécurité', 
+    icon: '🦺',
+    description: 'Casques, Gants, Lunettes, Chaussures',
+    slug: 'safety',
+    color: 'bg-yellow-500',
+    products: 55
+  },
+  { 
+    id: 'storage', 
+    name: 'Rangement', 
+    icon: '🧰',
+    description: 'Caisses à outils, Armoires, Coffrets',
+    slug: 'storage',
+    color: 'bg-teal-500',
+    products: 32
   }
 ]
 
 export default function CategoriesPage() {
-  const [activeCategory, setActiveCategory] = useState('construction')
+  const [activeCategory, setActiveCategory] = useState('power-tools')
 
   const currentCategory = demoCategories.find(c => c.id === activeCategory)
 
