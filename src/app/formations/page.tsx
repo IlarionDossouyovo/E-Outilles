@@ -4,6 +4,85 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Logo from '@/components/Logo'
 
+// Vidéos de formation par catégorie
+const videoModules = [
+  {
+    category: 'Outils Électriques',
+    videos: [
+      { title: 'Comment utiliser une perceuse visseuse', duration: '5:30', thumbnail: '🔩' },
+      { title: 'Guide meuleuse angulaire', duration: '7:15', thumbnail: '⚙️' },
+      { title: 'Marteau perforateur: Mode d\'emploi', duration: '10:45', thumbnail: '🔨' }
+    ]
+  },
+  {
+    category: 'Outils Sans Fil',
+    videos: [
+      { title: 'Bien choisir sa batterie 20V', duration: '4:20', thumbnail: '🔋' },
+      { title: 'Entretien des batteries lithium-ion', duration: '6:00', thumbnail: '⚡' }
+    ]
+  },
+  {
+    category: 'Sécurité',
+    videos: [
+      { title: ' EPI obligatoires sur chantier', duration: '8:30', thumbnail: '🦺' },
+      { title: 'Sécurité électrique: Les essentiels', duration: '12:15', thumbnail: '⚡' }
+    ]
+  },
+  {
+    category: 'Jardinage',
+    videos: [
+      { title: 'Entretien tronçonneuse', duration: '9:00', thumbnail: '🌿' },
+      { title: 'Réglage tondeuse thermique', duration: '6:45', thumbnail: '🪥' }
+    ]
+  }
+]
+
+// Ressources écrites (Articles/Tutoriels)
+const writtenResources = [
+  {
+    title: 'Guide complet: Choisir son outil électrique',
+    category: 'Outils Électriques',
+    type: 'Guide PDF',
+    pages: 24,
+    download: '/downloads/guide-outils-electriques.pdf'
+  },
+  {
+    title: 'Catalogue technique INGCO 2026',
+    category: 'Tous produits',
+    type: 'Catalogue',
+    pages: 120,
+    download: '/downloads/catalogue-ingco-2026.pdf'
+  },
+  {
+    title: 'Maintenance préventive des outils',
+    category: 'Technique',
+    type: 'Guide',
+    pages: 18,
+    download: '/downloads/maintenance-preventive.pdf'
+  },
+  {
+    title: 'Sécurité sur les chantiers',
+    category: 'Sécurité',
+    type: 'Guide',
+    pages: 32,
+    download: '/downloads/guide-securite-chantier.pdf'
+  },
+  {
+    title: 'Comparatif batteries 12V vs 20V',
+    category: 'Outils Sans Fil',
+    type: 'Fiche technique',
+    pages: 8,
+    download: '/downloads/comparatif-batteries.pdf'
+  },
+  {
+    title: 'Guide d\'achat: Tronçonneuse',
+    category: 'Jardinage',
+    type: 'Guide',
+    pages: 16,
+    download: '/downloads/guide-tronconneuse.pdf'
+  }
+]
+
 // Données des formations
 const formations = [
   {
@@ -14,6 +93,9 @@ const formations = [
     duration: '2 jours',
     level: 'Débutant',
     price: 'Inclus',
+    videos: 5,
+    articles: 8,
+    pdfs: 3,
     program: [
       'Présentation des 15 catégories de produits',
       'Spécifications techniques détaillées',
@@ -35,6 +117,9 @@ const formations = [
     duration: '3 jours',
     level: 'Avancé',
     price: 'Inclus',
+    videos: 8,
+    articles: 12,
+    pdfs: 5,
     program: [
       'Diagnostic des pannes courantes',
       'Maintenance préventive',
@@ -269,6 +354,148 @@ export default function FormationsPage() {
                   <div className="text-white">{item.event}</div>
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Video Modules */}
+      <section className="py-16 bg-ingco-black">
+        <div className="max-w-7xl mx-auto px-4">
+          <h2 className="text-3xl font-bold text-white text-center mb-4">
+            🎥 Vidéos de Formation
+          </h2>
+          <p className="text-gray-400 text-center mb-12">
+            Apprenez à utiliser les produits INGCO grâce à nos tutoriels vidéo
+          </p>
+          
+          {videoModules.map((module, index) => (
+            <div key={index} className="mb-12">
+              <h3 className="text-xl font-bold text-ingco-yellow mb-4">{module.category}</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {module.videos.map((video, vIndex) => (
+                  <div key={vIndex} className="bg-ingco-gray rounded-xl overflow-hidden hover:scale-105 transition-transform cursor-pointer">
+                    <div className="bg-gradient-to-br from-gray-800 to-gray-900 h-40 flex items-center justify-center">
+                      <div className="text-6xl">{video.thumbnail}</div>
+                    </div>
+                    <div className="p-4">
+                      <h4 className="text-white font-semibold mb-2">{video.title}</h4>
+                      <div className="flex items-center gap-2 text-gray-400 text-sm">
+                        <span>▶</span>
+                        <span>{video.duration}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+          
+          <div className="text-center mt-8">
+            <button className="bg-ingco-yellow text-ingco-black px-8 py-3 rounded-xl font-bold hover:bg-yellow-400 transition-colors">
+              Voir toutes les vidéos
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Downloadable Resources */}
+      <section className="py-16 bg-ingco-gray">
+        <div className="max-w-7xl mx-auto px-4">
+          <h2 className="text-3xl font-bold text-white text-center mb-4">
+            📚 Ressources PDF à Télécharger
+          </h2>
+          <p className="text-gray-400 text-center mb-12">
+            Guides techniques, catalogues et fiches produit
+          </p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {writtenResources.map((resource, index) => (
+              <div key={index} className="bg-ingco-black rounded-xl p-6 hover:border-ingco-yellow border-2 border-transparent transition-colors">
+                <div className="flex items-start gap-4">
+                  <div className="text-4xl">📄</div>
+                  <div>
+                    <h4 className="text-white font-bold mb-2">{resource.title}</h4>
+                    <div className="flex items-center gap-3 text-sm text-gray-400 mb-4">
+                      <span className="bg-ingco-gray px-2 py-1 rounded">{resource.type}</span>
+                      <span>{resource.pages} pages</span>
+                    </div>
+                    <button className="bg-ingco-yellow text-ingco-black px-4 py-2 rounded-lg font-semibold text-sm hover:bg-yellow-400 transition-colors flex items-center gap-2">
+                      <span>⬇️</span> Télécharger
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Written Articles */}
+      <section className="py-16 bg-ingco-black">
+        <div className="max-w-7xl mx-auto px-4">
+          <h2 className="text-3xl font-bold text-white text-center mb-4">
+            📖 Articles & Tutoriels
+          </h2>
+          <p className="text-gray-400 text-center mb-12">
+            Des contenus détaillés pour approfondir vos connaissances
+          </p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-ingco-gray rounded-xl p-6">
+              <div className="flex items-center gap-4 mb-4">
+                <span className="text-3xl">🔧</span>
+                <div>
+                  <h4 className="text-white font-bold">Bien choisir sa perceuse visseuse</h4>
+                  <span className="text-gray-400 text-sm">Outils Électriques</span>
+                </div>
+              </div>
+              <p className="text-gray-400 mb-4">
+                Guide complet pour choisir le bon outil selon vos besoins...
+              </p>
+              <button className="text-ingco-yellow font-semibold hover:underline">Lire la suite →</button>
+            </div>
+            
+            <div className="bg-ingco-gray rounded-xl p-6">
+              <div className="flex items-center gap-4 mb-4">
+                <span className="text-3xl">🔋</span>
+                <div>
+                  <h4 className="text-white font-bold">Entretien des batteries lithium-ion</h4>
+                  <span className="text-gray-400 text-sm">Outils Sans Fil</span>
+                </div>
+              </div>
+              <p className="text-gray-400 mb-4">
+                Astuces et bonnes pratiques pour prolonger la durée de vie...
+              </p>
+              <button className="text-ingco-yellow font-semibold hover:underline">Lire la suite →</button>
+            </div>
+            
+            <div className="bg-ingco-gray rounded-xl p-6">
+              <div className="flex items-center gap-4 mb-4">
+                <span className="text-3xl">🦺</span>
+                <div>
+                  <h4 className="text-white font-bold">Sécurité sur les chantiers</h4>
+                  <span className="text-gray-400 text-sm">Sécurité</span>
+                </div>
+              </div>
+              <p className="text-gray-400 mb-4">
+                Checklist complète des équipements de protection obligatoire...
+              </p>
+              <button className="text-ingco-yellow font-semibold hover:underline">Lire la suite →</button>
+            </div>
+            
+            <div className="bg-ingco-gray rounded-xl p-6">
+              <div className="flex items-center gap-4 mb-4">
+                <span className="text-3xl">🌿</span>
+                <div>
+                  <h4 className="text-white font-bold">Guide d'achat tronçonneuse</h4>
+                  <span className="text-gray-400 text-sm">Jardinage</span>
+                </div>
+              </div>
+              <p className="text-gray-400 mb-4">
+                Comparatif des meilleures tronçonneuses pour professionnel...
+              </p>
+              <button className="text-ingco-yellow font-semibold hover:underline">Lire la suite →</button>
             </div>
           </div>
         </div>
