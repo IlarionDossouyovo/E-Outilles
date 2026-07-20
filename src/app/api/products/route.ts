@@ -10,11 +10,12 @@ export async function GET(request: Request) {
   try {
     const where: Record<string, unknown> = {}
     
-    if (category) {
+    // Only filter by category if it's not empty
+    if (category && category.trim() !== '') {
       where.category = { slug: category }
     }
     
-    if (search) {
+    if (search && search.trim() !== '') {
       where.OR = [
         { name: { contains: search } },
         { description: { contains: search } }
