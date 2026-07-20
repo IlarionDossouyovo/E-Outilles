@@ -4,43 +4,142 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Logo from '@/components/Logo'
 
-// Données des catégories par métier
+// Données des catégories par métier - 15 catégories INGCO
 const categories = [
   {
-    id: 'construction',
-    name: 'Construction & BTP',
-    icon: '🏗️',
-    products: ['Perceuses', 'Marteaux perforateurs', 'Meuleuses'],
-    blog: 'Top outils chantier 2026',
-    description: 'Outils professionnels pour le BTP',
-    color: 'from-orange-500 to-red-600'
-  },
-  {
-    id: 'electricite',
-    name: 'Électricité',
+    id: 'power-tools',
+    name: 'Outils Électriques',
     icon: '⚡',
-    products: ['Multimètres', 'Testeurs', 'Pinces isolées'],
-    blog: 'Sécurité électrique pro',
-    description: 'Équipements pour installations électriques',
-    color: 'from-yellow-400 to-yellow-600'
+    products: ['Perceuses', 'Meuleuses', 'Scies', 'Marteau perforateur'],
+    blog: 'Guide outils électriques 2026',
+    description: 'Outils électriques professionnels',
+    color: 'from-red-500 to-red-700'
   },
   {
-    id: 'garage',
-    name: 'Garage Auto',
-    icon: '🚗',
-    products: ['Clés mécaniques', 'Cric hydraulique', 'Compresseurs'],
-    blog: 'Équipement garage louable',
-    description: 'Outillage garage automobile',
+    id: 'cordless-tools',
+    name: 'Outils Sans Fil',
+    icon: '🔋',
+    products: ['Perceuses visseuses', 'Clés à chocs', 'Scies circulaires'],
+    blog: 'Avantages outils sans fil',
+    description: 'Liberté sans fil pour pros',
+    color: 'from-blue-600 to-blue-800'
+  },
+  {
+    id: 'hand-tools',
+    name: 'Outils à Main',
+    icon: '🔧',
+    products: ['Clés', 'Tournevis', 'Pinces', 'Marteaux'],
+    blog: 'Trousse outils essentielle',
+    description: 'Outils à main professionnels',
     color: 'from-blue-500 to-blue-700'
   },
   {
-    id: 'jardinage',
+    id: 'air-tools',
+    name: 'Outils à Air',
+    icon: '💨',
+    products: ['Compresseurs', 'Clés à chocs pneumatiques', 'Pistolets'],
+    blog: 'Guide compresseurs',
+    description: 'Outils pneumatiques pros',
+    color: 'from-sky-500 to-sky-700'
+  },
+  {
+    id: 'measuring',
+    name: 'Mesure & Niveau',
+    icon: '📏',
+    products: ['Niveaux laser', 'Multimètres', 'Détecteurs'],
+    blog: 'Précision mesures',
+    description: 'Instruments de mesure',
+    color: 'from-purple-500 to-purple-700'
+  },
+  {
+    id: 'garden',
     name: 'Jardinage',
-    icon: '🌱',
-    products: ['Tondeuses', 'Tronçonneuses', 'Systèmes arrosage'],
-    blog: 'Créer un business jardinage',
-    description: 'Équipement pour landscaping pro',
+    icon: '🌿',
+    products: ['Tondeuses', 'Tronçonneuses', 'Taille-haies'],
+    blog: 'Entretien jardin pro',
+    description: 'Équipement paysagement',
     color: 'from-green-500 to-green-700'
+  },
+  {
+    id: 'automotive',
+    name: 'Automobile',
+    icon: '🚗',
+    products: ['Crics', 'Chandelles', 'Clés à chocs'],
+    blog: 'Outils mécanicien',
+    description: 'Équipement garage auto',
+    color: 'from-orange-500 to-orange-700'
+  },
+  {
+    id: 'drilling',
+    name: 'Forage & Découpe',
+    icon: '🔩',
+    products: ['Burins', 'Disques', 'Scies trépans'],
+    blog: 'Guide forage professionnel',
+    description: 'Accessoires forage',
+    color: 'from-gray-500 to-gray-700'
+  },
+  {
+    id: 'welding',
+    name: 'Soudeuse & Welding',
+    icon: '🔥',
+    products: ['Machines à souder', 'Masques', 'Electrodes'],
+    blog: 'Initiation soudure MMA',
+    description: 'Équipement soudure',
+    color: 'from-red-600 to-red-800'
+  },
+  {
+    id: 'generators',
+    name: 'Générateurs',
+    icon: '⚙️',
+    products: ['Groupes électrogènes', 'Inverters'],
+    blog: 'Choisir générateur',
+    description: 'Alimentation électrique',
+    color: 'from-yellow-600 to-yellow-800'
+  },
+  {
+    id: 'construction',
+    name: 'Construction',
+    icon: '🏗️',
+    products: ['Vibreurs à béton', 'Aiguilles vibrantes'],
+    blog: 'Outils chantier BTP',
+    description: 'Équipement construction',
+    color: 'from-amber-600 to-amber-800'
+  },
+  {
+    id: 'pumps',
+    name: 'Pompes & Eau',
+    icon: '💧',
+    products: ['Pompes submersibles', 'Pompes surface'],
+    blog: 'Gestion eaux',
+    description: 'Pompes et irrigation',
+    color: 'from-cyan-500 to-cyan-700'
+  },
+  {
+    id: 'safety',
+    name: 'Sécurité',
+    icon: '🦺',
+    products: ['Casques', 'Gants', 'Chaussures', 'Lunettes'],
+    blog: 'EPI obligatoires',
+    description: 'Équipements protection',
+    color: 'from-yellow-500 to-yellow-700'
+  },
+  {
+    id: 'storage',
+    name: 'Rangement',
+    icon: '🧰',
+    products: ['Caisse à outils', 'Coffrets', 'Armoires'],
+    blog: 'Organisation atelier',
+    description: 'Rangement outils',
+    color: 'from-teal-500 to-teal-700'
+  },
+  {
+    id: 'accessories',
+    name: 'Accessoires',
+    icon: '🪛',
+    products: ['Batteries', 'Chargeurs', 'Disques', 'Forets'],
+    blog: 'Choisir accessoires',
+    description: 'Accessoires tous outils',
+    color: 'from-indigo-500 to-indigo-700'
   }
 ]
 
