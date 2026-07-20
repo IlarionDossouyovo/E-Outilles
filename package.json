@@ -6,9 +6,9 @@
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   },
   "scripts": {
-    "dev": "npx dotenv -e .env -- next dev --port 3003",
-    "build": "npx dotenv -e .env -- next build",
-    "start": "npx dotenv -e .env -- next start --port 3003",
+    "dev": "next dev --port 3003",
+    "build": "next build",
+    "start": "next start --port 3003",
     "lint": "next lint",
     "postinstall": "prisma generate"
   },
