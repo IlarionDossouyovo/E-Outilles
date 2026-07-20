@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  # Base de données PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: e-outilles-db
+    restart: always
+    environment:
+      POSTGRES_USER: eoutilles
+      POSTGRES_PASSWORD: eoutilles123
+      POSTGRES_DB: eoutilles
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Service email (Mailhog pour développement)
+  mailhog:
+    image: mailhog/mailhog
+    container_name: e-outilles-mail
+    restart: always
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Web UI
+
+volumes:
+  postgres_data:
