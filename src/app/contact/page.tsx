@@ -13,11 +13,32 @@ export default function Contact() {
     message: ''
   })
   const [submitted, setSubmitted] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Simuler l'envoi du formulaire
-    setSubmitted(true)
+    setLoading(true)
+    setError('')
+    
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      })
+      
+      if (response.ok) {
+        setSubmitted(true)
+      } else {
+        const data = await response.json()
+        setError(data.error || 'Erreur lors de l\'envoi du message')
+      }
+    } catch (err) {
+      setError('Erreur de connexion')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -140,6 +161,13 @@ export default function Contact() {
               ) : (
                 <>
                   <h2 className="text-2xl font-bold text-white mb-8">Envoyez-nous un message</h2>
+                  
+                  {error && (
+                    <div className="bg-red-500/20 border border-red-500 text-red-400 px-4 py-3 rounded-xl mb-6">
+                      {error}
+                    </div>
+                  )}
+                  
                   <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
                       <label className="block text-gray-300 mb-2">Nom complet</label>
@@ -196,9 +224,10 @@ export default function Contact() {
 
                     <button
                       type="submit"
-                      className="w-full bg-ingco-yellow text-ingco-black py-4 rounded-xl font-bold hover:bg-yellow-400 transition-all"
+                      disabled={loading}
+                      className="w-full bg-ingco-yellow text-ingco-black py-4 rounded-xl font-bold hover:bg-yellow-400 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      Envoyer le message
+                      {loading ? 'Envoi en cours...' : 'Envoyer le message'}
                     </button>
                   </form>
                 </>

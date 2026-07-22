@@ -1,22 +1,54 @@
 // Email utility for E-Outilles
-// Send confirmation emails for orders
+// Send confirmation emails using Resend API
+
+import { Resend } from 'resend'
 
 interface EmailOptions {
   to: string
   subject: string
   html: string
+  text?: string
 }
 
-export async function sendEmail({ to, subject, html }: EmailOptions): Promise<boolean> {
+export async function sendEmail({ to, subject, html, text }: EmailOptions): Promise<boolean> {
+  const resendKey = process.env.RESEND_API_KEY
+  const fromEmail = process.env.FROM_EMAIL || 'E-Outilles <noreply@eoutilles.com>'
+  
+  // Use Resend if API key is configured
+  if (resendKey && resendKey.startsWith('re_') && resendKey !== 're_placeholder_key') {
+    try {
+      const resend = new Resend(resendKey)
+      
+      const { data, error } = await resend.emails.send({
+        from: fromEmail,
+        to: [to],
+        subject: subject,
+        html: html,
+        text: text || html.replace(/<[^>]*>/g, '')
+      })
+
+      if (error) {
+        console.error('❌ Resend error:', error)
+        return false
+      }
+
+      console.log('✅ Email sent via Resend:', data?.id)
+      return true
+    } catch (err) {
+      console.error('❌ Failed to send email via Resend:', err)
+      // Fall through to SMTP
+    }
+  }
+
+  // Fallback to SMTP or development mode
   const smtpHost = process.env.SMTP_HOST
   const smtpPort = process.env.SMTP_PORT || '1025'
   const smtpUser = process.env.SMTP_USER || ''
   const smtpPassword = process.env.SMTP_PASSWORD || ''
-  const fromEmail = process.env.FROM_EMAIL || 'noreply@eoutilles.com'
 
   // If no SMTP configured, log the email (development mode)
   if (!smtpHost || smtpHost === 'localhost') {
-    console.log('📧 Email (development mode):')
+    console.log('📧 Email (development mode - logged only):')
     console.log(`To: ${to}`)
     console.log(`Subject: ${subject}`)
     console.log(`Body: ${html.substring(0, 200)}...`)
