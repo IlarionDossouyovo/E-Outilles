@@ -152,7 +152,7 @@ export default function CheckoutPage() {
             <div className="bg-ingco-dark rounded-xl p-4 mb-6 text-left">
               <p className="text-gray-400 text-sm">Résumé:</p>
               <p className="text-white font-bold">{items.length} produit(s)</p>
-              <p className="text-ingco-yellow font-bold text-xl">{formData.total || getTotal().toFixed(2)}€</p>
+              <p className="text-ingco-yellow font-bold text-xl">{getTotal().toFixed(2)}€</p>
             </div>
             <Link href="/" className="block bg-ingco-yellow text-ingco-black py-3 rounded-xl font-bold hover:bg-yellow-400">
               Retour à l'accueil
