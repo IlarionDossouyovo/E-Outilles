@@ -221,31 +221,63 @@ export default function FormationsPage() {
 
   const showNotification = (message: string) => {
     console.log('Notification triggered:', message)
-    setNotification({message: message + ' ', type: 'info'})
-    setTimeout(() => setNotification(null), 3000)
+    // Use setTimeout to ensure state update happens
+    setTimeout(() => {
+      setNotification({message: message, type: 'info'})
+    }, 10)
+    // Auto hide after 3 seconds
+    setTimeout(() => {
+      setNotification(null)
+    }, 3000)
   }
 
   const handleVideoClick = (videoTitle: string) => {
     console.log('Video clicked:', videoTitle)
+    alert('🎬 Vidéo: ' + videoTitle + ' - Bientôt disponible!')
     showNotification(`🎬 Vidéo: ${videoTitle} - Bientôt disponible!`)
   }
 
   const handleDownload = (resourceTitle: string) => {
     console.log('Download clicked:', resourceTitle)
+    alert('📄 Document: ' + resourceTitle + ' - Bientôt disponible!')
     showNotification(`📄 Document: ${resourceTitle} - Bientôt disponible!`)
   }
 
   const handleArticleClick = (articleTitle: string) => {
     console.log('Article clicked:', articleTitle)
+    alert('📖 Article: ' + articleTitle + ' - Bientôt disponible!')
     showNotification(`📖 Article: ${articleTitle} - Bientôt disponible!`)
   }
 
   return (
     <div className="min-h-screen bg-ingco-black">
-      {/* Notification Toast */}
+      {/* Notification Toast - VERY VISIBLE */}
       {notification && (
-        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 bg-green-600 text-white px-8 py-4 rounded-2xl shadow-2xl font-bold text-lg animate-bounce border-4 border-white">
-          {notification.message}
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.8)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 99999
+        }}>
+          <div style={{
+            backgroundColor: '#16a34a',
+            color: 'white',
+            padding: '30px 60px',
+            borderRadius: '20px',
+            fontSize: '28px',
+            fontWeight: 'bold',
+            border: '5px solid white',
+            boxShadow: '0 0 30px rgba(22, 163, 74, 0.8)',
+            animation: 'bounce 0.5s infinite'
+          }}>
+            {notification.message}
+          </div>
         </div>
       )}
       {/* Navigation */}
