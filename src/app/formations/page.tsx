@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import Logo from '@/components/Logo'
 
@@ -263,30 +263,30 @@ export default function FormationsPage() {
     setShowModal(true)
   }
 
-  // useEffect to detect hash changes (works reliably!)
-  useEffect(() => {
-    const handleHashChange = () => {
-      if (window.location.hash === '#clicked') {
-        // Show the modal
-        const modal = document.getElementById('test-modal')
-        if (modal) {
-          modal.style.display = 'flex'
-        }
-        // Remove hash so it can be clicked again
-        window.location.hash = ''
+  // Simpler: Add click handler directly to window
+  if (typeof window !== 'undefined') {
+    // @ts-ignore
+    window.__handleTestClick = () => {
+      console.log('TEST CLICK TRIGGERED!')
+      const modal = document.getElementById('test-modal')
+      if (modal) {
+        modal.style.display = 'flex'
       }
     }
-    
-    window.addEventListener('hashchange', handleHashChange)
-    return () => window.removeEventListener('hashchange', handleHashChange)
-  }, [])
+  }
 
   return (
     <div className="min-h-screen bg-ingco-black">
-      {/* TEST LINK - Uses hash change (very reliable!) */}
+      {/* TEST BUTTON - Direct onclick */}
       <div style={{position: 'fixed', top: '80px', right: '10px', zIndex: 9999}}>
-        <a 
-          href="#clicked"
+        <button 
+          onClick={() => {
+            console.log('BUTTON CLICKED!')
+            const modal = document.getElementById('test-modal')
+            if (modal) {
+              modal.style.display = 'flex'
+            }
+          }}
           style={{
             backgroundColor: 'red',
             color: 'white',
@@ -295,13 +295,11 @@ export default function FormationsPage() {
             fontWeight: 'bold',
             border: '3px solid white',
             borderRadius: '10px',
-            cursor: 'pointer',
-            textDecoration: 'none',
-            display: 'inline-block'
+            cursor: 'pointer'
           }}
         >
           🧪 TEST: Cliquer ici!
-        </a>
+        </button>
       </div>
 
       {/* TEST MODAL - Direct DOM manipulation */}
