@@ -213,73 +213,78 @@ const schedule = [
 
 export default function FormationsPage() {
   const [expandedFormation, setExpandedFormation] = useState<string | null>(null)
-  const [notification, setNotification] = useState<{message: string, type: string} | null>(null)
 
   const toggleFormation = (id: string) => {
     setExpandedFormation(expandedFormation === id ? null : id)
   }
 
+  const [showModal, setShowModal] = useState(false)
+  const [modalMessage, setModalMessage] = useState('')
+
   const showNotification = (message: string) => {
     console.log('Notification triggered:', message)
-    // Direct alert first to ensure user sees something
-    alert(message)
-    // Then show the toast
-    setNotification({message: message, type: 'info'})
+    // Show modal instead of alert - works better in all browsers
+    setModalMessage(message)
+    setShowModal(true)
     // Auto hide after 3 seconds
     setTimeout(() => {
-      setNotification(null)
+      setShowModal(false)
     }, 3000)
   }
 
   const handleVideoClick = (videoTitle: string) => {
     const msg = `🎬 Vidéo: ${videoTitle} - Bientôt disponible!`
     console.log('Video clicked:', videoTitle)
-    alert(msg)
     showNotification(msg)
   }
 
   const handleDownload = (resourceTitle: string) => {
     const msg = `📄 Document: ${resourceTitle} - Bientôt disponible!`
     console.log('Download clicked:', resourceTitle)
-    alert(msg)
     showNotification(msg)
   }
 
   const handleArticleClick = (articleTitle: string) => {
     const msg = `📖 Article: ${articleTitle} - Bientôt disponible!`
     console.log('Article clicked:', articleTitle)
-    alert(msg)
     showNotification(msg)
   }
 
   return (
     <div className="min-h-screen bg-ingco-black">
-      {/* Notification Toast - VERY VISIBLE */}
-      {notification && (
+      {/* Modal Popup - shows immediately on click */}
+      {showModal && (
         <div style={{
           position: 'fixed',
           top: 0,
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: 'rgba(0,0,0,0.8)',
+          backgroundColor: 'rgba(0,0,0,0.7)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           zIndex: 99999
         }}>
-          <div style={{
-            backgroundColor: '#16a34a',
-            color: 'white',
-            padding: '30px 60px',
-            borderRadius: '20px',
-            fontSize: '28px',
-            fontWeight: 'bold',
-            border: '5px solid white',
-            boxShadow: '0 0 30px rgba(22, 163, 74, 0.8)',
-            animation: 'bounce 0.5s infinite'
-          }}>
-            {notification.message}
+          <div 
+            onClick={() => setShowModal(false)}
+            style={{
+              backgroundColor: '#16a34a',
+              color: 'white',
+              padding: '40px 80px',
+              borderRadius: '20px',
+              fontSize: '32px',
+              fontWeight: 'bold',
+              border: '6px solid white',
+              boxShadow: '0 0 50px rgba(22, 163, 74, 1)',
+              cursor: 'pointer',
+              textAlign: 'center'
+            }}
+          >
+            {modalMessage}
+            <div style={{fontSize: '16px', marginTop: '20px', opacity: 0.8}}>
+              (Cliquez pour fermer)
+            </div>
           </div>
         </div>
       )}
