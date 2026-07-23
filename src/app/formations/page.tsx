@@ -263,12 +263,30 @@ export default function FormationsPage() {
     setShowModal(true)
   }
 
+  // useEffect to detect hash changes (works reliably!)
+  useEffect(() => {
+    const handleHashChange = () => {
+      if (window.location.hash === '#clicked') {
+        // Show the modal
+        const modal = document.getElementById('test-modal')
+        if (modal) {
+          modal.style.display = 'flex'
+        }
+        // Remove hash so it can be clicked again
+        window.location.hash = ''
+      }
+    }
+    
+    window.addEventListener('hashchange', handleHashChange)
+    return () => window.removeEventListener('hashchange', handleHashChange)
+  }, [])
+
   return (
     <div className="min-h-screen bg-ingco-black">
-      {/* TEST BUTTON - Click this first to verify it works */}
+      {/* TEST LINK - Uses hash change (very reliable!) */}
       <div style={{position: 'fixed', top: '80px', right: '10px', zIndex: 9999}}>
-        <button 
-          onClick={testClick}
+        <a 
+          href="#clicked"
           style={{
             backgroundColor: 'red',
             color: 'white',
@@ -277,26 +295,34 @@ export default function FormationsPage() {
             fontWeight: 'bold',
             border: '3px solid white',
             borderRadius: '10px',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            textDecoration: 'none',
+            display: 'inline-block'
           }}
         >
           🧪 TEST: Cliquer ici!
-        </button>
+        </a>
       </div>
 
       {/* TEST MODAL - Direct DOM manipulation */}
-      <div id="test-modal" style={{
-        display: 'none',
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(0,0,0,0.9)',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 999999
-      }}>
+      <div 
+        id="test-modal" 
+        style={{
+          display: 'none',
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.9)',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 999999
+        }}
+        onClick={() => {
+          document.getElementById('test-modal').style.display = 'none'
+        }}
+      >
         <div style={{
           backgroundColor: '#16a34a',
           color: 'white',
@@ -306,9 +332,9 @@ export default function FormationsPage() {
           fontWeight: 'bold',
           border: '8px solid white',
           textAlign: 'center'
-        }}>
+        }} id="modal-message">
           🎉 YES! Ça marche!<br/>
-          <span style={{fontSize: '20px'}}>(Cette boîte = ça marche!)</span>
+          <span style={{fontSize: '20px'}}>(Cliquez pour fermer)</span>
         </div>
       </div>
 
@@ -502,14 +528,18 @@ export default function FormationsPage() {
               <h3 className="text-xl font-bold text-ingco-yellow mb-4">{module.category}</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {module.videos.map((video, vIndex) => (
-                  <button
+                  <a
                     key={vIndex}
-                    type="button"
-                    className="bg-ingco-gray rounded-xl overflow-hidden hover:scale-105 transition-transform cursor-pointer text-left w-full"
-                    onClick={() => {
-                      console.log('Video clicked:', video.title)
-                      alert('🎬 Vidéo: ' + video.title + ' - Bientôt disponible!')
-                      showNotification(`🎬 Vidéo: ${video.title} - Bientôt disponible!`)
+                    href={`#video-${encodeURIComponent(video.title)}`}
+                    className="block bg-ingco-gray rounded-xl overflow-hidden hover:scale-105 transition-transform cursor-pointer text-left w-full"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      const modal = document.getElementById('test-modal')
+                      if (modal) {
+                        document.getElementById('modal-message').textContent = `🎬 Vidéo: ${video.title} - Bientôt disponible!`
+                        modal.style.display = 'flex'
+                      }
+                      window.location.hash = ''
                     }}
                   >
                     <div className="bg-gradient-to-br from-gray-800 to-gray-900 h-40 flex items-center justify-center">
@@ -522,7 +552,7 @@ export default function FormationsPage() {
                         <span>{video.duration}</span>
                       </div>
                     </div>
-                  </button>
+                  </a>
                 ))}
               </div>
             </div>
