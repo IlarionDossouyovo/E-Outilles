@@ -4,22 +4,6 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Logo from '@/components/Logo'
 
-// Handlers for buttons
-const handleVideoClick = (videoTitle: string) => {
-  console.log(`Vidéo cliquée: ${videoTitle}`)
-  alert(`🎬 Vidéo: ${videoTitle}\n\nCette fonctionnalité sera bientôt disponible!`)
-}
-
-const handleDownload = (resourceTitle: string) => {
-  console.log(`Téléchargement cliqué: ${resourceTitle}`)
-  alert(`📄 Document: ${resourceTitle}\n\nCe document sera bientôt disponible!`)
-}
-
-const handleArticleClick = (articleTitle: string) => {
-  console.log(`Article cliqué: ${articleTitle}`)
-  alert(`📖 Article: ${articleTitle}\n\nCette page sera bientôt disponible!`)
-}
-
 // Vidéos de formation par catégorie
 const videoModules = [
   {
@@ -229,13 +213,37 @@ const schedule = [
 
 export default function FormationsPage() {
   const [expandedFormation, setExpandedFormation] = useState<string | null>(null)
+  const [notification, setNotification] = useState<{message: string, type: string} | null>(null)
 
   const toggleFormation = (id: string) => {
     setExpandedFormation(expandedFormation === id ? null : id)
   }
 
+  const showNotification = (message: string) => {
+    setNotification({message, type: 'info'})
+    setTimeout(() => setNotification(null), 3000)
+  }
+
+  const handleVideoClick = (videoTitle: string) => {
+    showNotification(`🎬 Vidéo: ${videoTitle} - Bientôt disponible!`)
+  }
+
+  const handleDownload = (resourceTitle: string) => {
+    showNotification(`📄 Document: ${resourceTitle} - Bientôt disponible!`)
+  }
+
+  const handleArticleClick = (articleTitle: string) => {
+    showNotification(`📖 Article: ${articleTitle} - Bientôt disponible!`)
+  }
+
   return (
     <div className="min-h-screen bg-ingco-black">
+      {/* Notification Toast */}
+      {notification && (
+        <div className="fixed top-20 right-4 z-50 bg-ingco-yellow text-ingco-black px-6 py-3 rounded-xl shadow-lg font-semibold animate-pulse">
+          {notification.message}
+        </div>
+      )}
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-ingco-black/95 backdrop-blur-md border-b border-ingco-gray">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
