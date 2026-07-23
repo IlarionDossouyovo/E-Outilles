@@ -227,7 +227,6 @@ export default function FormationsPage() {
 
   const handleVideoClick = (videoTitle: string) => {
     console.log('Video clicked:', videoTitle)
-    alert(`🎬 Vidéo: ${videoTitle} - Bientôt disponible!`)
     showNotification(`🎬 Vidéo: ${videoTitle} - Bientôt disponible!`)
   }
 
