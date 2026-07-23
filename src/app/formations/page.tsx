@@ -4,6 +4,19 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Logo from '@/components/Logo'
 
+// Handlers for buttons
+const handleVideoClick = (videoTitle: string) => {
+  alert(`Vidéo: ${videoTitle}\n\nCette fonctionnalité sera bientôt disponible!`)
+}
+
+const handleDownload = (resourceTitle: string) => {
+  alert(`Téléchargement: ${resourceTitle}\n\nCe document sera bientôt disponible!`)
+}
+
+const handleArticleClick = (articleTitle: string) => {
+  alert(`Article: ${articleTitle}\n\nCette page sera bientôt disponible!`)
+}
+
 // Vidéos de formation par catégorie
 const videoModules = [
   {
@@ -374,7 +387,11 @@ export default function FormationsPage() {
               <h3 className="text-xl font-bold text-ingco-yellow mb-4">{module.category}</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {module.videos.map((video, vIndex) => (
-                  <div key={vIndex} className="bg-ingco-gray rounded-xl overflow-hidden hover:scale-105 transition-transform cursor-pointer">
+                  <div 
+                    key={vIndex} 
+                    className="bg-ingco-gray rounded-xl overflow-hidden hover:scale-105 transition-transform cursor-pointer"
+                    onClick={() => handleVideoClick(video.title)}
+                  >
                     <div className="bg-gradient-to-br from-gray-800 to-gray-900 h-40 flex items-center justify-center">
                       <div className="text-6xl">{video.thumbnail}</div>
                     </div>
@@ -392,7 +409,10 @@ export default function FormationsPage() {
           ))}
           
           <div className="text-center mt-8">
-            <button className="bg-ingco-yellow text-ingco-black px-8 py-3 rounded-xl font-bold hover:bg-yellow-400 transition-colors">
+            <button 
+              onClick={() => handleVideoClick('Toutes les vidéos')}
+              className="bg-ingco-yellow text-ingco-black px-8 py-3 rounded-xl font-bold hover:bg-yellow-400 transition-colors"
+            >
               Voir toutes les vidéos
             </button>
           </div>
@@ -420,7 +440,10 @@ export default function FormationsPage() {
                       <span className="bg-ingco-gray px-2 py-1 rounded">{resource.type}</span>
                       <span>{resource.pages} pages</span>
                     </div>
-                    <button className="bg-ingco-yellow text-ingco-black px-4 py-2 rounded-lg font-semibold text-sm hover:bg-yellow-400 transition-colors flex items-center gap-2">
+                    <button 
+                      onClick={() => handleDownload(resource.title)}
+                      className="bg-ingco-yellow text-ingco-black px-4 py-2 rounded-lg font-semibold text-sm hover:bg-yellow-400 transition-colors flex items-center gap-2"
+                    >
                       <span>⬇️</span> Télécharger
                     </button>
                   </div>
@@ -453,7 +476,7 @@ export default function FormationsPage() {
               <p className="text-gray-400 mb-4">
                 Guide complet pour choisir le bon outil selon vos besoins...
               </p>
-              <button className="text-ingco-yellow font-semibold hover:underline">Lire la suite →</button>
+              <button onClick={() => handleArticleClick('Bien choisir sa perceuse visseuse')} className="text-ingco-yellow font-semibold hover:underline">Lire la suite →</button>
             </div>
             
             <div className="bg-ingco-gray rounded-xl p-6">
@@ -467,21 +490,21 @@ export default function FormationsPage() {
               <p className="text-gray-400 mb-4">
                 Astuces et bonnes pratiques pour prolonger la durée de vie...
               </p>
-              <button className="text-ingco-yellow font-semibold hover:underline">Lire la suite →</button>
+              <button onClick={() => handleArticleClick('Entretien des batteries lithium-ion')} className="text-ingco-yellow font-semibold hover:underline">Lire la suite →</button>
             </div>
             
             <div className="bg-ingco-gray rounded-xl p-6">
               <div className="flex items-center gap-4 mb-4">
                 <span className="text-3xl">🦺</span>
                 <div>
-                  <h4 className="text-white font-bold">Sécurité sur les chantiers</h4>
+                  <h4 className="text-white font-bold">Sécurité sur les chantier</h4>
                   <span className="text-gray-400 text-sm">Sécurité</span>
                 </div>
               </div>
               <p className="text-gray-400 mb-4">
                 Checklist complète des équipements de protection obligatoire...
               </p>
-              <button className="text-ingco-yellow font-semibold hover:underline">Lire la suite →</button>
+              <button onClick={() => handleArticleClick('Sécurité sur les chantiers')} className="text-ingco-yellow font-semibold hover:underline">Lire la suite →</button>
             </div>
             
             <div className="bg-ingco-gray rounded-xl p-6">
@@ -495,7 +518,7 @@ export default function FormationsPage() {
               <p className="text-gray-400 mb-4">
                 Comparatif des meilleures tronçonneuses pour professionnel...
               </p>
-              <button className="text-ingco-yellow font-semibold hover:underline">Lire la suite →</button>
+              <button onClick={() => handleArticleClick('Guide d\'achat tronçonneuse')} className="text-ingco-yellow font-semibold hover:underline">Lire la suite →</button>
             </div>
           </div>
         </div>
