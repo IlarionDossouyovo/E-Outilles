@@ -6,15 +6,18 @@ import Logo from '@/components/Logo'
 
 // Handlers for buttons
 const handleVideoClick = (videoTitle: string) => {
-  alert(`Vidéo: ${videoTitle}\n\nCette fonctionnalité sera bientôt disponible!`)
+  console.log(`Vidéo cliquée: ${videoTitle}`)
+  alert(`🎬 Vidéo: ${videoTitle}\n\nCette fonctionnalité sera bientôt disponible!`)
 }
 
 const handleDownload = (resourceTitle: string) => {
-  alert(`Téléchargement: ${resourceTitle}\n\nCe document sera bientôt disponible!`)
+  console.log(`Téléchargement cliqué: ${resourceTitle}`)
+  alert(`📄 Document: ${resourceTitle}\n\nCe document sera bientôt disponible!`)
 }
 
 const handleArticleClick = (articleTitle: string) => {
-  alert(`Article: ${articleTitle}\n\nCette page sera bientôt disponible!`)
+  console.log(`Article cliqué: ${articleTitle}`)
+  alert(`📖 Article: ${articleTitle}\n\nCette page sera bientôt disponible!`)
 }
 
 // Vidéos de formation par catégorie
