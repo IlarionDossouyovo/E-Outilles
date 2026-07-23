@@ -242,10 +242,15 @@ export default function FormationsPage() {
 
   return (
     <div className="min-h-screen bg-ingco-black">
-      {/* Notification Toast */}
+      {/* Notification Toast - VERY VISIBLE */}
       {notification && (
-        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 bg-green-600 text-white px-8 py-4 rounded-2xl shadow-2xl font-bold text-lg animate-bounce">
-          {notification.message}
+        <div 
+          className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/50"
+          style={{ backgroundColor: 'rgba(0,0,0,0.8)' }}
+        >
+          <div className="bg-green-600 text-white px-12 py-8 rounded-3xl shadow-2xl font-bold text-2xl animate-bounce border-4 border-white">
+            {notification.message}
+          </div>
         </div>
       )}
       {/* Navigation */}
