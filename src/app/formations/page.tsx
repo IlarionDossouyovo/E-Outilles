@@ -437,12 +437,24 @@ export default function FormationsPage() {
                   <div 
                     key={vIndex} 
                     className="bg-ingco-gray rounded-xl overflow-hidden hover:scale-105 transition-transform cursor-pointer"
-                    onClick={() => handleVideoClick(video.title)}
+                    onClick={() => {
+                      console.log('Video clicked:', video.title)
+                      alert('🎬 Vidéo: ' + video.title + ' - Bientôt disponible!')
+                      showNotification(`🎬 Vidéo: ${video.title} - Bientôt disponible!`)
+                    }}
                   >
-                    <div className="bg-gradient-to-br from-gray-800 to-gray-900 h-40 flex items-center justify-center">
+                    <div className="bg-gradient-to-br from-gray-800 to-gray-900 h-40 flex items-center justify-center" onClick={() => {
+                      console.log('Thumbnail clicked:', video.title)
+                      alert('🎬 Vidéo: ' + video.title + ' - Bientôt disponible!')
+                      showNotification(`🎬 Vidéo: ${video.title} - Bientôt disponible!`)
+                    }}>
                       <div className="text-6xl">{video.thumbnail}</div>
                     </div>
-                    <div className="p-4">
+                    <div className="p-4" onClick={() => {
+                      console.log('Text clicked:', video.title)
+                      alert('🎬 Vidéo: ' + video.title + ' - Bientôt disponible!')
+                      showNotification(`🎬 Vidéo: ${video.title} - Bientôt disponible!`)
+                    }}>
                       <h4 className="text-white font-semibold mb-2">{video.title}</h4>
                       <div className="flex items-center gap-2 text-gray-400 text-sm">
                         <span>▶</span>
