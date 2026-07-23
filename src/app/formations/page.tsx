@@ -318,7 +318,8 @@ export default function FormationsPage() {
           zIndex: 999999
         }}
         onClick={() => {
-          document.getElementById('test-modal').style.display = 'none'
+          const modal = document.getElementById('test-modal')
+          if (modal) modal.style.display = 'none'
         }}
       >
         <div style={{
