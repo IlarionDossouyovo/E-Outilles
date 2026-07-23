@@ -250,8 +250,34 @@ export default function FormationsPage() {
     showNotification(msg)
   }
 
+  // TEST: Direct click handler for testing
+  const testClick = () => {
+    console.log('TEST CLICK WORKED!')
+    setModalMessage('🎉 YES! Ça marche! Cliquez pour fermer.')
+    setShowModal(true)
+  }
+
   return (
     <div className="min-h-screen bg-ingco-black">
+      {/* TEST BUTTON - Click this first to verify it works */}
+      <div style={{position: 'fixed', top: '80px', right: '10px', zIndex: 9999}}>
+        <button 
+          onClick={testClick}
+          style={{
+            backgroundColor: 'red',
+            color: 'white',
+            padding: '15px 25px',
+            fontSize: '18px',
+            fontWeight: 'bold',
+            border: '3px solid white',
+            borderRadius: '10px',
+            cursor: 'pointer'
+          }}
+        >
+          🧪 TEST: Cliquer ici!
+        </button>
+      </div>
+
       {/* Modal Popup - shows immediately on click */}
       {showModal && (
         <div style={{
