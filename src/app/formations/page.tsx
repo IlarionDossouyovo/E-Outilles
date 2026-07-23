@@ -243,7 +243,7 @@ export default function FormationsPage() {
           </h1>
           <p className="text-gray-400 text-lg max-w-3xl mx-auto mb-8">
             Développez vos compétences et celles de votre équipe avec nos formations professionnelles. 
-            Tout Inglclus pour les revendeurs agréés E-Outilles.
+            Tout inclus pour les revendeurs agréés E-Outilles.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link href="#formations" className="bg-ingco-yellow text-ingco-black px-8 py-3 rounded-xl font-bold hover:bg-yellow-400 transition-colors">
