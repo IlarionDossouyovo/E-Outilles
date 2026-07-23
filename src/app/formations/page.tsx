@@ -253,6 +253,12 @@ export default function FormationsPage() {
   // TEST: Direct click handler for testing
   const testClick = () => {
     console.log('TEST CLICK WORKED!')
+    // Direct DOM manipulation as backup
+    const modal = document.getElementById('test-modal')
+    if (modal) {
+      modal.style.display = 'flex'
+    }
+    // Also try React state
     setModalMessage('🎉 YES! Ça marche! Cliquez pour fermer.')
     setShowModal(true)
   }
@@ -276,6 +282,34 @@ export default function FormationsPage() {
         >
           🧪 TEST: Cliquer ici!
         </button>
+      </div>
+
+      {/* TEST MODAL - Direct DOM manipulation */}
+      <div id="test-modal" style={{
+        display: 'none',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0,0,0,0.9)',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 999999
+      }}>
+        <div style={{
+          backgroundColor: '#16a34a',
+          color: 'white',
+          padding: '50px 100px',
+          borderRadius: '20px',
+          fontSize: '36px',
+          fontWeight: 'bold',
+          border: '8px solid white',
+          textAlign: 'center'
+        }}>
+          🎉 YES! Ça marche!<br/>
+          <span style={{fontSize: '20px'}}>(Cette boîte = ça marche!)</span>
+        </div>
       </div>
 
       {/* Modal Popup - shows immediately on click */}
