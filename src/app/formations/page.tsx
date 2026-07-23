@@ -221,10 +221,10 @@ export default function FormationsPage() {
 
   const showNotification = (message: string) => {
     console.log('Notification triggered:', message)
-    // Use setTimeout to ensure state update happens
-    setTimeout(() => {
-      setNotification({message: message, type: 'info'})
-    }, 10)
+    // Direct alert first to ensure user sees something
+    alert(message)
+    // Then show the toast
+    setNotification({message: message, type: 'info'})
     // Auto hide after 3 seconds
     setTimeout(() => {
       setNotification(null)
@@ -232,21 +232,24 @@ export default function FormationsPage() {
   }
 
   const handleVideoClick = (videoTitle: string) => {
+    const msg = `🎬 Vidéo: ${videoTitle} - Bientôt disponible!`
     console.log('Video clicked:', videoTitle)
-    alert('🎬 Vidéo: ' + videoTitle + ' - Bientôt disponible!')
-    showNotification(`🎬 Vidéo: ${videoTitle} - Bientôt disponible!`)
+    alert(msg)
+    showNotification(msg)
   }
 
   const handleDownload = (resourceTitle: string) => {
+    const msg = `📄 Document: ${resourceTitle} - Bientôt disponible!`
     console.log('Download clicked:', resourceTitle)
-    alert('📄 Document: ' + resourceTitle + ' - Bientôt disponible!')
-    showNotification(`📄 Document: ${resourceTitle} - Bientôt disponible!`)
+    alert(msg)
+    showNotification(msg)
   }
 
   const handleArticleClick = (articleTitle: string) => {
+    const msg = `📖 Article: ${articleTitle} - Bientôt disponible!`
     console.log('Article clicked:', articleTitle)
-    alert('📖 Article: ' + articleTitle + ' - Bientôt disponible!')
-    showNotification(`📖 Article: ${articleTitle} - Bientôt disponible!`)
+    alert(msg)
+    showNotification(msg)
   }
 
   return (
@@ -434,34 +437,27 @@ export default function FormationsPage() {
               <h3 className="text-xl font-bold text-ingco-yellow mb-4">{module.category}</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {module.videos.map((video, vIndex) => (
-                  <div 
-                    key={vIndex} 
-                    className="bg-ingco-gray rounded-xl overflow-hidden hover:scale-105 transition-transform cursor-pointer"
+                  <button
+                    key={vIndex}
+                    type="button"
+                    className="bg-ingco-gray rounded-xl overflow-hidden hover:scale-105 transition-transform cursor-pointer text-left w-full"
                     onClick={() => {
                       console.log('Video clicked:', video.title)
                       alert('🎬 Vidéo: ' + video.title + ' - Bientôt disponible!')
                       showNotification(`🎬 Vidéo: ${video.title} - Bientôt disponible!`)
                     }}
                   >
-                    <div className="bg-gradient-to-br from-gray-800 to-gray-900 h-40 flex items-center justify-center" onClick={() => {
-                      console.log('Thumbnail clicked:', video.title)
-                      alert('🎬 Vidéo: ' + video.title + ' - Bientôt disponible!')
-                      showNotification(`🎬 Vidéo: ${video.title} - Bientôt disponible!`)
-                    }}>
+                    <div className="bg-gradient-to-br from-gray-800 to-gray-900 h-40 flex items-center justify-center">
                       <div className="text-6xl">{video.thumbnail}</div>
                     </div>
-                    <div className="p-4" onClick={() => {
-                      console.log('Text clicked:', video.title)
-                      alert('🎬 Vidéo: ' + video.title + ' - Bientôt disponible!')
-                      showNotification(`🎬 Vidéo: ${video.title} - Bientôt disponible!`)
-                    }}>
+                    <div className="p-4">
                       <h4 className="text-white font-semibold mb-2">{video.title}</h4>
                       <div className="flex items-center gap-2 text-gray-400 text-sm">
                         <span>▶</span>
                         <span>{video.duration}</span>
                       </div>
                     </div>
-                  </div>
+                  </button>
                 ))}
               </div>
             </div>
