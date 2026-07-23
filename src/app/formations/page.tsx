@@ -220,19 +220,23 @@ export default function FormationsPage() {
   }
 
   const showNotification = (message: string) => {
-    setNotification({message, type: 'info'})
+    console.log('Notification triggered:', message)
+    setNotification({message: message + ' ', type: 'info'})
     setTimeout(() => setNotification(null), 3000)
   }
 
   const handleVideoClick = (videoTitle: string) => {
+    console.log('Video clicked:', videoTitle)
     showNotification(`🎬 Vidéo: ${videoTitle} - Bientôt disponible!`)
   }
 
   const handleDownload = (resourceTitle: string) => {
+    console.log('Download clicked:', resourceTitle)
     showNotification(`📄 Document: ${resourceTitle} - Bientôt disponible!`)
   }
 
   const handleArticleClick = (articleTitle: string) => {
+    console.log('Article clicked:', articleTitle)
     showNotification(`📖 Article: ${articleTitle} - Bientôt disponible!`)
   }
 
@@ -240,7 +244,7 @@ export default function FormationsPage() {
     <div className="min-h-screen bg-ingco-black">
       {/* Notification Toast */}
       {notification && (
-        <div className="fixed top-20 right-4 z-50 bg-ingco-yellow text-ingco-black px-6 py-3 rounded-xl shadow-lg font-semibold animate-pulse">
+        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 bg-green-600 text-white px-8 py-4 rounded-2xl shadow-2xl font-bold text-lg animate-bounce">
           {notification.message}
         </div>
       )}
