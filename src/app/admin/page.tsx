@@ -47,7 +47,8 @@ export default function AdminDashboard() {
           <div className="hidden md:flex items-center gap-6">
             <Link href="/" className="text-gray-300 hover:text-ingco-yellow">Accueil</Link>
             <Link href="/admin" className="text-ingco-yellow">Dashboard</Link>
-            <Link href="/search" className="text-gray-300 hover:text-ingco-yellow">Produits</Link>
+            <Link href="/admin/products" className="text-gray-300 hover:text-ingco-yellow">Produits</Link>
+            <Link href="/admin/add-product" className="text-gray-300 hover:text-ingco-yellow">Ajouter</Link>
             <Link href="/contact" className="text-gray-300 hover:text-ingco-yellow">Messages</Link>
           </div>
           <div className="flex items-center gap-4">
