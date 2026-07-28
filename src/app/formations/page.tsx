@@ -534,8 +534,9 @@ export default function FormationsPage() {
                     onClick={(e) => {
                       e.preventDefault()
                       const modal = document.getElementById('test-modal')
-                      if (modal) {
-                        document.getElementById('modal-message').textContent = `🎬 Vidéo: ${video.title} - Bientôt disponible!`
+                      const modalMessage = document.getElementById('modal-message')
+                      if (modal && modalMessage) {
+                        modalMessage.textContent = `🎬 Vidéo: ${video.title} - Bientôt disponible!`
                         modal.style.display = 'flex'
                       }
                       window.location.hash = ''
