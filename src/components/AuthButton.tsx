@@ -3,35 +3,22 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { getSessionAction, logoutAction } from '@/app/actions'
-
-interface User {
-  id: string
-  email: string
-  name: string
-  role: string
-}
+import type { SessionUser } from '@/lib/security/session'
 
 export default function AuthButton() {
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<SessionUser | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Check session
-    const stored = localStorage.getItem('eoutilles_session')
-    if (stored) {
-      try {
-        setUser(JSON.parse(stored))
-      } catch {}
-    }
-    getSessionAction().then(result => {
-      if (result.user) setUser(result.user)
-    }).catch(() => {}).finally(() => setLoading(false))
+    getSessionAction()
+      .then(result => setUser(result.user))
+      .catch(() => {})
+      .finally(() => setLoading(false))
   }, [])
 
   const handleLogout = async () => {
-    localStorage.removeItem('eoutilles_session')
     await logoutAction()
-    window.location.href = '/auth/login'
+    window.location.href = '/'
   }
 
   if (loading) {

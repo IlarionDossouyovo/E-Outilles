@@ -10,13 +10,36 @@ export default function RegisterPage() {
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [country, setCountry] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
   const router = useRouter()
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Mock register - in production call API
-    localStorage.setItem('eoutilles_user', JSON.stringify({ email, name, country }))
-    router.push('/profile')
+    setError('')
+    setLoading(true)
+
+    try {
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password, country })
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        setError(data.error || 'Erreur lors de la création du compte')
+        setLoading(false)
+        return
+      }
+
+      router.push('/profile')
+      router.refresh()
+    } catch {
+      setError('Erreur de connexion au serveur')
+      setLoading(false)
+    }
   }
 
   return (
@@ -25,6 +48,12 @@ export default function RegisterPage() {
         <div className="bg-ingco-gray rounded-2xl p-8">
           <h1 className="text-3xl font-bold text-white text-center mb-2">Creer un compte</h1>
           <p className="text-gray-400 text-center mb-8">Rejoignez E-Outilles</p>
+
+          {error && (
+            <div className="bg-red-500/20 border border-red-500 text-red-400 px-4 py-2 rounded-xl mb-4">
+              {error}
+            </div>
+          )}
           
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -91,8 +120,8 @@ export default function RegisterPage() {
               </span>
             </label>
 
-            <button type="submit" className="w-full bg-ingco-yellow text-ingco-black py-3 rounded-xl font-bold hover:bg-yellow-400 transition-colors flex items-center justify-center gap-2">
-              🔐 Creer mon compte
+            <button type="submit" disabled={loading} className="w-full bg-ingco-yellow text-ingco-black py-3 rounded-xl font-bold hover:bg-yellow-400 transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
+              {loading ? '⏳ Creation...' : '🔐 Creer mon compte'}
             </button>
           </form>
 

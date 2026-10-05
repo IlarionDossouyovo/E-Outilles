@@ -95,11 +95,41 @@ export default function RevendeursPage() {
   })
 
   const [submitted, setSubmitted] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Simulation d'envoi
-    setSubmitted(true)
+    setLoading(true)
+    setError('')
+
+    try {
+      const res = await fetch('/api/resellers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          company: formData.companyName,
+          name: formData.contactName,
+          email: formData.email,
+          phone: formData.phone,
+          address: formData.address,
+          city: formData.city,
+          message: formData.message,
+        }),
+      })
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        setError(data.error || "Erreur lors de l'envoi de la demande")
+        return
+      }
+
+      setSubmitted(true)
+    } catch {
+      setError('Erreur de connexion au serveur')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const handleCategoryToggle = (category: string) => {
@@ -312,10 +342,16 @@ export default function RevendeursPage() {
 
               <button
                 type="submit"
-                className="w-full bg-ingco-yellow text-ingco-black py-4 rounded-xl font-bold text-lg hover:bg-yellow-400 transition-colors"
+                disabled={loading}
+                className="w-full bg-ingco-yellow text-ingco-black py-4 rounded-xl font-bold text-lg hover:bg-yellow-400 transition-colors disabled:opacity-50"
               >
-                Envoyer ma Demande
+                {loading ? '⏳ Envoi...' : 'Envoyer ma Demande'}
               </button>
+              {error && (
+                <div className="mt-4 bg-red-500/20 border border-red-500 text-red-400 px-4 py-3 rounded-xl text-sm">
+                  {error}
+                </div>
+              )}
             </form>
           )}
         </div>

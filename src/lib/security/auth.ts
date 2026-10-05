@@ -1,33 +1,35 @@
 import { cookies } from 'next/headers'
+import { prisma } from '@/lib/db/prisma'
+import { SESSION_COOKIE, SessionUser, verifySessionToken } from '@/lib/security/session'
 
-export interface User {
-  id: string
-  email: string
-  name?: string
-  role: 'customer' | 'admin' | 'reseller'
-  country?: string
-}
+export type { SessionUser as User }
 
-// Demo users database (same as API)
-export const users = [
-  { id: '1', email: 'demo@e-outilles.com', password: 'demo123', name: 'Demo User', role: 'customer' },
-  { id: '2', email: 'admin@e-outilles.com', password: 'admin123', name: 'Admin', role: 'admin' },
-]
-
-// Get current session (server-side)
-export async function getSession(): Promise<User | null> {
+// Get current session (server-side, verifies signature)
+export async function getSession(): Promise<SessionUser | null> {
   try {
     const cookieStore = await cookies()
-    const sessionCookie = cookieStore.get('session')
-    if (!sessionCookie) return null
-    return JSON.parse(sessionCookie.value)
+    return verifySessionToken(cookieStore.get(SESSION_COOKIE)?.value)
   } catch {
     return null
   }
 }
 
-// Check role
-export function hasRole(user: User | null, role: string): boolean {
+// Get the current user record from the database
+export async function getCurrentUser() {
+  const session = await getSession()
+  if (!session) return null
+  return prisma.user.findUnique({ where: { id: session.id } })
+}
+
+// Check role. Admins pass every check.
+export function hasRole(user: SessionUser | null, role: string): boolean {
   if (!user) return false
   return user.role === role || user.role === 'admin'
+}
+
+// Require an authenticated admin, returns the user or null
+export async function requireAdmin(): Promise<SessionUser | null> {
+  const user = await getSession()
+  if (!user || user.role !== 'admin') return null
+  return user
 }

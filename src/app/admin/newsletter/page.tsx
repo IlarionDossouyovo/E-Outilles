@@ -1,17 +1,17 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import AdminAnalytics from '@/components/AdminAnalytics'
 import Logo from '@/components/Logo'
 
-const subscribers = [
-  { id: 1, email: 'jean@example.com', name: 'Jean Kouassi', date: '16/04/2026', status: 'actif' },
-  { id: 2, email: 'marie@example.com', name: 'Marie Diallo', date: '15/04/2026', status: 'actif' },
-  { id: 3, email: 'paul@example.com', name: 'Paul Okonkwo', date: '14/04/2026', status: 'actif' },
-  { id: 4, email: 'anne@example.com', name: 'Anne Mensah', date: '13/04/2026', status: 'actif' },
-  { id: 5, email: 'pierre@example.com', name: 'Pierre Ngoma', date: '12/04/2026', status: 'inactif' },
-]
+interface Subscriber {
+  id: string
+  email: string
+  name: string | null
+  createdAt: string
+  status: string
+}
 
 const templates = [
   { id: 1, name: 'Nouveaux produits', subject: 'Découvrez nos nouveautés!' },
@@ -25,12 +25,20 @@ export default function NewsletterPage() {
   const [body, setBody] = useState('')
   const [template, setTemplate] = useState('')
   const [sending, setSending] = useState(false)
+  const [subscribers, setSubscribers] = useState<Subscriber[]>([])
+
+  useEffect(() => {
+    fetch('/api/newsletter')
+      .then(res => res.json())
+      .then(data => { if (Array.isArray(data)) setSubscribers(data) })
+      .catch(err => console.error('Error fetching subscribers:', err))
+  }, [])
 
   const handleSend = () => {
     setSending(true)
     setTimeout(() => {
       setSending(false)
-      alert(`Newsletter "${subject}" envoyée à ${subscribers.filter(s => s.status === 'actif').length} abonnés!`)
+      alert(`Newsletter "${subject}" envoyée à ${subscribers.filter(s => s.status === 'active').length} abonnés!`)
     }, 2000)
   }
 
@@ -141,7 +149,7 @@ export default function NewsletterPage() {
                     : 'bg-ingco-yellow text-ingco-black hover:bg-yellow-400'
                 }`}
               >
-                {sending ? '⏳ Envoi en cours...' : `📤 Envoyer à ${subscribers.filter(s => s.status === 'actif').length} abonnés`}
+                {sending ? '⏳ Envoi en cours...' : `📤 Envoyer à ${subscribers.filter(s => s.status === 'active').length} abonnés`}
               </button>
             </div>
           </div>
@@ -159,7 +167,7 @@ export default function NewsletterPage() {
                       <div className="text-gray-500 text-xs">{sub.email}</div>
                     </div>
                     <span className={`text-xs px-2 py-1 rounded-full ${
-                      sub.status === 'actif' ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-400'
+                      sub.status === 'active' ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-400'
                     }`}>
                       {sub.status}
                     </span>
@@ -177,7 +185,7 @@ export default function NewsletterPage() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Actifs</span>
-                  <span className="text-green-400 font-bold">{subscribers.filter(s => s.status === 'actif').length}</span>
+                  <span className="text-green-400 font-bold">{subscribers.filter(s => s.status === 'active').length}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Taux d'ouverture</span>

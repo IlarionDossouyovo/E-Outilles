@@ -14,17 +14,17 @@ export default function LoginPage() {
     e.preventDefault()
     setError('')
     setRedirecting(true)
-    
+
     const formData = new FormData(e.currentTarget)
     const result = await loginAction(formData)
-    
+
     if (result?.error) {
       setError(result.error)
       setRedirecting(false)
     } else if (result?.success) {
-      // Store session and redirect
-      localStorage.setItem('eoutilles_session', JSON.stringify(result.user))
-      router.push('/profile')
+      const redirectTo = new URLSearchParams(window.location.search).get('redirect') || '/profile'
+      router.push(redirectTo)
+      router.refresh()
     }
   }
 

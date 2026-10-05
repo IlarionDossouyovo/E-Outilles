@@ -1,40 +1,87 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import AdminAnalytics from '@/components/AdminAnalytics'
 import Logo from '@/components/Logo'
 
-const stats = {
-  totalOrders: 1247,
-  totalRevenue: 89450,
-  activeProducts: 523,
-  subscribers: 3421
+interface RecentOrder {
+  id: string
+  customer: string
+  amount: number
+  status: string
+  date: string
 }
 
-const recentOrders = [
-  { id: 'ORD-001', customer: 'Jean Kouassi', amount: 459.99, status: 'pending', date: '16/04/2026' },
-  { id: 'ORD-002', customer: 'Marie Diallo', amount: 189.00, status: 'shipped', date: '15/04/2026' },
-  { id: 'ORD-003', customer: 'Paul Okonkwo', amount: 899.50, status: 'delivered', date: '15/04/2026' },
-  { id: 'ORD-004', customer: 'Anne Mensah', amount: 234.00, status: 'processing', date: '14/04/2026' },
-  { id: 'ORD-005', customer: 'Pierre Ngoma', amount: 567.00, status: 'pending', date: '14/04/2026' },
-]
-
-const topProducts = [
-  { name: 'Perceuse visseuse INGCO 20V', sales: 89, revenue: 8011 },
-  { name: 'Marteau perforateur SDS Max', sales: 45, revenue: 11249 },
-  { name: 'Kit de clés mécaniques 50 pièces', sales: 67, revenue: 5359 },
-  { name: 'Tronconneuse thermique 45cm', sales: 34, revenue: 10196 },
-  { name: 'Multimètre numérique professionnel', sales: 78, revenue: 4679 },
-]
+interface TopProduct {
+  name: string
+  sales: number
+  revenue: number
+}
 
 const statusLabels: Record<string, { label: string; color: string }> = {
   pending: { label: 'en attente', color: 'bg-yellow-500' },
   processing: { label: 'traitement', color: 'bg-blue-500' },
+  paid: { label: 'payé', color: 'bg-green-600' },
   shipped: { label: 'expédié', color: 'bg-purple-500' },
-  delivered: { label: 'livré', color: 'bg-green-500' }
+  delivered: { label: 'livré', color: 'bg-green-500' },
+  cancelled: { label: 'annulé', color: 'bg-red-500' }
+}
+
+function statusInfo(status: string) {
+  return statusLabels[status] || { label: status, color: 'bg-gray-500' }
 }
 
 export default function AdminDashboard() {
+  const [stats, setStats] = useState({ totalOrders: 0, totalRevenue: 0, activeProducts: 0, subscribers: 0 })
+  const [recentOrders, setRecentOrders] = useState<RecentOrder[]>([])
+  const [topProducts, setTopProducts] = useState<TopProduct[]>([])
+
+  useEffect(() => {
+    Promise.all([
+      fetch('/api/orders').then(r => r.ok ? r.json() : []).catch(() => []),
+      fetch('/api/products?limit=1000').then(r => r.ok ? r.json() : []).catch(() => []),
+      fetch('/api/newsletter').then(r => r.ok ? r.json() : []).catch(() => []),
+    ]).then(([ordersData, productsData, subsData]) => {
+      const orders = Array.isArray(ordersData) ? ordersData : []
+      const products = Array.isArray(productsData) ? productsData : (productsData.products || [])
+      const subs = Array.isArray(subsData) ? subsData : []
+
+      const revenue = orders
+        .filter((o: { status: string }) => o.status !== 'cancelled')
+        .reduce((sum: number, o: { total: number }) => sum + (o.total || 0), 0)
+
+      setStats({
+        totalOrders: orders.length,
+        totalRevenue: Math.round(revenue * 100) / 100,
+        activeProducts: products.length,
+        subscribers: subs.length,
+      })
+
+      setRecentOrders(orders.slice(0, 5).map((o: {
+        id: string; total: number; status: string; createdAt: string
+        user?: { name?: string | null } | null
+      }) => ({
+        id: o.id,
+        customer: o.user?.name || 'Client',
+        amount: o.total,
+        status: o.status,
+        date: new Date(o.createdAt).toLocaleDateString('fr-FR'),
+      })))
+
+      const salesByProduct: Record<string, { name: string; sales: number; revenue: number }> = {}
+      orders.forEach((o: { items?: { quantity: number; price: number; product?: { name?: string } | null }[] }) => {
+        (o.items || []).forEach((item) => {
+          const name = item.product?.name || 'Produit'
+          if (!salesByProduct[name]) salesByProduct[name] = { name, sales: 0, revenue: 0 }
+          salesByProduct[name].sales += item.quantity
+          salesByProduct[name].revenue += item.quantity * item.price
+        })
+      })
+      setTopProducts(Object.values(salesByProduct).sort((a, b) => b.sales - a.sales).slice(0, 5))
+    })
+  }, [])
+
   return (
     <div className="min-h-screen bg-ingco-black">
       {/* Navigation */}
@@ -143,8 +190,8 @@ export default function AdminDashboard() {
                   </div>
                   <div className="text-right">
                     <div className="text-white font-bold">{order.amount.toLocaleString()}€</div>
-                    <span className={`text-xs px-2 py-1 rounded-full text-white ${statusLabels[order.status].color}`}>
-                      {statusLabels[order.status].label}
+                    <span className={`text-xs px-2 py-1 rounded-full text-white ${statusInfo(order.status).color}`}>
+                      {statusInfo(order.status).label}
                     </span>
                   </div>
                 </div>

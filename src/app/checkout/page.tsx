@@ -6,24 +6,15 @@ import Link from 'next/link'
 import PageNavigation from '@/components/PageNavigation'
 import Logo from '@/components/Logo'
 
-interface OrderData {
-  customerName: string
-  customerEmail: string
-  phone: string
-  address: string
-  city: string
-  country: string
-  paymentMethod: string
-  total: number
-  items: Array<{ id: string; name: string; price: number; quantity: number }>
-}
-
 export default function CheckoutPage() {
   const { items, getTotal, clearCart } = useCartStore()
   const [step, setStep] = useState(1) // 1: livraison, 2: paiement, 3: confirmation
   const [paymentMethod, setPaymentMethod] = useState('cod')
   const [loading, setLoading] = useState(false)
   const [orderId, setOrderId] = useState('')
+  const [error, setError] = useState('')
+  const [finalTotal, setFinalTotal] = useState(0)
+  const [finalCount, setFinalCount] = useState(0)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -41,60 +32,61 @@ export default function CheckoutPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (step < 3) {
       setStep(step + 1)
-    } else {
-      // Submit order
-      setLoading(true)
-      
-      const orderData: OrderData = {
-        customerName: formData.name,
-        customerEmail: formData.email,
-        phone: formData.phone,
-        address: formData.address,
-        city: formData.city,
-        country: formData.country,
-        paymentMethod,
-        total: getTotal(),
-        items: items.map(item => ({
-          id: item.id,
-          name: item.name,
-          price: item.price,
-          quantity: item.quantity
-        }))
-      }
+      return
+    }
 
-      try {
-        const response = await fetch('/api/orders', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(orderData)
-        })
+    // Submit order
+    setLoading(true)
+    setError('')
 
-        if (response.ok) {
-          const result = await response.json()
-          setOrderId(result.orderId || `ORD-${Date.now()}`)
-          
-          // If Mobile Money, show payment instructions
-          if (paymentMethod === 'momo') {
-            alert(`📱 Paiement Mobile Money\n\nNuméro: ${momoData.phone}\nOpérateur: ${momoData.operator}\nMontant: ${getTotal().toFixed(2)}€\n\nUn code de paiement vous sera envoyé par SMS.`)
-          }
-          
-          clearCart()
-          setStep(3)
-        } else {
-          alert('Erreur lors de la commande. Veuillez réessayer.')
-        }
-      } catch (error) {
-        console.error('Order error:', error)
-        // Still proceed for demo
-        setOrderId(`ORD-${Date.now()}`)
-        clearCart()
-        setStep(3)
-      } finally {
+    const orderData = {
+      customerName: formData.name,
+      customerEmail: formData.email,
+      phone: formData.phone,
+      shippingAddress: formData.address,
+      shippingCity: formData.city,
+      shippingCountry: formData.country,
+      paymentMethod,
+      notes: formData.note,
+      items: items.map(item => ({
+        productId: item.id,
+        quantity: item.quantity,
+      })),
+    }
+
+    try {
+      const response = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderData)
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        setError(result.error || 'Erreur lors de la commande. Veuillez réessayer.')
         setLoading(false)
+        return
       }
+
+      setOrderId(result.orderId)
+      setFinalTotal(result.order?.total ?? getTotal())
+      setFinalCount(items.length)
+
+      if (paymentMethod === 'momo') {
+        alert(`Paiement Mobile Money\n\nNumero: ${momoData.phone}\nOperateur: ${momoData.operator}\nMontant: ${(result.order?.total ?? getTotal()).toFixed(2)} EUR\n\nUn code de paiement vous sera envoye par SMS.`)
+      }
+
+      clearCart()
+      setStep(3)
+    } catch (err) {
+      console.error('Order error:', err)
+      setError('Erreur de connexion au serveur. Veuillez reessayer.')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -151,8 +143,8 @@ export default function CheckoutPage() {
             </div>
             <div className="bg-ingco-dark rounded-xl p-4 mb-6 text-left">
               <p className="text-gray-400 text-sm">Résumé:</p>
-              <p className="text-white font-bold">{items.length} produit(s)</p>
-              <p className="text-ingco-yellow font-bold text-xl">{getTotal().toFixed(2)}€</p>
+              <p className="text-white font-bold">{finalCount} produit(s)</p>
+              <p className="text-ingco-yellow font-bold text-xl">{finalTotal.toFixed(2)}€</p>
             </div>
             <Link href="/" className="block bg-ingco-yellow text-ingco-black py-3 rounded-xl font-bold hover:bg-yellow-400">
               Retour à l'accueil
@@ -414,6 +406,11 @@ export default function CheckoutPage() {
               >
                 {loading ? '⏳ Traitement en cours...' : step === 1 ? 'Continuer vers paiement' : 'Confirmer la commande'}
               </button>
+              {error && (
+                <div className="mt-4 bg-red-500/20 border border-red-500 text-red-400 px-4 py-3 rounded-xl text-sm">
+                  {error}
+                </div>
+              )}
             </form>
           </div>
 

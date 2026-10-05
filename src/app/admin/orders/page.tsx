@@ -1,43 +1,83 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import AdminAnalytics from '@/components/AdminAnalytics'
 import Logo from '@/components/Logo'
 
-const allOrders = [
-  { id: 'ORD-001', customer: 'Jean Kouassi', email: 'jean@example.com', phone: '+229 01 234 5678', amount: 459.99, status: 'pending', date: '16/04/2026', items: ['Cric hydraulique 3T'] },
-  { id: 'ORD-002', customer: 'Marie Diallo', email: 'marie@example.com', phone: '+229 01 234 5679', amount: 189.00, status: 'shipped', date: '15/04/2026', items: ['Multimètre digital'] },
-  { id: 'ORD-003', customer: 'Paul Okonkwo', email: 'paul@example.com', phone: '+229 01 234 5680', amount: 899.50, status: 'delivered', date: '15/04/2026', items: ['Tronçonneuse thermique', 'Système irrigation'] },
-  { id: 'ORD-004', customer: 'Anne Mensah', email: 'anne@example.com', phone: '+229 01 234 5681', amount: 234.00, status: 'processing', date: '14/04/2026', items: ['Kit clés mécaniques'] },
-  { id: 'ORD-005', customer: 'Pierre Ngoma', email: 'pierre@example.com', phone: '+229 01 234 5682', amount: 567.00, status: 'pending', date: '14/04/2026', items: ['Perceuse visseuse', 'Marteau perforateur'] },
-  { id: 'ORD-006', customer: 'Sophie Martin', email: 'sophie@example.com', phone: '+229 01 234 5683', amount: 145.00, status: 'delivered', date: '13/04/2026', items: ['Pinces isolées'] },
-  { id: 'ORD-007', customer: 'Ali Baba', email: 'ali@example.com', phone: '+229 01 234 5684', amount: 320.00, status: 'shipped', date: '12/04/2026', items: ['Compresseur portable'] },
-  { id: 'ORD-008', customer: 'Fatou Diallo', email: 'fatou@example.com', phone: '+229 01 234 5685', amount: 78.00, status: 'processing', date: '11/04/2026', items: ['Testeur de tension'] },
-]
+interface AdminOrder {
+  id: string
+  customer: string
+  email: string
+  phone: string
+  amount: number
+  status: string
+  date: string
+  items: string[]
+}
 
-const statusOptions = ['pending', 'processing', 'shipped', 'delivered']
+const statusOptions = ['pending', 'processing', 'paid', 'shipped', 'delivered', 'cancelled']
 
 const statusLabels: Record<string, { label: string; color: string }> = {
   pending: { label: 'En attente', color: 'bg-yellow-500' },
   processing: { label: 'En traitement', color: 'bg-blue-500' },
-  shipped: { label: 'Expédié', color: 'bg-purple-500' },
-  delivered: { label: 'Livré', color: 'bg-green-500' }
+  paid: { label: 'Paye', color: 'bg-green-600' },
+  shipped: { label: 'Expedie', color: 'bg-purple-500' },
+  delivered: { label: 'Livre', color: 'bg-green-500' },
+  cancelled: { label: 'Annule', color: 'bg-red-500' }
 }
 
 export default function AdminOrdersPage() {
+  const [orders, setOrders] = useState<AdminOrder[]>([])
+  const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('all')
   const [search, setSearch] = useState('')
 
-  const filteredOrders = allOrders.filter(order => {
+  useEffect(() => {
+    fetch('/api/orders')
+      .then(res => res.json())
+      .then((data) => {
+        if (!Array.isArray(data)) return
+        setOrders(data.map((o: {
+          id: string
+          total: number
+          status: string
+          createdAt: string
+          user?: { name?: string | null; email?: string } | null
+          items?: { product?: { name?: string } | null }[]
+        }) => ({
+          id: o.id,
+          customer: o.user?.name || 'Client',
+          email: o.user?.email || '',
+          phone: '',
+          amount: o.total,
+          status: o.status,
+          date: new Date(o.createdAt).toLocaleDateString('fr-FR'),
+          items: (o.items || []).map(i => i.product?.name).filter(Boolean) as string[],
+        })))
+      })
+      .catch(err => console.error('Error fetching orders:', err))
+      .finally(() => setLoading(false))
+  }, [])
+
+  const filteredOrders = orders.filter(order => {
     const matchFilter = filter === 'all' || order.status === filter
     const matchSearch = order.customer.toLowerCase().includes(search.toLowerCase()) || 
                      order.id.toLowerCase().includes(search.toLowerCase())
     return matchFilter && matchSearch
   })
 
-  const updateStatus = (orderId: string, newStatus: string) => {
-    alert(`Commande ${orderId} mise à jour: ${statusLabels[newStatus].label}`)
+  const updateStatus = async (orderId: string, newStatus: string) => {
+    const res = await fetch(`/api/orders/${orderId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: newStatus }),
+    })
+    if (res.ok) {
+      setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus } : o))
+    } else {
+      alert('Erreur lors de la mise a jour du statut')
+    }
   }
 
   return (
@@ -63,17 +103,17 @@ export default function AdminOrdersPage() {
           <div>
             <Link href="/admin" className="text-ingco-yellow text-sm hover:underline">← Dashboard</Link>
             <h1 className="text-3xl font-bold text-white mt-2">Gestion des commandes</h1>
-            <p className="text-gray-400">{allOrders.length} commandes</p>
+            <p className="text-gray-400">{orders.length} commandes</p>
           </div>
         </div>
 
         {/* Analytics */}
         <AdminAnalytics data={{
-          totalOrders: allOrders.length,
-          totalRevenue: allOrders.reduce((sum, o) => sum + o.amount, 0),
+          totalOrders: orders.length,
+          totalRevenue: orders.reduce((sum, o) => sum + o.amount, 0),
           activeProducts: 523,
           subscribers: 3421,
-          recentOrders: allOrders.slice(0, 5).map(o => ({ ...o, status: o.status })),
+          recentOrders: orders.slice(0, 5).map(o => ({ ...o, status: o.status })),
           topProducts: [
             { name: 'Perceuse visseuse INGCO 20V', sales: 89, revenue: 8011 },
             { name: 'Marteau perforateur SDS Max', sales: 45, revenue: 11249 },
@@ -160,8 +200,8 @@ export default function AdminOrdersPage() {
           </div>
           
           {filteredOrders.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-gray-400">Aucune commande trouvée</p>
+            <div className="bg-ingco-gray rounded-xl p-8 text-center text-gray-400">
+              {loading ? 'Chargement des commandes...' : 'Aucune commande trouvée'}
             </div>
           )}
         </div>
