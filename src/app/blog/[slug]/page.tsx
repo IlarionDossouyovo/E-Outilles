@@ -41,9 +41,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
     const post = await prisma.blogPost.findUnique({ where: { slug } })
     if (post) {
+      const description = post.excerpt || post.content?.slice(0, 160) || undefined
+      const image = post.image || blogCategoryImage(post.category)
       return {
         title: `${post.title} | Blog E-Outilles`,
-        description: post.excerpt || post.content?.slice(0, 160),
+        description,
+        alternates: { canonical: `/blog/${slug}` },
+        openGraph: {
+          type: 'article',
+          title: post.title,
+          description,
+          url: `/blog/${slug}`,
+          images: [{ url: image }],
+        },
+        twitter: { card: 'summary_large_image', title: post.title, description },
       }
     }
   } catch {

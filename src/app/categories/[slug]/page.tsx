@@ -16,21 +16,40 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const meta = categoryMeta(slug)
+  const fallbackImage = categoryImage(slug)
   try {
     const cat = await prisma.category.findUnique({ where: { slug: dbSlugFor(slug) ?? slug } })
     if (cat) {
+      const description = cat.description || `Découvrez la gamme ${cat.name} chez E-Outilles.`
       return {
         title: `${cat.name} | Catégories E-Outilles`,
-        description: cat.description || `Découvrez la gamme ${cat.name} chez E-Outilles.`,
+        description,
+        alternates: { canonical: `/categories/${slug}` },
+        openGraph: {
+          type: 'website',
+          title: `${cat.name} | E-Outilles`,
+          description,
+          url: `/categories/${slug}`,
+          images: [{ url: cat.image || fallbackImage }],
+        },
       }
     }
   } catch {
     // Database unavailable at build time: fall back to the static catalog below.
   }
   if (!meta) return { title: 'Catégorie non trouvée' }
+  const description = `Découvrez la gamme ${meta.name} chez E-Outilles.`
   return {
     title: `${meta.name} | Catégories E-Outilles`,
-    description: `Découvrez la gamme ${meta.name} chez E-Outilles.`,
+    description,
+    alternates: { canonical: `/categories/${slug}` },
+    openGraph: {
+      type: 'website',
+      title: `${meta.name} | E-Outilles`,
+      description,
+      url: `/categories/${slug}`,
+      images: [{ url: fallbackImage }],
+    },
   }
 }
 
