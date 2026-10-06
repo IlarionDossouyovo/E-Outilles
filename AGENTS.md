@@ -51,3 +51,20 @@ Persistent notes for working on the E-Outilles codebase.
 - If dynamic routes 500 with `Cannot find module './vendor-chunks/...'`, the
   `.next` cache is stale (dev server ran during a `next build`). Stop dev,
   `rm -rf .next`, restart `npm run dev`.
+
+## Database resilience at build (session 2026-10-05)
+- `/categories/[slug]` is gated by the static catalog (`src/lib/catalog.ts`),
+  NOT by the DB. `generateStaticParams` enumerates `CATEGORY_META` and the page
+  only calls `notFound()` when the slug is absent from the catalog. All Prisma
+  reads are wrapped in try/catch and fall back to catalog values, so a build with
+  an empty/unmigrated `dev.db` no longer prerenders 18 pages as 404.
+- Keep it that way: never let a Prisma read decide whether a statically listed
+  page exists. The DB enriches (products, counts, related posts); the catalog decides.
+- Catalog slug `jardinage` maps to DB slug `garden` via `DB_SLUG_ALIASES`
+  (`dbSlugFor`). Add an alias if a catalog slug has no matching seed row.
+- `prisma/dev.db` is gitignored and absent from fresh clones. Migrations create
+  the tables; `npx prisma db seed` (upserts, idempotent) fills demo data.
+  A `dev.db` that exists but was never seeded causes
+  `P2021: The table 'main.Category' does not exist` during `next build`.
+- `scripts/update.ps1` always runs `prisma db seed` (no longer skipped when
+  `dev.db` exists) to avoid the empty-DB build failure on the local machine.

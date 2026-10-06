@@ -3,8 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import prisma from '@/lib/db/prisma'
 import { NavigationArrows, Breadcrumb, Icon } from '@/components/Icons'
-import { categoryImage, categoryMeta, subcategoriesFor } from '@/lib/catalog'
-import { CATEGORY_META } from '@/lib/catalog'
+import { categoryImage, categoryMeta, subcategoriesFor, dbSlugFor, CATEGORY_META } from '@/lib/catalog'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -16,11 +15,22 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  const cat = await prisma.category.findUnique({ where: { slug } })
-  if (!cat) return { title: 'Catégorie non trouvée' }
+  const meta = categoryMeta(slug)
+  try {
+    const cat = await prisma.category.findUnique({ where: { slug: dbSlugFor(slug) ?? slug } })
+    if (cat) {
+      return {
+        title: `${cat.name} | Catégories E-Outilles`,
+        description: cat.description || `Découvrez la gamme ${cat.name} chez E-Outilles.`,
+      }
+    }
+  } catch {
+    // Database unavailable at build time: fall back to the static catalog below.
+  }
+  if (!meta) return { title: 'Catégorie non trouvée' }
   return {
-    title: `${cat.name} | Catégories E-Outilles`,
-    description: cat.description || `Découvrez la gamme ${cat.name} chez E-Outilles.`,
+    title: `${meta.name} | Catégories E-Outilles`,
+    description: `Découvrez la gamme ${meta.name} chez E-Outilles.`,
   }
 }
 
@@ -35,26 +45,41 @@ function firstImage(images: string): string | null {
 
 export default async function CategoryDetailPage({ params }: Props) {
   const { slug } = await params
-  const category = await prisma.category.findUnique({
-    where: { slug },
-    include: { _count: { select: { products: true } }, children: true },
-  })
-
-  if (!category) notFound()
-
-  const products = await prisma.product.findMany({
-    where: { categoryId: category.id },
-    orderBy: { createdAt: 'desc' },
-    take: 24,
-  })
-
+  // The static catalog is the source of truth for which categories exist, so the
+  // page still builds and renders when the database is empty or unavailable.
   const meta = categoryMeta(slug)
+  if (!meta) notFound()
+
+  let dbCategory: (Awaited<ReturnType<typeof prisma.category.findUnique>> & { _count?: { products: number } }) | null = null
+  let products: Awaited<ReturnType<typeof prisma.product.findMany>> = []
+  let posts: Awaited<ReturnType<typeof prisma.blogPost.findMany>> = []
+
+  try {
+    dbCategory = await prisma.category.findUnique({
+      where: { slug: dbSlugFor(slug) ?? slug },
+      include: { _count: { select: { products: true } }, children: true },
+    })
+    if (dbCategory) {
+      products = await prisma.product.findMany({
+        where: { categoryId: dbCategory.id },
+        orderBy: { createdAt: 'desc' },
+        take: 24,
+      })
+      posts = await prisma.blogPost.findMany({
+        where: { published: true, category: dbCategory.name },
+        orderBy: { createdAt: 'desc' },
+        take: 3,
+      })
+    }
+  } catch (error) {
+    console.error('Category fetch error:', error)
+  }
+
+  const name = dbCategory?.name ?? meta.name
+  const description = dbCategory?.description ?? `Découvrez notre gamme ${meta.name}.`
+  const color = dbCategory?.color ?? meta.color
+  const productCount = dbCategory?._count?.products
   const subs = subcategoriesFor(slug)
-  const posts = await prisma.blogPost.findMany({
-    where: { published: true, category: category.name },
-    orderBy: { createdAt: 'desc' },
-    take: 3,
-  })
 
   return (
     <div className="min-h-screen bg-ingco-black">
@@ -62,19 +87,21 @@ export default async function CategoryDetailPage({ params }: Props) {
       {/* Hero */}
       <section className="pt-24 pb-10">
         <div className="max-w-7xl mx-auto px-4">
-          <Breadcrumb items={[{ label: 'Catégories', href: '/categories' }, { label: category.name }]} />
+          <Breadcrumb items={[{ label: 'Catégories', href: '/categories' }, { label: name }]} />
           <div className="relative rounded-3xl overflow-hidden border border-white/5 animate-fade-in-up"
-            style={{ background: `linear-gradient(135deg, ${meta?.color || category.color || '#FFC400'}33, #121212)` }}>
+            style={{ background: `linear-gradient(135deg, ${color || '#FFC400'}33, #121212)` }}>
             <div className="grid sm:grid-cols-[auto,1fr] items-center gap-6 p-6 sm:p-10">
               <div className="w-28 h-28 sm:w-40 sm:h-40 rounded-2xl bg-ingco-black/60 flex items-center justify-center">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={categoryImage(slug)} alt={category.name} className="w-24 h-24 sm:w-32 sm:h-32 object-contain animate-float" />
+                <img src={categoryImage(slug)} alt={name} className="w-24 h-24 sm:w-32 sm:h-32 object-contain animate-float" />
               </div>
               <div>
                 <span className="text-ingco-yellow text-sm font-semibold uppercase tracking-wide">Catégorie</span>
-                <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mt-1 mb-3">{category.name}</h1>
-                <p className="text-gray-300 max-w-2xl">{category.description}</p>
-                <p className="text-ingco-yellow font-bold mt-3">{category._count.products} produits disponibles</p>
+                <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mt-1 mb-3">{name}</h1>
+                <p className="text-gray-300 max-w-2xl">{description}</p>
+                {typeof productCount === 'number' && (
+                  <p className="text-ingco-yellow font-bold mt-3">{productCount} produits disponibles</p>
+                )}
               </div>
             </div>
           </div>
@@ -106,7 +133,7 @@ export default async function CategoryDetailPage({ params }: Props) {
 
       {/* Products */}
       <section className="max-w-7xl mx-auto px-4 pb-10">
-        <h2 className="text-white font-bold text-xl mb-4">Produits {category.name}</h2>
+        <h2 className="text-white font-bold text-xl mb-4">Produits {name}</h2>
         {products.length === 0 ? (
           <div className="bg-ingco-gray rounded-2xl p-10 text-center text-gray-400">
             Aucun produit dans cette catégorie pour le moment.

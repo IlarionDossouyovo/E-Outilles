@@ -48,6 +48,17 @@ export function subcategoriesFor(slug?: string | null): string[] {
   return slug ? BY_SLUG[slug]?.subcategories ?? [] : []
 }
 
+// Catalog slugs whose matching row in the database seed uses a different slug
+// (e.g. the static catalog has both `garden` and `jardinage` for Jardinage).
+export const DB_SLUG_ALIASES: Record<string, string> = {
+  jardinage: 'garden',
+}
+
+export function dbSlugFor(slug?: string | null): string | null {
+  if (!slug) return null
+  return DB_SLUG_ALIASES[slug] ?? slug
+}
+
 // Blog category -> real image asset.
 export const BLOG_CATEGORY_IMAGES: Record<string, string> = {
   Tous: '/blog/cordless-tools.svg',

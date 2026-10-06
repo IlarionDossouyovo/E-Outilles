@@ -30,12 +30,10 @@ npx prisma generate
 Write-Host "== 5/7 Application des migrations ==" -ForegroundColor Cyan
 npx prisma migrate deploy
 
-Write-Host "== 6/7 Base de donnees de demonstration (optionnel) ==" -ForegroundColor Cyan
-if (Test-Path "prisma\dev.db") {
-    Write-Host "dev.db deja present - seed ignore (supprimez prisma\dev.db pour reinitialiser)." -ForegroundColor Yellow
-} else {
-    npx prisma db seed
-}
+Write-Host "== 6/7 Base de donnees de demonstration (idempotent) ==" -ForegroundColor Cyan
+# Le seed utilise des upsert : relancer ne cree pas de doublons.
+# Indispensable si dev.db existe mais est vide (tables jamais migrees/seedees).
+npx prisma db seed
 
 Write-Host "== 7/7 Verification du build ==" -ForegroundColor Cyan
 npm run build

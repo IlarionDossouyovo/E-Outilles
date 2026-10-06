@@ -38,22 +38,30 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  const post = await prisma.blogPost.findUnique({ where: { slug } })
-  if (!post) return { title: 'Article non trouvé' }
-  
-  return {
-    title: `${post.title} | Blog E-Outilles`,
-    description: post.excerpt || post.content?.slice(0, 160)
+  try {
+    const post = await prisma.blogPost.findUnique({ where: { slug } })
+    if (post) {
+      return {
+        title: `${post.title} | Blog E-Outilles`,
+        description: post.excerpt || post.content?.slice(0, 160),
+      }
+    }
+  } catch {
+    // Database unavailable at build time: fall through to the generic metadata.
   }
+  return { title: 'Article | Blog E-Outilles' }
 }
 
 
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params
-  const post = await prisma.blogPost.findUnique({ 
-    where: { slug } 
-  })
+  let post: Awaited<ReturnType<typeof prisma.blogPost.findUnique>> = null
+  try {
+    post = await prisma.blogPost.findUnique({ where: { slug } })
+  } catch (error) {
+    console.error('Blog post fetch error:', error)
+  }
   
   if (!post) {
     notFound()

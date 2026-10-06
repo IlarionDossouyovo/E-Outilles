@@ -16,9 +16,28 @@ Boutique e-commerce d'outillage professionnel **INGCO** pour l'Afrique de l'Oues
 npm install
 npx prisma generate
 npx prisma migrate deploy
-npx prisma db seed      # données de démonstration
+npx prisma db seed      # données de démonstration (upsert, réexécutable)
 npm run dev             # http://localhost:3003
 ```
+
+> Les catégories de la page `/categories/[slug]` s'appuient sur le catalogue
+> statique (`src/lib/catalog.ts`) et se construisent même si la base est vide.
+> Le seed reste nécessaire pour afficher les produits, articles et comptes de démo.
+
+### Base vide ou build qui échoue
+
+Si `npm run build` affiche `The table 'main.Category' does not exist`, la base
+SQLite existe mais n'a jamais été migrée/seedée. Corrigez avec :
+
+```bash
+npx prisma migrate deploy
+npx prisma db seed
+npm run build
+```
+
+Si `npm start` échoue avec `ENOENT ... prerender-manifest.json`, le build a
+échoué plus haut : relancez `npm run build` et vérifiez qu'il se termine sans
+`Export encountered errors`.
 
 ## Variables d'environnement (`.env`)
 
