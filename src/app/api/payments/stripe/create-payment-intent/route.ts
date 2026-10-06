@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { isStripeConfigured } from '@/lib/payments/config'
 
 export async function POST(request: NextRequest) {
   try {
     const { amount, currency = 'eur' } = await request.json()
     
     // Only create payment intent if Stripe is configured
-    if (!process.env.STRIPE_SECRET_KEY) {
+    if (!isStripeConfigured()) {
       // Return mock response for development
       return NextResponse.json({ 
         clientSecret: 'mock_client_secret_for_development',
@@ -14,7 +15,7 @@ export async function POST(request: NextRequest) {
     }
     
     const Stripe = (await import('stripe')).default
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string)
     
     const amountInCents = Math.round(amount * 100)
     const paymentIntent = await stripe.paymentIntents.create({

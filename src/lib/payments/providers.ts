@@ -15,7 +15,7 @@ export const paymentMethods: PaymentMethod[] = [
   {
     id: 'visa',
     name: 'Visa',
-    icon: '💳',
+    icon: 'card',
     countries: ['WW'],
     currency: 'EUR',
     enabled: true
@@ -23,7 +23,7 @@ export const paymentMethods: PaymentMethod[] = [
   {
     id: 'mastercard',
     name: 'Mastercard',
-    icon: '💳',
+    icon: 'card',
     countries: ['WW'],
     currency: 'EUR',
     enabled: true
@@ -31,7 +31,7 @@ export const paymentMethods: PaymentMethod[] = [
   {
     id: 'paypal',
     name: 'PayPal',
-    icon: '🅿️',
+    icon: 'card',
     countries: ['WW'],
     currency: 'EUR',
     enabled: true
@@ -40,7 +40,7 @@ export const paymentMethods: PaymentMethod[] = [
   {
     id: 'flutterwave',
     name: 'Flutterwave',
-    icon: '🌍',
+    icon: 'grid',
     countries: ['NG', 'GH', 'KE', 'ZA', 'TZ', 'UG'],
     currency: 'XOF',
     enabled: true
@@ -48,7 +48,7 @@ export const paymentMethods: PaymentMethod[] = [
   {
     id: 'paystack',
     name: 'Paystack',
-    icon: '💰',
+    icon: 'card',
     countries: ['NG', 'GH'],
     currency: 'XOF',
     enabled: true
@@ -57,7 +57,7 @@ export const paymentMethods: PaymentMethod[] = [
   {
     id: 'mtn-momo',
     name: 'MTN Mobile Money',
-    icon: '📱',
+    icon: 'phone',
     countries: ['CI', 'GH', 'NG', 'CM', 'RW', 'UG'],
     currency: 'XOF',
     enabled: true
@@ -65,7 +65,7 @@ export const paymentMethods: PaymentMethod[] = [
   {
     id: 'orange-money',
     name: 'Orange Money',
-    icon: '🍊',
+    icon: 'phone',
     countries: ['CI', 'SN', 'ML', 'BF', 'NE'],
     currency: 'XOF',
     enabled: true
@@ -73,7 +73,7 @@ export const paymentMethods: PaymentMethod[] = [
   {
     id: 'moov-money',
     name: 'Moov Money',
-    icon: '🔵',
+    icon: 'phone',
     countries: ['BJ', 'TG', 'NE', 'ML', 'BF'],
     currency: 'XOF',
     enabled: true

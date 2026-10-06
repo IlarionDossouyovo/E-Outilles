@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { PaymentMethod } from '@/lib/payments/providers'
+import { Icon } from '@/components/Icons'
 
 interface PaymentSelectorProps {
   methods: PaymentMethod[]
@@ -40,7 +41,7 @@ export default function PaymentSelector({ methods, currency, onPaymentSelect }: 
                     : 'border-ingco-gray hover:border-gray-500'
                 }`}
               >
-                <span className="text-2xl block mb-1">{method.icon}</span>
+                <Icon name={method.icon as never} className="w-6 h-6 text-ingco-yellow mx-auto mb-1" />
                 <span className="text-white text-sm font-medium">{method.name}</span>
               </button>
             ))}
@@ -63,7 +64,7 @@ export default function PaymentSelector({ methods, currency, onPaymentSelect }: 
                     : 'border-ingco-gray hover:border-gray-500'
                 }`}
               >
-                <span className="text-2xl block mb-1">{method.icon}</span>
+                <Icon name={method.icon as never} className="w-6 h-6 text-ingco-yellow mx-auto mb-1" />
                 <span className="text-white text-xs font-medium">{method.name}</span>
               </button>
             ))}
@@ -86,7 +87,7 @@ export default function PaymentSelector({ methods, currency, onPaymentSelect }: 
                     : 'border-ingco-gray hover:border-gray-500'
                 }`}
               >
-                <span className="text-2xl block mb-1">{method.icon}</span>
+                <Icon name={method.icon as never} className="w-6 h-6 text-ingco-yellow mx-auto mb-1" />
                 <span className="text-white text-sm font-medium">{method.name}</span>
               </button>
             ))}

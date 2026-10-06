@@ -1,32 +1,93 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import AdminAnalytics from '@/components/AdminAnalytics'
 import Logo from '@/components/Logo'
+import { Icon } from '@/components/Icons'
 
-const categories = ['Construction', 'Électricité', 'Garage', 'Jardinage']
+interface Category {
+  id: string
+  name: string
+  slug: string
+}
 
 export default function AddProductPage() {
   const router = useRouter()
   const [form, setForm] = useState({
     name: '',
     price: '',
-    category: 'Construction',
+    category: '',
     description: '',
     stock: '',
     sku: ''
   })
   const [image, setImage] = useState('')
+  const [categories, setCategories] = useState<Category[]>([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    fetch('/api/categories')
+      .then(res => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setCategories(data)
+          if (data[0]) setForm(prev => ({ ...prev, category: data[0].id }))
+        }
+      })
+      .catch(err => console.error('Error fetching categories:', err))
+  }, [])
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    alert(`Produit "${form.name}" ajouté avec succès!`)
-    router.push('/admin')
+    setLoading(true)
+    setError('')
+
+    const slug = form.name
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+
+    try {
+      const res = await fetch('/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.name,
+          slug,
+          description: form.description,
+          price: form.price,
+          stock: form.stock || '0',
+          sku: form.sku || null,
+          images: image ? [image] : [],
+          categoryId: form.category,
+        }),
+      })
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        setError(data.error || "Erreur lors de l'ajout du produit")
+        return
+      }
+
+      router.push('/admin/products')
+    } catch {
+      setError('Erreur de connexion au serveur')
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const icons = ['🔩', '⚒️', '⚙️', '📊', '🔌', '📡', '🔧', '🚗', '💨', '🌿', '🪚', '💧']
+  const productImages = [
+    'perceuse-visseuse', 'meuleuse-230', 'marteau-perforateur', 'scie-circulaire',
+    'battery', 'charger', 'compressor', 'generator', 'coffret', 'kit-cles',
+    'pince-sertir', 'multimetre', 'casque', 'gants', 'lunettes', 'niveau-laser',
+    'tournevis-isole', 'tronconneuse', 'tondeuse', 'pulverisateur',
+  ]
 
   return (
     <div className="min-h-screen bg-ingco-black">
@@ -45,7 +106,7 @@ export default function AddProductPage() {
       <div className="pt-24 pb-16 max-w-4xl mx-auto px-4">
         {/* Header */}
         <div className="mb-8">
-          <Link href="/admin" className="text-ingco-yellow text-sm hover:underline">← Dashboard</Link>
+          <Link href="/admin" className="text-ingco-yellow text-sm hover:underline inline-flex items-center gap-1"><Icon name="arrow-left" className="w-4 h-4" /> Dashboard</Link>
           <h1 className="text-3xl font-bold text-white mt-2">Ajouter un produit</h1>
           <p className="text-gray-400">Ajoutez un nouveau produit à votre catalogue</p>
         </div>
@@ -122,7 +183,7 @@ export default function AddProductPage() {
                 className="w-full bg-ingco-black border border-ingco-dark rounded-xl px-4 py-3 text-white"
               >
                 {categories.map(cat => (
-                  <option key={cat} value={cat}>{cat}</option>
+                  <option key={cat.id} value={cat.id}>{cat.name}</option>
                 ))}
               </select>
             </div>
@@ -138,26 +199,30 @@ export default function AddProductPage() {
             </div>
           </div>
 
-          {/* Icône */}
+          {/* Image */}
           <div>
-            <label className="text-gray-400 text-sm mb-2 block">Icône</label>
-            <div className="flex flex-wrap gap-2">
-              {icons.map(icon => (
-                <button
-                  key={icon}
-                  type="button"
-                  onClick={() => setImage(icon)}
-                  className={`w-12 h-12 rounded-xl text-2xl flex items-center justify-center border-2 transition-all ${
-                    image === icon 
-                      ? 'border-ingco-yellow bg-ingco-yellow/20' 
-                      : 'border-ingco-dark hover:border-gray-600'
-                  }`}
-                >
-                  {icon}
-                </button>
-              ))}
+            <label className="text-gray-400 text-sm mb-2 block">Image</label>
+            <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
+              {productImages.map((img) => {
+                const src = `/products/${img}.svg`
+                return (
+                  <button
+                    key={img}
+                    type="button"
+                    onClick={() => setImage(src)}
+                    className={`aspect-square rounded-xl flex items-center justify-center border-2 transition-all p-2 bg-ingco-black ${
+                      image === src
+                        ? 'border-ingco-yellow bg-ingco-yellow/20'
+                        : 'border-ingco-dark hover:border-gray-600'
+                    }`}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={src} alt={img} className="w-full h-full object-contain" />
+                  </button>
+                )
+              })}
             </div>
-            {image && <p className="text-gray-400 text-sm mt-2">Sélectionné: {image}</p>}
+            {image && <p className="text-gray-400 text-sm mt-2">Sélectionné : {image}</p>}
           </div>
 
           {/* Description */}
@@ -176,9 +241,10 @@ export default function AddProductPage() {
           <div className="flex gap-4">
             <button
               type="submit"
-              className="flex-1 bg-ingco-yellow text-ingco-black py-4 rounded-xl font-bold hover:bg-yellow-400 transition-colors"
+              disabled={loading}
+              className="flex-1 bg-ingco-yellow text-ingco-black py-4 rounded-xl font-bold hover:bg-yellow-400 transition-colors disabled:opacity-50"
             >
-              ➕ Ajouter le produit
+              {loading ? 'Ajout...' : 'Ajouter le produit'}
             </button>
             <Link 
               href="/admin"
@@ -187,6 +253,11 @@ export default function AddProductPage() {
               Annuler
             </Link>
           </div>
+          {error && (
+            <div className="bg-red-500/20 border border-red-500 text-red-400 px-4 py-3 rounded-xl text-sm">
+              {error}
+            </div>
+          )}
         </form>
       </div>
 

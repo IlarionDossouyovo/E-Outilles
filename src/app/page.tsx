@@ -1,15 +1,15 @@
 'use client'
 
-import { useState } from 'react'
 import Link from 'next/link'
-import Logo from '@/components/Logo'
+import { NavigationArrows, Icon } from '@/components/Icons'
+import Reveal from '@/components/Reveal'
+import { categoryImage } from '@/lib/catalog'
 
 // Données des catégories par métier - 15 catégories INGCO
 const categories = [
   {
     id: 'power-tools',
     name: 'Outils Électriques',
-    icon: '⚡',
     products: ['Perceuses', 'Meuleuses', 'Scies', 'Marteau perforateur'],
     blog: 'Guide outils électriques 2026',
     description: 'Outils électriques professionnels',
@@ -18,7 +18,6 @@ const categories = [
   {
     id: 'cordless-tools',
     name: 'Outils Sans Fil',
-    icon: '🔋',
     products: ['Perceuses visseuses', 'Clés à chocs', 'Scies circulaires'],
     blog: 'Avantages outils sans fil',
     description: 'Liberté sans fil pour pros',
@@ -27,7 +26,6 @@ const categories = [
   {
     id: 'hand-tools',
     name: 'Outils à Main',
-    icon: '🔧',
     products: ['Clés', 'Tournevis', 'Pinces', 'Marteaux'],
     blog: 'Trousse outils essentielle',
     description: 'Outils à main professionnels',
@@ -36,7 +34,6 @@ const categories = [
   {
     id: 'air-tools',
     name: 'Outils à Air',
-    icon: '💨',
     products: ['Compresseurs', 'Clés à chocs pneumatiques', 'Pistolets'],
     blog: 'Guide compresseurs',
     description: 'Outils pneumatiques pros',
@@ -45,7 +42,6 @@ const categories = [
   {
     id: 'measuring',
     name: 'Mesure & Niveau',
-    icon: '📏',
     products: ['Niveaux laser', 'Multimètres', 'Détecteurs'],
     blog: 'Précision mesures',
     description: 'Instruments de mesure',
@@ -54,7 +50,6 @@ const categories = [
   {
     id: 'garden',
     name: 'Jardinage',
-    icon: '🌿',
     products: ['Tondeuses', 'Tronçonneuses', 'Taille-haies'],
     blog: 'Entretien jardin pro',
     description: 'Équipement paysagement',
@@ -63,7 +58,6 @@ const categories = [
   {
     id: 'automotive',
     name: 'Automobile',
-    icon: '🚗',
     products: ['Crics', 'Chandelles', 'Clés à chocs'],
     blog: 'Outils mécanicien',
     description: 'Équipement garage auto',
@@ -72,7 +66,6 @@ const categories = [
   {
     id: 'drilling',
     name: 'Forage & Découpe',
-    icon: '🔩',
     products: ['Burins', 'Disques', 'Scies trépans'],
     blog: 'Guide forage professionnel',
     description: 'Accessoires forage',
@@ -81,7 +74,6 @@ const categories = [
   {
     id: 'welding',
     name: 'Soudeuse & Welding',
-    icon: '🔥',
     products: ['Machines à souder', 'Masques', 'Electrodes'],
     blog: 'Initiation soudure MMA',
     description: 'Équipement soudure',
@@ -90,7 +82,6 @@ const categories = [
   {
     id: 'generators',
     name: 'Générateurs',
-    icon: '⚙️',
     products: ['Groupes électrogènes', 'Inverters'],
     blog: 'Choisir générateur',
     description: 'Alimentation électrique',
@@ -99,7 +90,6 @@ const categories = [
   {
     id: 'construction',
     name: 'Construction',
-    icon: '🏗️',
     products: ['Vibreurs à béton', 'Aiguilles vibrantes'],
     blog: 'Outils chantier BTP',
     description: 'Équipement construction',
@@ -108,7 +98,6 @@ const categories = [
   {
     id: 'pumps',
     name: 'Pompes & Eau',
-    icon: '💧',
     products: ['Pompes submersibles', 'Pompes surface'],
     blog: 'Gestion eaux',
     description: 'Pompes et irrigation',
@@ -117,7 +106,6 @@ const categories = [
   {
     id: 'safety',
     name: 'Sécurité',
-    icon: '🦺',
     products: ['Casques', 'Gants', 'Chaussures', 'Lunettes'],
     blog: 'EPI obligatoires',
     description: 'Équipements protection',
@@ -126,7 +114,6 @@ const categories = [
   {
     id: 'storage',
     name: 'Rangement',
-    icon: '🧰',
     products: ['Caisse à outils', 'Coffrets', 'Armoires'],
     blog: 'Organisation atelier',
     description: 'Rangement outils',
@@ -135,7 +122,6 @@ const categories = [
   {
     id: 'accessories',
     name: 'Accessoires',
-    icon: '🪛',
     products: ['Batteries', 'Chargeurs', 'Disques', 'Forets'],
     blog: 'Choisir accessoires',
     description: 'Accessoires tous outils',
@@ -145,360 +131,305 @@ const categories = [
 
 // Produits vedettes
 const featuredProducts = [
-  { id: 1, name: 'Perceuse visseuse INGCO 20V', price: 89.99, image: '🔩', category: 'construction' },
-  { id: 2, name: 'Marteau perforateur SDS Max 1500W', price: 249.99, image: '⚒️', category: 'construction' },
-  { id: 3, name: 'Multimètre digital professionnel', price: 59.99, image: '📊', category: 'electricite' },
-  { id: 4, name: 'Kit clés mécaniciennes 50pcs', price: 79.99, image: '🔧', category: 'garage' },
-  { id: 5, name: 'Tondeuse thermique pro 160cc', price: 399.99, image: '🌿', category: 'jardinage' },
-  { id: 6, name: 'Tronçonneuse thermique 45cm', price: 299.99, image: '🪚', category: 'jardinage' },
+  { id: 1, name: 'Perceuse visseuse INGCO 20V', price: 89.99, image: '/products/perceuse-visseuse.svg', category: 'construction' },
+  { id: 2, name: 'Marteau perforateur SDS Max 1500W', price: 249.99, image: '/products/marteau-perforateur.svg', category: 'construction' },
+  { id: 3, name: 'Multimètre digital professionnel', price: 59.99, image: '/products/multimetre.svg', category: 'electricite' },
+  { id: 4, name: 'Kit clés mécaniciennes 50pcs', price: 79.99, image: '/products/kit-cles.svg', category: 'garage' },
+  { id: 5, name: 'Tondeuse thermique pro 160cc', price: 399.99, image: '/products/tondeuse.svg', category: 'jardinage' },
+  { id: 6, name: 'Tronçonneuse thermique 45cm', price: 299.99, image: '/products/tronconneuse.svg', category: 'jardinage' },
 ]
 
 export default function Home() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-
   return (
-    <div className="min-h-screen bg-ingco-black">
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-ingco-black/95 backdrop-blur-md border-b border-ingco-gray">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <Logo variant="horizontal" size={40} />
-
-            {/* Desktop Menu */}
-            <div className="hidden md:flex items-center gap-8">
-              <a href="#categories" className="text-gray-300 hover:text-ingco-yellow transition-colors">Catégories</a>
-              <a href="#products" className="text-gray-300 hover:text-ingco-yellow transition-colors">Produits</a>
-              <Link href="/revendeurs" className="text-gray-300 hover:text-ingco-yellow transition-colors">Revendeurs</Link>
-              <Link href="/formations" className="text-gray-300 hover:text-ingco-yellow transition-colors">Formations</Link>
-              <Link href="/vendeur" className="text-gray-300 hover:text-ingco-yellow transition-colors">Vendeur</Link>
-              <Link href="/chat" className="text-gray-300 hover:text-ingco-yellow transition-colors">💬 Assistant</Link>
-              <Link href="/contact" className="text-gray-300 hover:text-ingco-yellow transition-colors">Contact</Link>
-              <Link href="/admin" className="text-gray-300 hover:text-ingco-yellow transition-colors">Admin</Link>
-              <Link href="/cart" className="bg-ingco-yellow text-ingco-black px-5 py-2 rounded-lg font-semibold hover:bg-yellow-400 transition-colors">
-                Commander
-              </Link>
-            </div>
-
-            {/* Mobile Menu Button */}
-            <button 
-              className="md:hidden p-2"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              <div className="w-6 h-5 flex flex-col justify-between">
-                <span className={`block h-0.5 bg-white transition-transform ${mobileMenuOpen ? 'rotate-45 translate-y-2' : ''}`}></span>
-                <span className={`block h-0.5 bg-white transition-opacity ${mobileMenuOpen ? 'opacity-0' : ''}`}></span>
-                <span className={`block h-0.5 bg-white transition-transform ${mobileMenuOpen ? '-rotate-45 -translate-y-2' : ''}`}></span>
-              </div>
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Menu */}
-        {mobileMenuOpen && (
-          <div className="md:hidden bg-ingco-dark border-t border-ingco-gray">
-            <div className="px-4 py-4 space-y-3">
-              <a href="#categories" className="block text-gray-300 hover:text-ingco-yellow" onClick={() => setMobileMenuOpen(false)}>Catégories</a>
-              <a href="#products" className="block text-gray-300 hover:text-ingco-yellow" onClick={() => setMobileMenuOpen(false)}>Produits</a>
-              <Link href="/revendeurs" className="block text-gray-300 hover:text-ingco-yellow">Revendeurs</Link>
-              <Link href="/formations" className="block text-gray-300 hover:text-ingco-yellow">Formations</Link>
-              <Link href="/vendeur" className="block text-gray-300 hover:text-ingco-yellow">Vendeur</Link>
-              <Link href="/chat" className="block text-gray-300 hover:text-ingco-yellow">💬 Assistant</Link>
-              <Link href="/contact" className="block text-gray-300 hover:text-ingco-yellow">Contact</Link>
-              <Link href="/admin" className="block text-gray-300 hover:text-ingco-yellow">Admin</Link>
-              <Link href="/cart" className="w-full block text-center bg-ingco-yellow text-ingco-black px-5 py-2 rounded-lg font-semibold">
-                Commander
-              </Link>
-            </div>
-          </div>
-        )}
-      </nav>
-
-      {/* Hero Section with Premium Animated Background */}
-      <section className="pt-24 pb-16 md:pt-32 md:pb-24 relative overflow-hidden min-h-screen flex items-center">
-        {/* Premium Animated Background */}
+    <div className="bg-ingco-black">
+      {/* HERO */}
+      <section className="relative overflow-hidden min-h-[92vh] flex items-center pt-28 pb-20">
         <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-950/20 to-black">
-          {/* Animated Grid - Stronger Visibility */}
           <div className="absolute inset-0 opacity-40">
-            <div className="absolute inset-0 animate-grid" style={{
-              backgroundImage: `
-                linear-gradient(rgba(255,196,0,0.2) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,196,0,0.2) 1px, transparent 1px)
-              `,
-              backgroundSize: '30px 30px'
-            }}></div>
+            <div
+              className="absolute inset-0 animate-grid"
+              style={{
+                backgroundImage: `
+                  linear-gradient(rgba(255,196,0,0.18) 1px, transparent 1px),
+                  linear-gradient(90deg, rgba(255,196,0,0.18) 1px, transparent 1px)
+                `,
+                backgroundSize: '32px 32px',
+              }}
+            />
           </div>
-          {/* Large Floating Orbs */}
-          <div className="absolute -top-32 -left-32 w-[600px] h-[600px] bg-gradient-to-br from-yellow-500/25 to-transparent rounded-full blur-[120px] animate-pulse"></div>
-          <div className="absolute -bottom-32 -right-32 w-[600px] h-[600px] bg-gradient-to-tl from-purple-600/25 to-transparent rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1.5s' }}></div>
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-r from-blue-500/20 to-transparent rounded-full blur-[100px] animate-pulse" style={{ animationDelay: '2.5s' }}></div>
-          {/* Additional Glow Effects */}
-          <div className="absolute top-1/4 right-1/4 w-[300px] h-[300px] bg-ingco-yellow/10 rounded-full blur-[80px] animate-glow"></div>
-          {/* Noise Texture Overlay */}
-          <div className="absolute inset-0 opacity-[0.04]" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`
-          }}></div>
+          <div className="absolute -top-32 -left-32 w-[600px] h-[600px] bg-gradient-to-br from-yellow-500/25 to-transparent rounded-full blur-[120px] animate-float" />
+          <div
+            className="absolute -bottom-32 -right-32 w-[600px] h-[600px] bg-gradient-to-tl from-purple-600/25 to-transparent rounded-full blur-[120px] animate-float"
+            style={{ animationDelay: '1.5s' }}
+          />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-r from-blue-500/20 to-transparent rounded-full blur-[100px] animate-glow" />
+          <div
+            className="absolute inset-0 opacity-[0.04]"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+            }}
+          />
         </div>
-        
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <div className="text-center">
-            <div className="inline-flex items-center gap-2 bg-ingco-gray/50 rounded-full px-4 py-2 mb-6">
-              <span className="w-2 h-2 bg-ingco-yellow rounded-full animate-pulse"></span>
-              <span className="text-gray-300 text-sm">Distribution officielle INGCO</span>
-            </div>
-            
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6">
-              <span className="text-white">L'outillage </span>
-              <span className="text-ingco-yellow text-shadow-glow">professionnel</span>
-              <br />
-              <span className="text-white">accessible à tous</span>
-            </h1>
-            
-            <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-8">
-              Votre partenaire dropshipping international pour outillage professionnel.
-              Qualité INGCO, livraison mondiale, prix fabricant.
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/search" className="bg-ingco-yellow text-ingco-black px-8 py-4 rounded-xl font-bold text-lg hover:bg-yellow-400 transition-all hover:scale-105 hover:shadow-lg hover:shadow-ingco-yellow/30 inline-block text-center">
-                Découvrir le catalogue
-              </Link>
-              <Link href="/auth/register" className="border border-ingco-gray text-white px-8 py-4 rounded-xl font-bold text-lg hover:border-ingco-yellow hover:text-ingco-yellow transition-all inline-block text-center">
-                Devenir revendeur
-              </Link>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative w-full">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+            <div className="text-center lg:text-left">
+              <div className="animate-fade-in-up inline-flex items-center gap-2 bg-ingco-gray/50 backdrop-blur rounded-full px-4 py-2 mb-6 border border-white/5">
+                <span className="w-2 h-2 bg-ingco-yellow rounded-full animate-pulse" />
+                <span className="text-gray-300 text-sm">Distribution officielle INGCO · Afrique de l&apos;Ouest</span>
+              </div>
+
+              <h1 className="animate-fade-in-up stagger-1 text-4xl md:text-6xl xl:text-7xl font-extrabold leading-[1.05] mb-6">
+                <span className="text-white">L&apos;outillage </span>
+                <span className="bg-gradient-to-r from-ingco-yellow via-yellow-300 to-ingco-yellow bg-clip-text text-transparent text-shadow-glow">
+                  professionnel
+                </span>
+                <br />
+                <span className="text-white">accessible à tous</span>
+              </h1>
+
+              <p className="animate-fade-in-up stagger-2 text-gray-400 text-lg md:text-xl max-w-2xl mx-auto lg:mx-0 mb-8">
+                Votre partenaire dropshipping international pour outillage professionnel.
+                Qualité INGCO, livraison mondiale, prix fabricant.
+              </p>
+
+              <div className="animate-fade-in-up stagger-3 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                <Link
+                  href="/search"
+                  className="group inline-flex items-center justify-center gap-2 bg-ingco-yellow text-ingco-black px-8 py-4 rounded-xl font-bold text-lg hover:bg-yellow-400 transition-all hover:scale-[1.03] hover:shadow-xl hover:shadow-ingco-yellow/30"
+                >
+                  Découvrir le catalogue
+                  <Icon name="arrow-right" className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                </Link>
+                <Link
+                  href="/revendeurs"
+                  className="inline-flex items-center justify-center gap-2 border border-ingco-gray text-white px-8 py-4 rounded-xl font-bold text-lg hover:border-ingco-yellow hover:text-ingco-yellow hover:bg-ingco-yellow/5 transition-all"
+                >
+                  Devenir revendeur
+                </Link>
+              </div>
+
+              <div className="animate-fade-in-up stagger-4 grid grid-cols-2 md:grid-cols-4 gap-6 mt-14">
+                {[
+                  { value: '500+', label: 'Produits' },
+                  { value: '50+', label: 'Pays livrés' },
+                  { value: '24h', label: 'Livraison' },
+                  { value: '100%', label: 'Satisfait ou remboursé' },
+                ].map((stat) => (
+                  <div key={stat.label} className="text-center lg:text-left">
+                    <div className="text-3xl md:text-4xl font-extrabold text-ingco-yellow">{stat.value}</div>
+                    <div className="text-gray-500 text-sm">{stat.label}</div>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16">
-              <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-ingco-yellow">500+</div>
-                <div className="text-gray-500 text-sm">Produits</div>
+            <div className="hidden lg:block relative animate-fade-in stagger-2">
+              <div className="relative rounded-3xl border border-white/5 bg-gradient-to-br from-ingco-gray/60 to-ingco-dark/60 backdrop-blur p-8 animate-float">
+                <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-ingco-yellow/20 to-transparent blur-2xl -z-10" />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={categoryImage('power-tools')}
+                  alt="Outillage professionnel INGCO"
+                  className="w-full max-h-[340px] object-contain drop-shadow-2xl"
+                />
               </div>
-              <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-ingco-yellow">50+</div>
-                <div className="text-gray-500 text-sm">Pays livrés</div>
+              <div className="absolute -bottom-6 -left-6 bg-ingco-gray/90 backdrop-blur rounded-2xl p-4 border border-white/5 shadow-xl animate-fade-in-up stagger-5">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-ingco-yellow/20 flex items-center justify-center">
+                    <Icon name="truck" className="w-5 h-5 text-ingco-yellow" />
+                  </div>
+                  <div>
+                    <div className="text-white font-semibold text-sm">Livraison mondiale</div>
+                    <div className="text-gray-500 text-xs">Sans stock, sans frontière</div>
+                  </div>
+                </div>
               </div>
-              <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-ingco-yellow">24h</div>
-                <div className="text-gray-500 text-sm">Livraison</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-ingco-yellow">100%</div>
-                <div className="text-gray-500 text-sm">Satisfait ou remboursé</div>
+              <div className="absolute -top-4 -right-4 bg-ingco-gray/90 backdrop-blur rounded-2xl p-4 border border-white/5 shadow-xl animate-fade-in-up stagger-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center">
+                    <Icon name="check" className="w-5 h-5 text-green-400" />
+                  </div>
+                  <div>
+                    <div className="text-white font-semibold text-sm">Qualité certifiée</div>
+                    <div className="text-gray-500 text-xs">Garantie fabricant</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Categories Section */}
-      <section id="categories" className="py-24 md:py-32 bg-ingco-dark scroll-mt-20">
+      {/* TRUST BAND */}
+      <section className="border-y border-ingco-gray bg-ingco-dark/60">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+          {([
+            { icon: 'truck', title: 'Dropshipping mondial', text: 'Livraison directe, sans stock' },
+            { icon: 'chat', title: 'IA Marketing', text: 'Campagnes automatisées' },
+            { icon: 'card', title: 'Paiements locaux', text: 'MTN, Orange, Flutterwave' },
+            { icon: 'shield', title: 'Paiement sécurisé', text: 'Stripe & 3D Secure' },
+          ] as const).map((f, i) => (
+            <Reveal key={f.title} delay={i * 80} className="flex items-center gap-3">
+              <div className="w-11 h-11 shrink-0 rounded-xl bg-ingco-yellow/15 flex items-center justify-center">
+                <Icon name={f.icon} className="w-5 h-5 text-ingco-yellow" />
+              </div>
+              <div>
+                <div className="text-white font-semibold text-sm">{f.title}</div>
+                <div className="text-gray-500 text-xs">{f.text}</div>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
+      {/* CATEGORIES */}
+      <section id="categories" className="py-20 md:py-28 bg-ingco-dark scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          <Reveal className="text-center mb-14">
+            <span className="text-ingco-yellow text-sm font-semibold uppercase tracking-widest">Catalogue</span>
+            <h2 className="text-3xl md:text-5xl font-extrabold mt-3 mb-4">
               <span className="text-white">Parcourir par </span>
               <span className="text-ingco-yellow">métier</span>
             </h2>
             <p className="text-gray-400 max-w-2xl mx-auto">
-              Des solutions spécialisées pour chaque secteur d'activité
+              Des solutions spécialisées pour chaque secteur d&apos;activité
             </p>
-          </div>
+          </Reveal>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {categories.map((category) => (
-              <Link 
-                key={category.id}
-                href={`/search?category=${category.id}`}
-                className="group bg-ingco-gray rounded-2xl p-6 hover:bg-ingco-gray/80 transition-all hover:-translate-y-2 hover:shadow-xl hover:shadow-ingco-yellow/10 cursor-pointer block"
-              >
-                <div className="text-4xl mb-4">{category.icon}</div>
-                <h3 className="text-xl font-bold text-white mb-2 group-hover:text-ingco-yellow transition-colors">
-                  {category.name}
-                </h3>
-                <p className="text-gray-500 text-sm mb-4">{category.description}</p>
-                
-                <div className="border-t border-ingco-dark pt-4">
-                  <p className="text-xs text-gray-500 mb-2">Produits clés:</p>
-                  <div className="flex flex-wrap gap-2">
-                    {category.products.slice(0, 3).map((product, idx) => (
-                      <span key={idx} className="text-xs bg-ingco-dark px-2 py-1 rounded text-gray-400">
-                        {product}
-                      </span>
-                    ))}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {categories.map((category, i) => (
+              <Reveal key={category.id} delay={(i % 4) * 80}>
+                <Link
+                  href={`/categories/${category.id}`}
+                  className="card-premium group h-full bg-ingco-gray rounded-2xl p-6 border border-white/5 hover:border-ingco-yellow/30 block"
+                >
+                  <div className="w-full h-24 mb-4 flex items-center justify-center rounded-xl bg-ingco-dark overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={categoryImage(category.id)}
+                      alt={category.name}
+                      loading="lazy"
+                      className="card-icon max-h-20 object-contain"
+                    />
                   </div>
-                </div>
+                  <h3 className="text-xl font-bold text-white mb-2 group-hover:text-ingco-yellow transition-colors">
+                    {category.name}
+                  </h3>
+                  <p className="text-gray-500 text-sm mb-4">{category.description}</p>
 
-                <div className="mt-4 flex items-center gap-2 text-ingco-yellow text-sm">
-                  <span>Blog: {category.blog}</span>
-                  <span className="group-hover:translate-x-1 transition-transform">→</span>
-                </div>
-              </Link>
+                  <div className="border-t border-ingco-dark pt-4">
+                    <p className="text-xs text-gray-500 mb-2">Produits clés</p>
+                    <div className="flex flex-wrap gap-2">
+                      {category.products.slice(0, 3).map((product, idx) => (
+                        <span key={idx} className="text-xs bg-ingco-dark px-2 py-1 rounded text-gray-400">
+                          {product}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="mt-4 flex items-center gap-2 text-ingco-yellow text-sm font-medium">
+                    <span className="line-clamp-1">Blog: {category.blog}</span>
+                    <Icon name="arrow-right" className="w-4 h-4 shrink-0 transition-transform group-hover:translate-x-1" />
+                  </div>
+                </Link>
+              </Reveal>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Featured Products */}
-      <section id="products" className="py-24 md:py-32 scroll-mt-20">
+      {/* FEATURED */}
+      <section id="products" className="py-20 md:py-28 scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          <Reveal className="text-center mb-14">
+            <span className="text-ingco-yellow text-sm font-semibold uppercase tracking-widest">Best-sellers</span>
+            <h2 className="text-3xl md:text-5xl font-extrabold mt-3 mb-4">
               <span className="text-white">Produits </span>
               <span className="text-ingco-yellow">vedettes</span>
             </h2>
             <p className="text-gray-400 max-w-2xl mx-auto">
               Les meilleures ventes de notre catalogue professionnel
             </p>
-          </div>
+          </Reveal>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredProducts.map((product) => (
-              <div 
-                key={product.id}
-                className="bg-ingco-gray rounded-2xl overflow-hidden hover:shadow-xl hover:shadow-ingco-yellow/10 transition-all hover:-translate-y-2 group"
-              >
-                <div className="h-48 bg-ingco-dark flex items-center justify-center text-6xl group-hover:scale-110 transition-transform">
-                  {product.image}
-                </div>
-                <div className="p-6">
-                  <div className="text-xs text-ingco-yellow mb-2 uppercase tracking-wide">
-                    {categories.find(c => c.id === product.category)?.name}
-                  </div>
-                  <h3 className="text-lg font-bold text-white mb-2">{product.name}</h3>
-                  <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-ingco-yellow">{product.price}€</span>
-                    <Link href="/cart" className="bg-ingco-yellow text-ingco-black px-4 py-2 rounded-lg font-semibold text-sm hover:bg-yellow-400 transition-colors">
-                      Ajouter
+            {featuredProducts.map((product, i) => (
+              <Reveal key={product.id} delay={(i % 3) * 100}>
+                <div className="card-premium group h-full bg-ingco-gray rounded-2xl overflow-hidden border border-white/5 hover:border-ingco-yellow/30">
+                  <Link href={`/categories/${product.category}`} className="block h-48 bg-ingco-dark flex items-center justify-center overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      loading="lazy"
+                      className="card-icon max-h-40 object-contain"
+                    />
+                  </Link>
+                  <div className="p-6">
+                    <Link href={`/categories/${product.category}`} className="text-xs text-ingco-yellow mb-2 uppercase tracking-wide hover:underline block">
+                      {categories.find((c) => c.id === product.category)?.name}
                     </Link>
+                    <h3 className="text-lg font-bold text-white mb-3 line-clamp-2">{product.name}</h3>
+                    <div className="flex items-center justify-between">
+                      <span className="text-2xl font-extrabold text-ingco-yellow">{product.price}€</span>
+                      <Link
+                        href={`/categories/${product.category}`}
+                        className="inline-flex items-center gap-1.5 bg-ingco-yellow text-ingco-black px-4 py-2 rounded-lg font-semibold text-sm hover:bg-yellow-400 transition-colors"
+                      >
+                        Voir <Icon name="arrow-right" className="w-4 h-4" />
+                      </Link>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </Reveal>
             ))}
           </div>
 
-          <div className="text-center mt-12">
-            <Link href="/search" className="border border-ingco-yellow text-ingco-yellow px-8 py-3 rounded-xl font-semibold hover:bg-ingco-yellow hover:text-ingco-black transition-all inline-block">
-              Voir tous les produits
+          <Reveal className="text-center mt-12">
+            <Link href="/search" className="inline-flex items-center gap-2 border border-ingco-yellow text-ingco-yellow px-8 py-3 rounded-xl font-semibold hover:bg-ingco-yellow hover:text-ingco-black transition-all">
+              Voir tous les produits <Icon name="arrow-right" className="w-4 h-4" />
             </Link>
-          </div>
+          </Reveal>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-16 md:py-24 bg-ingco-dark">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="text-center p-6">
-              <div className="w-16 h-16 bg-ingco-yellow/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl">🚚</span>
-              </div>
-              <h3 className="text-xl font-bold text-white mb-2">Dropshipping mondial</h3>
-              <p className="text-gray-400">Livraison directe depuis nos entrepôts vers vos clients, sans stock.</p>
-            </div>
-            
-            <div className="text-center p-6">
-              <div className="w-16 h-16 bg-ingco-yellow/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl">🤖</span>
-              </div>
-              <h3 className="text-xl font-bold text-white mb-2">IA Marketing</h3>
-              <p className="text-gray-400">Automatisation intelligente pour vos campagnes publicitaires et SEO.</p>
-            </div>
-            
-            <div className="text-center p-6">
-              <div className="w-16 h-16 bg-ingco-yellow/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl">💳</span>
-              </div>
-              <h3 className="text-xl font-bold text-white mb-2">Paiements locaux</h3>
-              <p className="text-gray-400">MTN, Moov, Orange, Flutterwave - Paiements adaptés à votre pays.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-16 md:py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-ingco-yellow/20 to-transparent"></div>
+      {/* CTA */}
+      <section className="py-20 md:py-24 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-ingco-yellow/15 via-transparent to-transparent" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <div className="bg-ingco-gray rounded-3xl p-8 md:p-16 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          <Reveal className="bg-ingco-gray rounded-3xl p-8 md:p-16 text-center border border-white/5 relative overflow-hidden">
+            <div className="absolute -top-24 -right-24 w-64 h-64 bg-ingco-yellow/10 rounded-full blur-3xl" />
+            <h2 className="text-3xl md:text-5xl font-extrabold mb-4 relative">
               <span className="text-white">Prêt à démarrer votre </span>
-              <span className="text-ingco-yellow">activité dropshipping?</span>
+              <span className="text-ingco-yellow">activité dropshipping ?</span>
             </h2>
-            <p className="text-gray-400 max-w-2xl mx-auto mb-8">
+            <p className="text-gray-400 max-w-2xl mx-auto mb-8 relative">
               Rejoignez notre réseau de revendeurs et accédez à des marges avantageuses,
               un catalogue de 500+ produits et un support client dédié.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/auth/register" className="bg-ingco-yellow text-ingco-black px-8 py-4 rounded-xl font-bold text-lg hover:bg-yellow-400 transition-all hover:scale-105">
-                Créer mon compte revendeur
+            <div className="flex flex-col sm:flex-row gap-4 justify-center relative">
+              <Link
+                href="/auth/register"
+                className="inline-flex items-center justify-center gap-2 bg-ingco-yellow text-ingco-black px-8 py-4 rounded-xl font-bold text-lg hover:bg-yellow-400 transition-all hover:scale-[1.03]"
+              >
+                Créer mon compte revendeur <Icon name="arrow-right" className="w-5 h-5" />
               </Link>
-              <Link href="/auth/login" className="border border-ingco-gray text-white px-8 py-4 rounded-xl font-bold text-lg hover:border-ingco-yellow hover:text-ingco-yellow transition-all">
+              <Link
+                href="/auth/login"
+                className="inline-flex items-center justify-center border border-ingco-gray text-white px-8 py-4 rounded-xl font-bold text-lg hover:border-ingco-yellow hover:text-ingco-yellow transition-all"
+              >
                 Me connecter
               </Link>
             </div>
-          </div>
+          </Reveal>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-ingco-dark border-t border-ingco-gray py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <Logo variant="horizontal" size={40} />
-              </div>
-              <p className="text-gray-500 text-sm">
-                Votre partenaire dropshipping international pour outillage professionnel INGCO.
-              </p>
-            </div>
-            
-            <div>
-              <h4 className="text-white font-semibold mb-4">Catégories</h4>
-              <ul className="space-y-2 text-gray-500 text-sm">
-                <li><Link href="/search?category=construction" className="hover:text-ingco-yellow transition-colors">Construction & BTP</Link></li>
-                <li><Link href="/search?category=electricite" className="hover:text-ingco-yellow transition-colors">Électricité</Link></li>
-                <li><Link href="/search?category=garage" className="hover:text-ingco-yellow transition-colors">Garage Auto</Link></li>
-                <li><Link href="/search?category=jardinage" className="hover:text-ingco-yellow transition-colors">Jardinage</Link></li>
-                <li><Link href="/chat" className="hover:text-ingco-yellow transition-colors">💬 Assistant IA</Link></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h4 className="text-white font-semibold mb-4">Entreprise</h4>
-              <ul className="space-y-2 text-gray-500 text-sm">
-                <li><Link href="/about" className="hover:text-ingco-yellow transition-colors">À propos</Link></li>
-                <li><Link href="/auth/register" className="hover:text-ingco-yellow transition-colors">Devenir revendeur</Link></li>
-                <li><Link href="/blog" className="hover:text-ingco-yellow transition-colors">Blog</Link></li>
-                <li><Link href="/contact" className="hover:text-ingco-yellow transition-colors">Contact</Link></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h4 className="text-white font-semibold mb-4">Paiements</h4>
-              <div className="flex flex-wrap gap-2">
-                <span className="bg-ingco-gray px-3 py-1 rounded text-xs text-gray-400">Visa</span>
-                <span className="bg-ingco-gray px-3 py-1 rounded text-xs text-gray-400">Mastercard</span>
-                <span className="bg-ingco-gray px-3 py-1 rounded text-xs text-gray-400">PayPal</span>
-                <span className="bg-ingco-gray px-3 py-1 rounded text-xs text-gray-400">MTN</span>
-                <span className="bg-ingco-gray px-3 py-1 rounded text-xs text-gray-400">Orange</span>
-                <span className="bg-ingco-gray px-3 py-1 rounded text-xs text-gray-400">Flutterwave</span>
-              </div>
-            </div>
-          </div>
-          
-          <div className="border-t border-ingco-gray pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-gray-500 text-sm">
-              © 2026 E-Outilles. Tous droits réservés. Projet dropshipping INGCO.
-            </p>
-            <div className="flex gap-4">
-              <Link href="/legal" className="text-gray-500 hover:text-ingco-yellow transition-colors">Mentions légales</Link>
-              <Link href="/privacy" className="text-gray-500 hover:text-ingco-yellow transition-colors">RGPD</Link>
-              <Link href="/terms" className="text-gray-500 hover:text-ingco-yellow transition-colors">CGV</Link>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <div className="max-w-7xl mx-auto px-4 pb-12">
+        <NavigationArrows current="/" />
+      </div>
     </div>
   )
 }

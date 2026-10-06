@@ -3,108 +3,102 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Logo from '@/components/Logo'
-
-// Code secret du fondateur (à changer)
-const FOUNDER_CODE = 'EO2024'
+import { Icon } from '@/components/Icons'
 
 const founder = {
   name: 'Ilarion Dossouyovo',
   role: 'Fondateur & PDG',
   email: 'ilarion@e-outilles.com',
   phone: '+229 01 977 003 47',
-  avatar: '👨‍💼',
+  avatar: 'user',
   since: '2024',
   vision: 'Démocratiser l\'accès aux outils professionnels de qualité pour tous les artisans du monde'
 }
 
-// Agents IA pour l'entreprise
-const allAgents = [
-  // Agents principaux
-  { id: 1, name: 'Assistant IA', status: 'online', type: 'chat', icon: '🤖', conversations: 156, category: 'principal',
-    description: 'Assistant conversationnel principal pour les clients',
-    features: ['Recommandations produits', 'Questions techniques', 'Conseils utilisation', 'suivi projet'],
-    color: 'from-purple-500 to-indigo-600' },
-  { id: 2, name: 'Vendeur Bot', status: 'online', type: 'sales', icon: '💼', conversations: 89, category: 'principal',
-    description: 'Automatisation des ventes et conversion',
-    features: ['Qualification leads', 'Closing automatique', 'Suivi panier abandonné', 'Promotions personnalisées'],
-    color: 'from-green-500 to-emerald-600' },
-  { id: 3, name: 'Support Client', status: 'online', type: 'support', icon: '🎧', conversations: 234, category: 'principal',
-    description: 'Support client automatisé 24/7',
-    features: ['FAQ automatique', 'Ouverture tickets', 'Suivi résolution', 'Escalade humaine'],
-    color: 'from-blue-500 to-cyan-600' },
-  { id: 4, name: 'Suivi Commande', status: 'offline', type: 'tracking', icon: '📦', conversations: 0, category: 'principal',
-    description: 'Suivi et gestion des commandes',
-    features: ['Tracking temps réel', 'Notifications livraison', 'Retours & échanges', 'Suivi fournisseurs'],
-    color: 'from-orange-500 to-amber-600' },
-  // Nouveaux agents additionnels
-  { id: 5, name: 'Chef de Projet IA', status: 'online', type: 'project', icon: '📋', conversations: 67, category: 'management',
-    description: 'Gestion de projets et planification',
-    features: ['Planification tâches', 'Suivi deadlines', 'Coordination équipe', 'Rapports avance'],
-    color: 'from-indigo-500 to-purple-600' },
-  { id: 6, name: 'Analyste Data', status: 'online', type: 'analytics', icon: '📊', conversations: 45, category: 'management',
-    description: 'Analyse des données бизнес',
-    features: ['Rapports ventes', 'Analyse tendances', 'Prévisions', 'Tableaux de bord'],
-    color: 'from-pink-500 to-rose-600' },
-  { id: 7, name: 'Marketing Bot', status: 'online', type: 'marketing', icon: '📢', conversations: 123, category: 'marketing',
-    description: 'Automatisation marketing digital',
-    features: ['Campagnes email', 'SEO optimisation', 'Gestion réseaux sociaux', 'Contenu automatique'],
-    color: 'from-red-500 to-orange-600' },
-  { id: 8, name: 'Assistant RH', status: 'offline', type: 'hr', icon: '👥', conversations: 0, category: 'management',
-    description: 'Gestion des ressources humaines',
-    features: ['Recrutement', 'Onboarding', 'Gestion congès', 'Formation'],
-    color: 'from-teal-500 to-cyan-600' },
-  { id: 9, name: 'Comptable IA', status: 'offline', type: 'finance', icon: '💳', conversations: 0, category: 'finance',
-    description: 'Gestion financière et comptable',
-    features: ['Facturation', 'Suivi trésorerie', 'Rapports financiers', 'Prévisions budétaires'],
-    color: 'from-yellow-500 to-amber-600' },
-  { id: 10, name: 'Legal Bot', status: 'offline', type: 'legal', icon: '⚖️', conversations: 0, category: 'finance',
-    description: 'Assistant juridique et conformité',
-    features: ['Contrats types', 'CGU/RGPD', 'Mentions légales', 'Conseils juridiques'],
-    color: 'from-slate-500 to-gray-600' },
-]
+// Agents IA — source unique de vérité partagée avec l'API (/api/chat).
+import { AGENT_LIST } from '@/lib/ai/agents'
+
+const allAgents = AGENT_LIST.map((a, index) => ({
+  id: index + 1,
+  agentId: a.id,
+  name: a.name,
+  status: a.status,
+  type: a.category,
+  icon: a.icon,
+  conversations: 0,
+  category: a.category,
+  description: a.description,
+  features: a.features,
+  color: a.color,
+}))
 
 const agents = allAgents.filter(a => a.category === 'principal')
 const extraAgents = allAgents.filter(a => a.category !== 'principal')
-
-const stats = {
-  totalConversations: 714,
-  activeAgents: 7,
-  totalAgents: 10,
-  offlineAgents: 3,
-  messagesToday: 1247,
-  satisfaction: 94.5
-}
 
 export default function AgentDashboard() {
   const [activeTab, setActiveTab] = useState('overview')
   const [accessGranted, setAccessGranted] = useState(false)
   const [codeInput, setCodeInput] = useState('')
   const [error, setError] = useState('')
+  const [verifying, setVerifying] = useState(false)
+  const [stats, setStats] = useState({
+    totalConversations: 0,
+    activeAgents: allAgents.filter(a => a.status === 'online').length,
+    totalAgents: allAgents.length,
+    offlineAgents: allAgents.filter(a => a.status !== 'online').length,
+    messagesToday: 0,
+    satisfaction: 0,
+  })
 
-  const verifyCode = () => {
-    if (codeInput === FOUNDER_CODE) {
-      setAccessGranted(true)
-      setError('')
-    } else {
-      setError('Code incorrect')
-    }
-  }
-
-  // Auto-redirect si pas de code
+  // Access is validated server-side (admin session + AGENT_ACCESS_CODE).
   useEffect(() => {
-    const stored = localStorage.getItem('founder_access')
-    if (stored === 'granted') {
+    if (sessionStorage.getItem('agent_access') === 'granted') {
       setAccessGranted(true)
     }
   }, [])
 
-  const grantAccess = () => {
-    if (codeInput === FOUNDER_CODE) {
-      localStorage.setItem('founder_access', 'granted')
-      setAccessGranted(true)
-      setError('')
-    } else {
-      setError('Code secret incorrect')
+  // Real agent counters derived from the orders data.
+  useEffect(() => {
+    if (!accessGranted) return
+    fetch('/api/orders')
+      .then(res => res.ok ? res.json() : [])
+      .then((data) => {
+        const orders = Array.isArray(data) ? data : []
+        const today = new Date().toDateString()
+        const todayOrders = orders.filter((o: { createdAt: string }) => new Date(o.createdAt).toDateString() === today)
+        setStats(prev => ({
+          ...prev,
+          totalConversations: orders.length,
+          messagesToday: todayOrders.length,
+        }))
+      })
+      .catch(err => console.error('Error fetching agent stats:', err))
+  }, [accessGranted])
+
+  const grantAccess = async () => {
+    setVerifying(true)
+    setError('')
+    try {
+      const res = await fetch('/api/agent/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: codeInput }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (res.ok && data.valid) {
+        sessionStorage.setItem('agent_access', 'granted')
+        setAccessGranted(true)
+      } else if (res.status === 403) {
+        setError('Accès réservé aux administrateurs connectés')
+      } else if (res.status === 500) {
+        setError(data.error || "Code d'accès non configuré")
+      } else {
+        setError('Code secret incorrect')
+      }
+    } catch {
+      setError('Erreur de connexion au serveur')
+    } finally {
+      setVerifying(false)
     }
   }
 
@@ -114,7 +108,7 @@ export default function AgentDashboard() {
       <div className="min-h-screen bg-ingco-black flex items-center justify-center p-4">
         <div className="bg-ingco-gray rounded-2xl p-8 max-w-md w-full">
           <div className="text-center mb-6">
-            <div className="text-5xl mb-4">🔐</div>
+            <Icon name="shield" className="w-12 h-12 text-ingco-yellow mx-auto mb-4" />
             <h1 className="text-2xl font-bold text-white">Accès Réservé</h1>
             <p className="text-gray-400 mt-2">Entrez votre code secret pour accéder aux agents IA</p>
           </div>
@@ -128,12 +122,13 @@ export default function AgentDashboard() {
           {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
           <button
             onClick={grantAccess}
-            className="w-full bg-ingco-yellow text-ingco-black py-3 rounded-xl font-bold hover:bg-yellow-400"
+            disabled={verifying}
+            className="w-full bg-ingco-yellow text-ingco-black py-3 rounded-xl font-bold hover:bg-yellow-400 disabled:opacity-50"
           >
-            Valider
+            {verifying ? '⏳ Vérification...' : 'Valider'}
           </button>
           <Link href="/" className="block text-center text-gray-500 text-sm mt-4 hover:text-ingco-yellow">
-            ← Retour à l'accueil
+            <span className="inline-flex items-center gap-1"><Icon name="arrow-left" className="w-4 h-4" /> Retour à l'accueil</span>
           </Link>
         </div>
       </div>
@@ -159,7 +154,7 @@ export default function AgentDashboard() {
         {/* Navigation Arrows */}
         <div className="flex items-center justify-between mb-6">
           <Link href="/admin" className="flex items-center gap-2 text-gray-400 hover:text-ingco-yellow transition-colors bg-ingco-gray px-4 py-2 rounded-lg">
-            <span>←</span> Retour Admin
+            <Icon name="arrow-left" className="w-4 h-4" /> Retour Admin
           </Link>
           <div className="flex items-center gap-2">
             <Link href="/chat" className="bg-purple-500 text-white px-3 py-2 rounded-lg text-sm hover:bg-purple-600">Chat IA</Link>
@@ -170,7 +165,7 @@ export default function AgentDashboard() {
 
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white">🤖 Tableau de Bord Agents IA</h1>
+          <h1 className="text-3xl font-bold text-white flex items-center gap-3"><Icon name="chat" className="w-8 h-8 text-ingco-yellow" /> Tableau de Bord Agents IA</h1>
           <p className="text-gray-400">Gestion des assistants virtuels et automatisations</p>
         </div>
 
@@ -190,10 +185,10 @@ export default function AgentDashboard() {
               <p className="text-purple-200 font-semibold text-lg">{founder.role}</p>
               <div className="flex flex-wrap justify-center md:justify-start gap-4 mt-3">
                 <a href={`mailto:${founder.email}`} className="flex items-center gap-2 text-purple-100 hover:text-white transition-colors">
-                  <span>📧</span> {founder.email}
+                  <Icon name="chat" className="w-4 h-4" /> {founder.email}
                 </a>
                 <a href={`tel:${founder.phone}`} className="flex items-center gap-2 text-purple-100 hover:text-white transition-colors">
-                  <span>📞</span> {founder.phone}
+                  <Icon name="phone" className="w-4 h-4" /> {founder.phone}
                 </a>
               </div>
             </div>
@@ -209,7 +204,7 @@ export default function AgentDashboard() {
           <div className="bg-ingco-gray rounded-2xl p-6">
             <div className="flex items-center justify-between mb-4">
               <span className="text-gray-400 text-sm">Total Agents</span>
-              <span className="w-10 h-10 bg-purple-500/20 rounded-xl flex items-center justify-center">🤖</span>
+              <span className="w-10 h-10 bg-purple-500/20 rounded-xl flex items-center justify-center"><Icon name="chat" className="w-5 h-5 text-purple-400" /></span>
             </div>
             <div className="text-3xl font-bold text-white">{stats.totalAgents}</div>
             <div className="text-gray-500 text-sm mt-1">Configurés</div>
@@ -218,7 +213,7 @@ export default function AgentDashboard() {
           <div className="bg-ingco-gray rounded-2xl p-6">
             <div className="flex items-center justify-between mb-4">
               <span className="text-gray-400 text-sm">Agents actifs</span>
-              <span className="w-10 h-10 bg-green-500/20 rounded-xl flex items-center justify-center">✓</span>
+              <span className="w-10 h-10 bg-green-500/20 rounded-xl flex items-center justify-center"><Icon name="check" className="w-5 h-5 text-green-500" /></span>
             </div>
             <div className="text-3xl font-bold text-green-500">{stats.activeAgents}/{stats.totalAgents}</div>
             <div className="text-gray-500 text-sm mt-1">En ligne</div>
@@ -227,7 +222,7 @@ export default function AgentDashboard() {
           <div className="bg-ingco-gray rounded-2xl p-6">
             <div className="flex items-center justify-between mb-4">
               <span className="text-gray-400 text-sm">Conversations</span>
-              <span className="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center">💬</span>
+              <span className="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center"><Icon name="chat" className="w-5 h-5 text-blue-400" /></span>
             </div>
             <div className="text-3xl font-bold text-white">{stats.totalConversations}</div>
             <div className="text-green-500 text-sm mt-1">+23% ce mois</div>
@@ -236,7 +231,7 @@ export default function AgentDashboard() {
           <div className="bg-ingco-gray rounded-2xl p-6">
             <div className="flex items-center justify-between mb-4">
               <span className="text-gray-400 text-sm">Hors ligne</span>
-              <span className="w-10 h-10 bg-gray-500/20 rounded-xl flex items-center justify-center">💤</span>
+              <span className="w-10 h-10 bg-gray-500/20 rounded-xl flex items-center justify-center"><Icon name="user" className="w-5 h-5 text-gray-400" /></span>
             </div>
             <div className="text-3xl font-bold text-gray-400">{stats.offlineAgents}</div>
             <div className="text-gray-500 text-sm mt-1">À activer</div>
@@ -245,7 +240,7 @@ export default function AgentDashboard() {
 
         {/* Agents List with Animation */}
         <div className="bg-ingco-gray rounded-2xl p-6">
-          <h2 className="text-xl font-bold text-white mb-6">🤖 Agents IA Disponibles</h2>
+          <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2"><Icon name="chat" className="w-5 h-5 text-ingco-yellow" /> Agents IA Disponibles</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {agents.map((agent, index) => (
               <div 
@@ -254,29 +249,23 @@ export default function AgentDashboard() {
                 style={{ animationDelay: `${index * 100}ms` }}
               >
                 <div className="flex items-start gap-4">
-                  <div className="text-3xl group-hover:scale-110 transition-transform duration-300">{agent.icon}</div>
+                  <div className="group-hover:scale-110 transition-transform duration-300"><Icon name={agent.icon as never} className="w-8 h-8 text-ingco-yellow" /></div>
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
                       <h3 className="text-white font-semibold group-hover:text-ingco-yellow transition-colors">{agent.name}</h3>
                       <span className={`text-xs px-2 py-1 rounded ${agent.status === 'online' ? 'bg-green-500/20 text-green-500' : 'bg-gray-500/20 text-gray-500'}`}>
-                        {agent.status === 'online' ? '🟢 En ligne' : '⚪ Hors ligne'}
+                        {agent.status === 'online' ? 'En ligne' : 'Hors ligne'}
                       </span>
                     </div>
-                    <p className="text-purple-400 text-sm font-medium mt-1">{agent.type === 'chat' ? 'Assistant conversationnel' : agent.type === 'sales' ? 'Vente automatisée' : agent.type === 'support' ? 'Support client' : 'Suivi commandes'}</p>
+                    <p className="text-purple-400 text-sm font-medium mt-1">{agent.description}</p>
                     <p className="text-gray-500 text-sm mt-2">
-                      {agent.type === 'chat' && '• Recommandations produits\n• Réponses aux questions techniques\n• Conseils d\'utilisation'}
-                      {agent.type === 'sales' && '• Qualification leads\n• Closing automatique\n• Suivi panier abandonné'}
-                      {agent.type === 'support' && '• FAQ automatique\n• Ouverture tickets\n• Suivi résolution'}
-                      {agent.type === 'tracking' && '• Tracking commandes\n• Notifications livraison\n• Retours & échanges'}
+                      {agent.features.slice(0, 3).map((f: string) => `• ${f}`).join('\n')}
                     </p>
                     <div className="flex items-center justify-between mt-3">
-                      <span className="text-gray-400 text-sm">{agent.conversations} conversations</span>
-                      <button 
-                        onClick={() => alert(`🔧 Configuration de ${agent.name}\n\nStatut: ${agent.status}\nType: ${agent.type}\nFonctionnalités:\n${agent.features?.join('\n')}`)}
-                        className="text-ingco-yellow text-sm hover:underline"
-                      >
-                        Config →
-                      </button>
+                      <span className="text-gray-400 text-sm">{agent.status === 'online' ? 'Actif' : 'Inactif'}</span>
+                      <Link href={`/chat?agent=${agent.agentId}`} className="text-ingco-yellow text-sm hover:underline">
+                        Tester <Icon name="arrow-right" className="w-4 h-4 inline" />
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -287,7 +276,7 @@ export default function AgentDashboard() {
 
         {/* Extra Agents - Management & Marketing */}
         <div className="bg-ingco-gray rounded-2xl p-6 mt-8">
-          <h2 className="text-xl font-bold text-white mb-6">⚙️ Agents Avancés (Management & Marketing)</h2>
+          <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2"><Icon name="settings" className="w-5 h-5 text-ingco-yellow" /> Agents Avancés (Management &amp; Marketing)</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {extraAgents.map((agent, index) => (
               <div 
@@ -296,12 +285,12 @@ export default function AgentDashboard() {
                 style={{ animationDelay: `${index * 50}ms` }}
               >
                 <div className="flex items-start gap-3">
-                  <div className="text-2xl group-hover:scale-110 transition-transform duration-300">{agent.icon}</div>
+                  <div className="group-hover:scale-110 transition-transform duration-300"><Icon name={agent.icon as never} className="w-6 h-6 text-white" /></div>
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
                       <h3 className="text-white font-semibold group-hover:text-white">{agent.name}</h3>
                       <span className={`text-xs px-2 py-1 rounded bg-white/20 ${agent.status === 'online' ? 'text-green-300' : 'text-gray-300'}`}>
-                        {agent.status === 'online' ? '🟢' : '⚪'}
+                        {agent.status === 'online' ? 'En ligne' : 'Hors ligne'}
                       </span>
                     </div>
                     <p className="text-white/80 text-sm mt-1">{agent.description}</p>
@@ -313,10 +302,10 @@ export default function AgentDashboard() {
                     <div className="mt-2 flex items-center justify-between">
                       <span className="text-white/60 text-xs">{agent.conversations} conv.</span>
                       <button 
-                        onClick={() => alert(`⚙️ ${agent.name}\n\n${agent.description}\n\nFonctionnalités:\n${agent.features?.join('\n')}`)}
+                        onClick={() => alert(`${agent.name}\n\n${agent.description}\n\nFonctionnalités:\n${agent.features?.join('\n')}`)}
                         className="text-xs text-white underline"
                       >
-                        Config →
+                        Config <Icon name="arrow-right" className="w-4 h-4 inline" />
                       </button>
                     </div>
                   </div>
@@ -329,22 +318,22 @@ export default function AgentDashboard() {
         {/* Quick Actions with Animation */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
           <Link href="/chat" className="bg-ingco-gray rounded-xl p-4 hover:bg-gray-700 hover:scale-110 transition-all duration-300 block text-center">
-            <div className="text-2xl mb-1">🤖</div>
+            <Icon name="chat" className="w-6 h-6 text-ingco-yellow mx-auto mb-1" />
             <h3 className="text-white font-bold text-sm">Assistant</h3>
           </Link>
 
           <Link href="/admin" className="bg-ingco-gray rounded-xl p-4 hover:bg-gray-700 transition-colors block text-center">
-            <div className="text-2xl mb-1">📊</div>
+            <Icon name="grid" className="w-6 h-6 text-ingco-yellow mx-auto mb-1" />
             <h3 className="text-white font-bold text-sm">Dashboard</h3>
           </Link>
 
           <Link href="/admin/orders" className="bg-ingco-gray rounded-xl p-4 hover:bg-gray-700 transition-colors block text-center">
-            <div className="text-2xl mb-1">📦</div>
+            <Icon name="truck" className="w-6 h-6 text-ingco-yellow mx-auto mb-1" />
             <h3 className="text-white font-bold text-sm">Commandes</h3>
           </Link>
 
           <Link href="/" className="bg-ingco-gray rounded-xl p-4 hover:bg-gray-700 transition-colors block text-center">
-            <div className="text-2xl mb-1">🏠</div>
+            <Icon name="home" className="w-6 h-6 text-ingco-yellow mx-auto mb-1" />
             <h3 className="text-white font-bold text-sm">Accueil</h3>
           </Link>
         </div>

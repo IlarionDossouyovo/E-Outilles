@@ -1,22 +1,10 @@
 'use client'
 
 import { useState } from 'react'
+import { NavigationArrows, Icon } from '@/components/Icons'
 import { useCartStore } from '@/lib/store/cart'
 import Link from 'next/link'
 import PageNavigation from '@/components/PageNavigation'
-import Logo from '@/components/Logo'
-
-interface OrderData {
-  customerName: string
-  customerEmail: string
-  phone: string
-  address: string
-  city: string
-  country: string
-  paymentMethod: string
-  total: number
-  items: Array<{ id: string; name: string; price: number; quantity: number }>
-}
 
 export default function CheckoutPage() {
   const { items, getTotal, clearCart } = useCartStore()
@@ -24,6 +12,9 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState('cod')
   const [loading, setLoading] = useState(false)
   const [orderId, setOrderId] = useState('')
+  const [error, setError] = useState('')
+  const [finalTotal, setFinalTotal] = useState(0)
+  const [finalCount, setFinalCount] = useState(0)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -41,96 +32,94 @@ export default function CheckoutPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (step < 3) {
       setStep(step + 1)
-    } else {
-      // Submit order
-      setLoading(true)
-      
-      const orderData: OrderData = {
-        customerName: formData.name,
-        customerEmail: formData.email,
-        phone: formData.phone,
-        address: formData.address,
-        city: formData.city,
-        country: formData.country,
-        paymentMethod,
-        total: getTotal(),
-        items: items.map(item => ({
-          id: item.id,
-          name: item.name,
-          price: item.price,
-          quantity: item.quantity
-        }))
+      return
+    }
+
+    // Submit order
+    setLoading(true)
+    setError('')
+
+    const orderData = {
+      customerName: formData.name,
+      customerEmail: formData.email,
+      phone: formData.phone,
+      shippingAddress: formData.address,
+      shippingCity: formData.city,
+      shippingCountry: formData.country,
+      paymentMethod,
+      notes: formData.note,
+      items: items.map(item => ({
+        productId: item.id,
+        quantity: item.quantity,
+      })),
+    }
+
+    try {
+      const response = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderData)
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        setError(result.error || 'Erreur lors de la commande. Veuillez réessayer.')
+        setLoading(false)
+        return
       }
 
-      try {
-        const response = await fetch('/api/orders', {
+      setOrderId(result.orderId)
+      setFinalTotal(result.order?.total ?? getTotal())
+      setFinalCount(items.length)
+
+      if (paymentMethod === 'card') {
+        // Hand off to Stripe Checkout; the webhook marks the order as paid.
+        const payRes = await fetch('/api/payments/stripe/create-checkout-session', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(orderData)
+          body: JSON.stringify({ orderId: result.orderId, customerEmail: formData.email }),
         })
+        const pay = await payRes.json()
 
-        if (response.ok) {
-          const result = await response.json()
-          setOrderId(result.orderId || `ORD-${Date.now()}`)
-          
-          // If Mobile Money, show payment instructions
-          if (paymentMethod === 'momo') {
-            alert(`📱 Paiement Mobile Money\n\nNuméro: ${momoData.phone}\nOpérateur: ${momoData.operator}\nMontant: ${getTotal().toFixed(2)}€\n\nUn code de paiement vous sera envoyé par SMS.`)
-          }
-          
-          clearCart()
-          setStep(3)
-        } else {
-          alert('Erreur lors de la commande. Veuillez réessayer.')
+        if (pay.url) {
+          window.location.href = pay.url
+          return
         }
-      } catch (error) {
-        console.error('Order error:', error)
-        // Still proceed for demo
-        setOrderId(`ORD-${Date.now()}`)
+
+        // Stripe not configured: fall back to offline confirmation.
         clearCart()
         setStep(3)
-      } finally {
-        setLoading(false)
+        return
       }
+
+      if (paymentMethod === 'momo') {
+        alert(`Paiement Mobile Money\n\nNumero: ${momoData.phone}\nOperateur: ${momoData.operator}\nMontant: ${(result.order?.total ?? getTotal()).toFixed(2)} EUR\n\nUn code de paiement vous sera envoye par SMS.`)
+      }
+
+      clearCart()
+      setStep(3)
+    } catch (err) {
+      console.error('Order error:', err)
+      setError('Erreur de connexion au serveur. Veuillez reessayer.')
+    } finally {
+      setLoading(false)
     }
   }
 
-  // Navigation
-  const Nav = () => (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-ingco-black/95 backdrop-blur-md border-b border-ingco-gray">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <Logo variant="horizontal" size={40} />
-          <div className="hidden md:flex items-center gap-8">
-            <Link href="/" className="text-gray-300 hover:text-ingco-yellow transition-colors">Accueil</Link>
-            <Link href="/search" className="text-gray-300 hover:text-ingco-yellow transition-colors">Produits</Link>
-          </div>
-        </div>
-      </div>
-    </nav>
-  )
 
-  // Footer
-  const Footer = () => (
-    <footer className="bg-ingco-dark border-t border-ingco-gray py-8 mt-16">
-      <div className="max-w-7xl mx-auto px-4 text-center">
-        <p className="text-gray-500 text-sm">© 2026 E-Outilles. Tous droits réservés.</p>
-      </div>
-    </footer>
-  )
 
   // Étape 3: Confirmation
   if (step === 3) {
     return (
       <div className="min-h-screen bg-ingco-black">
-        <Nav />
         <div className="pt-24 pb-16 max-w-md mx-auto px-4 text-center">
           <div className="bg-ingco-gray rounded-3xl p-8">
             <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="text-4xl">✅</span>
+              <Icon name="check" className="w-10 h-10 text-green-400" />
             </div>
             <h1 className="text-2xl font-bold text-white mb-4">Commande confirmée!</h1>
             <div className="bg-ingco-dark rounded-xl p-3 mb-4">
@@ -144,29 +133,27 @@ export default function CheckoutPage() {
             <div className="bg-ingco-dark rounded-xl p-4 mb-6 text-left">
               <p className="text-gray-400 text-sm">Mode de paiement:</p>
               <p className="text-white font-bold">
-                {paymentMethod === 'cod' && '💵 Paiement à la livraison'}
-                {paymentMethod === 'momo' && '📱 Mobile Money'}
-                {paymentMethod === 'card' && '💳 Carte bancaire'}
+                {paymentMethod === 'cod' && 'Paiement à la livraison'}
+                {paymentMethod === 'momo' && 'Mobile Money'}
+                {paymentMethod === 'card' && 'Carte bancaire'}
               </p>
             </div>
             <div className="bg-ingco-dark rounded-xl p-4 mb-6 text-left">
               <p className="text-gray-400 text-sm">Résumé:</p>
-              <p className="text-white font-bold">{items.length} produit(s)</p>
-              <p className="text-ingco-yellow font-bold text-xl">{getTotal().toFixed(2)}€</p>
+              <p className="text-white font-bold">{finalCount} produit(s)</p>
+              <p className="text-ingco-yellow font-bold text-xl">{finalTotal.toFixed(2)}€</p>
             </div>
             <Link href="/" className="block bg-ingco-yellow text-ingco-black py-3 rounded-xl font-bold hover:bg-yellow-400">
               Retour à l'accueil
             </Link>
           </div>
         </div>
-        <Footer />
       </div>
     )
   }
 
   return (
     <div className="min-h-screen bg-ingco-black">
-      <Nav />
       <PageNavigation />
       <div className="pt-24 pb-16 max-w-4xl mx-auto px-4">
         <h1 className="text-3xl font-bold text-white mb-8">Checkout</h1>
@@ -292,7 +279,7 @@ export default function CheckoutPage() {
                         <p className="text-green-400 text-xs mt-1">Frais: 0€</p>
                         {paymentMethod === 'cod' && <span className="inline-block mt-2 text-xs bg-ingco-yellow/20 text-ingco-yellow px-2 py-1 rounded">Sélectionné</span>}
                       </div>
-                      <span className="text-2xl">📦</span>
+                      <Icon name="truck" className="w-6 h-6 text-ingco-yellow" />
                     </div>
                     <div 
                       onClick={() => setPaymentMethod('momo')}
@@ -303,7 +290,7 @@ export default function CheckoutPage() {
                         <p className="text-white font-bold">Mobile Money</p>
                         <p className="text-gray-400 text-sm">MTN, Moov, Orange Money</p>
                       </div>
-                      <span className="text-2xl">📱</span>
+                      <Icon name="phone" className="w-6 h-6 text-ingco-yellow" />
                     </div>
                     <div 
                       onClick={() => setPaymentMethod('card')}
@@ -316,7 +303,7 @@ export default function CheckoutPage() {
                         <p className="text-green-400 text-xs mt-1">Sécurisé par Stripe</p>
                         {paymentMethod === 'card' && <span className="inline-block mt-2 text-xs bg-ingco-yellow/20 text-ingco-yellow px-2 py-1 rounded">Sélectionné</span>}
                       </div>
-                      <span className="text-2xl">💳</span>
+                      <Icon name="card" className="w-6 h-6 text-ingco-yellow" />
                     </div>
                   </div>
 
@@ -349,7 +336,7 @@ export default function CheckoutPage() {
                           />
                         </div>
                         <p className="text-gray-400 text-sm">
-                          📱 Un code de paiement vous sera envoyé sur ce numéro
+                          Un code de paiement vous sera envoyé sur ce numéro
                         </p>
                       </div>
                     </div>
@@ -398,7 +385,7 @@ export default function CheckoutPage() {
                           />
                         </div>
                         <div className="flex items-center gap-2 mt-2">
-                          <span className="text-green-400">🔒</span>
+                          <Icon name="shield" className="w-4 h-4 text-green-400" />
                           <span className="text-gray-400 text-sm">Paiement sécurisé par Stripe</span>
                         </div>
                       </div>
@@ -414,13 +401,18 @@ export default function CheckoutPage() {
               >
                 {loading ? '⏳ Traitement en cours...' : step === 1 ? 'Continuer vers paiement' : 'Confirmer la commande'}
               </button>
+              {error && (
+                <div className="mt-4 bg-red-500/20 border border-red-500 text-red-400 px-4 py-3 rounded-xl text-sm">
+                  {error}
+                </div>
+              )}
             </form>
           </div>
 
           {/* Summary */}
           <div className="bg-ingco-dark border-2 border-ingco-gray rounded-2xl p-6 h-fit sticky top-24">
             <div className="flex items-center gap-2 mb-4">
-              <span className="text-xl">🛒</span>
+              <Icon name="cart" className="w-5 h-5 text-ingco-yellow" />
               <h2 className="text-xl font-bold text-white">Votre commande</h2>
             </div>
             <div className="space-y-3 mb-4 max-h-40 overflow-y-auto">
@@ -441,20 +433,23 @@ export default function CheckoutPage() {
               </div>
               <div className="flex justify-between text-gray-400">
                 <span>Livraison</span>
-                <span className="text-green-400 font-medium">✓ Gratuit</span>
+                <span className="text-green-400 font-medium flex items-center gap-1"><Icon name="check" className="w-4 h-4" /> Gratuit</span>
               </div>
               <div className="flex justify-between text-white font-bold text-xl pt-2 border-t border-gray-700">
                 <span>Total</span>
                 <span className="text-ingco-yellow">{getTotal().toFixed(2)}€</span>
               </div>
             </div>
-            <Link href="/cart" className="block text-center text-gray-500 mt-4 text-sm hover:text-ingco-yellow transition-colors">
-              ← Retour au panier
+            <Link href="/cart" className="inline-flex items-center justify-center gap-1 w-full text-gray-500 mt-4 text-sm hover:text-ingco-yellow transition-colors">
+              <Icon name="arrow-left" className="w-4 h-4" /> Retour au panier
             </Link>
           </div>
         </div>
       </div>
-      <Footer />
+      <div className="max-w-7xl mx-auto px-4 pb-8">
+        <NavigationArrows current="/checkout" />
+      </div>
+
     </div>
   )
 }

@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
+import { Icon } from '@/components/Icons'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
@@ -14,12 +15,23 @@ export default function ForgotPasswordPage() {
     setError('')
     setLoading(true)
 
-    // Simulate API call - In production, this would call your API
-    await new Promise(resolve => setTimeout(resolve, 1000))
-
-    // For demo purposes, just show success
-    setSubmitted(true)
-    setLoading(false)
+    try {
+      const res = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        setError(data.error || 'Une erreur est survenue')
+        return
+      }
+      setSubmitted(true)
+    } catch {
+      setError('Erreur de connexion au serveur')
+    } finally {
+      setLoading(false)
+    }
   }
 
   if (submitted) {
@@ -27,7 +39,7 @@ export default function ForgotPasswordPage() {
       <div className="min-h-screen bg-ingco-black pt-24 pb-16">
         <div className="max-w-md mx-auto px-4">
           <div className="bg-ingco-gray rounded-2xl p-8 text-center">
-            <div className="text-6xl mb-4">✅</div>
+            <Icon name="check" className="w-14 h-14 text-green-400 mx-auto mb-4" />
             <h1 className="text-2xl font-bold text-white mb-4">Email envoyé!</h1>
             <p className="text-gray-400 mb-6">
               Si un compte existe avec cet email, tu recevras un lien pour réinitialiser ton mot de passe.
@@ -77,7 +89,7 @@ export default function ForgotPasswordPage() {
               disabled={loading}
               className="w-full bg-ingco-yellow text-ingco-black py-3 rounded-xl font-bold hover:bg-yellow-400 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
             >
-              {loading ? '⏳ Envoi en cours...' : '📧 Envoyer le lien'}
+              {loading ? 'Envoi en cours...' : 'Envoyer le lien'}
             </button>
           </form>
 

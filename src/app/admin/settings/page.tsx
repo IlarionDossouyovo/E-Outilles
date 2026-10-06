@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import AdminAnalytics from '@/components/AdminAnalytics'
 import Logo from '@/components/Logo'
+import { Icon } from '@/components/Icons'
 
 export default function SettingsPage() {
   const [settings, setSettings] = useState({
@@ -43,7 +44,7 @@ export default function SettingsPage() {
       <div className="pt-24 pb-16 max-w-4xl mx-auto px-4">
         {/* Header */}
         <div className="mb-8">
-          <Link href="/admin" className="text-ingco-yellow text-sm hover:underline">← Dashboard</Link>
+          <Link href="/admin" className="text-ingco-yellow text-sm hover:underline inline-flex items-center gap-1"><Icon name="arrow-left" className="w-4 h-4" /> Dashboard</Link>
           <h1 className="text-3xl font-bold text-white mt-2">Paramètres</h1>
           <p className="text-gray-400">Configurez votre boutique</p>
         </div>
@@ -73,7 +74,7 @@ export default function SettingsPage() {
         <div className="space-y-6">
           {/* Informations boutique */}
           <div className="bg-ingco-gray rounded-2xl p-6">
-            <h2 className="text-xl font-bold text-white mb-4">🏪 Informations boutique</h2>
+            <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2"><Icon name="info" className="w-5 h-5 text-ingco-yellow" /> Informations boutique</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="text-gray-400 text-sm mb-2 block">Nom de la boutique</label>
@@ -116,7 +117,7 @@ export default function SettingsPage() {
 
           {/* Localisation */}
           <div className="bg-ingco-gray rounded-2xl p-6">
-            <h2 className="text-xl font-bold text-white mb-4">🌍 Localisation</h2>
+            <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2"><Icon name="grid" className="w-5 h-5 text-ingco-yellow" /> Localisation</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="text-gray-400 text-sm mb-2 block">Devise</label>
@@ -148,7 +149,7 @@ export default function SettingsPage() {
 
           {/* Livraison */}
           <div className="bg-ingco-gray rounded-2xl p-6">
-            <h2 className="text-xl font-bold text-white mb-4">🚚 Livraison</h2>
+            <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2"><Icon name="truck" className="w-5 h-5 text-ingco-yellow" /> Livraison</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="text-gray-400 text-sm mb-2 block">Livraison gratuite (€)</label>
@@ -182,7 +183,7 @@ export default function SettingsPage() {
 
           {/* Paiements */}
           <div className="bg-ingco-gray rounded-2xl p-6">
-            <h2 className="text-xl font-bold text-white mb-4">💳 Moyens de paiement</h2>
+            <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2"><Icon name="card" className="w-5 h-5 text-ingco-yellow" /> Moyens de paiement</h2>
             <div className="space-y-3">
               <label className="flex items-center justify-between p-4 bg-ingco-dark rounded-xl">
                 <div>
@@ -210,7 +211,7 @@ export default function SettingsPage() {
 
           {/* Notifications */}
           <div className="bg-ingco-gray rounded-2xl p-6">
-            <h2 className="text-xl font-bold text-white mb-4">🔔 Notifications</h2>
+            <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2"><Icon name="info" className="w-5 h-5 text-ingco-yellow" /> Notifications</h2>
             <div className="space-y-3">
               <label className="flex items-center justify-between p-4 bg-ingco-dark rounded-xl">
                 <div>
@@ -234,7 +235,7 @@ export default function SettingsPage() {
             onClick={handleSave}
             className="w-full bg-ingco-yellow text-ingco-black py-4 rounded-xl font-bold hover:bg-yellow-400 transition-colors"
           >
-            💾 Enregistrer les paramètres
+            <Icon name="check" className="w-4 h-4 inline" /> Enregistrer les paramètres
           </button>
         </div>
       </div>

@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import ChatWidget from '@/lib/ai/ChatWidget'
+import ServiceWorkerRegister from '@/components/ServiceWorkerRegister'
+import SiteChrome from '@/components/SiteChrome'
 
 export const metadata: Metadata = {
   title: 'E-Outille par ELECTRON | Outillage Professionnel',
@@ -20,8 +22,9 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body className="bg-ingco-black text-white antialiased">
-        {children}
+        <SiteChrome>{children}</SiteChrome>
         <ChatWidget />
+        <ServiceWorkerRegister />
       </body>
     </html>
   )

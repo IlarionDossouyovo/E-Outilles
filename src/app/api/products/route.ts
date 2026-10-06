@@ -1,6 +1,7 @@
 // API Products - E-Outilles
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db/prisma'
+import { requireAdmin } from '@/lib/security/auth'
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
@@ -36,6 +37,11 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  const admin = await requireAdmin()
+  if (!admin) {
+    return NextResponse.json({ error: 'Accès refusé' }, { status: 403 })
+  }
+
   try {
     const body = await request.json()
     const { name, slug, description, price, comparePrice, sku, stock, images, features, categoryId } = body

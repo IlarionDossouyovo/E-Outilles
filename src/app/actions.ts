@@ -1,64 +1,58 @@
 'use server'
 
 import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
-
-// Demo users database
-const users = [
-  { id: '1', email: 'demo@e-outilles.com', password: 'demo123', name: 'Demo User', role: 'customer' },
-  { id: '2', email: 'admin@e-outilles.com', password: 'admin123', name: 'Admin', role: 'admin' },
-]
+import bcrypt from 'bcryptjs'
+import { prisma } from '@/lib/db/prisma'
+import {
+  SESSION_COOKIE,
+  SESSION_MAX_AGE,
+  createSessionToken,
+  verifySessionToken,
+  SessionUser,
+} from '@/lib/security/session'
 
 export async function loginAction(formData: FormData) {
-  const email = formData.get('email') as string
-  const password = formData.get('password') as string
+  const email = String(formData.get('email') || '').trim().toLowerCase()
+  const password = String(formData.get('password') || '')
 
   if (!email || !password) {
     return { error: 'Email et mot de passe requis' }
   }
 
-  const user = users.find(u => u.email === email && u.password === password)
-
-  if (!user) {
+  const user = await prisma.user.findUnique({ where: { email } })
+  if (!user || !(await bcrypt.compare(password, user.password))) {
     return { error: 'Email ou mot de passe incorrect' }
   }
 
-  // Set session cookie
-  const cookieStore = await cookies()
-  cookieStore.set('session', JSON.stringify({
+  const sessionUser: SessionUser = {
     id: user.id,
     email: user.email,
     name: user.name,
-    role: user.role
-  }), {
+    role: user.role,
+    country: user.country,
+  }
+
+  const token = await createSessionToken(sessionUser)
+  const cookieStore = await cookies()
+  cookieStore.set(SESSION_COOKIE, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    maxAge: 60 * 60 * 24 * 7,
-    path: '/'
+    maxAge: SESSION_MAX_AGE,
+    path: '/',
   })
 
-  return { success: true, user }
+  return { success: true, user: sessionUser }
 }
 
 export async function logoutAction() {
   const cookieStore = await cookies()
-  cookieStore.delete('session')
+  cookieStore.delete(SESSION_COOKIE)
   return { success: true }
 }
 
 export async function getSessionAction() {
   const cookieStore = await cookies()
-  const sessionCookie = cookieStore.get('session')
-  
-  if (!sessionCookie) {
-    return { user: null }
-  }
-  
-  try {
-    const user = JSON.parse(sessionCookie.value)
-    return { user }
-  } catch {
-    return { user: null }
-  }
+  const user = await verifySessionToken(cookieStore.get(SESSION_COOKIE)?.value)
+  return { user }
 }

@@ -8,3 +8,8 @@ build/
 
 
 /src/generated/prisma
+
+# Base SQLite locale (non versionnee)
+prisma/dev.db
+prisma/dev.db-journal
+tsconfig.tsbuildinfo

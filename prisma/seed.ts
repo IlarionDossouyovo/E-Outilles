@@ -1,11 +1,18 @@
 import { PrismaClient } from '@prisma/client'
 import dotenv from 'dotenv'
 import path from 'path'
+import bcrypt from 'bcryptjs'
 
 // Load environment variables from root .env
 dotenv.config({ path: path.join(__dirname, '..', '.env') })
 
 const prisma = new PrismaClient()
+
+// Seed users (passwords hashed with bcrypt)
+const seedUsers = [
+  { email: 'admin@e-outilles.com', password: 'admin123', name: 'Admin', role: 'admin' },
+  { email: 'demo@e-outilles.com', password: 'demo123', name: 'Demo User', role: 'customer' },
+]
 
 // Categories data - All INGCO Product Categories
 const categories = [
@@ -142,7 +149,7 @@ const products = [
     comparePrice: 349.99,
     sku: 'HIK-001',
     stock: 45,
-    images: '["/products/hik-001.jpg"]',
+    images: '["/products/hik-001.svg"]',
     features: '["18V Brushless","SDS-Max","3 modes","Frein électronique"]',
     categoryId: 'power-tools'
   },
@@ -154,7 +161,7 @@ const products = [
     comparePrice: 199.99,
     sku: 'DEW-001',
     stock: 120,
-    images: '["/products/dew-001.jpg"]',
+    images: '["/products/dew-001.svg"]',
     features: '["20V Li-Ion","85Nm","Brushless","2 vitesses"]',
     categoryId: 'power-tools'
   },
@@ -166,7 +173,7 @@ const products = [
     comparePrice: 119.99,
     sku: 'BOS-001',
     stock: 67,
-    images: '["/products/bos-001.jpg"]',
+    images: '["/products/bos-001.svg"]',
     features: '["±0.3mm/m","50m portée","Auto-nivellant","Vert"]',
     categoryId: 'power-tools'
   },
@@ -179,7 +186,7 @@ const products = [
     comparePrice: 69.99,
     sku: 'HT-WREN-001',
     stock: 120,
-    images: '["/products/cle-pipe.jpg"]',
+    images: '["/products/cle-pipe.svg"]',
     features: '["Chrome vanadium","10-24mm","10 pièces","Poli miroir"]',
     categoryId: 'hand-tools'
   },
@@ -191,7 +198,7 @@ const products = [
     comparePrice: 39.99,
     sku: 'HT-SCREW-001',
     stock: 200,
-    images: '["/products/tournevis.jpg"]',
+    images: '["/products/tournevis.svg"]',
     features: '["32 pièces","Aimantés","Poignée Soft","Résistance 1000V"]',
     categoryId: 'hand-tools'
   },
@@ -203,7 +210,7 @@ const products = [
     comparePrice: 44.99,
     sku: 'HT-PLIER-001',
     stock: 150,
-    images: '["/products/pince.jpg"]',
+    images: '["/products/pince.svg"]',
     features: '["10 positions","REG","Chrome vanadium","Grip confortable"]',
     categoryId: 'hand-tools'
   },
@@ -215,7 +222,7 @@ const products = [
     comparePrice: 34.99,
     sku: 'HT-HAMM-001',
     stock: 180,
-    images: '["/products/marteau.jpg"]',
+    images: '["/products/marteau.svg"]',
     features: '["500g","Tête forgée","Manche Hickory","Anti-vibration"]',
     categoryId: 'hand-tools'
   },
@@ -227,7 +234,7 @@ const products = [
     comparePrice: 29.99,
     sku: 'HT-SAW-001',
     stock: 100,
-    images: '["/products/scie.jpg"]',
+    images: '["/products/scie.svg"]',
     features: '["Lame bi-métal","Cadre acier","Lame 300mm","Réglage rapide"]',
     categoryId: 'hand-tools'
   },
@@ -240,7 +247,7 @@ const products = [
     comparePrice: 49.99,
     sku: 'DRL-CHIS-001',
     stock: 80,
-    images: '["/products/burins.jpg"]',
+    images: '["/products/burins.svg"]',
     features: '["SDS Plus","5 pièces","Tungstène","Longue durée"]',
     categoryId: 'drilling'
   },
@@ -252,7 +259,7 @@ const products = [
     comparePrice: 14.99,
     sku: 'DRL-DISC-001',
     stock: 500,
-    images: '["/products/disque.jpg"]',
+    images: '["/products/disque.svg"]',
     features: '["230mm","Métal","80m/s max","Épaisseur 3mm"]',
     categoryId: 'drilling'
   },
@@ -264,7 +271,7 @@ const products = [
     comparePrice: 34.99,
     sku: 'DRL-HOLE-001',
     stock: 60,
-    images: '["/products/trepan.jpg"]',
+    images: '["/products/trepan.svg"]',
     features: '["68mm","Carbure","Perceuse","Coupe propre"]',
     categoryId: 'drilling'
   },
@@ -277,7 +284,7 @@ const products = [
     comparePrice: 99.99,
     sku: 'FLU-001',
     stock: 200,
-    images: '["/products/flu-001.jpg"]',
+    images: '["/products/flu-001.svg"]',
     features: '["True-RMS","NCV","6000 counts","Température"]',
     categoryId: 'measuring'
   },
@@ -289,7 +296,7 @@ const products = [
     comparePrice: 44.99,
     sku: 'KN-001',
     stock: 150,
-    images: '["/products/kn-001.jpg"]',
+    images: '["/products/kn-001.svg"]',
     features: '["0.2-6mm²","Automatique","Réglage précision"]',
     categoryId: 'measuring'
   },
@@ -301,7 +308,7 @@ const products = [
     comparePrice: 34.99,
     sku: 'WERA-001',
     stock: 300,
-    images: '["/products/wera-001.jpg"]',
+    images: '["/products/wera-001.svg"]',
     features: '["1000V","6 pièces","IEC 60900","Garantie à vie"]',
     categoryId: 'measuring'
   },
@@ -314,7 +321,7 @@ const products = [
     comparePrice: 249.99,
     sku: 'ING-001',
     stock: 80,
-    images: '["/products/ing-001.jpg"]',
+    images: '["/products/ing-001.svg"]',
     features: '["1/2\"","1500Nm","6 positions","Carross aluminium"]',
     categoryId: 'automotive'
   },
@@ -326,7 +333,7 @@ const products = [
     comparePrice: 159.99,
     sku: 'RAV-001',
     stock: 60,
-    images: '["/products/rav-001.jpg"]',
+    images: '["/products/rav-001.svg"]',
     features: '["3 Tonnes","75-510mm","Hydraulique","Roulettes nylon"]',
     categoryId: 'automotive'
   },
@@ -338,7 +345,7 @@ const products = [
     comparePrice: 79.99,
     sku: 'STA-001',
     stock: 180,
-    images: '["/products/sta-001.jpg"]',
+    images: '["/products/sta-001.svg"]',
     features: '["40 pièces","CrV","Métriques","Pouces"]',
     categoryId: 'automotive'
   },
@@ -351,7 +358,7 @@ const products = [
     comparePrice: 429.99,
     sku: 'HUS-001',
     stock: 35,
-    images: '["/products/hus-001.jpg"]',
+    images: '["/products/hus-001.svg"]',
     features: '["165cc","45cm","60L bac","Autopropulsée"]',
     categoryId: 'garden'
   },
@@ -363,7 +370,7 @@ const products = [
     comparePrice: 119.99,
     sku: 'STIH-001',
     stock: 70,
-    images: '["/products/stih-001.jpg"]',
+    images: '["/products/stih-001.svg"]',
     features: '["60cm","450W","Lames laser","Double action"]',
     categoryId: 'garden'
   },
@@ -375,7 +382,7 @@ const products = [
     comparePrice: 749.99,
     sku: 'ECHO-001',
     stock: 25,
-    images: '["/products/echo-001.jpg"]',
+    images: '["/products/echo-001.svg"]',
     features: '["52V","75cm guide","Sans fil","Coupe multi-angle"]',
     categoryId: 'garden'
   },
@@ -388,7 +395,7 @@ const products = [
     comparePrice: 199.99,
     sku: 'BOS-MEU-001',
     stock: 55,
-    images: '["/products/meuleuse-230.jpg"]',
+    images: '["/products/meuleuse-230.svg"]',
     features: '["2300W","230mm","Variateur","Protection poussières"]',
     categoryId: 'power-tools'
   },
@@ -400,7 +407,7 @@ const products = [
     comparePrice: 169.99,
     sku: 'DEW-SCI-001',
     stock: 40,
-    images: '["/products/scie-circulaire.jpg"]',
+    images: '["/products/scie-circulaire.svg"]',
     features: '["1900W","66mm coupe","190mm disque","Guide parallèle"]',
     categoryId: 'power-tools'
   },
@@ -412,7 +419,7 @@ const products = [
     comparePrice: 119.99,
     sku: 'HUM-ESC-001',
     stock: 80,
-    images: '["/products/escabeau.jpg"]',
+    images: '["/products/escabeau.svg"]',
     features: '["8 marches","3.5m hauteur","150kg charge","Antidérapant"]',
     categoryId: 'power-tools'
   },
@@ -424,7 +431,7 @@ const products = [
     comparePrice: 99.99,
     sku: 'ING-DIS-001',
     stock: 65,
-    images: '["/products/disqueuse-pneu.jpg"]',
+    images: '["/products/disqueuse-pneu.svg"]',
     features: '["22000 tr/min","50mm disque","Pneumatique","Poignée latérale"]',
     categoryId: 'power-tools'
   },
@@ -436,7 +443,7 @@ const products = [
     comparePrice: 44.99,
     sku: 'BOS-BUR-001',
     stock: 120,
-    images: '["/products/burins-sds.jpg"]',
+    images: '["/products/burins-sds.svg"]',
     features: '["10 pièces","SDS-Plus","Pour béton","Longue durée"]',
     categoryId: 'power-tools'
   },
@@ -449,7 +456,7 @@ const products = [
     comparePrice: 319.99,
     sku: 'KL-SERT-001',
     stock: 35,
-    images: '["/products/pince-sertir.jpg"]',
+    images: '["/products/pince-sertir.svg"]',
     features: '["16-300mm²","Tête rotative","Hydraulique","Mallette"]',
     categoryId: 'measuring'
   },
@@ -461,7 +468,7 @@ const products = [
     comparePrice: 29.99,
     sku: 'FLU-NCV-001',
     stock: 200,
-    images: '["/products/testeur-ncv.jpg"]',
+    images: '["/products/testeur-ncv.svg"]',
     features: '["12-1000V","NCV","LED","Bip sonore"]',
     categoryId: 'measuring'
   },
@@ -473,7 +480,7 @@ const products = [
     comparePrice: 189.99,
     sku: 'FLU-PIN-001',
     stock: 45,
-    images: '["/products/pince-amp.jpg"]',
+    images: '["/products/pince-amp.svg"]',
     features: '["1000A AC/DC","True-RMS","TRMS","Écran rétro"]',
     categoryId: 'measuring'
   },
@@ -485,7 +492,7 @@ const products = [
     comparePrice: 34.99,
     sku: 'TEST-CAB-001',
     stock: 250,
-    images: '["/products/cables-test.jpg"]',
+    images: '["/products/cables-test.svg"]',
     features: '["5m","Rouge/Noir","4mm bananes","Qualité pro"]',
     categoryId: 'measuring'
   },
@@ -497,7 +504,7 @@ const products = [
     comparePrice: 49.99,
     sku: 'LED-LAM-001',
     stock: 150,
-    images: '["/products/lampe-led.jpg"]',
+    images: '["/products/lampe-led.svg"]',
     features: '["500 lumens","Rechargeable","Tête flexible","Crochet"]',
     categoryId: 'measuring'
   },
@@ -510,7 +517,7 @@ const products = [
     comparePrice: 749.99,
     sku: 'RAV-PRES-001',
     stock: 15,
-    images: '["/products/presse-20t.jpg"]',
+    images: '["/products/presse-20t.svg"]',
     features: '["20 tonnes","250mm course","1500mm largeur","Hydraulique"]',
     categoryId: 'automotive'
   },
@@ -522,7 +529,7 @@ const products = [
     comparePrice: 69.99,
     sku: 'RAV-VAL-001',
     stock: 90,
-    images: '["/products/demonte-valve.jpg"]',
+    images: '["/products/demonte-valve.svg"]',
     features: '["Pneumatique","Tous valves","Rapide","Complet"]',
     categoryId: 'automotive'
   },
@@ -534,7 +541,7 @@ const products = [
     comparePrice: 99.99,
     sku: 'ING-EXT-001',
     stock: 55,
-    images: '["/products/extracteur.jpg"]',
+    images: '["/products/extracteur.svg"]',
     features: '["6 pièces","30-90mm","Acier forgé","3 griffes"]',
     categoryId: 'automotive'
   },
@@ -546,7 +553,7 @@ const products = [
     comparePrice: 59.99,
     sku: 'STA-CAL-001',
     stock: 100,
-    images: '["/products/cales.jpg"]',
+    images: '["/products/cales.svg"]',
     features: '["24 pièces","Métriques","Classe 1","Étui bois"]',
     categoryId: 'automotive'
   },
@@ -558,7 +565,7 @@ const products = [
     comparePrice: 89.99,
     sku: 'RAV-CHAN-001',
     stock: 75,
-    images: '["/products/chandelles.jpg"]',
+    images: '["/products/chandelles.svg"]',
     features: '["3T","280-420mm","Paire","Robuste"]',
     categoryId: 'automotive'
   },
@@ -571,7 +578,7 @@ const products = [
     comparePrice: 319.99,
     sku: 'STIH-SOU-001',
     stock: 30,
-    images: '["/products/souffleur.jpg"]',
+    images: '["/products/souffleur.svg"]',
     features: '["75cc","900m³/h","50L sac","2 temps"]',
     categoryId: 'garden'
   },
@@ -583,7 +590,7 @@ const products = [
     comparePrice: 549.99,
     sku: 'HUS-TRON-001',
     stock: 20,
-    images: '["/products/tronconneuse.jpg"]',
+    images: '["/products/tronconneuse.svg"]',
     features: '["55cc","50cm","20m/s","EasyStart"]',
     categoryId: 'garden'
   },
@@ -595,7 +602,7 @@ const products = [
     comparePrice: 999.99,
     sku: 'BEN-MOTO-001',
     stock: 10,
-    images: '["/products/motoculteur.jpg"]',
+    images: '["/products/motoculteur.svg"]',
     features: '["7CV","80cm largeur","4 vitesses","Fraises"]',
     categoryId: 'garden'
   },
@@ -607,7 +614,7 @@ const products = [
     comparePrice: 49.99,
     sku: 'GARD-PUL-001',
     stock: 80,
-    images: '["/products/pulverisateur.jpg"]',
+    images: '["/products/pulverisateur.svg"]',
     features: '["12L","Lance telescopique","Buse regulable","Joints pro"]',
     categoryId: 'garden'
   },
@@ -619,7 +626,7 @@ const products = [
     comparePrice: 239.99,
     sku: 'STIH-SEC-001',
     stock: 40,
-    images: '["/products/secateur.jpg"]',
+    images: '["/products/secateur.svg"]',
     features: '["18V","25mm coupe","8h autonomie","Professionnel"]',
     categoryId: 'garden'
   },
@@ -632,7 +639,7 @@ const products = [
     comparePrice: 34.99,
     sku: 'SAF-HEL-001',
     stock: 150,
-    images: '["/products/casque.jpg"]',
+    images: '["/products/casque.svg"]',
     features: '["ABS","Aéré","Jugulaire","Norme EN397"]',
     categoryId: 'safety'
   },
@@ -644,7 +651,7 @@ const products = [
     comparePrice: 29.99,
     sku: 'SAF-GLO-001',
     stock: 300,
-    images: '["/products/gants.jpg"]',
+    images: '["/products/gants.svg"]',
     features: '["Niveau 5","Anti-coupure","Souple","Durable"]',
     categoryId: 'safety'
   },
@@ -656,7 +663,7 @@ const products = [
     comparePrice: 18.99,
     sku: 'SAF-GOG-001',
     stock: 500,
-    images: '["/products/lunettes.jpg"]',
+    images: '["/products/lunettes.svg"]',
     features: '["Anti-buée","UV400","Impacts","Légère"]',
     categoryId: 'safety'
   },
@@ -668,7 +675,7 @@ const products = [
     comparePrice: 79.99,
     sku: 'SAF-SHO-001',
     stock: 100,
-    images: '["/products/chaussures.jpg"]',
+    images: '["/products/chaussures.svg"]',
     features: '["SRC","Coque acier","Antidérapante","Semelle coussinée"]',
     categoryId: 'safety'
   },
@@ -680,7 +687,7 @@ const products = [
     comparePrice: 19.99,
     sku: 'SAF-VES-001',
     stock: 200,
-    images: '["/products/gilet.jpg"]',
+    images: '["/products/gilet.svg"]',
     features: '["EN471","2 bandes","Fermeture velcro","Tailles S-3XL"]',
     categoryId: 'safety'
   },
@@ -692,7 +699,7 @@ const products = [
     comparePrice: 14.99,
     sku: 'SAF-EAR-001',
     stock: 250,
-    images: '["/products/ear.jpg"]',
+    images: '["/products/ear.svg"]',
     features: '["SNR 28dB","Arceau","Régable","Confortable"]',
     categoryId: 'safety'
   },
@@ -705,7 +712,7 @@ const products = [
     comparePrice: 69.99,
     sku: 'STO-BOX-001',
     stock: 80,
-    images: '["/products/caisse.jpg"]',
+    images: '["/products/caisse.svg"]',
     features: '["21 pouces","Résistante","Compartiments","Fermeture sécurisée"]',
     categoryId: 'storage'
   },
@@ -717,7 +724,7 @@ const products = [
     comparePrice: 179.99,
     sku: 'STO-KIT-001',
     stock: 45,
-    images: '["/products/coffret.jpg"]',
+    images: '["/products/coffret.svg"]',
     features: '["186 pièces","Chrome vanadium","Sac de transport","Garantie 2 ans"]',
     categoryId: 'storage'
   },
@@ -729,7 +736,7 @@ const products = [
     comparePrice: 279.99,
     sku: 'STO-CAB-001',
     stock: 25,
-    images: '["/products/armoire.jpg"]',
+    images: '["/products/armoire.svg"]',
     features: '["5 tiroirs","Roulettes","Plateau","Verrouillable"]',
     categoryId: 'storage'
   },
@@ -741,7 +748,7 @@ const products = [
     comparePrice: 54.99,
     sku: 'STO-CAS-001',
     stock: 120,
-    images: '["/products/valise.jpg"]',
+    images: '["/products/valise.svg"]',
     features: '["Imperméable","Antichoc","Poignée","Sangle"]',
     categoryId: 'storage'
   },
@@ -753,7 +760,7 @@ const products = [
     comparePrice: 39.99,
     sku: 'STO-MAG-001',
     stock: 90,
-    images: '["/products/magnet.jpg"]',
+    images: '["/products/magnet.svg"]',
     features: '["Magnétique","Antidérapant","Washable","Grand format"]',
     categoryId: 'storage'
   },
@@ -765,7 +772,7 @@ const products = [
     comparePrice: 44.99,
     sku: 'STO-BELT-001',
     stock: 70,
-    images: '["/products/ceinture.jpg"]',
+    images: '["/products/ceinture.svg"]',
     features: '["Régtable","Multi pochettes","Durable","Confortable"]',
     categoryId: 'storage'
   },
@@ -778,7 +785,7 @@ const products = [
     comparePrice: 199.99,
     sku: 'CORD-DRL-001',
     stock: 80,
-    images: '["/products/cordless-drill.jpg"]',
+    images: '["/products/cordless-drill.svg"]',
     features: '["20V","45Nm","Brushless","2 batteries"]',
     categoryId: 'cordless-tools'
   },
@@ -790,7 +797,7 @@ const products = [
     comparePrice: 229.99,
     sku: 'CORD-IMP-001',
     stock: 50,
-    images: '["/products/cordless-impact.jpg"]',
+    images: '["/products/cordless-impact.svg"]',
     features: '["20V","400Nm","3 vitesses","LED"]',
     categoryId: 'cordless-tools'
   },
@@ -802,7 +809,7 @@ const products = [
     comparePrice: 199.99,
     sku: 'CORD-SAW-001',
     stock: 40,
-    images: '["/products/cordless-saw.jpg"]',
+    images: '["/products/cordless-saw.svg"]',
     features: '["185mm","65mm profondeur","Sans fil","Guide parallèle"]',
     categoryId: 'cordless-tools'
   },
@@ -815,7 +822,7 @@ const products = [
     comparePrice: 279.99,
     sku: 'AIR-COMP-001',
     stock: 30,
-    images: '["/products/compressor.jpg"]',
+    images: '["/products/compressor.svg"]',
     features: '["24L","2HP","1500W","Silent"]',
     categoryId: 'air-tools'
   },
@@ -827,7 +834,7 @@ const products = [
     comparePrice: 119.99,
     sku: 'AIR-WREN-001',
     stock: 60,
-    images: '["/products/air-wrench.jpg"]',
+    images: '["/products/air-wrench.svg"]',
     features: '["1/2\"","1500Nm","6 positions","Carross aluminium"]',
     categoryId: 'air-tools'
   },
@@ -839,7 +846,7 @@ const products = [
     comparePrice: 109.99,
     sku: 'AIR-GUN-001',
     stock: 45,
-    images: '["/products/paint-gun.jpg"]',
+    images: '["/products/paint-gun.svg"]',
     features: '["HVLP","1.3L","Turbine","Réglage jet"]',
     categoryId: 'air-tools'
   },
@@ -852,7 +859,7 @@ const products = [
     comparePrice: 329.99,
     sku: 'WELD-MMA-001',
     stock: 25,
-    images: '["/products/welder.jpg"]',
+    images: '["/products/welder.svg"]',
     features: '["200A","IGBT","Anti-stick","VRD"]',
     categoryId: 'welding'
   },
@@ -864,7 +871,7 @@ const products = [
     comparePrice: 79.99,
     sku: 'WELD-MASK-001',
     stock: 100,
-    images: '["/products/weld-mask.jpg"]',
+    images: '["/products/weld-mask.svg"]',
     features: '["LCD","9-13","1/30000s","Solar"]',
     categoryId: 'welding'
   },
@@ -876,7 +883,7 @@ const products = [
     comparePrice: 39.99,
     sku: 'WELD-ROD-001',
     stock: 200,
-    images: '["/products/electrodes.jpg"]',
+    images: '["/products/electrodes.svg"]',
     features: '["3.2mm","5kg","Rutile","Acier doux"]',
     categoryId: 'welding'
   },
@@ -889,7 +896,7 @@ const products = [
     comparePrice: 649.99,
     sku: 'GEN-3000-001',
     stock: 15,
-    images: '["/products/generator.jpg"]',
+    images: '["/products/generator.svg"]',
     features: '["3000W","7HP","Electrique","AVR"]',
     categoryId: 'generators'
   },
@@ -901,7 +908,7 @@ const products = [
     comparePrice: 499.99,
     sku: 'GEN-INV-001',
     stock: 20,
-    images: '["/products/inverter.jpg"]',
+    images: '["/products/inverter.svg"]',
     features: '["2000W","Inverter","Silencieux","Eco mode"]',
     categoryId: 'generators'
   },
@@ -914,7 +921,7 @@ const products = [
     comparePrice: 249.99,
     sku: 'CONST-VIB-001',
     stock: 25,
-    images: '["/products/vibrator.jpg"]',
+    images: '["/products/vibrator.svg"]',
     features: '["1500W","35mm","6m flexible","Professionnel"]',
     categoryId: 'construction'
   },
@@ -926,7 +933,7 @@ const products = [
     comparePrice: 119.99,
     sku: 'CONST-AIG-001',
     stock: 40,
-    images: '["/products/needle.jpg"]',
+    images: '["/products/needle.svg"]',
     features: '["35mm","Flexible","Manche isolant"]',
     categoryId: 'construction'
   },
@@ -939,7 +946,7 @@ const products = [
     comparePrice: 169.99,
     sku: 'PUMP-SUB-001',
     stock: 35,
-    images: '["/projects/pump.jpg"]',
+    images: '["/products/pump.svg"]',
     features: '["750W","15m3/h","20m profondeur","Inox"]',
     categoryId: 'pumps'
   },
@@ -951,7 +958,7 @@ const products = [
     comparePrice: 139.99,
     sku: 'PUMP-SUR-001',
     stock: 50,
-    images: '["/products/surface-pump.jpg"]',
+    images: '["/products/surface-pump.svg"]',
     features: '["1300W","4.5m3/h","4 bar","Automatique"]',
     categoryId: 'pumps'
   },
@@ -964,7 +971,7 @@ const products = [
     comparePrice: 79.99,
     sku: 'ACC-BAT-001',
     stock: 150,
-    images: '["/products/battery.jpg"]',
+    images: '["/products/battery.svg"]',
     features: '["20V","5Ah","Li-Ion","LED indicateur"]',
     categoryId: 'accessories'
   },
@@ -976,7 +983,7 @@ const products = [
     comparePrice: 49.99,
     sku: 'ACC-CHG-001',
     stock: 100,
-    images: '["/products/charger.jpg"]',
+    images: '["/products/charger.svg"]',
     features: '["20V","45min","Universel","Protection"]',
     categoryId: 'accessories'
   },
@@ -988,7 +995,7 @@ const products = [
     comparePrice: 34.99,
     sku: 'ACC-DIA-001',
     stock: 200,
-    images: '["/products/diamond-disc.jpg"]',
+    images: '["/products/diamond-disc.svg"]',
     features: '["230mm","Segment","Humide","Turbo"]',
     categoryId: 'accessories'
   },
@@ -1000,7 +1007,7 @@ const products = [
     comparePrice: 19.99,
     sku: 'ACC-DRL-001',
     stock: 300,
-    images: '["/products/drill-bit.jpg"]',
+    images: '["/products/drill-bit.svg"]',
     features: '["SDS Plus","10mm","Carbure","210mm"]',
     categoryId: 'accessories'
   }
@@ -1036,7 +1043,7 @@ Pour la plupart des professionnels, le **marteau perforateur SDS-Max 18V** est l
 
 Chez E-Outille, nous proposons les meilleures marques: Makita, DeWalt, Bosch Professional, et Hilti.`,
     excerpt: 'Guide complet pour choisir le bon marteau perforateur pour vos travaux.',
-    image: '/blog/marteau-perforateur.jpg',
+    image: '/blog/marteau-perforateur.svg',
     author: 'Équipe E-Outille',
     category: 'Construction',
     published: true,
@@ -1076,7 +1083,7 @@ Chez E-Outille, nous proposons les meilleures marques: Makita, DeWalt, Bosch Pro
 
 Nous recommandons les tournevis isolés WERA et les multimètres Fluke pour leur fiabilité professionnelle.`,
     excerpt: 'Les équipements et règles de sécurité pour travailler en électricité.',
-    image: '/blog/electricite.jpg',
+    image: '/blog/electricite.svg',
     author: 'Équipe E-Outille',
     category: 'Électricité',
     published: true,
@@ -1116,7 +1123,7 @@ Pour un garage professionnel, nous recommandons un kit de 40 à 100 pièces mini
 
 Les marques références: Stanley, Snap-on, Facom.`,
     excerpt: 'Guide pour choisir le bon kit de clés pour votre garage.',
-    image: '/blog/cles-garage.jpg',
+    image: '/blog/cles-garage.svg',
     author: 'Équipe E-Outille',
     category: 'Garage',
     published: true,
@@ -1154,7 +1161,7 @@ Pour un jardin impeccable:
 
 Les marques recommandées: Husqvarna, Stihl, Echo.`,
     excerpt: 'Guide d\'entretien du jardin au printemps.',
-    image: '/blog/jardin-printemps.jpg',
+    image: '/blog/jardin-printemps.svg',
     author: 'Équipe E-Outille',
     category: 'Jardinage',
     published: true,
@@ -1193,7 +1200,7 @@ Les marques recommandées: Husqvarna, Stihl, Echo.`,
 
 Chez E-Outilles, nous proposons des tarifs flexibles et un service de livraison gratuit.`,
     excerpt: 'Découvrez les avantages de la location d\'outils pour vos projets.',
-    image: '/blog/location-outils.jpg',
+    image: '/blog/location-outils.svg',
     author: 'Équipe E-Outilles',
     category: 'Services',
     published: true,
@@ -1230,7 +1237,7 @@ Chez E-Outilles, nous proposons des tarifs flexibles et un service de livraison 
 
 Notre service de maintenance offre un diagnostic gratuit et des pièces authentiques.`,
     excerpt: 'Guide pour entretenir vos outils et prolonger leur durée de vie.',
-    image: '/blog/maintenance-outils.jpg',
+    image: '/blog/maintenance-outils.svg',
     author: 'Équipe E-Outilles',
     category: 'Services',
     published: true,
@@ -1264,7 +1271,7 @@ Notre service de maintenance offre un diagnostic gratuit et des pièces authenti
 
 Vérifiez votre adresse et téléphone pour une livraison rapide!`,
     excerpt: 'Découvrez comment fonctionne notre service de livraison.',
-    image: '/blog/livraison.jpg',
+    image: '/blog/livraison.svg',
     author: 'Équipe E-Outilles',
     category: 'Services',
     published: true,
@@ -1301,7 +1308,7 @@ Vérifiez votre adresse et téléphone pour une livraison rapide!`,
 ## Attestation:
 Toutes nos formations délivrent un certificat reconnu.`,
     excerpt: 'Améliorez vos compétences avec nos formations.',
-    image: '/blog/formation.jpg',
+    image: '/blog/formation.svg',
     author: 'Équipe E-Outilles',
     category: 'Services',
     published: true,
@@ -1336,7 +1343,7 @@ Toutes nos formations délivrent un certificat reconnu.`,
 - +500 clients satisfaits
 - Partenaires des grandes marques`,
     excerpt: 'Bénéficiez de nos conseils d\'experts.',
-    image: '/blog/consultation.jpg',
+    image: '/blog/consultation.svg',
     author: 'Équipe E-Outilles',
     category: 'Services',
     published: true,
@@ -1367,7 +1374,7 @@ Toutes nos formations délivrent un certificat reconnu.`,
 - Ne pas laisser décharger complètement
 - Utiliser le chargeur adapté`,
     excerpt: 'Tout savoir sur les outils sans fil 20V pour professionnels.',
-    image: '/blog/cordless-tools.jpg',
+    image: '/blog/cordless-tools.svg',
     author: 'Équipe E-Outilles',
     category: 'Outils Sans Fil',
     published: true,
@@ -1397,7 +1404,7 @@ Toutes nos formations délivrent un certificat reconnu.`,
 - Vérifier le niveau d'huile (modèles oil-less)
 - Nettoyer les filtres régulièrement`,
     excerpt: 'Comment choisir votre compresseur d\'air professionnel.',
-    image: '/blog/compressor-guide.jpg',
+    image: '/blog/compressor-guide.svg',
     author: 'Équipe E-Outilles',
     category: 'Outils à Air',
     published: true,
@@ -1426,7 +1433,7 @@ Toutes nos formations délivrent un certificat reconnu.`,
 2. Maintenir un arc court
 3. Baguette perpendiculaire`,
     excerpt: 'Guide pour débutants en soudure MMA.',
-    image: '/blog/welding-guide.jpg',
+    image: '/blog/welding-guide.svg',
     author: 'Équipe E-Outilles',
     category: 'Soudeuse',
     published: true,
@@ -1454,7 +1461,7 @@ Toutes nos formations délivrent un certificat reconnu.`,
 - Maison: 5000-10000W
 - Professionnel: 10000W+`,
     excerpt: 'Comment choisir la puissance de votre générateur.',
-    image: '/blog/generator-guide.jpg',
+    image: '/blog/generator-guide.svg',
     author: 'Équipe E-Outilles',
     category: 'Générateurs',
     published: true,
@@ -1478,7 +1485,7 @@ Toutes nos formations délivrent un certificat reconnu.`,
 - Ne pas utiliser de carburant ancien
 - Vidanger si non utilisation prolongée`,
     excerpt: 'Conseils pour entretenir votre tronçonneuse.',
-    image: '/blog/tronconneuse.jpg',
+    image: '/blog/tronconneuse.svg',
     author: 'Équipe E-Outilles',
     category: 'Jardinage',
     published: true,
@@ -1503,7 +1510,7 @@ Toutes nos formations délivrent un certificat reconnu.`,
 - Marquage de qualité
 - Garantie fabricante`,
     excerpt: 'Les outils indispensables pour mécaniciens.',
-    image: '/blog/mecanicien.jpg',
+    image: '/blog/mecanicien.svg',
     author: 'Équipe E-Outilles',
     category: 'Automobile',
     published: true,
@@ -1529,7 +1536,7 @@ Toutes nos formations délivrent un certificat reconnu.`,
 - EN388: Gants
 - EN166: Lunettes`,
     excerpt: 'Les équipements de protection individuelle obligatoires.',
-    image: '/blog/securite.jpg',
+    image: '/blog/securite.svg',
     author: 'Équipe E-Outilles',
     category: 'Sécurité',
     published: true,
@@ -1557,7 +1564,7 @@ Toutes nos formations délivrent un certificat reconnu.`,
 - Protéger des chocs
 - Remplacer quand usé`,
     excerpt: 'Comment choisir les bons accessoires pour vos outils.',
-    image: '/blog/accessories.jpg',
+    image: '/blog/accessories.svg',
     author: 'Équipe E-Outilles',
     category: 'Accessoires',
     published: true,
@@ -1568,6 +1575,21 @@ Toutes nos formations délivrent un certificat reconnu.`,
 
 async function main() {
   console.log('🌱 Starting seed...')
+
+  // Create users (hashed passwords)
+  for (const u of seedUsers) {
+    await prisma.user.upsert({
+      where: { email: u.email },
+      update: { name: u.name, role: u.role },
+      create: {
+        email: u.email,
+        name: u.name,
+        role: u.role,
+        password: await bcrypt.hash(u.password, 10),
+      },
+    })
+    console.log(`✓ Created user: ${u.email}`)
+  }
 
   // Create categories
   for (const cat of categories) {

@@ -1,26 +1,14 @@
 'use client'
 
 import Link from 'next/link'
+import { NavigationArrows, Icon } from '@/components/Icons'
+import Reveal from '@/components/Reveal'
 import PageNavigation from '@/components/PageNavigation'
-import Logo from '@/components/Logo'
 
 export default function About() {
   return (
     <div className="min-h-screen bg-ingco-black">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-ingco-black/95 backdrop-blur-md border-b border-ingco-gray">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Logo variant="horizontal" size={40} />
-            <div className="hidden md:flex items-center gap-8">
-              <Link href="/" className="text-gray-300 hover:text-ingco-yellow transition-colors">Accueil</Link>
-              <Link href="/about" className="text-ingco-yellow font-semibold">À propos</Link>
-              <Link href="/contact" className="text-gray-300 hover:text-ingco-yellow transition-colors">Contact</Link>
-              <Link href="/cart" className="text-gray-300 hover:text-ingco-yellow transition-colors">Panier</Link>
-            </div>
-          </div>
-        </div>
-      </nav>
 
       <div className="pt-24 max-w-7xl mx-auto px-4">
         <PageNavigation />
@@ -29,7 +17,7 @@ export default function About() {
       {/* Hero Section */}
       <section className="pt-24 pb-16 md:pt-32 md:pb-24 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
+          <Reveal className="text-center mb-16">
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
               <span className="text-white">À propos de </span>
               <span className="text-ingco-yellow">E-Outilles</span>
@@ -37,12 +25,12 @@ export default function About() {
             <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto">
               Votre partenaire dropshipping international pour outillage professionnel INGCO
             </p>
-          </div>
+          </Reveal>
 
           {/* Mission */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
             <div className="bg-ingco-dark rounded-3xl p-8">
-              <div className="text-4xl mb-4">🎯</div>
+              <Icon name="grid" className="w-9 h-9 text-ingco-yellow mb-4" />
               <h2 className="text-2xl font-bold text-white mb-4">Notre Mission</h2>
               <p className="text-gray-400">
                 Permettre aux entrepreneurs Africans d'accéder à des outils professionnels de qualité 
@@ -51,7 +39,7 @@ export default function About() {
               </p>
             </div>
             <div className="bg-ingco-dark rounded-3xl p-8">
-              <div className="text-4xl mb-4">💡</div>
+              <Icon name="info" className="w-9 h-9 text-ingco-yellow mb-4" />
               <h2 className="text-2xl font-bold text-white mb-4">Notre Vision</h2>
               <p className="text-gray-400">
                 Devenir la plateforme de référence pour le dropshipping d'outils 
@@ -90,21 +78,21 @@ export default function About() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="bg-ingco-dark rounded-2xl p-6 text-center">
                 <div className="w-16 h-16 bg-ingco-yellow/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl">🏭</span>
+                  <Icon name="tools" className="w-7 h-7 text-ingco-yellow" />
                 </div>
                 <h3 className="text-white font-semibold mb-2">INGCO</h3>
                 <p className="text-gray-500 text-sm">Fabricant officiel</p>
               </div>
               <div className="bg-ingco-dark rounded-2xl p-6 text-center">
                 <div className="w-16 h-16 bg-ingco-yellow/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl">💳</span>
+                  <Icon name="card" className="w-7 h-7 text-ingco-yellow" />
                 </div>
                 <h3 className="text-white font-semibold mb-2">Stripe</h3>
                 <p className="text-gray-500 text-sm">Paiement sécurisé</p>
               </div>
               <div className="bg-ingco-dark rounded-2xl p-6 text-center">
                 <div className="w-16 h-16 bg-ingco-yellow/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-2xl">📦</span>
+                  <Icon name="truck" className="w-7 h-7 text-ingco-yellow" />
                 </div>
                 <h3 className="text-white font-semibold mb-2">DHL/FedEx</h3>
                 <p className="text-gray-500 text-sm">Logistique mondiale</p>
@@ -117,22 +105,22 @@ export default function About() {
             <h2 className="text-2xl font-bold text-white text-center mb-8">Nos Valeurs</h2>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <div className="text-center">
-                <div className="text-3xl mb-2">🤝</div>
+                <Icon name="user" className="w-7 h-7 text-ingco-yellow mx-auto mb-2" />
                 <h3 className="text-white font-semibold">Confiance</h3>
                 <p className="text-gray-500 text-sm">Relations durables</p>
               </div>
               <div className="text-center">
-                <div className="text-3xl mb-2">⚡</div>
+                <Icon name="zap" className="w-7 h-7 text-ingco-yellow mx-auto mb-2" />
                 <h3 className="text-white font-semibold">Rapiditié</h3>
                 <p className="text-gray-500 text-sm">Livraison express</p>
               </div>
               <div className="text-center">
-                <div className="text-3xl mb-2">🎯</div>
+                <Icon name="check" className="w-7 h-7 text-ingco-yellow mx-auto mb-2" />
                 <h3 className="text-white font-semibold">Qualité</h3>
                 <p className="text-gray-500 text-sm">Produits certifiés</p>
               </div>
               <div className="text-center">
-                <div className="text-3xl mb-2">💰</div>
+                <Icon name="star" className="w-7 h-7 text-ingco-yellow mx-auto mb-2" />
                 <h3 className="text-white font-semibold">Prix justes</h3>
                 <p className="text-gray-500 text-sm">Marges optimales</p>
               </div>
@@ -158,20 +146,10 @@ export default function About() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-ingco-black border-t border-ingco-gray py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-gray-500 text-sm">
-              © 2026 E-Outilles. Tous droits réservés.
-            </p>
-            <div className="flex gap-4">
-              <Link href="/" className="text-gray-500 hover:text-ingco-yellow">Accueil</Link>
-              <Link href="/about" className="text-ingco-yellow">À propos</Link>
-              <Link href="/contact" className="text-gray-500 hover:text-ingco-yellow">Contact</Link>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <div className="max-w-7xl mx-auto px-4 pb-8">
+        <NavigationArrows current="/about" />
+      </div>
+
     </div>
   )
 }

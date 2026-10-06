@@ -1,9 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { Icon, NavigationArrows } from '@/components/Icons'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { getSessionAction, logoutAction } from '@/app/actions'
+import { logoutAction } from '@/app/actions'
 import PageNavigation from '@/components/PageNavigation'
 
 interface User {
@@ -18,50 +19,50 @@ interface Order {
   id: string
   date: string
   total: number
-  status: 'pending' | 'shipped' | 'delivered'
+  status: string
   items: number
 }
 
-const mockOrders: Order[] = [
-  { id: 'ORD-001', date: '2026-04-10', total: 459.99, status: 'delivered', items: 3 },
-  { id: 'ORD-002', date: '2026-04-05', total: 189.00, status: 'shipped', items: 2 },
-  { id: 'ORD-003', date: '2026-04-01', total: 899.50, status: 'pending', items: 5 },
-]
+const statusColors: Record<string, string> = {
+  pending: 'bg-yellow-500',
+  processing: 'bg-blue-500',
+  paid: 'bg-green-500',
+  shipped: 'bg-purple-500',
+  delivered: 'bg-green-500',
+  cancelled: 'bg-red-500'
+}
 
 export default function ProfilePage() {
   const [user, setUser] = useState<User | null>(null)
+  const [orders, setOrders] = useState<Order[]>([])
   const [activeTab, setActiveTab] = useState('orders')
   const router = useRouter()
 
   useEffect(() => {
-    // Check session
-    const stored = localStorage.getItem('eoutilles_session')
-    if (stored) {
-      try {
-        setUser(JSON.parse(stored))
-        return
-      } catch {}
-    }
-    // Fallback to server action
-    getSessionAction().then(result => {
-      if (result.user) setUser(result.user)
-      else router.push('/auth/login')
-    }).catch(() => router.push('/auth/login'))
+    fetch('/api/auth/me')
+      .then(async (res) => {
+        if (res.status === 401) {
+          router.push('/auth/login')
+          return null
+        }
+        return res.json()
+      })
+      .then((data) => {
+        if (data?.user) {
+          setUser(data.user)
+          setOrders(data.orders || [])
+        }
+      })
+      .catch(() => router.push('/auth/login'))
   }, [router])
 
   const handleLogout = async () => {
-    localStorage.removeItem('eoutilles_session')
     await logoutAction()
     router.push('/auth/login')
+    router.refresh()
   }
 
   if (!user) return null
-
-  const statusColors: Record<string, string> = {
-    pending: 'bg-yellow-500',
-    shipped: 'bg-purple-500', 
-    delivered: 'bg-green-500'
-  }
 
   return (
     <div className="min-h-screen bg-ingco-black pt-24 pb-16">
@@ -105,17 +106,27 @@ export default function ProfilePage() {
         {/* Content */}
         {activeTab === 'orders' && (
           <div className="space-y-4">
-            {mockOrders.map(order => (
+            {orders.length === 0 ? (
+              <div className="bg-ingco-gray rounded-xl p-8 text-center">
+                <Icon name="truck" className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+                <p className="text-gray-400">Aucune commande pour le moment</p>
+                <Link href="/search" className="text-ingco-yellow hover:underline mt-3 inline-block">
+                  Découvrir le catalogue
+                </Link>
+              </div>
+            ) : orders.map(order => (
               <div key={order.id} className="bg-ingco-gray rounded-xl p-4">
                 <div className="flex flex-col md:flex-row justify-between gap-4">
                   <div>
                     <div className="flex items-center gap-3">
                       <span className="text-white font-bold">{order.id}</span>
-                      <span className={`text-xs px-2 py-1 rounded-full text-white ${statusColors[order.status]}`}>
+                      <span className={`text-xs px-2 py-1 rounded-full text-white ${statusColors[order.status] || 'bg-gray-500'}`}>
                         {order.status}
                       </span>
                     </div>
-                    <p className="text-gray-400 text-sm mt-1">{order.date} • {order.items} produit(s)</p>
+                    <p className="text-gray-400 text-sm mt-1">
+                      {new Date(order.date).toLocaleDateString('fr-FR')} • {order.items} produit(s)
+                    </p>
                   </div>
                   <div className="text-right">
                     <p className="text-ingco-yellow font-bold">{order.total}€</p>
@@ -174,6 +185,9 @@ export default function ProfilePage() {
             </label>
           </div>
         )}
+      </div>
+      <div className="max-w-7xl mx-auto px-4 pb-8">
+        <NavigationArrows current="/profile" />
       </div>
     </div>
   )

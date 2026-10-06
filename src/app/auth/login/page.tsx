@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { loginAction } from '@/app/actions'
 import { useRouter } from 'next/navigation'
+import PasswordInput from '@/components/PasswordInput'
 
 export default function LoginPage() {
   const [error, setError] = useState('')
@@ -14,17 +15,17 @@ export default function LoginPage() {
     e.preventDefault()
     setError('')
     setRedirecting(true)
-    
+
     const formData = new FormData(e.currentTarget)
     const result = await loginAction(formData)
-    
+
     if (result?.error) {
       setError(result.error)
       setRedirecting(false)
     } else if (result?.success) {
-      // Store session and redirect
-      localStorage.setItem('eoutilles_session', JSON.stringify(result.user))
-      router.push('/profile')
+      const redirectTo = new URLSearchParams(window.location.search).get('redirect') || '/profile'
+      router.push(redirectTo)
+      router.refresh()
     }
   }
 
@@ -57,15 +58,7 @@ export default function LoginPage() {
               />
             </div>
 
-            <div>
-              <label className="text-gray-400 text-sm mb-2 block">Mot de passe</label>
-              <input
-                type="password"
-                name="password"
-                className="w-full bg-ingco-dark border border-ingco-dark rounded-xl px-4 py-3 text-white focus:border-ingco-yellow focus:outline-none"
-                required
-              />
-            </div>
+            <PasswordInput label="Mot de passe" name="password" autoComplete="current-password" required />
 
             <div className="flex justify-between items-center">
               <label className="flex items-center gap-2">
@@ -82,7 +75,7 @@ export default function LoginPage() {
               disabled={redirecting}
               className="w-full bg-ingco-yellow text-ingco-black py-3 rounded-xl font-bold hover:bg-yellow-400 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
             >
-              {redirecting ? '⏳ Connexion...' : '🔐 Se connecter'}
+              {redirecting ? 'Connexion...' : 'Se connecter'}
             </button>
           </form>
 

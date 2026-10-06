@@ -1,56 +1,109 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Logo from '@/components/Logo'
+import { Icon, NavigationArrows } from '@/components/Icons'
 
-// Données simulées pour le revendeur
-const vendorStats = {
-  totalSales: 45780,
-  totalOrders: 234,
-  totalCustomers: 189,
-  averageRating: 4.8,
-  thisMonth: {
-    sales: 12450,
-    orders: 56,
-    newCustomers: 23
-  }
+interface VendorOrder {
+  id: string
+  customer: string
+  product: string
+  amount: number
+  status: string
+  date: string
 }
 
-const recentOrders = [
-  { id: 'ORD-001', customer: 'Jean Kouassi', product: 'Perceuse INGCO 20V', amount: 89.99, status: 'pending', date: '18/07/2026' },
-  { id: 'ORD-002', customer: 'Marie Diallo', product: 'Kit clés 50pcs', amount: 79.99, status: 'shipped', date: '17/07/2026' },
-  { id: 'ORD-003', customer: 'Paul Okonkwo', product: 'Tronçonneuse', amount: 299.99, status: 'delivered', date: '17/07/2026' },
-  { id: 'ORD-004', customer: 'Anne Mensah', product: 'Marteau perforateur', amount: 249.99, status: 'processing', date: '16/07/2026' },
-  { id: 'ORD-005', customer: 'Pierre Ngoma', product: 'Compresseur 24L', amount: 199.99, status: 'pending', date: '16/07/2026' },
-]
-
-const topProducts = [
-  { name: 'Perceuse visseuse INGCO 20V', sales: 45, revenue: 4049 },
-  { name: 'Marteau perforateur SDS Max', sales: 23, revenue: 5749 },
-  { name: 'Kit de clés mécaniques 50 pièces', sales: 34, revenue: 2719 },
-  { name: 'Tronçonneuse thermique 45cm', sales: 18, revenue: 5399 },
-  { name: 'Multimètre numérique pro', sales: 39, revenue: 2339 },
-]
+interface TopProduct {
+  name: string
+  sales: number
+  revenue: number
+}
 
 const statusLabels: Record<string, { label: string; color: string }> = {
   pending: { label: 'En attente', color: 'bg-yellow-500' },
   processing: { label: 'En traitement', color: 'bg-blue-500' },
+  paid: { label: 'Payé', color: 'bg-green-600' },
   shipped: { label: 'Expédié', color: 'bg-purple-500' },
-  delivered: { label: 'Livré', color: 'bg-green-500' }
+  delivered: { label: 'Livré', color: 'bg-green-500' },
+  cancelled: { label: 'Annulé', color: 'bg-red-500' }
+}
+
+function statusInfo(status: string) {
+  return statusLabels[status] || { label: status, color: 'bg-gray-500' }
 }
 
 const quickActions = [
-  { icon: '📦', title: 'Gestion Stocks', desc: 'Voir et modifier les produits', link: '/admin/products' },
-  { icon: '📊', title: 'Rapports', desc: 'Voir les statistiques', link: '/admin/orders' },
-  { icon: '👥', title: 'Clients', desc: 'Gérer les clients', link: '/profile' },
-  { icon: '💬', title: 'Messages', desc: 'Voir les messages', link: '/chat' },
-  { icon: '📚', title: 'Formations', desc: 'Accéder aux formations', link: '/formations' },
-  { icon: '📁', title: 'Documents', desc: 'Catalogue et guides', link: '/formations' },
+  { icon: 'grid', title: 'Gestion Stocks', desc: 'Voir et modifier les produits', link: '/admin/products' },
+  { icon: 'blog', title: 'Rapports', desc: 'Voir les statistiques', link: '/admin/orders' },
+  { icon: 'user', title: 'Clients', desc: 'Gérer les clients', link: '/profile' },
+  { icon: 'chat', title: 'Messages', desc: 'Voir les messages', link: '/chat' },
+  { icon: 'star', title: 'Formations', desc: 'Accéder aux formations', link: '/formations' },
+  { icon: 'download', title: 'Documents', desc: 'Catalogue et guides', link: '/formations' },
 ]
 
 export default function VendorDashboard() {
   const [activeTab, setActiveTab] = useState('overview')
+  const [vendorStats, setVendorStats] = useState({
+    totalSales: 0,
+    totalOrders: 0,
+    totalCustomers: 0,
+    averageRating: 0,
+    thisMonth: { sales: 0, orders: 0, newCustomers: 0 },
+  })
+  const [recentOrders, setRecentOrders] = useState<VendorOrder[]>([])
+  const [topProducts, setTopProducts] = useState<TopProduct[]>([])
+
+  useEffect(() => {
+    fetch('/api/orders')
+      .then(res => res.ok ? res.json() : [])
+      .then((data) => {
+        const orders = Array.isArray(data) ? data : []
+        const now = new Date()
+        const monthOrders = orders.filter((o: { createdAt: string }) => {
+          const d = new Date(o.createdAt)
+          return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()
+        })
+        const valid = orders.filter((o: { status: string }) => o.status !== 'cancelled')
+
+        setVendorStats({
+          totalSales: valid.reduce((sum: number, o: { total: number }) => sum + (o.total || 0), 0),
+          totalOrders: orders.length,
+          totalCustomers: new Set(orders.map((o: { userId: string }) => o.userId)).size,
+          averageRating: 4.8,
+          thisMonth: {
+            sales: monthOrders.reduce((sum: number, o: { total: number }) => sum + (o.total || 0), 0),
+            orders: monthOrders.length,
+            newCustomers: new Set(monthOrders.map((o: { userId: string }) => o.userId)).size,
+          },
+        })
+
+        setRecentOrders(orders.slice(0, 5).map((o: {
+          id: string; total: number; status: string; createdAt: string
+          user?: { name?: string | null } | null
+          items?: { product?: { name?: string } | null }[]
+        }) => ({
+          id: o.id,
+          customer: o.user?.name || 'Client',
+          product: o.items?.[0]?.product?.name || 'Produit',
+          amount: o.total,
+          status: o.status,
+          date: new Date(o.createdAt).toLocaleDateString('fr-FR'),
+        })))
+
+        const salesByProduct: Record<string, TopProduct> = {}
+        orders.forEach((o: { items?: { quantity: number; price: number; product?: { name?: string } | null }[] }) => {
+          (o.items || []).forEach((item) => {
+            const name = item.product?.name || 'Produit'
+            if (!salesByProduct[name]) salesByProduct[name] = { name, sales: 0, revenue: 0 }
+            salesByProduct[name].sales += item.quantity
+            salesByProduct[name].revenue += item.quantity * item.price
+          })
+        })
+        setTopProducts(Object.values(salesByProduct).sort((a, b) => b.sales - a.sales).slice(0, 5))
+      })
+      .catch(err => console.error('Error fetching vendor data:', err))
+  }, [])
 
   return (
     <div className="min-h-screen bg-ingco-black">
@@ -69,7 +122,7 @@ export default function VendorDashboard() {
             <Link href="/formations" className="text-gray-300 hover:text-ingco-yellow">Formations</Link>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-gray-400 text-sm">👤 Mon Compte</span>
+            <span className="text-gray-400 text-sm flex items-center gap-2"><Icon name="user" className="w-4 h-4" /> Mon Compte</span>
           </div>
         </div>
       </nav>
@@ -78,14 +131,14 @@ export default function VendorDashboard() {
         {/* Welcome Section */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white">Bienvenue sur votre espace revendeur</h1>
-          <p className="text-gray-400">Gérez vos ventes, commandes etformations</p>
+          <p className="text-gray-400">Gérez vos ventes, commandes et formations</p>
         </div>
 
         {/* Quick Actions */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
           {quickActions.map((action, index) => (
             <Link key={index} href={action.link} className="bg-ingco-gray rounded-xl p-4 hover:bg-gray-700 transition-colors text-center">
-              <div className="text-3xl mb-2">{action.icon}</div>
+              <Icon name={action.icon as never} className="w-7 h-7 text-ingco-yellow mx-auto mb-2" />
               <h3 className="text-white font-semibold text-sm">{action.title}</h3>
               <p className="text-gray-400 text-xs">{action.desc}</p>
             </Link>
@@ -110,15 +163,15 @@ export default function VendorDashboard() {
             <div className="text-green-500 text-sm">+5 ce mois</div>
           </div>
           <div className="bg-ingco-gray rounded-xl p-6">
-            <div className="text-gray-400 textsm mb-1">Note Moyenne</div>
-            <div className="text-2xl font-bold text-white">⭐ {vendorStats.averageRating}/5</div>
+            <div className="text-gray-400 text-sm mb-1">Note Moyenne</div>
+            <div className="text-2xl font-bold text-white flex items-center gap-1"><Icon name="star" className="w-5 h-5 text-ingco-yellow" /> {vendorStats.averageRating}/5</div>
             <div className="text-gray-400 text-sm">Basé sur 89 avis</div>
           </div>
         </div>
 
         {/* This Month Stats */}
         <div className="bg-gradient-to-r from-ingco-yellow/20 to-transparent rounded-xl p-6 mb-8 border border-ingco-yellow/30">
-          <h3 className="text-xl font-bold text-white mb-4">📈 Performances ce mois</h3>
+          <h3 className="text-xl font-bold text-white mb-4">Performances ce mois</h3>
           <div className="grid grid-cols-3 gap-6">
             <div>
               <div className="text-gray-400 text-sm">Ventes</div>
@@ -151,8 +204,8 @@ export default function VendorDashboard() {
                   </div>
                   <div className="text-right">
                     <div className="text-white font-bold">{order.amount} €</div>
-                    <span className={`${statusLabels[order.status].color} text-white text-xs px-2 py-1 rounded`}>
-                      {statusLabels[order.status].label}
+                    <span className={`${statusInfo(order.status).color} text-white text-xs px-2 py-1 rounded`}>
+                      {statusInfo(order.status).label}
                     </span>
                   </div>
                 </div>
@@ -170,7 +223,7 @@ export default function VendorDashboard() {
               {topProducts.map((product, index) => (
                 <div key={index} className="flex items-center justify-between bg-ingco-black rounded-lg p-4">
                   <div className="flex items-center gap-4">
-                    <span className="text-2xl">🔧</span>
+                    <Icon name="tools" className="w-6 h-6 text-ingco-yellow" />
                     <div>
                       <div className="text-white font-semibold">{product.name}</div>
                       <div className="text-gray-400 text-sm">{product.sales} ventes</div>
@@ -188,17 +241,17 @@ export default function VendorDashboard() {
           <h3 className="text-xl font-bold text-white mb-4">Liens Rapides</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Link href="/revendeurs" className="bg-ingco-gray rounded-xl p-6 hover:bg-gray-700 transition-colors">
-              <div className="text-3xl mb-3">🤝</div>
+              <Icon name="user" className="w-8 h-8 text-ingco-yellow mb-3" />
               <h4 className="text-white font-bold mb-2">Devenir Revendeur</h4>
               <p className="text-gray-400 text-sm">Proposez nos produits à vos clients</p>
             </Link>
             <Link href="/formations" className="bg-ingco-gray rounded-xl p-6 hover:bg-gray-700 transition-colors">
-              <div className="text-3xl mb-3">📚</div>
+              <Icon name="star" className="w-8 h-8 text-ingco-yellow mb-3" />
               <h4 className="text-white font-bold mb-2">Formations</h4>
               <p className="text-gray-400 text-sm">Développez vos compétences</p>
             </Link>
             <Link href="/admin/settings" className="bg-ingco-gray rounded-xl p-6 hover:bg-gray-700 transition-colors">
-              <div className="text-3xl mb-3">⚙️</div>
+              <Icon name="settings" className="w-8 h-8 text-ingco-yellow mb-3" />
               <h4 className="text-white font-bold mb-2">Paramètres</h4>
               <p className="text-gray-400 text-sm">Gérez votre compte</p>
             </Link>
@@ -212,6 +265,10 @@ export default function VendorDashboard() {
           <p>&copy; 2026 E-Outilles By ELECTRON. Tous droits réservés.</p>
         </div>
       </footer>
+
+      <div className="mt-12">
+        <NavigationArrows current="/vendeur" />
+      </div>
     </div>
   )
 }

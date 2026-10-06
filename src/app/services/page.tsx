@@ -1,14 +1,15 @@
 'use client'
 
 import { useState } from 'react'
+import { NavigationArrows, Icon } from '@/components/Icons'
+import Reveal from '@/components/Reveal'
 import Link from 'next/link'
-import Logo from '@/components/Logo'
 
 const services = [
   {
     id: 'consultation',
     name: 'Consultation Technique',
-    icon: '📋',
+    icon: 'blog',
     description: 'Conseils experts pour vos projets',
     price: 'Gratuit',
     duration: '30 min',
@@ -22,7 +23,7 @@ const services = [
   {
     id: 'installation',
     name: 'Installation & Montage',
-    icon: '🔧',
+    icon: 'tools',
     description: 'Installation professionnelle de vos equipements',
     price: 'A partir de 50€',
     duration: 'Selon projet',
@@ -36,7 +37,7 @@ const services = [
   {
     id: 'maintenance',
     name: 'Maintenance & Reparation',
-    icon: '🔩',
+    icon: 'wrench',
     description: 'Entretien et reparation de vos outils',
     price: 'A partir de 30€',
     duration: '24-48h',
@@ -50,7 +51,7 @@ const services = [
   {
     id: 'livraison',
     name: 'Livraison a Domicile',
-    icon: '🚚',
+    icon: 'truck',
     description: 'Livraison rapide dans tout le Benin',
     price: 'A partir de 5€',
     duration: '24-72h',
@@ -64,7 +65,7 @@ const services = [
   {
     id: 'formation',
     name: 'Formation Utilisation',
-    icon: '📚',
+    icon: 'star',
     description: 'Apprenez a utiliser vos outils',
     price: 'A partir de 25€',
     duration: '2-4 heures',
@@ -78,7 +79,7 @@ const services = [
   {
     id: 'location',
     name: 'Location de Materiel',
-    icon: '🔑',
+    icon: 'key',
     description: 'Louez vos outils pour vos projets',
     price: 'A partir de 10€/jour',
     duration: 'Flexible',
@@ -103,30 +104,15 @@ export default function ServicesPage() {
   return (
     <div className="min-h-screen bg-ingco-black">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-ingco-black/95 backdrop-blur-md border-b border-ingco-gray">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Logo variant="horizontal" size={40} />
-            <div className="hidden md:flex items-center gap-8">
-              <Link href="/" className="text-gray-300 hover:text-ingco-yellow transition-colors">Accueil</Link>
-              <Link href="/services" className="text-ingco-yellow font-semibold">Services</Link>
-              <Link href="/categories" className="text-gray-300 hover:text-ingco-yellow transition-colors">Categories</Link>
-              <Link href="/search" className="text-gray-300 hover:text-ingco-yellow transition-colors">Produits</Link>
-              <Link href="/contact" className="text-gray-300 hover:text-ingco-yellow transition-colors">Contact</Link>
-              <Link href="/cart" className="text-gray-300 hover:text-ingco-yellow transition-colors">Panier</Link>
-            </div>
-          </div>
-        </div>
-      </nav>
 
       {/* Hero */}
       <section className="pt-24 pb-12 bg-gradient-to-b from-ingco-gray to-ingco-black">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Nos Services Professionnels
+          <h1 className="animate-fade-in-up text-4xl md:text-5xl font-bold text-white mb-4">
+            Nos Services <span className="text-ingco-yellow">Professionnels</span>
           </h1>
-          <p className="text-gray-400 text-lg">
-            Des services completes pour accompagner tous vos projets
+          <p className="animate-fade-in-up stagger-1 text-gray-400 text-lg">
+            Des services complets pour accompagner tous vos projets
           </p>
         </div>
       </section>
@@ -134,15 +120,16 @@ export default function ServicesPage() {
       {/* Services Grid */}
       <section className="max-w-7xl mx-auto px-4 pb-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {services.map((service) => (
+          {services.map((service, si) => (
+            <Reveal key={service.id} as="div" delay={(si % 3) * 90}>
             <button
               key={service.id}
               onClick={() => setActiveService(service)}
-              className={`bg-ingco-gray rounded-xl p-6 text-left transition-all cursor-pointer hover:bg-ingco-yellow/20 hover:scale-105 ${
+              className={`w-full bg-ingco-gray rounded-xl p-6 text-left transition-all cursor-pointer hover:bg-ingco-yellow/20 hover:scale-105 ${
                 activeService.id === service.id ? 'ring-2 ring-ingco-yellow bg-ingco-yellow/10' : ''
               }`}
             >
-              <div className="text-4xl mb-4">{service.icon}</div>
+              <Icon name={service.icon as never} className="w-9 h-9 text-ingco-yellow mb-4 card-icon" />
               <h3 className="text-white font-bold text-xl mb-2">{service.name}</h3>
               <p className="text-gray-400 text-sm mb-4">{service.description}</p>
               <div className="flex items-center justify-between">
@@ -151,10 +138,11 @@ export default function ServicesPage() {
               </div>
               {activeService.id === service.id && (
                 <div className="mt-4 text-center text-ingco-yellow text-sm animate-pulse">
-                  ← Cliquez pour voir les details
+                  <Icon name="arrow-left" className="w-4 h-4 inline" /> Cliquez pour voir les details
                 </div>
               )}
             </button>
+            </Reveal>
           ))}
         </div>
       </section>
@@ -163,7 +151,7 @@ export default function ServicesPage() {
       <section className="max-w-4xl mx-auto px-4 pb-16">
         <div className="bg-ingco-gray rounded-2xl p-8">
           <div className="flex items-center gap-4 mb-6">
-            <span className="text-5xl">{activeService.icon}</span>
+            <Icon name={activeService.icon as never} className="w-12 h-12 text-ingco-yellow" />
             <div>
               <h2 className="text-2xl font-bold text-white">{activeService.name}</h2>
               <p className="text-gray-400">{activeService.description}</p>
@@ -176,7 +164,7 @@ export default function ServicesPage() {
               <ul className="space-y-3">
                 {activeService.features.map((feature, index) => (
                   <li key={index} className="flex items-center gap-3 text-gray-300">
-                    <span className="text-green-500">✓</span>
+                    <Icon name="check" className="w-4 h-4 text-green-500 shrink-0" />
                     {feature}
                   </li>
                 ))}
@@ -210,7 +198,7 @@ export default function ServicesPage() {
             <div key={index} className="bg-ingco-gray rounded-xl p-6">
               <div className="flex gap-1 mb-3">
                 {[...Array(testimonial.rating)].map((_, i) => (
-                  <span key={i} className="text-ingco-yellow">⭐</span>
+                  <Icon key={i} name="star" className="w-4 h-4 text-ingco-yellow" />
                 ))}
               </div>
               <p className="text-gray-300 mb-4">"{testimonial.text}"</p>
@@ -239,11 +227,10 @@ export default function ServicesPage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-ingco-gray py-8">
-        <div className="max-w-7xl mx-auto px-4 text-center text-gray-400">
-          <p>&copy; 2026 E-Outilles. Tous droits reserves.</p>
-        </div>
-      </footer>
+      <div className="max-w-7xl mx-auto px-4 pb-8">
+        <NavigationArrows current="/services" />
+      </div>
+
     </div>
   )
 }
