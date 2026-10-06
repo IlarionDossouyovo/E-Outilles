@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { Icon, NavigationArrows } from '@/components/Icons'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { logoutAction } from '@/app/actions'
@@ -107,7 +108,7 @@ export default function ProfilePage() {
           <div className="space-y-4">
             {orders.length === 0 ? (
               <div className="bg-ingco-gray rounded-xl p-8 text-center">
-                <div className="text-5xl mb-3">📦</div>
+                <Icon name="truck" className="w-12 h-12 text-gray-600 mx-auto mb-3" />
                 <p className="text-gray-400">Aucune commande pour le moment</p>
                 <Link href="/search" className="text-ingco-yellow hover:underline mt-3 inline-block">
                   Découvrir le catalogue
@@ -184,6 +185,9 @@ export default function ProfilePage() {
             </label>
           </div>
         )}
+      </div>
+      <div className="max-w-7xl mx-auto px-4 pb-8">
+        <NavigationArrows current="/profile" />
       </div>
     </div>
   )

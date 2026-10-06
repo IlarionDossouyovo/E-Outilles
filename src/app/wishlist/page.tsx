@@ -1,6 +1,7 @@
 'use client'
 
 import { useWishlistStore } from '@/lib/store/wishlist'
+import { Icon, NavigationArrows } from '@/components/Icons'
 import { useCartStore } from '@/lib/store/cart'
 import Link from 'next/link'
 import PageNavigation from '@/components/PageNavigation'
@@ -15,7 +16,7 @@ export default function WishlistPage() {
         <div className="max-w-7xl mx-auto px-4">
           <PageNavigation />
           <div className="text-center">
-            <div className="text-6xl mb-6">❤️</div>
+            <Icon name="heart" className="w-16 h-16 text-gray-600 mx-auto mb-6" />
             <h1 className="text-3xl font-bold text-white mb-4">Votre liste de favoris est vide</h1>
             <p className="text-gray-400 mb-8">Ajoutez des produits pour les retrouver facilement</p>
             <Link 
@@ -56,14 +57,18 @@ export default function WishlistPage() {
                   <button 
                     onClick={() => removeItem(item.id)}
                     className="px-4 border border-red-500 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-colors"
+                    aria-label="Retirer des favoris"
                   >
-                    ✕
+                    <Icon name="warning" className="w-5 h-5" />
                   </button>
                 </div>
               </div>
             </div>
           ))}
         </div>
+      </div>
+      <div className="max-w-7xl mx-auto px-4 pb-8">
+        <NavigationArrows current="/wishlist" />
       </div>
     </div>
   )

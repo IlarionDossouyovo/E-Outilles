@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useVoice } from './useVoice'
+import { Icon } from '@/components/Icons'
 
 interface Message {
   id: string
@@ -10,10 +11,10 @@ interface Message {
 }
 
 const QUICK_PROMPTS = [
-  { label: '🚚 Livraison', text: 'Quels sont vos délais de livraison ?' },
-  { label: '🛠️ Produits', text: 'Quels outils recommandez-vous pour percer du béton ?' },
-  { label: '💳 Paiement', text: 'Quels moyens de paiement acceptez-vous ?' },
-  { label: '🛡️ Garantie', text: 'Quelle est la garantie sur vos outils ?' },
+  { label: 'Livraison', text: 'Quels sont vos délais de livraison ?' },
+  { label: 'Produits', text: 'Quels outils recommandez-vous pour percer du béton ?' },
+  { label: 'Paiement', text: 'Quels moyens de paiement acceptez-vous ?' },
+  { label: 'Garantie', text: 'Quelle est la garantie sur vos outils ?' },
 ]
 
 export default function ChatWidget() {
@@ -83,7 +84,7 @@ export default function ChatWidget() {
         aria-label="Ouvrir le chat IA"
         className="fixed bottom-5 right-5 z-[99999] w-16 h-16 rounded-full bg-ingco-yellow text-ingco-black text-3xl flex items-center justify-center border-[3px] border-white shadow-xl hover:scale-110 active:scale-95 transition-transform animate-float"
       >
-        {isOpen ? '✕' : '💬'}
+        {isOpen ? 'Fermer' : 'Chat'}
       </button>
 
       <div
@@ -107,7 +108,7 @@ export default function ChatWidget() {
                 voiceReplies ? 'bg-ingco-yellow text-ingco-black' : 'bg-ingco-dark text-gray-400 hover:text-ingco-yellow'
               }`}
             >
-              {speaking ? '🔊' : voiceReplies ? '🔈' : '🔇'}
+              {speaking ? 'Voix active' : voiceReplies ? 'Voix' : 'Voix off'}
             </button>
           )}
         </div>
@@ -167,7 +168,7 @@ export default function ChatWidget() {
                 listening ? 'bg-red-500 text-white animate-pulse' : 'bg-ingco-gray text-gray-300 hover:text-ingco-yellow'
               }`}
             >
-              🎤
+              <Icon name="phone" className="w-5 h-5" />
             </button>
           )}
           <button

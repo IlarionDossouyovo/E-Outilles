@@ -1,6 +1,7 @@
 'use client'
 
 import { useCartStore } from '@/lib/store/cart'
+import { Icon, NavigationArrows } from '@/components/Icons'
 import Link from 'next/link'
 import PageNavigation from '@/components/PageNavigation'
 import Logo from '@/components/Logo'
@@ -45,7 +46,7 @@ export default function CartPage() {
         <Nav />
         <div className="pt-24 pb-16 max-w-7xl mx-auto px-4 text-center">
           <PageNavigation />
-          <div className="text-6xl mb-6">🛒</div>
+          <Icon name="cart" className="w-16 h-16 text-gray-600 mx-auto mb-6" />
           <h1 className="text-3xl font-bold text-white mb-4">Votre panier est vide</h1>
           <p className="text-gray-400 mb-8">Découvrez notre catalogue et ajoutez des produits</p>
           <Link 
@@ -96,9 +97,10 @@ export default function CartPage() {
                 </div>
                 <button 
                   onClick={() => removeItem(item.id)}
-                  className="text-red-500 hover:text-red-400 text-xl"
+                  className="text-red-500 hover:text-red-400"
+                  aria-label="Retirer du panier"
                 >
-                  ✕
+                  <Icon name="warning" className="w-5 h-5" />
                 </button>
               </div>
             ))}
@@ -133,6 +135,10 @@ export default function CartPage() {
           </div>
         </div>
       </div>
+      <div className="max-w-7xl mx-auto px-4 pb-8">
+        <NavigationArrows current="/cart" />
+      </div>
+
       <Footer />
     </div>
   )

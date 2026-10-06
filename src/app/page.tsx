@@ -3,13 +3,14 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Logo from '@/components/Logo'
+import { NavigationArrows, Icon } from '@/components/Icons'
+import { categoryImage } from '@/lib/catalog'
 
 // Données des catégories par métier - 15 catégories INGCO
 const categories = [
   {
     id: 'power-tools',
     name: 'Outils Électriques',
-    icon: '⚡',
     products: ['Perceuses', 'Meuleuses', 'Scies', 'Marteau perforateur'],
     blog: 'Guide outils électriques 2026',
     description: 'Outils électriques professionnels',
@@ -18,7 +19,6 @@ const categories = [
   {
     id: 'cordless-tools',
     name: 'Outils Sans Fil',
-    icon: '🔋',
     products: ['Perceuses visseuses', 'Clés à chocs', 'Scies circulaires'],
     blog: 'Avantages outils sans fil',
     description: 'Liberté sans fil pour pros',
@@ -27,7 +27,6 @@ const categories = [
   {
     id: 'hand-tools',
     name: 'Outils à Main',
-    icon: '🔧',
     products: ['Clés', 'Tournevis', 'Pinces', 'Marteaux'],
     blog: 'Trousse outils essentielle',
     description: 'Outils à main professionnels',
@@ -36,7 +35,6 @@ const categories = [
   {
     id: 'air-tools',
     name: 'Outils à Air',
-    icon: '💨',
     products: ['Compresseurs', 'Clés à chocs pneumatiques', 'Pistolets'],
     blog: 'Guide compresseurs',
     description: 'Outils pneumatiques pros',
@@ -45,7 +43,6 @@ const categories = [
   {
     id: 'measuring',
     name: 'Mesure & Niveau',
-    icon: '📏',
     products: ['Niveaux laser', 'Multimètres', 'Détecteurs'],
     blog: 'Précision mesures',
     description: 'Instruments de mesure',
@@ -54,7 +51,6 @@ const categories = [
   {
     id: 'garden',
     name: 'Jardinage',
-    icon: '🌿',
     products: ['Tondeuses', 'Tronçonneuses', 'Taille-haies'],
     blog: 'Entretien jardin pro',
     description: 'Équipement paysagement',
@@ -63,7 +59,6 @@ const categories = [
   {
     id: 'automotive',
     name: 'Automobile',
-    icon: '🚗',
     products: ['Crics', 'Chandelles', 'Clés à chocs'],
     blog: 'Outils mécanicien',
     description: 'Équipement garage auto',
@@ -72,7 +67,6 @@ const categories = [
   {
     id: 'drilling',
     name: 'Forage & Découpe',
-    icon: '🔩',
     products: ['Burins', 'Disques', 'Scies trépans'],
     blog: 'Guide forage professionnel',
     description: 'Accessoires forage',
@@ -81,7 +75,6 @@ const categories = [
   {
     id: 'welding',
     name: 'Soudeuse & Welding',
-    icon: '🔥',
     products: ['Machines à souder', 'Masques', 'Electrodes'],
     blog: 'Initiation soudure MMA',
     description: 'Équipement soudure',
@@ -90,7 +83,6 @@ const categories = [
   {
     id: 'generators',
     name: 'Générateurs',
-    icon: '⚙️',
     products: ['Groupes électrogènes', 'Inverters'],
     blog: 'Choisir générateur',
     description: 'Alimentation électrique',
@@ -99,7 +91,6 @@ const categories = [
   {
     id: 'construction',
     name: 'Construction',
-    icon: '🏗️',
     products: ['Vibreurs à béton', 'Aiguilles vibrantes'],
     blog: 'Outils chantier BTP',
     description: 'Équipement construction',
@@ -108,7 +99,6 @@ const categories = [
   {
     id: 'pumps',
     name: 'Pompes & Eau',
-    icon: '💧',
     products: ['Pompes submersibles', 'Pompes surface'],
     blog: 'Gestion eaux',
     description: 'Pompes et irrigation',
@@ -117,7 +107,6 @@ const categories = [
   {
     id: 'safety',
     name: 'Sécurité',
-    icon: '🦺',
     products: ['Casques', 'Gants', 'Chaussures', 'Lunettes'],
     blog: 'EPI obligatoires',
     description: 'Équipements protection',
@@ -126,7 +115,6 @@ const categories = [
   {
     id: 'storage',
     name: 'Rangement',
-    icon: '🧰',
     products: ['Caisse à outils', 'Coffrets', 'Armoires'],
     blog: 'Organisation atelier',
     description: 'Rangement outils',
@@ -135,7 +123,6 @@ const categories = [
   {
     id: 'accessories',
     name: 'Accessoires',
-    icon: '🪛',
     products: ['Batteries', 'Chargeurs', 'Disques', 'Forets'],
     blog: 'Choisir accessoires',
     description: 'Accessoires tous outils',
@@ -145,12 +132,12 @@ const categories = [
 
 // Produits vedettes
 const featuredProducts = [
-  { id: 1, name: 'Perceuse visseuse INGCO 20V', price: 89.99, image: '🔩', category: 'construction' },
-  { id: 2, name: 'Marteau perforateur SDS Max 1500W', price: 249.99, image: '⚒️', category: 'construction' },
-  { id: 3, name: 'Multimètre digital professionnel', price: 59.99, image: '📊', category: 'electricite' },
-  { id: 4, name: 'Kit clés mécaniciennes 50pcs', price: 79.99, image: '🔧', category: 'garage' },
-  { id: 5, name: 'Tondeuse thermique pro 160cc', price: 399.99, image: '🌿', category: 'jardinage' },
-  { id: 6, name: 'Tronçonneuse thermique 45cm', price: 299.99, image: '🪚', category: 'jardinage' },
+  { id: 1, name: 'Perceuse visseuse INGCO 20V', price: 89.99, image: '/products/perceuse-visseuse.svg', category: 'construction' },
+  { id: 2, name: 'Marteau perforateur SDS Max 1500W', price: 249.99, image: '/products/marteau-perforateur.svg', category: 'construction' },
+  { id: 3, name: 'Multimètre digital professionnel', price: 59.99, image: '/products/multimetre.svg', category: 'electricite' },
+  { id: 4, name: 'Kit clés mécaniciennes 50pcs', price: 79.99, image: '/products/kit-cles.svg', category: 'garage' },
+  { id: 5, name: 'Tondeuse thermique pro 160cc', price: 399.99, image: '/products/tondeuse.svg', category: 'jardinage' },
+  { id: 6, name: 'Tronçonneuse thermique 45cm', price: 299.99, image: '/products/tronconneuse.svg', category: 'jardinage' },
 ]
 
 export default function Home() {
@@ -169,10 +156,12 @@ export default function Home() {
             <div className="hidden md:flex items-center gap-8">
               <a href="#categories" className="text-gray-300 hover:text-ingco-yellow transition-colors">Catégories</a>
               <a href="#products" className="text-gray-300 hover:text-ingco-yellow transition-colors">Produits</a>
+              <Link href="/categories" className="text-gray-300 hover:text-ingco-yellow transition-colors">Catégories</Link>
+              <Link href="/blog" className="text-gray-300 hover:text-ingco-yellow transition-colors">Blog</Link>
               <Link href="/revendeurs" className="text-gray-300 hover:text-ingco-yellow transition-colors">Revendeurs</Link>
               <Link href="/formations" className="text-gray-300 hover:text-ingco-yellow transition-colors">Formations</Link>
               <Link href="/vendeur" className="text-gray-300 hover:text-ingco-yellow transition-colors">Vendeur</Link>
-              <Link href="/chat" className="text-gray-300 hover:text-ingco-yellow transition-colors">💬 Assistant</Link>
+              <Link href="/chat" className="text-gray-300 hover:text-ingco-yellow transition-colors">Assistant</Link>
               <Link href="/contact" className="text-gray-300 hover:text-ingco-yellow transition-colors">Contact</Link>
               <Link href="/admin" className="text-gray-300 hover:text-ingco-yellow transition-colors">Admin</Link>
               <Link href="/cart" className="bg-ingco-yellow text-ingco-black px-5 py-2 rounded-lg font-semibold hover:bg-yellow-400 transition-colors">
@@ -200,10 +189,12 @@ export default function Home() {
             <div className="px-4 py-4 space-y-3">
               <a href="#categories" className="block text-gray-300 hover:text-ingco-yellow" onClick={() => setMobileMenuOpen(false)}>Catégories</a>
               <a href="#products" className="block text-gray-300 hover:text-ingco-yellow" onClick={() => setMobileMenuOpen(false)}>Produits</a>
+              <Link href="/categories" className="block text-gray-300 hover:text-ingco-yellow">Catégories</Link>
+              <Link href="/blog" className="block text-gray-300 hover:text-ingco-yellow">Blog</Link>
               <Link href="/revendeurs" className="block text-gray-300 hover:text-ingco-yellow">Revendeurs</Link>
               <Link href="/formations" className="block text-gray-300 hover:text-ingco-yellow">Formations</Link>
               <Link href="/vendeur" className="block text-gray-300 hover:text-ingco-yellow">Vendeur</Link>
-              <Link href="/chat" className="block text-gray-300 hover:text-ingco-yellow">💬 Assistant</Link>
+              <Link href="/chat" className="block text-gray-300 hover:text-ingco-yellow">Assistant</Link>
               <Link href="/contact" className="block text-gray-300 hover:text-ingco-yellow">Contact</Link>
               <Link href="/admin" className="block text-gray-300 hover:text-ingco-yellow">Admin</Link>
               <Link href="/cart" className="w-full block text-center bg-ingco-yellow text-ingco-black px-5 py-2 rounded-lg font-semibold">
@@ -263,7 +254,7 @@ export default function Home() {
               <Link href="/search" className="bg-ingco-yellow text-ingco-black px-8 py-4 rounded-xl font-bold text-lg hover:bg-yellow-400 transition-all hover:scale-105 hover:shadow-lg hover:shadow-ingco-yellow/30 inline-block text-center">
                 Découvrir le catalogue
               </Link>
-              <Link href="/auth/register" className="border border-ingco-gray text-white px-8 py-4 rounded-xl font-bold text-lg hover:border-ingco-yellow hover:text-ingco-yellow transition-all inline-block text-center">
+              <Link href="/revendeurs" className="border border-ingco-gray text-white px-8 py-4 rounded-xl font-bold text-lg hover:border-ingco-yellow hover:text-ingco-yellow transition-all inline-block text-center">
                 Devenir revendeur
               </Link>
             </div>
@@ -308,10 +299,13 @@ export default function Home() {
             {categories.map((category) => (
               <Link 
                 key={category.id}
-                href={`/search?category=${category.id}`}
+                href={`/categories/${category.id}`}
                 className="group bg-ingco-gray rounded-2xl p-6 hover:bg-ingco-gray/80 transition-all hover:-translate-y-2 hover:shadow-xl hover:shadow-ingco-yellow/10 cursor-pointer block"
               >
-                <div className="text-4xl mb-4">{category.icon}</div>
+                <div className="w-full h-24 mb-4 flex items-center justify-center rounded-xl bg-ingco-dark overflow-hidden">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={categoryImage(category.id)} alt={category.name} className="max-h-20 object-contain transition-transform duration-300 group-hover:scale-110" />
+                </div>
                 <h3 className="text-xl font-bold text-white mb-2 group-hover:text-ingco-yellow transition-colors">
                   {category.name}
                 </h3>
@@ -357,18 +351,19 @@ export default function Home() {
                 key={product.id}
                 className="bg-ingco-gray rounded-2xl overflow-hidden hover:shadow-xl hover:shadow-ingco-yellow/10 transition-all hover:-translate-y-2 group"
               >
-                <div className="h-48 bg-ingco-dark flex items-center justify-center text-6xl group-hover:scale-110 transition-transform">
-                  {product.image}
-                </div>
+                <Link href={`/categories/${product.category}`} className="block h-48 bg-ingco-dark flex items-center justify-center overflow-hidden">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={product.image} alt={product.name} className="max-h-40 object-contain group-hover:scale-110 transition-transform" />
+                </Link>
                 <div className="p-6">
-                  <div className="text-xs text-ingco-yellow mb-2 uppercase tracking-wide">
+                  <Link href={`/categories/${product.category}`} className="text-xs text-ingco-yellow mb-2 uppercase tracking-wide hover:underline block">
                     {categories.find(c => c.id === product.category)?.name}
-                  </div>
+                  </Link>
                   <h3 className="text-lg font-bold text-white mb-2">{product.name}</h3>
                   <div className="flex items-center justify-between">
                     <span className="text-2xl font-bold text-ingco-yellow">{product.price}€</span>
-                    <Link href="/cart" className="bg-ingco-yellow text-ingco-black px-4 py-2 rounded-lg font-semibold text-sm hover:bg-yellow-400 transition-colors">
-                      Ajouter
+                    <Link href={`/categories/${product.category}`} className="bg-ingco-yellow text-ingco-black px-4 py-2 rounded-lg font-semibold text-sm hover:bg-yellow-400 transition-colors">
+                      Voir
                     </Link>
                   </div>
                 </div>
@@ -390,7 +385,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center p-6">
               <div className="w-16 h-16 bg-ingco-yellow/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl">🚚</span>
+                <Icon name="truck" className="w-8 h-8 text-ingco-yellow" />
               </div>
               <h3 className="text-xl font-bold text-white mb-2">Dropshipping mondial</h3>
               <p className="text-gray-400">Livraison directe depuis nos entrepôts vers vos clients, sans stock.</p>
@@ -398,7 +393,7 @@ export default function Home() {
             
             <div className="text-center p-6">
               <div className="w-16 h-16 bg-ingco-yellow/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl">🤖</span>
+                <Icon name="chat" className="w-8 h-8 text-ingco-yellow" />
               </div>
               <h3 className="text-xl font-bold text-white mb-2">IA Marketing</h3>
               <p className="text-gray-400">Automatisation intelligente pour vos campagnes publicitaires et SEO.</p>
@@ -406,7 +401,7 @@ export default function Home() {
             
             <div className="text-center p-6">
               <div className="w-16 h-16 bg-ingco-yellow/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <span className="text-3xl">💳</span>
+                <Icon name="card" className="w-8 h-8 text-ingco-yellow" />
               </div>
               <h3 className="text-xl font-bold text-white mb-2">Paiements locaux</h3>
               <p className="text-gray-400">MTN, Moov, Orange, Flutterwave - Paiements adaptés à votre pays.</p>
@@ -440,6 +435,10 @@ export default function Home() {
         </div>
       </section>
 
+      <div className="max-w-7xl mx-auto px-4 pb-8">
+        <NavigationArrows current="/" />
+      </div>
+
       {/* Footer */}
       <footer className="bg-ingco-dark border-t border-ingco-gray py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -455,7 +454,7 @@ export default function Home() {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/api/qrcode" alt="QR code application E-Outilles" className="w-16 h-16 rounded-lg bg-white p-1" />
                 <span className="text-sm">
-                  <span className="block text-white font-semibold group-hover:text-ingco-yellow transition-colors">📲 Télécharger l&apos;app</span>
+                  <span className="block text-white font-semibold group-hover:text-ingco-yellow transition-colors">Télécharger l&apos;app</span>
                   <span className="block text-gray-500 text-xs">Scannez le QR code</span>
                 </span>
               </Link>
@@ -464,12 +463,12 @@ export default function Home() {
             <div>
               <h4 className="text-white font-semibold mb-4">Catégories</h4>
               <ul className="space-y-2 text-gray-500 text-sm">
-                <li><Link href="/search?category=construction" className="hover:text-ingco-yellow transition-colors">Construction & BTP</Link></li>
-                <li><Link href="/search?category=electricite" className="hover:text-ingco-yellow transition-colors">Électricité</Link></li>
-                <li><Link href="/search?category=garage" className="hover:text-ingco-yellow transition-colors">Garage Auto</Link></li>
-                <li><Link href="/search?category=jardinage" className="hover:text-ingco-yellow transition-colors">Jardinage</Link></li>
-                <li><Link href="/chat" className="hover:text-ingco-yellow transition-colors">💬 Assistant IA</Link></li>
-                <li><Link href="/telecharger" className="hover:text-ingco-yellow transition-colors">📲 Télécharger l&apos;app</Link></li>
+                <li><Link href="/categories/construction" className="hover:text-ingco-yellow transition-colors">Construction & BTP</Link></li>
+                <li><Link href="/categories/electricite" className="hover:text-ingco-yellow transition-colors">Électricité</Link></li>
+                <li><Link href="/categories/garage" className="hover:text-ingco-yellow transition-colors">Garage Auto</Link></li>
+                <li><Link href="/categories/jardinage" className="hover:text-ingco-yellow transition-colors">Jardinage</Link></li>
+                <li><Link href="/chat" className="hover:text-ingco-yellow transition-colors">Assistant IA</Link></li>
+                <li><Link href="/telecharger" className="hover:text-ingco-yellow transition-colors">Télécharger l&apos;app</Link></li>
               </ul>
             </div>
             
@@ -477,7 +476,7 @@ export default function Home() {
               <h4 className="text-white font-semibold mb-4">Entreprise</h4>
               <ul className="space-y-2 text-gray-500 text-sm">
                 <li><Link href="/about" className="hover:text-ingco-yellow transition-colors">À propos</Link></li>
-                <li><Link href="/auth/register" className="hover:text-ingco-yellow transition-colors">Devenir revendeur</Link></li>
+                <li><Link href="/revendeurs" className="hover:text-ingco-yellow transition-colors">Devenir revendeur</Link></li>
                 <li><Link href="/blog" className="hover:text-ingco-yellow transition-colors">Blog</Link></li>
                 <li><Link href="/contact" className="hover:text-ingco-yellow transition-colors">Contact</Link></li>
               </ul>

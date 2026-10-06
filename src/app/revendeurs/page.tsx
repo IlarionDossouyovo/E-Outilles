@@ -1,38 +1,39 @@
 'use client'
 
 import { useState } from 'react'
+import { NavigationArrows, Icon } from '@/components/Icons'
 import Link from 'next/link'
 import Logo from '@/components/Logo'
 
 // Données des avantages revendeur
 const advantages = [
   {
-    icon: '💰',
+    icon: 'star',
     title: 'Marges Avantageuses',
     description: 'Profitez de tarifs préférentiels et de marges attractives sur tous les produits INGCO.'
   },
   {
-    icon: '📦',
+    icon: 'truck',
     title: 'Stock Garanti',
     description: 'Approvisionnement prioritaire et stocks garantis toute l\'année.'
   },
   {
-    icon: '🎯',
+    icon: 'check',
     title: 'Support Marketing',
     description: 'Aides promotionnelles, PLV, et supports publicitaires exclusifs.'
   },
   {
-    icon: '🔧',
+    icon: 'tools',
     title: 'Formation Technique',
-    description: 'Accès aux formations produits et技术支持 technique exclusif.'
+    description: 'Accès aux formations produits et support technique exclusif.'
   },
   {
-    icon: '🚚',
+    icon: 'truck',
     title: 'Livraison Prioritaire',
     description: 'Livraison rapide et gratuite pour les commandes revendeur.'
   },
   {
-    icon: '🤝',
+    icon: 'user',
     title: 'Partenariat Long Terme',
     description: 'Contrat de partenariat avantageux et suivi personnalisé.'
   }
@@ -152,7 +153,7 @@ export default function RevendeursPage() {
               <Link href="/" className="text-gray-300 hover:text-ingco-yellow transition-colors">Accueil</Link>
               <Link href="/categories" className="text-gray-300 hover:text-ingco-yellow transition-colors">Catégories</Link>
               <Link href="/formations" className="text-gray-300 hover:text-ingco-yellow transition-colors">Formations</Link>
-              <Link href="/cart" className="text-gray-300 hover:text-ingco-yellow transition-colors">🛒</Link>
+              <Link href="/cart" aria-label="Panier" className="text-gray-300 hover:text-ingco-yellow transition-colors"><Icon name="cart" className="w-5 h-5" /></Link>
             </div>
           </div>
         </div>
@@ -188,7 +189,7 @@ export default function RevendeursPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {advantages.map((adv, index) => (
               <div key={index} className="bg-ingco-gray rounded-2xl p-8 hover:bg-gray-700 transition-colors">
-                <div className="text-5xl mb-4">{adv.icon}</div>
+                <Icon name={adv.icon as never} className="w-11 h-11 text-ingco-yellow mb-4" />
                 <h3 className="text-xl font-bold text-white mb-3">{adv.title}</h3>
                 <p className="text-gray-400">{adv.description}</p>
               </div>
@@ -228,7 +229,7 @@ export default function RevendeursPage() {
 
           {submitted ? (
             <div className="bg-green-900/50 border border-green-500 rounded-2xl p-8 text-center">
-              <div className="text-6xl mb-4">✅</div>
+              <Icon name="check" className="w-14 h-14 text-green-400 mx-auto mb-4" />
               <h3 className="text-2xl font-bold text-white mb-2">Demande Envoyée!</h3>
               <p className="text-gray-400">
                 Merci pour votre intérêt. Notre équipe commerciale vous contactera sous 48h.
@@ -395,6 +396,10 @@ export default function RevendeursPage() {
       </section>
 
       {/* Footer */}
+      <div className="max-w-7xl mx-auto px-4 pb-8">
+        <NavigationArrows current="/revendeurs" />
+      </div>
+
       <footer className="bg-ingco-gray py-8">
         <div className="max-w-7xl mx-auto px-4 text-center text-gray-400">
           <p>&copy; 2026 E-Outilles By ELECTRON. Tous droits réservés.</p>

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Logo from '@/components/Logo'
+import { Icon } from '@/components/Icons'
 
 interface Product {
   id: string
@@ -89,7 +90,7 @@ export default function AdminProducts() {
             <Link href="/search" className="text-gray-300 hover:text-ingco-yellow">Produits</Link>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-gray-400 text-sm">👤 Admin</span>
+            <span className="text-gray-400 text-sm flex items-center gap-2"><Icon name="user" className="w-4 h-4" /> Admin</span>
           </div>
         </div>
       </nav>
@@ -174,7 +175,7 @@ export default function AdminProducts() {
                               : 'bg-gray-700 text-gray-400'
                           }`}
                         >
-                          {product.featured ? '⭐ Featured' : 'Standard'}
+                          {product.featured ? 'Featured' : 'Standard'}
                         </button>
                       </td>
                       <td className="px-6 py-4 text-right">
@@ -183,13 +184,13 @@ export default function AdminProducts() {
                             href={`/admin/add-product?id=${product.id}`}
                             className="text-gray-400 hover:text-white px-3 py-1"
                           >
-                            ✏️ Modifier
+                            <Icon name="settings" className="w-4 h-4" /> Modifier
                           </Link>
                           <button
                             onClick={() => handleDelete(product.id)}
                             className="text-red-400 hover:text-red-300 px-3 py-1"
                           >
-                            🗑️ Supprimer
+                            <Icon name="warning" className="w-4 h-4" /> Supprimer
                           </button>
                         </div>
                       </td>

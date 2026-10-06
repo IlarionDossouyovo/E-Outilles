@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Logo from '@/components/Logo'
+import { Icon, NavigationArrows } from '@/components/Icons'
 
 interface VendorOrder {
   id: string
@@ -33,12 +34,12 @@ function statusInfo(status: string) {
 }
 
 const quickActions = [
-  { icon: '📦', title: 'Gestion Stocks', desc: 'Voir et modifier les produits', link: '/admin/products' },
-  { icon: '📊', title: 'Rapports', desc: 'Voir les statistiques', link: '/admin/orders' },
-  { icon: '👥', title: 'Clients', desc: 'Gérer les clients', link: '/profile' },
-  { icon: '💬', title: 'Messages', desc: 'Voir les messages', link: '/chat' },
-  { icon: '📚', title: 'Formations', desc: 'Accéder aux formations', link: '/formations' },
-  { icon: '📁', title: 'Documents', desc: 'Catalogue et guides', link: '/formations' },
+  { icon: 'grid', title: 'Gestion Stocks', desc: 'Voir et modifier les produits', link: '/admin/products' },
+  { icon: 'blog', title: 'Rapports', desc: 'Voir les statistiques', link: '/admin/orders' },
+  { icon: 'user', title: 'Clients', desc: 'Gérer les clients', link: '/profile' },
+  { icon: 'chat', title: 'Messages', desc: 'Voir les messages', link: '/chat' },
+  { icon: 'star', title: 'Formations', desc: 'Accéder aux formations', link: '/formations' },
+  { icon: 'download', title: 'Documents', desc: 'Catalogue et guides', link: '/formations' },
 ]
 
 export default function VendorDashboard() {
@@ -121,7 +122,7 @@ export default function VendorDashboard() {
             <Link href="/formations" className="text-gray-300 hover:text-ingco-yellow">Formations</Link>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-gray-400 text-sm">👤 Mon Compte</span>
+            <span className="text-gray-400 text-sm flex items-center gap-2"><Icon name="user" className="w-4 h-4" /> Mon Compte</span>
           </div>
         </div>
       </nav>
@@ -130,14 +131,14 @@ export default function VendorDashboard() {
         {/* Welcome Section */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-white">Bienvenue sur votre espace revendeur</h1>
-          <p className="text-gray-400">Gérez vos ventes, commandes etformations</p>
+          <p className="text-gray-400">Gérez vos ventes, commandes et formations</p>
         </div>
 
         {/* Quick Actions */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
           {quickActions.map((action, index) => (
             <Link key={index} href={action.link} className="bg-ingco-gray rounded-xl p-4 hover:bg-gray-700 transition-colors text-center">
-              <div className="text-3xl mb-2">{action.icon}</div>
+              <Icon name={action.icon as never} className="w-7 h-7 text-ingco-yellow mx-auto mb-2" />
               <h3 className="text-white font-semibold text-sm">{action.title}</h3>
               <p className="text-gray-400 text-xs">{action.desc}</p>
             </Link>
@@ -162,15 +163,15 @@ export default function VendorDashboard() {
             <div className="text-green-500 text-sm">+5 ce mois</div>
           </div>
           <div className="bg-ingco-gray rounded-xl p-6">
-            <div className="text-gray-400 textsm mb-1">Note Moyenne</div>
-            <div className="text-2xl font-bold text-white">⭐ {vendorStats.averageRating}/5</div>
+            <div className="text-gray-400 text-sm mb-1">Note Moyenne</div>
+            <div className="text-2xl font-bold text-white flex items-center gap-1"><Icon name="star" className="w-5 h-5 text-ingco-yellow" /> {vendorStats.averageRating}/5</div>
             <div className="text-gray-400 text-sm">Basé sur 89 avis</div>
           </div>
         </div>
 
         {/* This Month Stats */}
         <div className="bg-gradient-to-r from-ingco-yellow/20 to-transparent rounded-xl p-6 mb-8 border border-ingco-yellow/30">
-          <h3 className="text-xl font-bold text-white mb-4">📈 Performances ce mois</h3>
+          <h3 className="text-xl font-bold text-white mb-4">Performances ce mois</h3>
           <div className="grid grid-cols-3 gap-6">
             <div>
               <div className="text-gray-400 text-sm">Ventes</div>
@@ -222,7 +223,7 @@ export default function VendorDashboard() {
               {topProducts.map((product, index) => (
                 <div key={index} className="flex items-center justify-between bg-ingco-black rounded-lg p-4">
                   <div className="flex items-center gap-4">
-                    <span className="text-2xl">🔧</span>
+                    <Icon name="tools" className="w-6 h-6 text-ingco-yellow" />
                     <div>
                       <div className="text-white font-semibold">{product.name}</div>
                       <div className="text-gray-400 text-sm">{product.sales} ventes</div>
@@ -240,17 +241,17 @@ export default function VendorDashboard() {
           <h3 className="text-xl font-bold text-white mb-4">Liens Rapides</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Link href="/revendeurs" className="bg-ingco-gray rounded-xl p-6 hover:bg-gray-700 transition-colors">
-              <div className="text-3xl mb-3">🤝</div>
+              <Icon name="user" className="w-8 h-8 text-ingco-yellow mb-3" />
               <h4 className="text-white font-bold mb-2">Devenir Revendeur</h4>
               <p className="text-gray-400 text-sm">Proposez nos produits à vos clients</p>
             </Link>
             <Link href="/formations" className="bg-ingco-gray rounded-xl p-6 hover:bg-gray-700 transition-colors">
-              <div className="text-3xl mb-3">📚</div>
+              <Icon name="star" className="w-8 h-8 text-ingco-yellow mb-3" />
               <h4 className="text-white font-bold mb-2">Formations</h4>
               <p className="text-gray-400 text-sm">Développez vos compétences</p>
             </Link>
             <Link href="/admin/settings" className="bg-ingco-gray rounded-xl p-6 hover:bg-gray-700 transition-colors">
-              <div className="text-3xl mb-3">⚙️</div>
+              <Icon name="settings" className="w-8 h-8 text-ingco-yellow mb-3" />
               <h4 className="text-white font-bold mb-2">Paramètres</h4>
               <p className="text-gray-400 text-sm">Gérez votre compte</p>
             </Link>
@@ -264,6 +265,10 @@ export default function VendorDashboard() {
           <p>&copy; 2026 E-Outilles By ELECTRON. Tous droits réservés.</p>
         </div>
       </footer>
+
+      <div className="mt-12">
+        <NavigationArrows current="/vendeur" />
+      </div>
     </div>
   )
 }

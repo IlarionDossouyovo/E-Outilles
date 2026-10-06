@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { NavigationArrows, Icon } from '@/components/Icons'
 import Link from 'next/link'
 import PageNavigation from '@/components/PageNavigation'
 import Logo from '@/components/Logo'
@@ -83,7 +84,7 @@ export default function Contact() {
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-ingco-yellow/20 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <span className="text-xl">📧</span>
+                    <Icon name="chat" className="w-5 h-5 text-ingco-yellow" />
                   </div>
                   <div>
                     <h3 className="text-white font-semibold mb-1">Email</h3>
@@ -93,7 +94,7 @@ export default function Contact() {
 
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-ingco-yellow/20 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <span className="text-xl">📱</span>
+                    <Icon name="phone" className="w-5 h-5 text-ingco-yellow" />
                   </div>
                   <div>
                     <h3 className="text-white font-semibold mb-1">WhatsApp</h3>
@@ -103,7 +104,7 @@ export default function Contact() {
 
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-ingco-yellow/20 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <span className="text-xl">🌍</span>
+                    <Icon name="grid" className="w-5 h-5 text-ingco-yellow" />
                   </div>
                   <div>
                     <h3 className="text-white font-semibold mb-1">Zone de service</h3>
@@ -113,7 +114,7 @@ export default function Contact() {
 
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-ingco-yellow/20 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <span className="text-xl">🕐</span>
+                    <Icon name="info" className="w-5 h-5 text-ingco-yellow" />
                   </div>
                   <div>
                     <h3 className="text-white font-semibold mb-1">Horaires</h3>
@@ -147,7 +148,7 @@ export default function Contact() {
               {submitted ? (
                 <div className="text-center py-12">
                   <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <span className="text-4xl">✅</span>
+                    <Icon name="check" className="w-10 h-10 text-green-400" />
                   </div>
                   <h2 className="text-2xl font-bold text-white mb-4">Message envoyé!</h2>
                   <p className="text-gray-400 mb-8">Nous vous répondrons sous 24h</p>
@@ -238,6 +239,10 @@ export default function Contact() {
       </section>
 
       {/* Footer */}
+      <div className="max-w-7xl mx-auto px-4 pb-8">
+        <NavigationArrows current="/contact" />
+      </div>
+
       <footer className="bg-ingco-black border-t border-ingco-gray py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">

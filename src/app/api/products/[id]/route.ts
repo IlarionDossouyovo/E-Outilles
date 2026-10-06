@@ -8,9 +8,10 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const product = await prisma.product.findUnique({
-      where: { id: params.id },
-      include: { category: true }
+    // Accept either the product id or its slug (links use slugs).
+    const product = await prisma.product.findFirst({
+      where: { OR: [{ id: params.id }, { slug: params.id }] },
+      include: { category: true },
     })
 
     if (!product) {
@@ -37,8 +38,14 @@ export async function PUT(
     const body = await request.json()
     const { name, slug, description, price, comparePrice, sku, stock, images, features, categoryId } = body
 
+    const target = await prisma.product.findFirst({
+      where: { OR: [{ id: params.id }, { slug: params.id }] },
+      select: { id: true },
+    })
+    if (!target) return NextResponse.json({ error: 'Product not found' }, { status: 404 })
+
     const product = await prisma.product.update({
-      where: { id: params.id },
+      where: { id: target.id },
       data: {
         ...(name && { name }),
         ...(slug && { slug }),
@@ -70,9 +77,13 @@ export async function DELETE(
   }
 
   try {
-    await prisma.product.delete({
-      where: { id: params.id }
+    const target = await prisma.product.findFirst({
+      where: { OR: [{ id: params.id }, { slug: params.id }] },
+      select: { id: true },
     })
+    if (!target) return NextResponse.json({ error: 'Product not found' }, { status: 404 })
+
+    await prisma.product.delete({ where: { id: target.id } })
 
     return NextResponse.json({ success: true })
   } catch (error) {

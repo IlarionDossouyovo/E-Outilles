@@ -3,12 +3,12 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import PasswordInput from '@/components/PasswordInput'
 
 export default function RegisterPage() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
   const [country, setCountry] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -95,23 +95,13 @@ export default function RegisterPage() {
               </select>
             </div>
             
-            <div className="relative">
-              <label className="text-gray-400 text-sm mb-2 block">Mot de passe</label>
-              <input
-                type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-ingco-dark border border-ingco-dark rounded-xl px-4 py-3 pr-12 text-white focus:border-ingco-yellow focus:outline-none"
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-9 text-gray-400 hover:text-ingco-yellow"
-              >
-                {showPassword ? "🙈" : "👁️"}
-              </button>
-            </div>
+            <PasswordInput
+              label="Mot de passe"
+              value={password}
+              onChange={setPassword}
+              autoComplete="new-password"
+              required
+            />
 
             <label className="flex items-start gap-2 mt-4">
               <input type="checkbox" className="bg-ingco-dark border-ingco-gray rounded mt-1" required />
@@ -121,7 +111,7 @@ export default function RegisterPage() {
             </label>
 
             <button type="submit" disabled={loading} className="w-full bg-ingco-yellow text-ingco-black py-3 rounded-xl font-bold hover:bg-yellow-400 transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
-              {loading ? '⏳ Creation...' : '🔐 Creer mon compte'}
+              {loading ? 'Création...' : 'Créer mon compte'}
             </button>
           </form>
 

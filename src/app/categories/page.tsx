@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import Logo from '@/components/Logo'
+import { NavigationArrows, Icon } from '@/components/Icons'
+import { categoryImage, subcategoriesFor } from '@/lib/catalog'
 
 interface Category {
   id: string
@@ -23,19 +25,6 @@ interface Product {
   images: string
   category?: { slug: string } | null
 }
-
-const FALLBACK_ICONS = ['🛠️', '⚡', '🔧', '🔩', '📏', '🌿', '🚗', '🧰', '🦺', '💧', '🔥', '⚙️']
-
-const GRADIENTS = [
-  'from-red-500/80 to-red-700/60',
-  'from-blue-500/80 to-blue-700/60',
-  'from-emerald-500/80 to-emerald-700/60',
-  'from-purple-500/80 to-purple-700/60',
-  'from-amber-500/80 to-amber-700/60',
-  'from-cyan-500/80 to-cyan-700/60',
-  'from-pink-500/80 to-pink-700/60',
-  'from-indigo-500/80 to-indigo-700/60',
-]
 
 function firstImage(images: string): string | null {
   try {
@@ -90,8 +79,10 @@ export default function CategoriesPage() {
               <Link href="/" className="text-gray-300 hover:text-ingco-yellow transition-colors">Accueil</Link>
               <Link href="/categories" className="text-ingco-yellow font-semibold">Catégories</Link>
               <Link href="/search" className="text-gray-300 hover:text-ingco-yellow transition-colors">Produits</Link>
-              <Link href="/chat" className="text-gray-300 hover:text-ingco-yellow transition-colors">Assistant</Link>
-              <Link href="/cart" className="text-gray-300 hover:text-ingco-yellow transition-colors">🛒</Link>
+              <Link href="/blog" className="text-gray-300 hover:text-ingco-yellow transition-colors">Blog</Link>
+              <Link href="/cart" className="text-gray-300 hover:text-ingco-yellow transition-colors" aria-label="Panier">
+                <Icon name="cart" className="w-5 h-5" />
+              </Link>
             </div>
           </div>
         </div>
@@ -103,7 +94,7 @@ export default function CategoriesPage() {
             Catégories de Produits
           </h1>
           <p className="text-gray-400 text-base sm:text-lg">
-            Trouvez tous vos outils professionnels par catégorie
+            Trouvez tous vos outils professionnels par catégorie et sous-catégorie
           </p>
         </div>
       </section>
@@ -122,7 +113,8 @@ export default function CategoriesPage() {
               }`}
               style={{ animationDelay: `${Math.min(i * 0.03, 0.3)}s` }}
             >
-              <span className="text-xl">{cat.icon || FALLBACK_ICONS[i % FALLBACK_ICONS.length]}</span>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={categoryImage(cat.slug)} alt="" className="w-6 h-6 object-contain rounded" />
               <span className="text-sm sm:text-base whitespace-nowrap">{cat.name}</span>
             </button>
           ))}
@@ -135,8 +127,9 @@ export default function CategoriesPage() {
           <div className="bg-ingco-gray rounded-3xl p-6 sm:p-8 border border-ingco-dark">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-2xl bg-ingco-black flex items-center justify-center text-4xl card-icon">
-                  {current.icon || '🛠️'}
+                <div className="w-16 h-16 rounded-2xl bg-ingco-black flex items-center justify-center overflow-hidden card-icon">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={categoryImage(current.slug)} alt={current.name} className="w-12 h-12 object-contain" />
                 </div>
                 <div>
                   <h2 className="text-2xl font-bold text-white">{current.name}</h2>
@@ -146,13 +139,39 @@ export default function CategoriesPage() {
                   </span>
                 </div>
               </div>
-              <Link
-                href={`/search?category=${current.slug}`}
-                className="bg-ingco-yellow text-ingco-black px-6 py-3 rounded-xl font-bold hover:bg-yellow-400 transition-all hover:scale-105 text-center"
-              >
-                Voir tous les produits →
-              </Link>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Link
+                  href={`/categories/${current.slug}`}
+                  className="bg-ingco-gray border border-ingco-yellow/40 text-ingco-yellow px-6 py-3 rounded-xl font-bold hover:bg-ingco-yellow/10 transition-all text-center"
+                >
+                  Page catégorie
+                </Link>
+                <Link
+                  href={`/search?category=${current.slug}`}
+                  className="bg-ingco-yellow text-ingco-black px-6 py-3 rounded-xl font-bold hover:bg-yellow-400 transition-all hover:scale-105 text-center"
+                >
+                  Voir tous les produits
+                </Link>
+              </div>
             </div>
+
+            {/* Sub-categories */}
+            {subcategoriesFor(current.slug).length > 0 && (
+              <div className="mb-6">
+                <h3 className="text-white font-semibold mb-3 text-sm uppercase tracking-wide">Sous-catégories</h3>
+                <div className="flex flex-wrap gap-2">
+                  {subcategoriesFor(current.slug).map((sub) => (
+                    <Link
+                      key={sub}
+                      href={`/categories/${current.slug}#${encodeURIComponent(sub.toLowerCase().replace(/\s+/g, '-'))}`}
+                      className="px-4 py-2 rounded-full bg-ingco-black border border-white/10 text-gray-300 text-sm hover:border-ingco-yellow/50 hover:text-ingco-yellow transition-all"
+                    >
+                      {sub}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {currentProducts.length > 0 && (
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -170,7 +189,8 @@ export default function CategoriesPage() {
                           // eslint-disable-next-line @next/next/no-img-element
                           <img src={img} alt={p.name} className="max-h-24 object-contain card-icon" />
                         ) : (
-                          <span className="text-4xl card-icon">🔧</span>
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={categoryImage(p.category?.slug)} alt={p.name} className="max-h-24 object-contain card-icon" />
                         )}
                       </div>
                       <p className="text-white text-sm font-semibold line-clamp-2">{p.name}</p>
@@ -185,7 +205,7 @@ export default function CategoriesPage() {
       )}
 
       {/* All categories grid — responsive */}
-      <section className="max-w-7xl mx-auto px-4 pb-16">
+      <section className="max-w-7xl mx-auto px-4 pb-12">
         {loading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
             {Array.from({ length: 8 }).map((_, i) => (
@@ -197,13 +217,20 @@ export default function CategoriesPage() {
             {categories.map((cat, i) => (
               <Link
                 key={cat.id}
-                href={`/search?category=${cat.slug}`}
-                className={`card-premium bg-gradient-to-br ${GRADIENTS[i % GRADIENTS.length]} rounded-2xl p-5 sm:p-8 text-center border border-white/5 animate-fade-in-up stagger-${(i % 6) + 1}`}
+                href={`/categories/${cat.slug}`}
+                className="card-premium bg-ingco-gray rounded-2xl p-5 sm:p-6 border border-white/5 animate-fade-in-up group"
+                style={{ animationDelay: `${Math.min(i * 0.05, 0.4)}s` }}
               >
-                <div className="text-4xl sm:text-6xl mb-3 card-icon">{cat.icon || FALLBACK_ICONS[i % FALLBACK_ICONS.length]}</div>
-                <h3 className="text-white font-bold text-base sm:text-xl mb-1">{cat.name}</h3>
-                <p className="text-white/70 text-xs sm:text-sm line-clamp-2">{cat.description}</p>
-                <span className="inline-block mt-2 text-white/90 text-xs font-semibold bg-black/20 px-2 py-1 rounded-full">
+                <div
+                  className="w-full h-28 sm:h-32 rounded-xl mb-3 flex items-center justify-center overflow-hidden"
+                  style={{ background: `linear-gradient(135deg, ${cat.color || '#FFC400'}22, transparent)` }}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={categoryImage(cat.slug)} alt={cat.name} className="max-h-24 sm:max-h-28 object-contain card-icon" />
+                </div>
+                <h3 className="text-white font-bold text-base sm:text-lg mb-1 group-hover:text-ingco-yellow transition-colors">{cat.name}</h3>
+                <p className="text-gray-500 text-xs sm:text-sm line-clamp-2 mb-2">{cat.description}</p>
+                <span className="inline-block text-ingco-yellow text-xs font-semibold">
                   {countFor(cat)} produits
                 </span>
               </Link>
@@ -211,6 +238,10 @@ export default function CategoriesPage() {
           </div>
         )}
       </section>
+
+      <div className="max-w-7xl mx-auto px-4 pb-16">
+        <NavigationArrows current="/categories" />
+      </div>
 
       <footer className="bg-ingco-gray py-8">
         <div className="max-w-7xl mx-auto px-4 text-center text-gray-400 text-sm">

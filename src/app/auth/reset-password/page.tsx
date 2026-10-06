@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import PasswordInput from '@/components/PasswordInput'
+import { Icon } from '@/components/Icons'
 
 export default function ResetPasswordPage() {
   const [token, setToken] = useState('')
@@ -54,7 +56,7 @@ export default function ResetPasswordPage() {
       <div className="min-h-screen bg-ingco-black pt-24 pb-16">
         <div className="max-w-md mx-auto px-4">
           <div className="bg-ingco-gray rounded-2xl p-8 text-center">
-            <div className="text-6xl mb-4">✅</div>
+            <Icon name="check" className="w-14 h-14 text-green-400 mx-auto mb-4" />
             <h1 className="text-2xl font-bold text-white mb-4">Mot de passe modifié</h1>
             <p className="text-gray-400 mb-6">Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.</p>
             <Link
@@ -88,28 +90,22 @@ export default function ResetPasswordPage() {
           )}
 
           <form onSubmit={onSubmit} className="space-y-5">
-            <div>
-              <label className="text-gray-400 text-sm mb-2 block">Nouveau mot de passe</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-ingco-dark border border-ingco-dark rounded-xl px-4 py-3 text-white focus:border-ingco-yellow focus:outline-none"
-                placeholder="••••••••"
-                required
-              />
-            </div>
-            <div>
-              <label className="text-gray-400 text-sm mb-2 block">Confirmer le mot de passe</label>
-              <input
-                type="password"
-                value={confirm}
-                onChange={(e) => setConfirm(e.target.value)}
-                className="w-full bg-ingco-dark border border-ingco-dark rounded-xl px-4 py-3 text-white focus:border-ingco-yellow focus:outline-none"
-                placeholder="••••••••"
-                required
-              />
-            </div>
+            <PasswordInput
+              label="Nouveau mot de passe"
+              value={password}
+              onChange={setPassword}
+              placeholder="••••••••"
+              autoComplete="new-password"
+              required
+            />
+            <PasswordInput
+              label="Confirmer le mot de passe"
+              value={confirm}
+              onChange={setConfirm}
+              placeholder="••••••••"
+              autoComplete="new-password"
+              required
+            />
             <button
               type="submit"
               disabled={loading || !token}

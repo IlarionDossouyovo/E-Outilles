@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import AdminAnalytics from '@/components/AdminAnalytics'
 import Logo from '@/components/Logo'
+import { Icon } from '@/components/Icons'
 
 interface AdminOrder {
   id: string
@@ -92,7 +93,7 @@ export default function AdminOrdersPage() {
             <Link href="/search" className="text-gray-300 hover:text-ingco-yellow">Produits</Link>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-gray-400 text-sm">👤 Admin</span>
+            <span className="text-gray-400 text-sm flex items-center gap-2"><Icon name="user" className="w-4 h-4" /> Admin</span>
           </div>
         </div>
       </nav>

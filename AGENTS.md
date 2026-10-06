@@ -11,7 +11,9 @@ Persistent notes for working on the E-Outilles codebase.
 - Build: `npm run build` — must pass before any commit.
 - Dev server: `npm run dev` (port 3003).
 - Prisma: `npx prisma generate`, `npx prisma migrate deploy`, `npx prisma db seed`.
-- `npm run lint` is interactive/slow in this environment; prefer `npm run build` for type checks.
+- Lint: `.eslintrc.json` extends `next/core-web-vitals` and disables
+  `react/no-unescaped-entities` (French copy uses raw `'`/`"`). `npm run lint`
+  now exits cleanly; run `npx next lint --dir src` to check.
 
 ## Conventions & gotchas
 - `middleware.ts` must live in `src/` for it to run (project root is `src/`).

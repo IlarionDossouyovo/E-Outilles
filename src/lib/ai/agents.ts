@@ -40,7 +40,7 @@ export const AGENTS: Record<AgentId, AgentDefinition> = {
   assistant: {
     id: 'assistant',
     name: 'Assistant IA',
-    icon: '🤖',
+    icon: 'chat',
     category: 'principal',
     status: 'online',
     description: 'Assistant conversationnel principal pour les clients',
@@ -56,7 +56,7 @@ Quand un client cherche un produit, propose 1 à 3 références concrètes avec 
   sales: {
     id: 'sales',
     name: 'Vendeur Bot',
-    icon: '💼',
+    icon: 'card',
     category: 'principal',
     status: 'online',
     description: 'Automatisation des ventes et conversion',
@@ -72,7 +72,7 @@ Sois persuasif mais honnête: jamais de fausse promotion ni de promesse irréali
   support: {
     id: 'support',
     name: 'Support Client',
-    icon: '🎧',
+    icon: 'phone',
     category: 'principal',
     status: 'online',
     description: 'Support client automatisé 24/7',
@@ -88,7 +88,7 @@ indique clairement qu'un agent va prendre le relais via WhatsApp +229 01 977 003
   tracking: {
     id: 'tracking',
     name: 'Suivi Commande',
-    icon: '📦',
+    icon: 'truck',
     category: 'principal',
     status: 'offline',
     description: 'Suivi et gestion des commandes',
@@ -103,7 +103,7 @@ delivered (livrée), cancelled (annulée). Explique les délais et la procédure
   project: {
     id: 'project',
     name: 'Chef de Projet IA',
-    icon: '📋',
+    icon: 'blog',
     category: 'management',
     status: 'online',
     description: 'Gestion de projets et planification',
@@ -117,7 +117,7 @@ identifier les risques et proposer un planning réaliste. Réponds en français,
   analytics: {
     id: 'analytics',
     name: 'Analyste Data',
-    icon: '📊',
+    icon: 'grid',
     category: 'management',
     status: 'online',
     description: 'Analyse des données business',
@@ -131,7 +131,7 @@ et des recommandations actionnables. Distingue toujours les faits des hypothèse
   marketing: {
     id: 'marketing',
     name: 'Marketing Bot',
-    icon: '📢',
+    icon: 'star',
     category: 'marketing',
     status: 'online',
     description: 'Automatisation marketing digital',
@@ -145,7 +145,7 @@ d'Afrique de l'Ouest. Ton: professionnel, concret, orienté bénéfice client. J
   hr: {
     id: 'hr',
     name: 'Assistant RH',
-    icon: '👥',
+    icon: 'user',
     category: 'management',
     status: 'offline',
     description: 'Gestion des ressources humaines',
@@ -158,7 +158,7 @@ Aide sur les offres d'emploi, l'onboarding, le suivi des congés et les plans de
   finance: {
     id: 'finance',
     name: 'Comptable IA',
-    icon: '💳',
+    icon: 'card',
     category: 'finance',
     status: 'offline',
     description: 'Gestion financière et comptable',
@@ -172,7 +172,7 @@ Reste prudent: tu ne remplaces pas un expert-comptable et tu le rappelles si né
   legal: {
     id: 'legal',
     name: 'Legal Bot',
-    icon: '⚖️',
+    icon: 'shield',
     category: 'finance',
     status: 'offline',
     description: 'Assistant juridique et conformité',

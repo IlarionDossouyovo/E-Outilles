@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { NavigationArrows, Icon } from '@/components/Icons'
 import { useCartStore } from '@/lib/store/cart'
 import Link from 'next/link'
 import PageNavigation from '@/components/PageNavigation'
@@ -142,7 +143,7 @@ export default function CheckoutPage() {
         <div className="pt-24 pb-16 max-w-md mx-auto px-4 text-center">
           <div className="bg-ingco-gray rounded-3xl p-8">
             <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="text-4xl">✅</span>
+              <Icon name="check" className="w-10 h-10 text-green-400" />
             </div>
             <h1 className="text-2xl font-bold text-white mb-4">Commande confirmée!</h1>
             <div className="bg-ingco-dark rounded-xl p-3 mb-4">
@@ -156,9 +157,9 @@ export default function CheckoutPage() {
             <div className="bg-ingco-dark rounded-xl p-4 mb-6 text-left">
               <p className="text-gray-400 text-sm">Mode de paiement:</p>
               <p className="text-white font-bold">
-                {paymentMethod === 'cod' && '💵 Paiement à la livraison'}
-                {paymentMethod === 'momo' && '📱 Mobile Money'}
-                {paymentMethod === 'card' && '💳 Carte bancaire'}
+                {paymentMethod === 'cod' && 'Paiement à la livraison'}
+                {paymentMethod === 'momo' && 'Mobile Money'}
+                {paymentMethod === 'card' && 'Carte bancaire'}
               </p>
             </div>
             <div className="bg-ingco-dark rounded-xl p-4 mb-6 text-left">
@@ -304,7 +305,7 @@ export default function CheckoutPage() {
                         <p className="text-green-400 text-xs mt-1">Frais: 0€</p>
                         {paymentMethod === 'cod' && <span className="inline-block mt-2 text-xs bg-ingco-yellow/20 text-ingco-yellow px-2 py-1 rounded">Sélectionné</span>}
                       </div>
-                      <span className="text-2xl">📦</span>
+                      <Icon name="truck" className="w-6 h-6 text-ingco-yellow" />
                     </div>
                     <div 
                       onClick={() => setPaymentMethod('momo')}
@@ -315,7 +316,7 @@ export default function CheckoutPage() {
                         <p className="text-white font-bold">Mobile Money</p>
                         <p className="text-gray-400 text-sm">MTN, Moov, Orange Money</p>
                       </div>
-                      <span className="text-2xl">📱</span>
+                      <Icon name="phone" className="w-6 h-6 text-ingco-yellow" />
                     </div>
                     <div 
                       onClick={() => setPaymentMethod('card')}
@@ -328,7 +329,7 @@ export default function CheckoutPage() {
                         <p className="text-green-400 text-xs mt-1">Sécurisé par Stripe</p>
                         {paymentMethod === 'card' && <span className="inline-block mt-2 text-xs bg-ingco-yellow/20 text-ingco-yellow px-2 py-1 rounded">Sélectionné</span>}
                       </div>
-                      <span className="text-2xl">💳</span>
+                      <Icon name="card" className="w-6 h-6 text-ingco-yellow" />
                     </div>
                   </div>
 
@@ -361,7 +362,7 @@ export default function CheckoutPage() {
                           />
                         </div>
                         <p className="text-gray-400 text-sm">
-                          📱 Un code de paiement vous sera envoyé sur ce numéro
+                          Un code de paiement vous sera envoyé sur ce numéro
                         </p>
                       </div>
                     </div>
@@ -410,7 +411,7 @@ export default function CheckoutPage() {
                           />
                         </div>
                         <div className="flex items-center gap-2 mt-2">
-                          <span className="text-green-400">🔒</span>
+                          <Icon name="shield" className="w-4 h-4 text-green-400" />
                           <span className="text-gray-400 text-sm">Paiement sécurisé par Stripe</span>
                         </div>
                       </div>
@@ -437,7 +438,7 @@ export default function CheckoutPage() {
           {/* Summary */}
           <div className="bg-ingco-dark border-2 border-ingco-gray rounded-2xl p-6 h-fit sticky top-24">
             <div className="flex items-center gap-2 mb-4">
-              <span className="text-xl">🛒</span>
+              <Icon name="cart" className="w-5 h-5 text-ingco-yellow" />
               <h2 className="text-xl font-bold text-white">Votre commande</h2>
             </div>
             <div className="space-y-3 mb-4 max-h-40 overflow-y-auto">
@@ -458,7 +459,7 @@ export default function CheckoutPage() {
               </div>
               <div className="flex justify-between text-gray-400">
                 <span>Livraison</span>
-                <span className="text-green-400 font-medium">✓ Gratuit</span>
+                <span className="text-green-400 font-medium flex items-center gap-1"><Icon name="check" className="w-4 h-4" /> Gratuit</span>
               </div>
               <div className="flex justify-between text-white font-bold text-xl pt-2 border-t border-gray-700">
                 <span>Total</span>
@@ -471,6 +472,10 @@ export default function CheckoutPage() {
           </div>
         </div>
       </div>
+      <div className="max-w-7xl mx-auto px-4 pb-8">
+        <NavigationArrows current="/checkout" />
+      </div>
+
       <Footer />
     </div>
   )

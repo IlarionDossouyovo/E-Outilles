@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { NavigationArrows, Icon } from '@/components/Icons'
 import Link from 'next/link'
 import Logo from '@/components/Logo'
 
@@ -8,7 +9,7 @@ const services = [
   {
     id: 'consultation',
     name: 'Consultation Technique',
-    icon: '📋',
+    icon: 'blog',
     description: 'Conseils experts pour vos projets',
     price: 'Gratuit',
     duration: '30 min',
@@ -22,7 +23,7 @@ const services = [
   {
     id: 'installation',
     name: 'Installation & Montage',
-    icon: '🔧',
+    icon: 'tools',
     description: 'Installation professionnelle de vos equipements',
     price: 'A partir de 50€',
     duration: 'Selon projet',
@@ -36,7 +37,7 @@ const services = [
   {
     id: 'maintenance',
     name: 'Maintenance & Reparation',
-    icon: '🔩',
+    icon: 'wrench',
     description: 'Entretien et reparation de vos outils',
     price: 'A partir de 30€',
     duration: '24-48h',
@@ -50,7 +51,7 @@ const services = [
   {
     id: 'livraison',
     name: 'Livraison a Domicile',
-    icon: '🚚',
+    icon: 'truck',
     description: 'Livraison rapide dans tout le Benin',
     price: 'A partir de 5€',
     duration: '24-72h',
@@ -64,7 +65,7 @@ const services = [
   {
     id: 'formation',
     name: 'Formation Utilisation',
-    icon: '📚',
+    icon: 'star',
     description: 'Apprenez a utiliser vos outils',
     price: 'A partir de 25€',
     duration: '2-4 heures',
@@ -78,7 +79,7 @@ const services = [
   {
     id: 'location',
     name: 'Location de Materiel',
-    icon: '🔑',
+    icon: 'key',
     description: 'Louez vos outils pour vos projets',
     price: 'A partir de 10€/jour',
     duration: 'Flexible',
@@ -142,7 +143,7 @@ export default function ServicesPage() {
                 activeService.id === service.id ? 'ring-2 ring-ingco-yellow bg-ingco-yellow/10' : ''
               }`}
             >
-              <div className="text-4xl mb-4">{service.icon}</div>
+              <Icon name={service.icon as never} className="w-9 h-9 text-ingco-yellow mb-4" />
               <h3 className="text-white font-bold text-xl mb-2">{service.name}</h3>
               <p className="text-gray-400 text-sm mb-4">{service.description}</p>
               <div className="flex items-center justify-between">
@@ -163,7 +164,7 @@ export default function ServicesPage() {
       <section className="max-w-4xl mx-auto px-4 pb-16">
         <div className="bg-ingco-gray rounded-2xl p-8">
           <div className="flex items-center gap-4 mb-6">
-            <span className="text-5xl">{activeService.icon}</span>
+            <Icon name={activeService.icon as never} className="w-12 h-12 text-ingco-yellow" />
             <div>
               <h2 className="text-2xl font-bold text-white">{activeService.name}</h2>
               <p className="text-gray-400">{activeService.description}</p>
@@ -176,7 +177,7 @@ export default function ServicesPage() {
               <ul className="space-y-3">
                 {activeService.features.map((feature, index) => (
                   <li key={index} className="flex items-center gap-3 text-gray-300">
-                    <span className="text-green-500">✓</span>
+                    <Icon name="check" className="w-4 h-4 text-green-500 shrink-0" />
                     {feature}
                   </li>
                 ))}
@@ -210,7 +211,7 @@ export default function ServicesPage() {
             <div key={index} className="bg-ingco-gray rounded-xl p-6">
               <div className="flex gap-1 mb-3">
                 {[...Array(testimonial.rating)].map((_, i) => (
-                  <span key={i} className="text-ingco-yellow">⭐</span>
+                  <Icon key={i} name="star" className="w-4 h-4 text-ingco-yellow" />
                 ))}
               </div>
               <p className="text-gray-300 mb-4">"{testimonial.text}"</p>
@@ -239,6 +240,10 @@ export default function ServicesPage() {
       </section>
 
       {/* Footer */}
+      <div className="max-w-7xl mx-auto px-4 pb-8">
+        <NavigationArrows current="/services" />
+      </div>
+
       <footer className="bg-ingco-gray py-8">
         <div className="max-w-7xl mx-auto px-4 text-center text-gray-400">
           <p>&copy; 2026 E-Outilles. Tous droits reserves.</p>

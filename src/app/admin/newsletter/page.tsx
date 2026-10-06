@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import AdminAnalytics from '@/components/AdminAnalytics'
 import Logo from '@/components/Logo'
+import { Icon } from '@/components/Icons'
 
 interface Subscriber {
   id: string
@@ -97,7 +98,7 @@ export default function NewsletterPage() {
           {/* Composer */}
           <div className="lg:col-span-2 space-y-6">
             <div className="bg-ingco-gray rounded-2xl p-6">
-              <h2 className="text-xl font-bold text-white mb-4">✉️ Composer</h2>
+              <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2"><Icon name="chat" className="w-5 h-5 text-ingco-yellow" /> Composer</h2>
               
               {/* Modèles */}
               <div className="mb-4">
@@ -149,7 +150,7 @@ export default function NewsletterPage() {
                     : 'bg-ingco-yellow text-ingco-black hover:bg-yellow-400'
                 }`}
               >
-                {sending ? '⏳ Envoi en cours...' : `📤 Envoyer à ${subscribers.filter(s => s.status === 'active').length} abonnés`}
+                {sending ? 'Envoi en cours...' : `Envoyer à ${subscribers.filter(s => s.status === 'active').length} abonnés`}
               </button>
             </div>
           </div>
@@ -157,7 +158,7 @@ export default function NewsletterPage() {
           {/* Abonnés */}
           <div className="space-y-6">
             <div className="bg-ingco-gray rounded-2xl p-6">
-              <h2 className="text-xl font-bold text-white mb-4">👥 Abonnés ({subscribers.length})</h2>
+              <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2"><Icon name="user" className="w-5 h-5 text-ingco-yellow" /> Abonnés ({subscribers.length})</h2>
               
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {subscribers.map(sub => (
@@ -177,7 +178,7 @@ export default function NewsletterPage() {
             </div>
 
             <div className="bg-ingco-gray rounded-2xl p-6">
-              <h2 className="text-xl font-bold text-white mb-4">📊 Statistiques</h2>
+              <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2"><Icon name="grid" className="w-5 h-5 text-ingco-yellow" /> Statistiques</h2>
               <div className="space-y-3">
                 <div className="flex justify-between">
                   <span className="text-gray-400">Total abonnés</span>

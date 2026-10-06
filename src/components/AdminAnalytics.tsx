@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { Icon } from '@/components/Icons'
 
 interface AnalyticsData {
   totalOrders: number
@@ -36,7 +37,7 @@ export default function AdminAnalytics({ data }: { data: AnalyticsData }) {
         <div className="bg-ingco-dark rounded-xl p-6 border border-ingco-gray">
           <div className="flex items-center justify-between mb-4">
             <span className="text-gray-400">Total Commandes</span>
-            <span className="text-2xl">📦</span>
+            <Icon name="truck" className="w-6 h-6 text-ingco-yellow" />
           </div>
           <div className="text-3xl font-bold text-white">{data.totalOrders.toLocaleString()}</div>
           <div className="text-green-500 text-sm mt-2">↑ 12% ce mois</div>
@@ -45,7 +46,7 @@ export default function AdminAnalytics({ data }: { data: AnalyticsData }) {
         <div className="bg-ingco-dark rounded-xl p-6 border border-ingco-gray">
           <div className="flex items-center justify-between mb-4">
             <span className="text-gray-400">Revenu Total</span>
-            <span className="text-2xl">💰</span>
+            <Icon name="card" className="w-6 h-6 text-ingco-yellow" />
           </div>
           <div className="text-3xl font-bold text-white">{data.totalRevenue.toLocaleString()}€</div>
           <div className="text-green-500 text-sm mt-2">↑ 8% ce mois</div>
@@ -54,7 +55,7 @@ export default function AdminAnalytics({ data }: { data: AnalyticsData }) {
         <div className="bg-ingco-dark rounded-xl p-6 border border-ingco-gray">
           <div className="flex items-center justify-between mb-4">
             <span className="text-gray-400">Produits</span>
-            <span className="text-2xl">🔧</span>
+            <Icon name="tools" className="w-6 h-6 text-ingco-yellow" />
           </div>
           <div className="text-3xl font-bold text-white">{data.activeProducts}</div>
           <div className="text-green-500 text-sm mt-2">↑ 3 nouveaux</div>
@@ -63,7 +64,7 @@ export default function AdminAnalytics({ data }: { data: AnalyticsData }) {
         <div className="bg-ingco-dark rounded-xl p-6 border border-ingco-gray">
           <div className="flex items-center justify-between mb-4">
             <span className="text-gray-400">Abonnés</span>
-            <span className="text-2xl">📧</span>
+            <Icon name="chat" className="w-6 h-6 text-ingco-yellow" />
           </div>
           <div className="text-3xl font-bold text-white">{data.subscribers.toLocaleString()}</div>
           <div className="text-green-500 text-sm mt-2">↑ 45 nouveaux</div>
@@ -74,7 +75,7 @@ export default function AdminAnalytics({ data }: { data: AnalyticsData }) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Orders */}
         <div className="bg-ingco-dark rounded-xl p-6 border border-ingco-gray">
-          <h3 className="text-xl font-bold text-white mb-4">📦 Commandes Récentes</h3>
+          <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2"><Icon name="truck" className="w-5 h-5 text-ingco-yellow" /> Commandes Récentes</h3>
           <div className="space-y-3">
             {data.recentOrders.map((order) => (
               <div key={order.id} className="flex items-center justify-between p-3 bg-ingco-black rounded-lg">
@@ -98,7 +99,7 @@ export default function AdminAnalytics({ data }: { data: AnalyticsData }) {
 
         {/* Top Products */}
         <div className="bg-ingco-dark rounded-xl p-6 border border-ingco-gray">
-          <h3 className="text-xl font-bold text-white mb-4">🔥 Produits Populaires</h3>
+          <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2"><Icon name="star" className="w-5 h-5 text-ingco-yellow" /> Produits Populaires</h3>
           <div className="space-y-3">
             {data.topProducts.map((product, index) => (
               <div key={index} className="flex items-center justify-between p-3 bg-ingco-black rounded-lg">

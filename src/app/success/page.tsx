@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { Icon } from '@/components/Icons'
 import Logo from '@/components/Logo'
 
 export default function SuccessPage() {
@@ -16,7 +17,7 @@ export default function SuccessPage() {
     <div className="min-h-screen bg-ingco-black flex items-center justify-center p-4">
       <div className="bg-ingco-gray rounded-3xl p-8 max-w-md w-full text-center">
         <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-          <span className="text-4xl">✅</span>
+          <Icon name="check" className="w-10 h-10 text-green-400" />
         </div>
         <Logo variant="horizontal" size={40} />
         <h1 className="text-2xl font-bold text-white mt-4 mb-4">Paiement confirmé</h1>

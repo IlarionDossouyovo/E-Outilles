@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { NavigationArrows, Icon } from '@/components/Icons'
 import Link from 'next/link'
 import Logo from '@/components/Logo'
 
@@ -76,11 +77,11 @@ export default function DownloadPage() {
               disabled={!deferredPrompt}
               className="w-full bg-ingco-yellow text-ingco-black py-4 rounded-2xl font-bold text-lg hover:bg-yellow-400 transition-all hover:scale-[1.02] disabled:opacity-60 animate-fade-in-up"
             >
-              {installed ? '✅ Application installée' : '📲 Installer l\'application'}
+              {installed ? 'Application installée' : 'Installer l\'application'}
             </button>
 
             <div className="bg-ingco-gray rounded-2xl p-6 animate-fade-in-up">
-              <h2 className="text-white font-bold mb-3">📱 Sur Android (Chrome)</h2>
+              <h2 className="text-white font-bold mb-3 flex items-center gap-2"><Icon name="download" className="w-5 h-5 text-ingco-yellow" /> Sur Android (Chrome)</h2>
               <ol className="text-gray-300 text-sm space-y-2 list-decimal list-inside">
                 <li>Ouvrez le site dans Chrome</li>
                 <li>Menu ⋮ puis « Ajouter à l&apos;écran d&apos;accueil »</li>
@@ -89,16 +90,16 @@ export default function DownloadPage() {
             </div>
 
             <div className="bg-ingco-gray rounded-2xl p-6 animate-fade-in-up">
-              <h2 className="text-white font-bold mb-3">🍎 Sur iPhone (Safari)</h2>
+              <h2 className="text-white font-bold mb-3 flex items-center gap-2"><Icon name="download" className="w-5 h-5 text-ingco-yellow" /> Sur iPhone (Safari)</h2>
               <ol className="text-gray-300 text-sm space-y-2 list-decimal list-inside">
                 <li>Ouvrez le site dans Safari</li>
-                <li>Bouton Partager ⬆️</li>
+                <li>Bouton Partager</li>
                 <li>« Sur l&apos;écran d&apos;accueil » puis « Ajouter »</li>
               </ol>
             </div>
 
             <div className="bg-ingco-gray rounded-2xl p-6 animate-fade-in-up">
-              <h2 className="text-white font-bold mb-3">💻 Sur ordinateur</h2>
+              <h2 className="text-white font-bold mb-3 flex items-center gap-2"><Icon name="download" className="w-5 h-5 text-ingco-yellow" /> Sur ordinateur</h2>
               <p className="text-gray-300 text-sm">
                 Cliquez sur l&apos;icône d&apos;installation dans la barre d&apos;adresse de votre navigateur.
               </p>
@@ -111,6 +112,9 @@ export default function DownloadPage() {
             ← Retour à l&apos;accueil
           </Link>
         </div>
+      </div>
+      <div className="max-w-7xl mx-auto px-4 pb-8">
+        <NavigationArrows current="/telecharger" />
       </div>
     </div>
   )

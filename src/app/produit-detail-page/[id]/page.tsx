@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useCartStore } from '@/lib/store/cart'
 import { useWishlistStore } from '@/lib/store/wishlist'
 import Logo from '@/components/Logo'
+import { Icon, NavigationArrows } from '@/components/Icons'
 
 interface Product {
   id: string
@@ -58,14 +59,14 @@ export default function ProductPage() {
       category: product.category?.name || '',
     }
     for (let i = 0; i < quantity; i++) addItem(payload)
-    showToast(`✓ ${product.name} ajouté au panier`)
+    showToast(`${product.name} ajouté au panier`)
   }
 
   const handleWishlist = () => {
     if (!product) return
     if (isInWishlist(product.id)) {
       removeFromWishlist(product.id)
-      showToast('💔 Retiré des favoris')
+      showToast('Retiré des favoris')
     } else {
       addToWishlist({
         id: product.id,
@@ -74,7 +75,7 @@ export default function ProductPage() {
         image: product.images,
         category: product.category?.name || '',
       })
-      showToast('❤️ Ajouté aux favoris')
+      showToast('Ajouté aux favoris')
     }
   }
 
@@ -124,8 +125,8 @@ export default function ProductPage() {
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
           <Logo variant="horizontal" size={40} />
           <div className="flex items-center gap-4">
-            <Link href="/wishlist" className="text-xl">🤍</Link>
-            <Link href="/cart" className="text-xl">🛒</Link>
+            <Link href="/wishlist" aria-label="Favoris"><Icon name="heart" className="w-5 h-5 text-gray-300 hover:text-ingco-yellow" /></Link>
+            <Link href="/cart" aria-label="Panier"><Icon name="cart" className="w-5 h-5 text-gray-300 hover:text-ingco-yellow" /></Link>
           </div>
         </div>
       </nav>
@@ -137,7 +138,17 @@ export default function ProductPage() {
       )}
 
       <div className="pt-24 pb-16 max-w-7xl mx-auto px-4">
-        <Link href="/search" className="text-gray-400 hover:text-ingco-yellow text-sm">← Retour au catalogue</Link>
+        <div className="flex items-center gap-2 text-sm text-gray-400">
+          <Link href="/" className="hover:text-ingco-yellow">Accueil</Link>
+          <span>›</span>
+          <Link href="/search" className="hover:text-ingco-yellow">Catalogue</Link>
+          {product.category && (
+            <>
+              <span>›</span>
+              <Link href={`/categories/${product.category.slug}`} className="hover:text-ingco-yellow">{product.category.name}</Link>
+            </>
+          )}
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mt-6">
           <div className="bg-ingco-gray rounded-2xl flex items-center justify-center p-10 min-h-[320px]">
@@ -145,7 +156,7 @@ export default function ProductPage() {
               // eslint-disable-next-line @next/next/no-img-element
               <img src={images[0]} alt={product.name} className="max-h-72 object-contain" />
             ) : (
-              <span className="text-9xl">{product.category?.icon || '🔧'}</span>
+              <Icon name="tools" className="w-24 h-24 text-gray-600" />
             )}
           </div>
 
@@ -164,7 +175,7 @@ export default function ProductPage() {
             </div>
 
             <p className={`mb-6 text-sm ${product.stock > 0 ? 'text-green-500' : 'text-red-500'}`}>
-              {product.stock > 0 ? `✓ En stock (${product.stock})` : '✗ Rupture de stock'}
+              {product.stock > 0 ? `En stock (${product.stock})` : 'Rupture de stock'}
             </p>
 
             {features.length > 0 && (
@@ -205,7 +216,7 @@ export default function ProductPage() {
                 onClick={handleWishlist}
                 className={`px-5 rounded-xl border ${isInWishlist(product.id) ? 'border-ingco-yellow text-ingco-yellow' : 'border-ingco-gray text-gray-400'}`}
               >
-                {isInWishlist(product.id) ? '❤️' : '🤍'}
+                <Icon name="heart" className={`w-5 h-5 ${isInWishlist(product.id) ? 'fill-current' : ''}`} />
               </button>
             </div>
 
@@ -217,6 +228,10 @@ export default function ProductPage() {
               Commander maintenant
             </button>
           </div>
+        </div>
+
+        <div className="mt-12">
+          <NavigationArrows current="/search" />
         </div>
       </div>
     </div>

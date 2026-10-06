@@ -2,6 +2,35 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 import prisma from '@/lib/db/prisma'
 import { notFound } from 'next/navigation'
+import { NavigationArrows, Breadcrumb, Icon } from '@/components/Icons'
+import { blogCategoryImage } from '@/lib/catalog'
+
+function ShareButtons({ title, slug }: { title: string; slug: string }) {
+  const base = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://e-outilles.com'
+  const url = `${base.replace(/\/$/, '')}/blog/${slug}`
+  const enc = encodeURIComponent
+  const links = [
+    { label: 'Facebook', href: `https://www.facebook.com/sharer/sharer.php?u=${enc(url)}`, cls: 'bg-blue-600 hover:bg-blue-700' },
+    { label: 'WhatsApp', href: `https://wa.me/?text=${enc(title + ' ' + url)}`, cls: 'bg-green-600 hover:bg-green-700' },
+    { label: 'X', href: `https://twitter.com/intent/tweet?text=${enc(title)}&url=${enc(url)}`, cls: 'bg-sky-500 hover:bg-sky-600' },
+    { label: 'LinkedIn', href: `https://www.linkedin.com/sharing/share-offsite/?url=${enc(url)}`, cls: 'bg-linkedin hover:opacity-90' },
+  ]
+  return (
+    <div className="flex flex-wrap gap-2">
+      <span className="text-gray-500 mr-2">Partager :</span>
+      {links.map((l) => (
+        <a key={l.label} href={l.href} target="_blank" rel="noopener noreferrer"
+           className={`px-4 py-2 rounded-lg text-white transition-colors ${l.cls}`}>
+          {l.label}
+        </a>
+      ))}
+      <a href={`/api/qrcode?url=${enc(url)}`} download="article-qr.png"
+         className="px-4 py-2 bg-ingco-gray rounded-lg text-white hover:bg-gray-700 inline-flex items-center gap-2">
+        <Icon name="qr" className="w-4 h-4" /> QR
+      </a>
+    </div>
+  )
+}
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -18,13 +47,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-const categoryIcons: Record<string, string> = {
-  'Construction': '🏗️',
-  'Électricité': '⚡',
-  'Garage': '🚗',
-  'Jardinage': '🌿',
-  'Conseils': '🛠️'
-}
+
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params
@@ -48,17 +71,13 @@ export default async function BlogPostPage({ params }: Props) {
   return (
     <div className="min-h-screen bg-ingco-black pt-24 pb-20">
       <div className="max-w-4xl mx-auto px-4">
-        {/* Back Button */}
-        <div className="mb-6">
-          <Link href="/blog" className="inline-flex items-center gap-2 text-ingco-yellow hover:text-yellow-400 transition-colors">
-            <span>←</span> Retour au blog
-          </Link>
-        </div>
+        <Breadcrumb items={[{ label: 'Blog', href: '/blog' }, { label: post.category || 'Article' }]} />
 
         {/* Article Header */}
         <header className="mb-8">
           <div className="flex items-center gap-3 mb-4">
-            <span className="text-2xl">{categoryIcons[post.category || 'Conseils'] || '📝'}</span>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={blogCategoryImage(post.category)} alt="" className="w-8 h-8 object-cover rounded-full" />
             <span className="text-ingco-yellow font-medium">{post.category}</span>
             <span className="text-gray-500">•</span>
             <span className="text-gray-500">{new Date(post.createdAt).toLocaleDateString('fr-FR')}</span>
@@ -78,8 +97,13 @@ export default async function BlogPostPage({ params }: Props) {
         </header>
 
         {/* Featured Image */}
-        <div className="bg-ingco-dark rounded-2xl p-12 mb-8 text-center text-8xl">
-          {categoryIcons[post.category || 'Conseils'] || '📝'}
+        <div className="bg-ingco-dark rounded-2xl overflow-hidden mb-8">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={post.image || blogCategoryImage(post.category)}
+            alt={post.title}
+            className="w-full h-64 md:h-80 object-cover"
+          />
         </div>
 
         {/* Article Content */}
@@ -94,18 +118,7 @@ export default async function BlogPostPage({ params }: Props) {
 
         {/* Share & Tags */}
         <div className="mt-12 pt-8 border-t border-ingco-gray">
-          <div className="flex flex-wrap gap-2">
-            <span className="text-gray-500 mr-2">Partager:</span>
-            <button className="px-4 py-2 bg-blue-600 rounded-lg text-white hover:bg-blue-700">
-              Facebook
-            </button>
-            <button className="px-4 py-2 bg-sky-500 rounded-lg text-white hover:bg-sky-600">
-              Twitter
-            </button>
-            <button className="px-4 py-2 bg-linkedin rounded-lg text-white hover:bg-linkedin">
-              LinkedIn
-            </button>
-          </div>
+          <ShareButtons title={post.title} slug={post.slug} />
         </div>
 
         {/* Related Posts */}
@@ -124,11 +137,16 @@ export default async function BlogPostPage({ params }: Props) {
                 href={`/blog/${p.slug}`}
                 className="block bg-ingco-gray rounded-xl p-4 hover:bg-gray-700 transition-colors"
               >
-                <span className="text-2xl mr-2">{categoryIcons[p.category || 'Conseils']}</span>
-                <span className="text-white">{p.title}</span>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={blogCategoryImage(p.category)} alt="" className="w-10 h-10 object-cover rounded-lg inline-block mr-3 align-middle" />
+                <span className="text-white align-middle">{p.title}</span>
               </Link>
             )))}
           </div>
+        </div>
+
+        <div className="mt-12">
+          <NavigationArrows current="/blog" />
         </div>
       </div>
     </div>

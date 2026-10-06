@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { COOKIE_CONSENT_KEY, defaultConsent, UserConsent } from '@/lib/security/gdpr'
+import { Icon } from '@/components/Icons'
 
 interface CookieConsentProps {
   onConsent?: (consent: UserConsent) => void
@@ -44,8 +45,8 @@ export default function CookieConsent({ onConsent }: CookieConsentProps) {
       <div className="max-w-4xl mx-auto bg-ingco-gray rounded-2xl p-6 shadow-2xl border border-ingco-dark">
         <div className="flex flex-col md:flex-row gap-6 items-start">
           <div className="flex-1">
-            <h3 className="text-xl font-bold text-white mb-2">
-              🍪 Respect de votre vie privée
+            <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
+              <Icon name="shield" className="w-5 h-5 text-ingco-yellow" /> Respect de votre vie privée
             </h3>
             <p className="text-gray-400 text-sm">
               Nous utilisons des cookies pour améliorer votre expérience. 

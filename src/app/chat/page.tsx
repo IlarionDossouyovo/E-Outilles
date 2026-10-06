@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import Logo from '@/components/Logo'
+import { Icon } from '@/components/Icons'
 import { useVoice } from '@/lib/ai/useVoice'
 
 interface Message {
@@ -12,12 +13,12 @@ interface Message {
 }
 
 const AGENT_OPTIONS = [
-  { id: 'assistant', name: 'Assistant IA', icon: '🤖', desc: 'Généraliste' },
-  { id: 'sales', name: 'Vendeur Bot', icon: '💼', desc: 'Vente & conseils' },
-  { id: 'support', name: 'Support Client', icon: '🎧', desc: 'SAV & retours' },
-  { id: 'tracking', name: 'Suivi Commande', icon: '📦', desc: 'Livraison' },
-  { id: 'marketing', name: 'Marketing Bot', icon: '📢', desc: 'Contenus' },
-  { id: 'analytics', name: 'Analyste Data', icon: '📊', desc: 'Chiffres' },
+  { id: 'assistant', name: 'Assistant IA', icon: 'chat', desc: 'Généraliste' },
+  { id: 'sales', name: 'Vendeur Bot', icon: 'card', desc: 'Vente & conseils' },
+  { id: 'support', name: 'Support Client', icon: 'phone', desc: 'SAV & retours' },
+  { id: 'tracking', name: 'Suivi Commande', icon: 'truck', desc: 'Livraison' },
+  { id: 'marketing', name: 'Marketing Bot', icon: 'star', desc: 'Contenus' },
+  { id: 'analytics', name: 'Analyste Data', icon: 'blog', desc: 'Chiffres' },
 ]
 
 export default function ChatPage() {
@@ -105,7 +106,7 @@ export default function ChatPage() {
                 voiceReplies ? 'bg-ingco-yellow text-ingco-black font-bold' : 'bg-ingco-gray text-gray-300 hover:text-ingco-yellow'
               }`}
             >
-              {speaking ? '🔊 Voix active' : voiceReplies ? '🔈 Voix' : '🔇 Voix'}
+              {speaking ? 'Voix active' : voiceReplies ? 'Voix' : 'Voix off'}
             </button>
           ) : <span className="w-16" />}
         </div>
@@ -122,7 +123,7 @@ export default function ChatPage() {
                   : 'bg-ingco-gray text-gray-300 hover:bg-gray-700'
               }`}
             >
-              <span className="text-lg">{a.icon}</span>
+              <Icon name={a.icon as never} className="w-5 h-5" />
               <span className="whitespace-nowrap">{a.name}</span>
             </button>
           ))}
@@ -170,7 +171,7 @@ export default function ChatPage() {
                 listening ? 'bg-red-500 text-white animate-pulse' : 'bg-ingco-gray text-gray-300 hover:text-ingco-yellow'
               }`}
             >
-              🎤
+              <Icon name="phone" className="w-5 h-5" />
             </button>
           )}
           <button
@@ -178,7 +179,7 @@ export default function ChatPage() {
             disabled={loading || !input.trim()}
             className="bg-ingco-yellow hover:bg-yellow-400 disabled:bg-ingco-gray disabled:text-gray-500 text-ingco-black font-bold px-6 py-3 rounded-xl transition-all"
           >
-            ➤
+            <Icon name="chat" className="w-5 h-5" />
           </button>
         </div>
 

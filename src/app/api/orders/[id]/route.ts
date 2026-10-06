@@ -1,9 +1,40 @@
 // Order status update - admin only
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db/prisma'
-import { requireAdmin } from '@/lib/security/auth'
+import { requireAdmin, getSession } from '@/lib/security/auth'
 
 const ALLOWED = ['pending', 'processing', 'paid', 'shipped', 'delivered', 'cancelled']
+
+export async function GET(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  const session = await getSession()
+  if (!session) {
+    return NextResponse.json({ error: 'Non authentifie' }, { status: 401 })
+  }
+
+  try {
+    const order = await prisma.order.findUnique({
+      where: { id: params.id },
+      include: { items: { include: { product: true } }, user: { select: { id: true, name: true, email: true } } },
+    })
+
+    if (!order) {
+      return NextResponse.json({ error: 'Commande introuvable' }, { status: 404 })
+    }
+
+    // Owners and admins only.
+    if (session.role !== 'admin' && order.userId !== session.id) {
+      return NextResponse.json({ error: 'Accès refusé' }, { status: 403 })
+    }
+
+    return NextResponse.json(order)
+  } catch (error) {
+    console.error('Order fetch error:', error)
+    return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })
+  }
+}
 
 export async function PATCH(
   request: Request,

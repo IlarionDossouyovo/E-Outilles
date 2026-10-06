@@ -3,13 +3,14 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Logo from '@/components/Logo'
+import { Icon } from '@/components/Icons'
 
 const founder = {
   name: 'Ilarion Dossouyovo',
   role: 'Fondateur & PDG',
   email: 'ilarion@e-outilles.com',
   phone: '+229 01 977 003 47',
-  avatar: '👨‍💼',
+  avatar: 'user',
   since: '2024',
   vision: 'Démocratiser l\'accès aux outils professionnels de qualité pour tous les artisans du monde'
 }
@@ -107,7 +108,7 @@ export default function AgentDashboard() {
       <div className="min-h-screen bg-ingco-black flex items-center justify-center p-4">
         <div className="bg-ingco-gray rounded-2xl p-8 max-w-md w-full">
           <div className="text-center mb-6">
-            <div className="text-5xl mb-4">🔐</div>
+            <Icon name="shield" className="w-12 h-12 text-ingco-yellow mx-auto mb-4" />
             <h1 className="text-2xl font-bold text-white">Accès Réservé</h1>
             <p className="text-gray-400 mt-2">Entrez votre code secret pour accéder aux agents IA</p>
           </div>
@@ -164,7 +165,7 @@ export default function AgentDashboard() {
 
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white">🤖 Tableau de Bord Agents IA</h1>
+          <h1 className="text-3xl font-bold text-white flex items-center gap-3"><Icon name="chat" className="w-8 h-8 text-ingco-yellow" /> Tableau de Bord Agents IA</h1>
           <p className="text-gray-400">Gestion des assistants virtuels et automatisations</p>
         </div>
 
@@ -184,10 +185,10 @@ export default function AgentDashboard() {
               <p className="text-purple-200 font-semibold text-lg">{founder.role}</p>
               <div className="flex flex-wrap justify-center md:justify-start gap-4 mt-3">
                 <a href={`mailto:${founder.email}`} className="flex items-center gap-2 text-purple-100 hover:text-white transition-colors">
-                  <span>📧</span> {founder.email}
+                  <Icon name="chat" className="w-4 h-4" /> {founder.email}
                 </a>
                 <a href={`tel:${founder.phone}`} className="flex items-center gap-2 text-purple-100 hover:text-white transition-colors">
-                  <span>📞</span> {founder.phone}
+                  <Icon name="phone" className="w-4 h-4" /> {founder.phone}
                 </a>
               </div>
             </div>
@@ -203,7 +204,7 @@ export default function AgentDashboard() {
           <div className="bg-ingco-gray rounded-2xl p-6">
             <div className="flex items-center justify-between mb-4">
               <span className="text-gray-400 text-sm">Total Agents</span>
-              <span className="w-10 h-10 bg-purple-500/20 rounded-xl flex items-center justify-center">🤖</span>
+              <span className="w-10 h-10 bg-purple-500/20 rounded-xl flex items-center justify-center"><Icon name="chat" className="w-5 h-5 text-purple-400" /></span>
             </div>
             <div className="text-3xl font-bold text-white">{stats.totalAgents}</div>
             <div className="text-gray-500 text-sm mt-1">Configurés</div>
@@ -212,7 +213,7 @@ export default function AgentDashboard() {
           <div className="bg-ingco-gray rounded-2xl p-6">
             <div className="flex items-center justify-between mb-4">
               <span className="text-gray-400 text-sm">Agents actifs</span>
-              <span className="w-10 h-10 bg-green-500/20 rounded-xl flex items-center justify-center">✓</span>
+              <span className="w-10 h-10 bg-green-500/20 rounded-xl flex items-center justify-center"><Icon name="check" className="w-5 h-5 text-green-500" /></span>
             </div>
             <div className="text-3xl font-bold text-green-500">{stats.activeAgents}/{stats.totalAgents}</div>
             <div className="text-gray-500 text-sm mt-1">En ligne</div>
@@ -221,7 +222,7 @@ export default function AgentDashboard() {
           <div className="bg-ingco-gray rounded-2xl p-6">
             <div className="flex items-center justify-between mb-4">
               <span className="text-gray-400 text-sm">Conversations</span>
-              <span className="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center">💬</span>
+              <span className="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center"><Icon name="chat" className="w-5 h-5 text-blue-400" /></span>
             </div>
             <div className="text-3xl font-bold text-white">{stats.totalConversations}</div>
             <div className="text-green-500 text-sm mt-1">+23% ce mois</div>
@@ -230,7 +231,7 @@ export default function AgentDashboard() {
           <div className="bg-ingco-gray rounded-2xl p-6">
             <div className="flex items-center justify-between mb-4">
               <span className="text-gray-400 text-sm">Hors ligne</span>
-              <span className="w-10 h-10 bg-gray-500/20 rounded-xl flex items-center justify-center">💤</span>
+              <span className="w-10 h-10 bg-gray-500/20 rounded-xl flex items-center justify-center"><Icon name="user" className="w-5 h-5 text-gray-400" /></span>
             </div>
             <div className="text-3xl font-bold text-gray-400">{stats.offlineAgents}</div>
             <div className="text-gray-500 text-sm mt-1">À activer</div>
@@ -239,7 +240,7 @@ export default function AgentDashboard() {
 
         {/* Agents List with Animation */}
         <div className="bg-ingco-gray rounded-2xl p-6">
-          <h2 className="text-xl font-bold text-white mb-6">🤖 Agents IA Disponibles</h2>
+          <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2"><Icon name="chat" className="w-5 h-5 text-ingco-yellow" /> Agents IA Disponibles</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {agents.map((agent, index) => (
               <div 
@@ -248,12 +249,12 @@ export default function AgentDashboard() {
                 style={{ animationDelay: `${index * 100}ms` }}
               >
                 <div className="flex items-start gap-4">
-                  <div className="text-3xl group-hover:scale-110 transition-transform duration-300">{agent.icon}</div>
+                  <div className="group-hover:scale-110 transition-transform duration-300"><Icon name={agent.icon as never} className="w-8 h-8 text-ingco-yellow" /></div>
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
                       <h3 className="text-white font-semibold group-hover:text-ingco-yellow transition-colors">{agent.name}</h3>
                       <span className={`text-xs px-2 py-1 rounded ${agent.status === 'online' ? 'bg-green-500/20 text-green-500' : 'bg-gray-500/20 text-gray-500'}`}>
-                        {agent.status === 'online' ? '🟢 En ligne' : '⚪ Hors ligne'}
+                        {agent.status === 'online' ? 'En ligne' : 'Hors ligne'}
                       </span>
                     </div>
                     <p className="text-purple-400 text-sm font-medium mt-1">{agent.description}</p>
@@ -275,7 +276,7 @@ export default function AgentDashboard() {
 
         {/* Extra Agents - Management & Marketing */}
         <div className="bg-ingco-gray rounded-2xl p-6 mt-8">
-          <h2 className="text-xl font-bold text-white mb-6">⚙️ Agents Avancés (Management & Marketing)</h2>
+          <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-2"><Icon name="settings" className="w-5 h-5 text-ingco-yellow" /> Agents Avancés (Management &amp; Marketing)</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {extraAgents.map((agent, index) => (
               <div 
@@ -284,12 +285,12 @@ export default function AgentDashboard() {
                 style={{ animationDelay: `${index * 50}ms` }}
               >
                 <div className="flex items-start gap-3">
-                  <div className="text-2xl group-hover:scale-110 transition-transform duration-300">{agent.icon}</div>
+                  <div className="group-hover:scale-110 transition-transform duration-300"><Icon name={agent.icon as never} className="w-6 h-6 text-white" /></div>
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
                       <h3 className="text-white font-semibold group-hover:text-white">{agent.name}</h3>
                       <span className={`text-xs px-2 py-1 rounded bg-white/20 ${agent.status === 'online' ? 'text-green-300' : 'text-gray-300'}`}>
-                        {agent.status === 'online' ? '🟢' : '⚪'}
+                        {agent.status === 'online' ? 'En ligne' : 'Hors ligne'}
                       </span>
                     </div>
                     <p className="text-white/80 text-sm mt-1">{agent.description}</p>
@@ -301,7 +302,7 @@ export default function AgentDashboard() {
                     <div className="mt-2 flex items-center justify-between">
                       <span className="text-white/60 text-xs">{agent.conversations} conv.</span>
                       <button 
-                        onClick={() => alert(`⚙️ ${agent.name}\n\n${agent.description}\n\nFonctionnalités:\n${agent.features?.join('\n')}`)}
+                        onClick={() => alert(`${agent.name}\n\n${agent.description}\n\nFonctionnalités:\n${agent.features?.join('\n')}`)}
                         className="text-xs text-white underline"
                       >
                         Config →
@@ -317,22 +318,22 @@ export default function AgentDashboard() {
         {/* Quick Actions with Animation */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
           <Link href="/chat" className="bg-ingco-gray rounded-xl p-4 hover:bg-gray-700 hover:scale-110 transition-all duration-300 block text-center">
-            <div className="text-2xl mb-1">🤖</div>
+            <Icon name="chat" className="w-6 h-6 text-ingco-yellow mx-auto mb-1" />
             <h3 className="text-white font-bold text-sm">Assistant</h3>
           </Link>
 
           <Link href="/admin" className="bg-ingco-gray rounded-xl p-4 hover:bg-gray-700 transition-colors block text-center">
-            <div className="text-2xl mb-1">📊</div>
+            <Icon name="grid" className="w-6 h-6 text-ingco-yellow mx-auto mb-1" />
             <h3 className="text-white font-bold text-sm">Dashboard</h3>
           </Link>
 
           <Link href="/admin/orders" className="bg-ingco-gray rounded-xl p-4 hover:bg-gray-700 transition-colors block text-center">
-            <div className="text-2xl mb-1">📦</div>
+            <Icon name="truck" className="w-6 h-6 text-ingco-yellow mx-auto mb-1" />
             <h3 className="text-white font-bold text-sm">Commandes</h3>
           </Link>
 
           <Link href="/" className="bg-ingco-gray rounded-xl p-4 hover:bg-gray-700 transition-colors block text-center">
-            <div className="text-2xl mb-1">🏠</div>
+            <Icon name="home" className="w-6 h-6 text-ingco-yellow mx-auto mb-1" />
             <h3 className="text-white font-bold text-sm">Accueil</h3>
           </Link>
         </div>

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import AdminAnalytics from '@/components/AdminAnalytics'
 import Logo from '@/components/Logo'
+import { Icon } from '@/components/Icons'
 
 interface RecentOrder {
   id: string
@@ -99,7 +100,7 @@ export default function AdminDashboard() {
             <Link href="/contact" className="text-gray-300 hover:text-ingco-yellow">Messages</Link>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-gray-400 text-sm">👤 Admin</span>
+            <span className="text-gray-400 text-sm flex items-center gap-2"><Icon name="user" className="w-4 h-4" /> Admin</span>
           </div>
         </div>
       </nav>
@@ -138,7 +139,7 @@ export default function AdminDashboard() {
           <div className="bg-ingco-gray rounded-2xl p-6">
             <div className="flex items-center justify-between mb-4">
               <span className="text-gray-400 text-sm">Commandes totales</span>
-              <span className="w-10 h-10 bg-ingco-yellow/20 rounded-xl flex items-center justify-center">📦</span>
+              <span className="w-10 h-10 bg-ingco-yellow/20 rounded-xl flex items-center justify-center"><Icon name="truck" className="w-5 h-5 text-ingco-yellow" /></span>
             </div>
             <div className="text-3xl font-bold text-white">{stats.totalOrders.toLocaleString()}</div>
             <div className="text-green-500 text-sm mt-1">+12% ce mois</div>
@@ -147,7 +148,7 @@ export default function AdminDashboard() {
           <div className="bg-ingco-gray rounded-2xl p-6">
             <div className="flex items-center justify-between mb-4">
               <span className="text-gray-400 text-sm">Chiffre d'affaires</span>
-              <span className="w-10 h-10 bg-ingco-yellow/20 rounded-xl flex items-center justify-center">💰</span>
+              <span className="w-10 h-10 bg-ingco-yellow/20 rounded-xl flex items-center justify-center"><Icon name="card" className="w-5 h-5 text-ingco-yellow" /></span>
             </div>
             <div className="text-3xl font-bold text-ingco-yellow">{stats.totalRevenue.toLocaleString()}€</div>
             <div className="text-green-500 text-sm mt-1">+8% ce mois</div>
@@ -156,7 +157,7 @@ export default function AdminDashboard() {
           <div className="bg-ingco-gray rounded-2xl p-6">
             <div className="flex items-center justify-between mb-4">
               <span className="text-gray-400 text-sm">Produits actifs</span>
-              <span className="w-10 h-10 bg-ingco-yellow/20 rounded-xl flex items-center justify-center">🛠️</span>
+              <span className="w-10 h-10 bg-ingco-yellow/20 rounded-xl flex items-center justify-center"><Icon name="tools" className="w-5 h-5 text-ingco-yellow" /></span>
             </div>
             <div className="text-3xl font-bold text-white">{stats.activeProducts}</div>
             <div className="text-gray-500 text-sm mt-1">5 nouveaux ce mois</div>
@@ -165,7 +166,7 @@ export default function AdminDashboard() {
           <div className="bg-ingco-gray rounded-2xl p-6">
             <div className="flex items-center justify-between mb-4">
               <span className="text-gray-400 text-sm">Newsletter Abonnés</span>
-              <span className="w-10 h-10 bg-ingco-yellow/20 rounded-xl flex items-center justify-center">📧</span>
+              <span className="w-10 h-10 bg-ingco-yellow/20 rounded-xl flex items-center justify-center"><Icon name="chat" className="w-5 h-5 text-ingco-yellow" /></span>
             </div>
             <div className="text-3xl font-bold text-white">{stats.subscribers.toLocaleString()}</div>
             <div className="text-green-500 text-sm mt-1">+156 ce mois</div>
@@ -228,23 +229,23 @@ export default function AdminDashboard() {
         {/* Quick Actions */}
         <div className="mt-8 grid grid-cols-2 md:grid-cols-5 gap-4">
           <Link href="/admin/add-product" className="bg-ingco-gray p-4 rounded-xl text-center hover:bg-ingco-dark transition-colors block">
-            <span className="text-2xl block mb-2">➕</span>
+            <Icon name="grid" className="w-6 h-6 text-ingco-yellow mx-auto mb-2" />
             <span className="text-white text-sm">Ajouter produit</span>
           </Link>
           <Link href="/admin/orders" className="bg-ingco-gray p-4 rounded-xl text-center hover:bg-ingco-dark transition-colors block">
-            <span className="text-2xl block mb-2">📦</span>
+            <Icon name="truck" className="w-6 h-6 text-ingco-yellow mx-auto mb-2" />
             <span className="text-white text-sm">Gérer commandes</span>
           </Link>
           <Link href="/admin/newsletter" className="bg-ingco-gray p-4 rounded-xl text-center hover:bg-ingco-dark transition-colors block">
-            <span className="text-2xl block mb-2">📧</span>
+            <Icon name="chat" className="w-6 h-6 text-ingco-yellow mx-auto mb-2" />
             <span className="text-white text-sm">Newsletter</span>
           </Link>
           <Link href="/agent" className="bg-ingco-gray p-4 rounded-xl text-center hover:bg-ingco-dark transition-colors block">
-            <span className="text-2xl block mb-2">🤖</span>
+            <Icon name="user" className="w-6 h-6 text-ingco-yellow mx-auto mb-2" />
             <span className="text-white text-sm">Agents IA</span>
           </Link>
           <Link href="/admin/settings" className="bg-ingco-gray p-4 rounded-xl text-center hover:bg-ingco-dark transition-colors block">
-            <span className="text-2xl block mb-2">⚙️</span>
+            <Icon name="settings" className="w-6 h-6 text-ingco-yellow mx-auto mb-2" />
             <span className="text-white text-sm">Paramètres</span>
           </Link>
         </div>

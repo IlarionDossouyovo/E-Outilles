@@ -81,7 +81,12 @@ export default function AddProductPage() {
     }
   }
 
-  const icons = ['🔩', '⚒️', '⚙️', '📊', '🔌', '📡', '🔧', '🚗', '💨', '🌿', '🪚', '💧']
+  const productImages = [
+    'perceuse-visseuse', 'meuleuse-230', 'marteau-perforateur', 'scie-circulaire',
+    'battery', 'charger', 'compressor', 'generator', 'coffret', 'kit-cles',
+    'pince-sertir', 'multimetre', 'casque', 'gants', 'lunettes', 'niveau-laser',
+    'tournevis-isole', 'tronconneuse', 'tondeuse', 'pulverisateur',
+  ]
 
   return (
     <div className="min-h-screen bg-ingco-black">
@@ -193,26 +198,30 @@ export default function AddProductPage() {
             </div>
           </div>
 
-          {/* Icône */}
+          {/* Image */}
           <div>
-            <label className="text-gray-400 text-sm mb-2 block">Icône</label>
-            <div className="flex flex-wrap gap-2">
-              {icons.map(icon => (
-                <button
-                  key={icon}
-                  type="button"
-                  onClick={() => setImage(icon)}
-                  className={`w-12 h-12 rounded-xl text-2xl flex items-center justify-center border-2 transition-all ${
-                    image === icon 
-                      ? 'border-ingco-yellow bg-ingco-yellow/20' 
-                      : 'border-ingco-dark hover:border-gray-600'
-                  }`}
-                >
-                  {icon}
-                </button>
-              ))}
+            <label className="text-gray-400 text-sm mb-2 block">Image</label>
+            <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
+              {productImages.map((img) => {
+                const src = `/products/${img}.svg`
+                return (
+                  <button
+                    key={img}
+                    type="button"
+                    onClick={() => setImage(src)}
+                    className={`aspect-square rounded-xl flex items-center justify-center border-2 transition-all p-2 bg-ingco-black ${
+                      image === src
+                        ? 'border-ingco-yellow bg-ingco-yellow/20'
+                        : 'border-ingco-dark hover:border-gray-600'
+                    }`}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={src} alt={img} className="w-full h-full object-contain" />
+                  </button>
+                )
+              })}
             </div>
-            {image && <p className="text-gray-400 text-sm mt-2">Sélectionné: {image}</p>}
+            {image && <p className="text-gray-400 text-sm mt-2">Sélectionné : {image}</p>}
           </div>
 
           {/* Description */}
@@ -234,7 +243,7 @@ export default function AddProductPage() {
               disabled={loading}
               className="flex-1 bg-ingco-yellow text-ingco-black py-4 rounded-xl font-bold hover:bg-yellow-400 transition-colors disabled:opacity-50"
             >
-              {loading ? '⏳ Ajout...' : '➕ Ajouter le produit'}
+              {loading ? 'Ajout...' : 'Ajouter le produit'}
             </button>
             <Link 
               href="/admin"
