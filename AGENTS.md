@@ -33,3 +33,21 @@ Persistent notes for working on the E-Outilles codebase.
 - Voice hook: `src/lib/ai/useVoice.ts` (TTS + dictation).
 - PWA: `/telecharger` page + `GET /api/qrcode` (PNG) + `ServiceWorkerRegister` registering `/sw.js`.
 - `prisma/dev.db` is gitignored; local SQLite only.
+
+## UI chrome & animations (session 2026-10-05)
+- `src/components/Header.tsx` is the single main navigation (search, cart/wishlist
+  counters, `AuthButton`, Commander CTA, animated underline, mobile panel).
+  `src/components/Footer.tsx` is the shared footer.
+- `src/components/SiteChrome.tsx` (rendered in `src/app/layout.tsx`) injects
+  Header/Footer on public routes and a `page-enter` transition keyed on
+  `pathname`. Routes under `/admin`, `/agent`, `/vendeur`, `/auth` keep their own
+  chrome (listed in `BARE_PREFIXES`).
+- Do NOT add a per-page `<nav>`/`<footer>`: public pages rely on `layout.tsx`.
+  Dashboards are the only place that should render their own chrome.
+- Scroll animations: wrap sections in `<Reveal>` (`src/components/Reveal.tsx`,
+  `.reveal`/`.is-visible` in `globals.css`). Entrance utilities: `animate-fade-in-up`,
+  `animate-fade-in`, `animate-pop-in` + `stagger-1..6`. Card hover: `card-premium`.
+- Respect `prefers-reduced-motion` (handled globally in `globals.css`).
+- If dynamic routes 500 with `Cannot find module './vendor-chunks/...'`, the
+  `.next` cache is stale (dev server ran during a `next build`). Stop dev,
+  `rm -rf .next`, restart `npm run dev`.
