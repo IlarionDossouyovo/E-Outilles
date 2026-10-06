@@ -3,7 +3,18 @@
 export const SESSION_COOKIE = 'session'
 export const SESSION_MAX_AGE = 60 * 60 * 24 * 7 // 7 days
 
-const SECRET = process.env.SESSION_SECRET || 'e-outilles-dev-secret-change-me'
+const DEFAULT_SECRET = 'e-outilles-dev-secret-change-me'
+const SECRET = process.env.SESSION_SECRET || DEFAULT_SECRET
+
+// Warn loudly when production runs with the insecure fallback secret.
+// (We do not throw, so a missing SESSION_SECRET never takes the site down;
+// scripts/update.ps1 generates one automatically on first run.)
+if (process.env.NODE_ENV === 'production' && SECRET === DEFAULT_SECRET) {
+  console.warn(
+    '[security] SESSION_SECRET is not set - using the insecure development default. ' +
+      'Define SESSION_SECRET in .env (48+ random characters) before going live.'
+  )
+}
 
 export interface SessionUser {
   id: string

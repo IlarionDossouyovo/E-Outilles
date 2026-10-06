@@ -68,3 +68,24 @@ Persistent notes for working on the E-Outilles codebase.
   `P2021: The table 'main.Category' does not exist` during `next build`.
 - `scripts/update.ps1` always runs `prisma db seed` (no longer skipped when
   `dev.db` exists) to avoid the empty-DB build failure on the local machine.
+
+## SEO & error pages (session 2026-10-05)
+- `src/app/sitemap.ts` (dynamic, ~119 URLs) and `src/app/robots.ts` replace the
+  old static `public/robots.txt` / `public/sitemap.xml` (deleted). `robots.ts`
+  disallows `/admin`, `/profile`, `/cart`, `/wishlist`, `/checkout`, `/orders`,
+  `/auth`.
+- `src/app/opengraph-image.tsx` renders the branded 1200x630 OG image
+  (`next/og`, `runtime = 'nodejs'`). Root `layout.tsx` sets `metadataBase` +
+  Open Graph/Twitter defaults; per-page OG/canonical on category, blog and
+  product pages.
+- Client-component routes (`about`, `services`, `contact`, `formations`,
+  `revendeurs`, `categories`, `search`, `telecharger`) cannot export `metadata`,
+  so each has a tiny `layout.tsx` that exports it. `produit-detail-page/[id]`
+  does the same to add per-product SEO without refactoring the client page.
+- Global `src/app/not-found.tsx` (404) and `src/app/error.tsx` (client error
+  boundary) render branded fallbacks with links back to home/categories/search.
+- `SESSION_SECRET`: `src/lib/security/session.ts` warns (not throws) in
+  production when it falls back to the dev default, so a missing secret never
+  breaks `npm start`. `scripts/update.ps1` generates a 48-char secret into `.env`
+  when the value is absent or still a `changez-…` placeholder.
+

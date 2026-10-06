@@ -8,8 +8,8 @@ $ErrorActionPreference = "Stop"
 
 Write-Host "== 1/7 Recuperation du code ==" -ForegroundColor Cyan
 git fetch origin
-git checkout fix/finalisation-build-admin-auth
-git pull origin fix/finalisation-build-admin-auth
+git checkout main
+git pull origin main
 
 Write-Host "== 2/7 Installation des dependances ==" -ForegroundColor Cyan
 npm install
@@ -18,10 +18,35 @@ Write-Host "== 3/7 Configuration (.env) ==" -ForegroundColor Cyan
 if (-not (Test-Path ".env")) {
     if (Test-Path ".env.example") {
         Copy-Item ".env.example" ".env"
-        Write-Host "Fichier .env cree depuis .env.example - renseignez SESSION_SECRET, STRIPE_*, AGENT_ACCESS_CODE et GOOGLE_AI_API_KEY." -ForegroundColor Yellow
+        Write-Host "Fichier .env cree depuis .env.example - renseignez STRIPE_*, AGENT_ACCESS_CODE et GOOGLE_AI_API_KEY." -ForegroundColor Yellow
     }
 } else {
     Write-Host ".env deja present - conserve." -ForegroundColor Yellow
+}
+
+# SESSION_SECRET : genere automatiquement une valeur forte si la variable est
+# absente ou laissee sur une valeur d'exemple. Sans secret, les sessions
+# utilisent un fallback non sur : acceptable en local, jamais en production.
+$envLines = @(Get-Content ".env" -ErrorAction SilentlyContinue)
+$secretLine = -1
+$secretOk = $false
+for ($i = 0; $i -lt $envLines.Count; $i++) {
+    if ($envLines[$i] -match "^\s*SESSION_SECRET\s*=\s*(.*)$") {
+        $secretLine = $i
+        $value = $Matches[1].Trim()
+        if ($value -and $value -notmatch "changez|votre|CHANGE") { $secretOk = $true }
+    }
+}
+if (-not $secretOk) {
+    $chars = (48..122) | ForEach-Object { [char]$_ } | Where-Object { $_ -match "[A-Za-z0-9]" }
+    $secret = -join (1..48 | ForEach-Object { $chars | Get-Random })
+    if ($secretLine -ge 0) {
+        $envLines[$secretLine] = "SESSION_SECRET=$secret"
+        Set-Content ".env" $envLines
+    } else {
+        Add-Content ".env" "SESSION_SECRET=$secret"
+    }
+    Write-Host "SESSION_SECRET genere dans .env." -ForegroundColor Green
 }
 
 Write-Host "== 4/7 Generation du client Prisma ==" -ForegroundColor Cyan

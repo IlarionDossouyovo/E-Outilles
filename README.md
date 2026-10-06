@@ -90,3 +90,8 @@ powershell -ExecutionPolicy Bypass -File .\scripts\update.ps1
 - `middleware.ts` doit rester dans `src/` pour s'exécuter.
 - Icônes UI : composant `@/components/Icons` (`<Icon name="…" />`), pas d'emoji dans les pages.
 - Les routes API sensibles appellent `requireAdmin()` (`src/lib/security/auth.ts`).
+- SEO : `sitemap.ts`/`robots.ts` dynamiques ; pour une page `'use client'`, les
+  métadonnées vont dans un `layout.tsx` voisin (une page client ne peut pas
+  exporter `metadata`).
+- Pages de secours globales : `src/app/not-found.tsx` (404) et
+  `src/app/error.tsx` (erreur runtime).
