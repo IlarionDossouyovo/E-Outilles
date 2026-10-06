@@ -4,9 +4,6 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Logo from '@/components/Logo'
 
-// Code secret du fondateur (à changer)
-const FOUNDER_CODE = 'EO2024'
-
 const founder = {
   name: 'Ilarion Dossouyovo',
   role: 'Fondateur & PDG',
@@ -66,45 +63,70 @@ const allAgents = [
 const agents = allAgents.filter(a => a.category === 'principal')
 const extraAgents = allAgents.filter(a => a.category !== 'principal')
 
-const stats = {
-  totalConversations: 714,
-  activeAgents: 7,
-  totalAgents: 10,
-  offlineAgents: 3,
-  messagesToday: 1247,
-  satisfaction: 94.5
-}
-
 export default function AgentDashboard() {
   const [activeTab, setActiveTab] = useState('overview')
   const [accessGranted, setAccessGranted] = useState(false)
   const [codeInput, setCodeInput] = useState('')
   const [error, setError] = useState('')
+  const [verifying, setVerifying] = useState(false)
+  const [stats, setStats] = useState({
+    totalConversations: 0,
+    activeAgents: allAgents.filter(a => a.status === 'online').length,
+    totalAgents: allAgents.length,
+    offlineAgents: allAgents.filter(a => a.status !== 'online').length,
+    messagesToday: 0,
+    satisfaction: 0,
+  })
 
-  const verifyCode = () => {
-    if (codeInput === FOUNDER_CODE) {
-      setAccessGranted(true)
-      setError('')
-    } else {
-      setError('Code incorrect')
-    }
-  }
-
-  // Auto-redirect si pas de code
+  // Access is validated server-side (admin session + AGENT_ACCESS_CODE).
   useEffect(() => {
-    const stored = localStorage.getItem('founder_access')
-    if (stored === 'granted') {
+    if (sessionStorage.getItem('agent_access') === 'granted') {
       setAccessGranted(true)
     }
   }, [])
 
-  const grantAccess = () => {
-    if (codeInput === FOUNDER_CODE) {
-      localStorage.setItem('founder_access', 'granted')
-      setAccessGranted(true)
-      setError('')
-    } else {
-      setError('Code secret incorrect')
+  // Real agent counters derived from the orders data.
+  useEffect(() => {
+    if (!accessGranted) return
+    fetch('/api/orders')
+      .then(res => res.ok ? res.json() : [])
+      .then((data) => {
+        const orders = Array.isArray(data) ? data : []
+        const today = new Date().toDateString()
+        const todayOrders = orders.filter((o: { createdAt: string }) => new Date(o.createdAt).toDateString() === today)
+        setStats(prev => ({
+          ...prev,
+          totalConversations: orders.length,
+          messagesToday: todayOrders.length,
+        }))
+      })
+      .catch(err => console.error('Error fetching agent stats:', err))
+  }, [accessGranted])
+
+  const grantAccess = async () => {
+    setVerifying(true)
+    setError('')
+    try {
+      const res = await fetch('/api/agent/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: codeInput }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (res.ok && data.valid) {
+        sessionStorage.setItem('agent_access', 'granted')
+        setAccessGranted(true)
+      } else if (res.status === 403) {
+        setError('Accès réservé aux administrateurs connectés')
+      } else if (res.status === 500) {
+        setError(data.error || "Code d'accès non configuré")
+      } else {
+        setError('Code secret incorrect')
+      }
+    } catch {
+      setError('Erreur de connexion au serveur')
+    } finally {
+      setVerifying(false)
     }
   }
 
@@ -128,9 +150,10 @@ export default function AgentDashboard() {
           {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
           <button
             onClick={grantAccess}
-            className="w-full bg-ingco-yellow text-ingco-black py-3 rounded-xl font-bold hover:bg-yellow-400"
+            disabled={verifying}
+            className="w-full bg-ingco-yellow text-ingco-black py-3 rounded-xl font-bold hover:bg-yellow-400 disabled:opacity-50"
           >
-            Valider
+            {verifying ? '⏳ Vérification...' : 'Valider'}
           </button>
           <Link href="/" className="block text-center text-gray-500 text-sm mt-4 hover:text-ingco-yellow">
             ← Retour à l'accueil

@@ -1,43 +1,35 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Logo from '@/components/Logo'
 
-// Données simulées pour le revendeur
-const vendorStats = {
-  totalSales: 45780,
-  totalOrders: 234,
-  totalCustomers: 189,
-  averageRating: 4.8,
-  thisMonth: {
-    sales: 12450,
-    orders: 56,
-    newCustomers: 23
-  }
+interface VendorOrder {
+  id: string
+  customer: string
+  product: string
+  amount: number
+  status: string
+  date: string
 }
 
-const recentOrders = [
-  { id: 'ORD-001', customer: 'Jean Kouassi', product: 'Perceuse INGCO 20V', amount: 89.99, status: 'pending', date: '18/07/2026' },
-  { id: 'ORD-002', customer: 'Marie Diallo', product: 'Kit clés 50pcs', amount: 79.99, status: 'shipped', date: '17/07/2026' },
-  { id: 'ORD-003', customer: 'Paul Okonkwo', product: 'Tronçonneuse', amount: 299.99, status: 'delivered', date: '17/07/2026' },
-  { id: 'ORD-004', customer: 'Anne Mensah', product: 'Marteau perforateur', amount: 249.99, status: 'processing', date: '16/07/2026' },
-  { id: 'ORD-005', customer: 'Pierre Ngoma', product: 'Compresseur 24L', amount: 199.99, status: 'pending', date: '16/07/2026' },
-]
-
-const topProducts = [
-  { name: 'Perceuse visseuse INGCO 20V', sales: 45, revenue: 4049 },
-  { name: 'Marteau perforateur SDS Max', sales: 23, revenue: 5749 },
-  { name: 'Kit de clés mécaniques 50 pièces', sales: 34, revenue: 2719 },
-  { name: 'Tronçonneuse thermique 45cm', sales: 18, revenue: 5399 },
-  { name: 'Multimètre numérique pro', sales: 39, revenue: 2339 },
-]
+interface TopProduct {
+  name: string
+  sales: number
+  revenue: number
+}
 
 const statusLabels: Record<string, { label: string; color: string }> = {
   pending: { label: 'En attente', color: 'bg-yellow-500' },
   processing: { label: 'En traitement', color: 'bg-blue-500' },
+  paid: { label: 'Payé', color: 'bg-green-600' },
   shipped: { label: 'Expédié', color: 'bg-purple-500' },
-  delivered: { label: 'Livré', color: 'bg-green-500' }
+  delivered: { label: 'Livré', color: 'bg-green-500' },
+  cancelled: { label: 'Annulé', color: 'bg-red-500' }
+}
+
+function statusInfo(status: string) {
+  return statusLabels[status] || { label: status, color: 'bg-gray-500' }
 }
 
 const quickActions = [
@@ -51,6 +43,66 @@ const quickActions = [
 
 export default function VendorDashboard() {
   const [activeTab, setActiveTab] = useState('overview')
+  const [vendorStats, setVendorStats] = useState({
+    totalSales: 0,
+    totalOrders: 0,
+    totalCustomers: 0,
+    averageRating: 0,
+    thisMonth: { sales: 0, orders: 0, newCustomers: 0 },
+  })
+  const [recentOrders, setRecentOrders] = useState<VendorOrder[]>([])
+  const [topProducts, setTopProducts] = useState<TopProduct[]>([])
+
+  useEffect(() => {
+    fetch('/api/orders')
+      .then(res => res.ok ? res.json() : [])
+      .then((data) => {
+        const orders = Array.isArray(data) ? data : []
+        const now = new Date()
+        const monthOrders = orders.filter((o: { createdAt: string }) => {
+          const d = new Date(o.createdAt)
+          return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()
+        })
+        const valid = orders.filter((o: { status: string }) => o.status !== 'cancelled')
+
+        setVendorStats({
+          totalSales: valid.reduce((sum: number, o: { total: number }) => sum + (o.total || 0), 0),
+          totalOrders: orders.length,
+          totalCustomers: new Set(orders.map((o: { userId: string }) => o.userId)).size,
+          averageRating: 4.8,
+          thisMonth: {
+            sales: monthOrders.reduce((sum: number, o: { total: number }) => sum + (o.total || 0), 0),
+            orders: monthOrders.length,
+            newCustomers: new Set(monthOrders.map((o: { userId: string }) => o.userId)).size,
+          },
+        })
+
+        setRecentOrders(orders.slice(0, 5).map((o: {
+          id: string; total: number; status: string; createdAt: string
+          user?: { name?: string | null } | null
+          items?: { product?: { name?: string } | null }[]
+        }) => ({
+          id: o.id,
+          customer: o.user?.name || 'Client',
+          product: o.items?.[0]?.product?.name || 'Produit',
+          amount: o.total,
+          status: o.status,
+          date: new Date(o.createdAt).toLocaleDateString('fr-FR'),
+        })))
+
+        const salesByProduct: Record<string, TopProduct> = {}
+        orders.forEach((o: { items?: { quantity: number; price: number; product?: { name?: string } | null }[] }) => {
+          (o.items || []).forEach((item) => {
+            const name = item.product?.name || 'Produit'
+            if (!salesByProduct[name]) salesByProduct[name] = { name, sales: 0, revenue: 0 }
+            salesByProduct[name].sales += item.quantity
+            salesByProduct[name].revenue += item.quantity * item.price
+          })
+        })
+        setTopProducts(Object.values(salesByProduct).sort((a, b) => b.sales - a.sales).slice(0, 5))
+      })
+      .catch(err => console.error('Error fetching vendor data:', err))
+  }, [])
 
   return (
     <div className="min-h-screen bg-ingco-black">
@@ -151,8 +203,8 @@ export default function VendorDashboard() {
                   </div>
                   <div className="text-right">
                     <div className="text-white font-bold">{order.amount} €</div>
-                    <span className={`${statusLabels[order.status].color} text-white text-xs px-2 py-1 rounded`}>
-                      {statusLabels[order.status].label}
+                    <span className={`${statusInfo(order.status).color} text-white text-xs px-2 py-1 rounded`}>
+                      {statusInfo(order.status).label}
                     </span>
                   </div>
                 </div>

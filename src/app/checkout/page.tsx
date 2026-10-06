@@ -76,6 +76,26 @@ export default function CheckoutPage() {
       setFinalTotal(result.order?.total ?? getTotal())
       setFinalCount(items.length)
 
+      if (paymentMethod === 'card') {
+        // Hand off to Stripe Checkout; the webhook marks the order as paid.
+        const payRes = await fetch('/api/payments/stripe/create-checkout-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ orderId: result.orderId, customerEmail: formData.email }),
+        })
+        const pay = await payRes.json()
+
+        if (pay.url) {
+          window.location.href = pay.url
+          return
+        }
+
+        // Stripe not configured: fall back to offline confirmation.
+        clearCart()
+        setStep(3)
+        return
+      }
+
       if (paymentMethod === 'momo') {
         alert(`Paiement Mobile Money\n\nNumero: ${momoData.phone}\nOperateur: ${momoData.operator}\nMontant: ${(result.order?.total ?? getTotal()).toFixed(2)} EUR\n\nUn code de paiement vous sera envoye par SMS.`)
       }

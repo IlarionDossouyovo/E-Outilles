@@ -13,13 +13,13 @@ export const getStripe = () => {
 }
 
 // Create checkout session
-export async function createCheckoutSession(priceId: string, quantity: number = 1) {
-  const response = await fetch('/api/payments/create-checkout-session', {
+export async function createCheckoutSession(priceId: string, quantity: number = 1, orderId?: string) {
+  const response = await fetch('/api/payments/stripe/create-checkout-session', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ priceId, quantity }),
+    body: JSON.stringify({ priceId, quantity, orderId }),
   })
 
   if (!response.ok) {
@@ -31,7 +31,7 @@ export async function createCheckoutSession(priceId: string, quantity: number = 
 
 // Create payment intent for custom amounts
 export async function createPaymentIntent(amount: number, currency: string = 'eur') {
-  const response = await fetch('/api/payments/create-payment-intent', {
+  const response = await fetch('/api/payments/stripe/create-payment-intent', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
