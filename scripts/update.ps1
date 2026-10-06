@@ -6,28 +6,38 @@
 
 $ErrorActionPreference = "Stop"
 
-Write-Host "== 1/6 Recuperation du code ==" -ForegroundColor Cyan
+Write-Host "== 1/7 Recuperation du code ==" -ForegroundColor Cyan
 git fetch origin
 git checkout fix/finalisation-build-admin-auth
 git pull origin fix/finalisation-build-admin-auth
 
-Write-Host "== 2/6 Installation des dependances ==" -ForegroundColor Cyan
+Write-Host "== 2/7 Installation des dependances ==" -ForegroundColor Cyan
 npm install
 
-Write-Host "== 3/6 Generation du client Prisma ==" -ForegroundColor Cyan
+Write-Host "== 3/7 Configuration (.env) ==" -ForegroundColor Cyan
+if (-not (Test-Path ".env")) {
+    if (Test-Path ".env.example") {
+        Copy-Item ".env.example" ".env"
+        Write-Host "Fichier .env cree depuis .env.example - renseignez SESSION_SECRET, STRIPE_* et AGENT_ACCESS_CODE." -ForegroundColor Yellow
+    }
+} else {
+    Write-Host ".env deja present - conserve." -ForegroundColor Yellow
+}
+
+Write-Host "== 4/7 Generation du client Prisma ==" -ForegroundColor Cyan
 npx prisma generate
 
-Write-Host "== 4/6 Application des migrations ==" -ForegroundColor Cyan
+Write-Host "== 5/7 Application des migrations ==" -ForegroundColor Cyan
 npx prisma migrate deploy
 
-Write-Host "== 5/6 Base de donnees de demonstration (optionnel) ==" -ForegroundColor Cyan
+Write-Host "== 6/7 Base de donnees de demonstration (optionnel) ==" -ForegroundColor Cyan
 if (Test-Path "prisma\dev.db") {
     Write-Host "dev.db deja present - seed ignore (supprimez prisma\dev.db pour reinitialiser)." -ForegroundColor Yellow
 } else {
     npx prisma db seed
 }
 
-Write-Host "== 6/6 Verification du build ==" -ForegroundColor Cyan
+Write-Host "== 7/7 Verification du build ==" -ForegroundColor Cyan
 npm run build
 
 Write-Host ""
