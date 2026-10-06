@@ -1,157 +1,187 @@
 'use client'
 
-import { useState, useRef, useEffect } from "react"
-import { ChatMessage, quickResponses, generateResponse } from "./chatbot"
+import { useEffect, useRef, useState } from 'react'
+import { useVoice } from './useVoice'
+
+interface Message {
+  id: string
+  role: 'user' | 'assistant'
+  content: string
+}
+
+const QUICK_PROMPTS = [
+  { label: '🚚 Livraison', text: 'Quels sont vos délais de livraison ?' },
+  { label: '🛠️ Produits', text: 'Quels outils recommandez-vous pour percer du béton ?' },
+  { label: '💳 Paiement', text: 'Quels moyens de paiement acceptez-vous ?' },
+  { label: '🛡️ Garantie', text: 'Quelle est la garantie sur vos outils ?' },
+]
 
 export default function ChatWidget() {
-  console.log('ChatWidget rendering...')
   const [isOpen, setIsOpen] = useState(false)
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    { id: "1", role: "assistant", content: "Bonjour! Je suis assistant E-Outilles. Comment puis-je vous aider?", timestamp: new Date() }
+  const [messages, setMessages] = useState<Message[]>([
+    { id: 'init', role: 'assistant', content: "Bonjour ! Je suis l'assistant E-Outilles. Comment puis-je vous aider ?" },
   ])
-  const [input, setInput] = useState("")
+  const [input, setInput] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [voiceReplies, setVoiceReplies] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const { speak, stop, speaking, listen, stopListening, listening, supported } = useVoice()
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }, [messages])
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages, isOpen])
 
-  const handleSend = () => {
-    if (!input.trim()) return
+  const send = async (text: string) => {
+    const clean = text.trim()
+    if (!clean || loading) return
+    setInput('')
+    setLoading(true)
 
-    const userMessage: ChatMessage = {
-      id: Date.now().toString(),
-      role: "user",
-      content: input,
-      timestamp: new Date()
+    const history = messages.slice(-6).map((m) => ({ role: m.role, content: m.content }))
+    setMessages((prev) => [...prev, { id: Date.now().toString(), role: 'user', content: clean }])
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: clean, history }),
+      })
+      const data = await res.json()
+      const reply = data.response || 'Désolé, je n\'ai pas pu répondre.'
+      setMessages((prev) => [...prev, { id: (Date.now() + 1).toString(), role: 'assistant', content: reply }])
+      if (voiceReplies) speak(reply)
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        { id: (Date.now() + 2).toString(), role: 'assistant', content: 'Désolé, une erreur est survenue.' },
+      ])
+    } finally {
+      setLoading(false)
     }
-
-    setMessages(prev => [...prev, userMessage])
-
-    setTimeout(() => {
-      const response: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        role: "assistant",
-        content: generateResponse(input),
-        timestamp: new Date()
-      }
-      setMessages(prev => [...prev, response])
-    }, 500)
-
-    setInput("")
   }
 
-  const handleQuickResponse = (key: string) => {
-    const response: ChatMessage = {
-      id: Date.now().toString(),
-      role: "assistant",
-      content: quickResponses[key],
-      timestamp: new Date()
-    }
-    setMessages(prev => [...prev, response])
+  const toggleVoiceReplies = () => {
+    if (voiceReplies) stop()
+    setVoiceReplies((v) => !v)
   }
 
-  function handleToggle() {
-    console.log('Chat button clicked!')
-    const newState = !isOpen
-    console.log('Setting isOpen to:', newState)
-    setIsOpen(newState)
+  const startListening = () => {
+    if (listening) {
+      stopListening()
+      return
+    }
+    listen((transcript) => {
+      setInput(transcript)
+      send(transcript)
+    })
   }
 
   return (
     <>
       <button
-        onClick={handleToggle}
-        style={{
-          position: 'fixed',
-          bottom: '20px',
-          right: '20px',
-          width: '64px',
-          height: '64px',
-          borderRadius: '50%',
-          backgroundColor: '#FFC400',
-          border: '3px solid white',
-          zIndex: 99999,
-          fontSize: '28px',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          boxShadow: '0 4px 10px rgba(0,0,0,0.3)'
-        }}
-        aria-label="Ouvrir le chat AI"
+        onClick={() => setIsOpen((v) => !v)}
+        aria-label="Ouvrir le chat IA"
+        className="fixed bottom-5 right-5 z-[99999] w-16 h-16 rounded-full bg-ingco-yellow text-ingco-black text-3xl flex items-center justify-center border-[3px] border-white shadow-xl hover:scale-110 active:scale-95 transition-transform animate-float"
       >
-        💬
+        {isOpen ? '✕' : '💬'}
       </button>
 
-      {/* Always render panel, toggle visibility */}
-      <div style={{
-        position: 'fixed',
-        bottom: '100px',
-        right: '20px',
-        width: '350px',
-        height: '450px',
-        backgroundColor: '#1a1a1a',
-        borderRadius: '16px',
-        border: '2px solid #FFC400',
-        zIndex: 99998,
-        display: 'flex',
-        flexDirection: 'column',
-        boxShadow: '0 8px 30px rgba(0,0,0,0.5)',
-        visibility: isOpen ? 'visible' : 'hidden',
-        opacity: isOpen ? 1 : 0,
-        transition: 'all 0.3s ease'
-      }}>
-          <div style={{padding: '16px', borderBottom: '1px solid #2E2E2E', backgroundColor: '#2E2E2E', borderRadius: '16px 16px 0 0'}}>
-            <h3 style={{color: 'white', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px'}}>
-              <span style={{width: '12px', height: '12px', backgroundColor: '#FFC400', borderRadius: '50%', animation: 'pulse 1s infinite'}}></span>
+      <div
+        className={`fixed bottom-24 right-5 z-[99998] w-[350px] max-w-[calc(100vw-2.5rem)] h-[480px] max-h-[calc(100vh-8rem)] bg-ingco-dark rounded-2xl border-2 border-ingco-yellow shadow-2xl flex flex-col overflow-hidden transition-all duration-300 origin-bottom-right ${
+          isOpen ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-90 pointer-events-none'
+        }`}
+      >
+        <div className="px-4 py-3 bg-ingco-gray border-b border-ingco-dark flex items-center justify-between">
+          <div>
+            <h3 className="text-white font-bold flex items-center gap-2 text-sm">
+              <span className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse" />
               Assistant E-Outilles
             </h3>
-            <p style={{color: '#888', fontSize: '12px'}}>Réponse instantanée</p>
+            <p className="text-gray-400 text-[11px]">Réponse instantanée · IA</p>
           </div>
-
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
-            {messages.map((msg) => (
-              <div key={msg.id} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                <div className={`max-w-[80%] p-3 rounded-xl ${msg.role === "user" ? "bg-ingco-yellow text-ingco-black" : "bg-ingco-gray text-white"}`}>
-                  {msg.content}
-                </div>
-              </div>
-            ))}
-            <div ref={messagesEndRef} />
-          </div>
-
-          <div className="px-4 py-2 flex gap-2 flex-wrap border-t border-ingco-gray">
-            {Object.keys(quickResponses).slice(0, 4).map((key) => (
-              <button
-                key={key}
-                onClick={() => handleQuickResponse(key)}
-                className="text-xs bg-ingco-gray px-3 py-1 rounded-full text-gray-400 hover:text-ingco-yellow hover:bg-ingco-gray/80 transition-colors"
-              >
-                {key}
-              </button>
-            ))}
-          </div>
-
-          <div className="p-4 border-t border-ingco-gray flex gap-2">
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && handleSend()}
-              placeholder="Tapez votre message..."
-              className="flex-1 bg-ingco-gray border border-ingco-dark rounded-xl px-4 py-2 text-white placeholder-gray-500 focus:border-ingco-yellow focus:outline-none"
-            />
+          {supported.speak && (
             <button
-              onClick={handleSend}
-              className="bg-ingco-yellow text-ingco-black p-2 rounded-xl hover:bg-yellow-400 transition-colors"
+              onClick={toggleVoiceReplies}
+              title={voiceReplies ? 'Désactiver la voix' : 'Activer la voix'}
+              className={`text-lg px-2 py-1 rounded-lg transition-colors ${
+                voiceReplies ? 'bg-ingco-yellow text-ingco-black' : 'bg-ingco-dark text-gray-400 hover:text-ingco-yellow'
+              }`}
             >
-              <svg style={{width: '20px', height: '20px'}} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-              </svg>
+              {speaking ? '🔊' : voiceReplies ? '🔈' : '🔇'}
             </button>
-          </div>
+          )}
         </div>
+
+        <div className="flex-1 overflow-y-auto p-4 space-y-3">
+          {messages.map((msg) => (
+            <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+              <div
+                className={`max-w-[85%] p-3 rounded-2xl text-sm leading-relaxed animate-fade-in ${
+                  msg.role === 'user'
+                    ? 'bg-ingco-yellow text-ingco-black rounded-br-sm'
+                    : 'bg-ingco-gray text-white rounded-bl-sm'
+                }`}
+              >
+                {msg.content}
+              </div>
+            </div>
+          ))}
+          {loading && (
+            <div className="flex justify-start">
+              <div className="bg-ingco-gray text-gray-300 p-3 rounded-2xl text-sm flex gap-1">
+                <span className="animate-bounce">●</span>
+                <span className="animate-bounce [animation-delay:0.15s]">●</span>
+                <span className="animate-bounce [animation-delay:0.3s]">●</span>
+              </div>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
+        </div>
+
+        <div className="px-3 py-2 flex gap-2 flex-wrap border-t border-ingco-dark">
+          {QUICK_PROMPTS.map((q) => (
+            <button
+              key={q.label}
+              onClick={() => send(q.text)}
+              className="text-[11px] bg-ingco-gray px-3 py-1 rounded-full text-gray-300 hover:text-ingco-yellow hover:bg-ingco-gray/80 transition-colors"
+            >
+              {q.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="p-3 border-t border-ingco-dark flex gap-2 items-center">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && send(input)}
+            placeholder="Tapez votre message..."
+            className="flex-1 bg-ingco-gray border border-ingco-dark rounded-xl px-4 py-2 text-sm text-white placeholder-gray-500 focus:border-ingco-yellow focus:outline-none"
+          />
+          {supported.listen && (
+            <button
+              onClick={startListening}
+              title="Dicter un message"
+              className={`p-2 rounded-xl transition-colors ${
+                listening ? 'bg-red-500 text-white animate-pulse' : 'bg-ingco-gray text-gray-300 hover:text-ingco-yellow'
+              }`}
+            >
+              🎤
+            </button>
+          )}
+          <button
+            onClick={() => send(input)}
+            disabled={loading}
+            className="bg-ingco-yellow text-ingco-black p-2 rounded-xl hover:bg-yellow-400 transition-colors disabled:opacity-50"
+            aria-label="Envoyer"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+            </svg>
+          </button>
+        </div>
+      </div>
     </>
   )
 }

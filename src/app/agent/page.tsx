@@ -14,51 +14,22 @@ const founder = {
   vision: 'Démocratiser l\'accès aux outils professionnels de qualité pour tous les artisans du monde'
 }
 
-// Agents IA pour l'entreprise
-const allAgents = [
-  // Agents principaux
-  { id: 1, name: 'Assistant IA', status: 'online', type: 'chat', icon: '🤖', conversations: 156, category: 'principal',
-    description: 'Assistant conversationnel principal pour les clients',
-    features: ['Recommandations produits', 'Questions techniques', 'Conseils utilisation', 'suivi projet'],
-    color: 'from-purple-500 to-indigo-600' },
-  { id: 2, name: 'Vendeur Bot', status: 'online', type: 'sales', icon: '💼', conversations: 89, category: 'principal',
-    description: 'Automatisation des ventes et conversion',
-    features: ['Qualification leads', 'Closing automatique', 'Suivi panier abandonné', 'Promotions personnalisées'],
-    color: 'from-green-500 to-emerald-600' },
-  { id: 3, name: 'Support Client', status: 'online', type: 'support', icon: '🎧', conversations: 234, category: 'principal',
-    description: 'Support client automatisé 24/7',
-    features: ['FAQ automatique', 'Ouverture tickets', 'Suivi résolution', 'Escalade humaine'],
-    color: 'from-blue-500 to-cyan-600' },
-  { id: 4, name: 'Suivi Commande', status: 'offline', type: 'tracking', icon: '📦', conversations: 0, category: 'principal',
-    description: 'Suivi et gestion des commandes',
-    features: ['Tracking temps réel', 'Notifications livraison', 'Retours & échanges', 'Suivi fournisseurs'],
-    color: 'from-orange-500 to-amber-600' },
-  // Nouveaux agents additionnels
-  { id: 5, name: 'Chef de Projet IA', status: 'online', type: 'project', icon: '📋', conversations: 67, category: 'management',
-    description: 'Gestion de projets et planification',
-    features: ['Planification tâches', 'Suivi deadlines', 'Coordination équipe', 'Rapports avance'],
-    color: 'from-indigo-500 to-purple-600' },
-  { id: 6, name: 'Analyste Data', status: 'online', type: 'analytics', icon: '📊', conversations: 45, category: 'management',
-    description: 'Analyse des données бизнес',
-    features: ['Rapports ventes', 'Analyse tendances', 'Prévisions', 'Tableaux de bord'],
-    color: 'from-pink-500 to-rose-600' },
-  { id: 7, name: 'Marketing Bot', status: 'online', type: 'marketing', icon: '📢', conversations: 123, category: 'marketing',
-    description: 'Automatisation marketing digital',
-    features: ['Campagnes email', 'SEO optimisation', 'Gestion réseaux sociaux', 'Contenu automatique'],
-    color: 'from-red-500 to-orange-600' },
-  { id: 8, name: 'Assistant RH', status: 'offline', type: 'hr', icon: '👥', conversations: 0, category: 'management',
-    description: 'Gestion des ressources humaines',
-    features: ['Recrutement', 'Onboarding', 'Gestion congès', 'Formation'],
-    color: 'from-teal-500 to-cyan-600' },
-  { id: 9, name: 'Comptable IA', status: 'offline', type: 'finance', icon: '💳', conversations: 0, category: 'finance',
-    description: 'Gestion financière et comptable',
-    features: ['Facturation', 'Suivi trésorerie', 'Rapports financiers', 'Prévisions budétaires'],
-    color: 'from-yellow-500 to-amber-600' },
-  { id: 10, name: 'Legal Bot', status: 'offline', type: 'legal', icon: '⚖️', conversations: 0, category: 'finance',
-    description: 'Assistant juridique et conformité',
-    features: ['Contrats types', 'CGU/RGPD', 'Mentions légales', 'Conseils juridiques'],
-    color: 'from-slate-500 to-gray-600' },
-]
+// Agents IA — source unique de vérité partagée avec l'API (/api/chat).
+import { AGENT_LIST } from '@/lib/ai/agents'
+
+const allAgents = AGENT_LIST.map((a, index) => ({
+  id: index + 1,
+  agentId: a.id,
+  name: a.name,
+  status: a.status,
+  type: a.category,
+  icon: a.icon,
+  conversations: 0,
+  category: a.category,
+  description: a.description,
+  features: a.features,
+  color: a.color,
+}))
 
 const agents = allAgents.filter(a => a.category === 'principal')
 const extraAgents = allAgents.filter(a => a.category !== 'principal')
@@ -285,21 +256,15 @@ export default function AgentDashboard() {
                         {agent.status === 'online' ? '🟢 En ligne' : '⚪ Hors ligne'}
                       </span>
                     </div>
-                    <p className="text-purple-400 text-sm font-medium mt-1">{agent.type === 'chat' ? 'Assistant conversationnel' : agent.type === 'sales' ? 'Vente automatisée' : agent.type === 'support' ? 'Support client' : 'Suivi commandes'}</p>
+                    <p className="text-purple-400 text-sm font-medium mt-1">{agent.description}</p>
                     <p className="text-gray-500 text-sm mt-2">
-                      {agent.type === 'chat' && '• Recommandations produits\n• Réponses aux questions techniques\n• Conseils d\'utilisation'}
-                      {agent.type === 'sales' && '• Qualification leads\n• Closing automatique\n• Suivi panier abandonné'}
-                      {agent.type === 'support' && '• FAQ automatique\n• Ouverture tickets\n• Suivi résolution'}
-                      {agent.type === 'tracking' && '• Tracking commandes\n• Notifications livraison\n• Retours & échanges'}
+                      {agent.features.slice(0, 3).map((f: string) => `• ${f}`).join('\n')}
                     </p>
                     <div className="flex items-center justify-between mt-3">
-                      <span className="text-gray-400 text-sm">{agent.conversations} conversations</span>
-                      <button 
-                        onClick={() => alert(`🔧 Configuration de ${agent.name}\n\nStatut: ${agent.status}\nType: ${agent.type}\nFonctionnalités:\n${agent.features?.join('\n')}`)}
-                        className="text-ingco-yellow text-sm hover:underline"
-                      >
-                        Config →
-                      </button>
+                      <span className="text-gray-400 text-sm">{agent.status === 'online' ? 'Actif' : 'Inactif'}</span>
+                      <Link href={`/chat?agent=${agent.agentId}`} className="text-ingco-yellow text-sm hover:underline">
+                        Tester →
+                      </Link>
                     </div>
                   </div>
                 </div>

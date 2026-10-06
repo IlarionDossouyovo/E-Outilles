@@ -29,6 +29,35 @@ commandes pour répliquer le projet en local et le mettre en production.
 - Dashboard admin, commandes, newsletter, ajout produit, page vendeur, tableau agents.
 - Formulaires revendeur et newsletter branchés sur l'API.
 
+### Intelligence Artificielle (Google AI / Gemini)
+- Couche fournisseur unifiée `src/lib/ai/provider.ts` : Google AI (Gemini) prioritaire,
+  puis Ollama, puis mode démo. Détection automatique des clés placeholder.
+- Registre d'agents `src/lib/ai/agents.ts` : 10 agents (assistant, vendeur, support,
+  suivi, projet, analyste, marketing, RH, finance, légal) avec prompts spécialisés.
+- Raisonnement en deux passes `src/lib/ai/reasoning.ts` : analyse de l'intention puis
+  réponse finale, avec lecture du catalogue réel (prix exacts) pour les agents concernés.
+- `/api/chat` : accepte `agentId`, `history` et `reasoning` ; routage automatique vers
+  l'agent pertinent ; réponse toujours garantie (démo hors-ligne).
+
+### Synthèse vocale (TTS)
+- `POST /api/tts` : synthèse vocale via Gemini TTS (voix `Kore` par défaut).
+- Hook `src/lib/ai/useVoice.ts` : lecture TTS serveur puis repli Web Speech API,
+  plus la dictée (reconnaissance vocale) en français.
+- Intégrés au widget de chat et à la page `/chat` (boutons 🔊 / 🎤).
+
+### Catégories responsives + animations premium
+- Page `/categories` désormais alimentée par `/api/categories` (données réelles,
+  comptage produits, produits en vedette par catégorie).
+- Grille responsive 2 / 3 / 4 colonnes, onglets scrollables sur mobile.
+- Animations premium (`globals.css`) : `card-premium`, shimmer, fade-in-up, pop-in,
+  entrées décalées, avec respect de `prefers-reduced-motion`.
+
+### Authentification — mot de passe oublié
+- `POST /api/auth/forgot-password` : génère un jeton (hash SHA-256, expiration 1h) et
+  envoie un email de réinitialisation.
+- `POST /api/auth/reset-password` + page `/auth/reset-password` : définition du nouveau mot de passe.
+- Champs `resetTokenHash` / `resetTokenExpiry` ajoutés au modèle `User`.
+
 ### Médias
 - Références d'images produits/blog corrigées (`.jpg` → `.svg`), visuels SVG générés.
 
@@ -46,7 +75,10 @@ Copier `.env.example` vers `.env` et renseigner :
 | `STRIPE_WEBHOOK_SECRET` | pour webhook | Secret de signature du webhook |
 | `RESEND_API_KEY` | pour emails | Envoi des emails transactionnels |
 | `FROM_EMAIL` | recommandé | Expéditeur des emails |
-| `OLLAMA_API_URL` / `OLLAMA_CHAT_MODEL` | optionnel | Chatbot IA (mode démo sinon) |
+| `GOOGLE_AI_API_KEY` | recommandé | Clé Google AI Studio (Gemini) pour les agents IA |
+| `GOOGLE_AI_MODEL` | optionnel | Modèle Gemini (défaut `gemini-2.0-flash`) |
+| `GOOGLE_AI_TTS_MODEL` / `GOOGLE_AI_TTS_VOICE` | optionnel | Synthèse vocale (défaut `Kore`) |
+| `OLLAMA_API_URL` / `OLLAMA_CHAT_MODEL` | optionnel | Repli IA local (mode démo sinon) |
 | `AGENT_ACCESS_CODE` | recommandé | Accès au tableau de bord agents |
 
 Les clés `sk_test_votre_cle_secrete` / `whsec_votre_secret_webhook` sont des

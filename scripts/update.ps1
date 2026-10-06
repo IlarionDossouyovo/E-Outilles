@@ -18,7 +18,7 @@ Write-Host "== 3/7 Configuration (.env) ==" -ForegroundColor Cyan
 if (-not (Test-Path ".env")) {
     if (Test-Path ".env.example") {
         Copy-Item ".env.example" ".env"
-        Write-Host "Fichier .env cree depuis .env.example - renseignez SESSION_SECRET, STRIPE_* et AGENT_ACCESS_CODE." -ForegroundColor Yellow
+        Write-Host "Fichier .env cree depuis .env.example - renseignez SESSION_SECRET, STRIPE_*, AGENT_ACCESS_CODE et GOOGLE_AI_API_KEY." -ForegroundColor Yellow
     }
 } else {
     Write-Host ".env deja present - conserve." -ForegroundColor Yellow

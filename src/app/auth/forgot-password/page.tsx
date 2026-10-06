@@ -14,12 +14,23 @@ export default function ForgotPasswordPage() {
     setError('')
     setLoading(true)
 
-    // Simulate API call - In production, this would call your API
-    await new Promise(resolve => setTimeout(resolve, 1000))
-
-    // For demo purposes, just show success
-    setSubmitted(true)
-    setLoading(false)
+    try {
+      const res = await fetch('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        setError(data.error || 'Une erreur est survenue')
+        return
+      }
+      setSubmitted(true)
+    } catch {
+      setError('Erreur de connexion au serveur')
+    } finally {
+      setLoading(false)
+    }
   }
 
   if (submitted) {
