@@ -45,6 +45,12 @@ commandes pour répliquer le projet en local et le mettre en production.
   plus la dictée (reconnaissance vocale) en français.
 - Intégrés au widget de chat et à la page `/chat` (boutons 🔊 / 🎤).
 
+### Application téléchargeable + QR code (PWA)
+- Page `/telecharger` : QR code, bouton d'installation PWA, instructions Android/iOS/desktop.
+- `GET /api/qrcode` : génère un QR code PNG (pointe vers l'URL du site).
+- `ServiceWorkerRegister` enregistre `/sw.js` (le service worker existant n'était pas activé).
+- Lien « 📲 Télécharger l'app » et QR code ajoutés au pied de page d'accueil.
+
 ### Catégories responsives + animations premium
 - Page `/categories` désormais alimentée par `/api/categories` (données réelles,
   comptage produits, produits en vedette par catégorie).
@@ -76,8 +82,8 @@ Copier `.env.example` vers `.env` et renseigner :
 | `RESEND_API_KEY` | pour emails | Envoi des emails transactionnels |
 | `FROM_EMAIL` | recommandé | Expéditeur des emails |
 | `GOOGLE_AI_API_KEY` | recommandé | Clé Google AI Studio (Gemini) pour les agents IA |
-| `GOOGLE_AI_MODEL` | optionnel | Modèle Gemini (défaut `gemini-2.0-flash`) |
-| `GOOGLE_AI_TTS_MODEL` / `GOOGLE_AI_TTS_VOICE` | optionnel | Synthèse vocale (défaut `Kore`) |
+| `GOOGLE_AI_MODEL` | optionnel | Modèle Gemini (défaut `gemini-flash-lite-latest`) |
+| `GOOGLE_AI_TTS_MODEL` / `GOOGLE_AI_TTS_VOICE` | optionnel | Synthèse vocale (défaut `gemini-3.8-flash-tts`, voix `Kore`) |
 | `OLLAMA_API_URL` / `OLLAMA_CHAT_MODEL` | optionnel | Repli IA local (mode démo sinon) |
 | `AGENT_ACCESS_CODE` | recommandé | Accès au tableau de bord agents |
 

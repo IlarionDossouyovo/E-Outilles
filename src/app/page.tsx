@@ -451,6 +451,14 @@ export default function Home() {
               <p className="text-gray-500 text-sm">
                 Votre partenaire dropshipping international pour outillage professionnel INGCO.
               </p>
+              <Link href="/telecharger" className="inline-flex items-center gap-3 mt-4 bg-ingco-gray rounded-xl p-2 pr-4 hover:bg-ingco-yellow/10 transition-colors group">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/api/qrcode" alt="QR code application E-Outilles" className="w-16 h-16 rounded-lg bg-white p-1" />
+                <span className="text-sm">
+                  <span className="block text-white font-semibold group-hover:text-ingco-yellow transition-colors">📲 Télécharger l&apos;app</span>
+                  <span className="block text-gray-500 text-xs">Scannez le QR code</span>
+                </span>
+              </Link>
             </div>
             
             <div>
@@ -461,6 +469,7 @@ export default function Home() {
                 <li><Link href="/search?category=garage" className="hover:text-ingco-yellow transition-colors">Garage Auto</Link></li>
                 <li><Link href="/search?category=jardinage" className="hover:text-ingco-yellow transition-colors">Jardinage</Link></li>
                 <li><Link href="/chat" className="hover:text-ingco-yellow transition-colors">💬 Assistant IA</Link></li>
+                <li><Link href="/telecharger" className="hover:text-ingco-yellow transition-colors">📲 Télécharger l&apos;app</Link></li>
               </ul>
             </div>
             

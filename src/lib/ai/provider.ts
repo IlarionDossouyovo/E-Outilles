@@ -33,18 +33,32 @@ function isPlaceholder(value: string | undefined): boolean {
 
 export function isGoogleAIConfigured(): boolean {
   const key = process.env.GOOGLE_AI_API_KEY || process.env.GEMINI_API_KEY
-  return Boolean(key && key.startsWith('AIza') && !isPlaceholder(key))
+  // Google AI keys start with "AIza" (API keys) or "AQ." (newer keys).
+  return Boolean(key && /^(AIza|AQ\.)/.test(key) && !isPlaceholder(key))
 }
 
 export function isOllamaConfigured(): boolean {
   return Boolean(process.env.OLLAMA_API_URL)
 }
 
-export const GOOGLE_AI_MODEL = process.env.GOOGLE_AI_MODEL || 'gemini-2.0-flash'
+export const GOOGLE_AI_MODEL = process.env.GOOGLE_AI_MODEL || 'gemini-flash-lite-latest'
+// Tried in order until one succeeds (models are retired or overloaded).
+const GOOGLE_MODEL_CANDIDATES = Array.from(
+  new Set([
+    GOOGLE_AI_MODEL,
+    'gemini-flash-lite-latest',
+    'gemini-flash-latest',
+    'gemini-3.8-flash',
+    'gemini-3.1-flash-lite',
+  ])
+)
 const OLLAMA_URL = process.env.OLLAMA_API_URL || 'http://localhost:11434'
 const OLLAMA_MODEL = process.env.OLLAMA_CHAT_MODEL || 'llama3.2:latest'
 
-async function generateWithGoogle(options: GenerateOptions): Promise<string> {
+async function generateWithGoogleModel(
+  model: string,
+  options: GenerateOptions
+): Promise<string> {
   const key = (process.env.GOOGLE_AI_API_KEY || process.env.GEMINI_API_KEY) as string
   const systemMessages = options.messages.filter((m) => m.role === 'system')
   const turns = options.messages.filter((m) => m.role !== 'system')
@@ -68,10 +82,10 @@ async function generateWithGoogle(options: GenerateOptions): Promise<string> {
   }
 
   const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${GOOGLE_AI_MODEL}:generateContent?key=${key}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
     {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
       body: JSON.stringify(body),
       signal: AbortSignal.timeout(options.timeoutMs ?? 20000),
     }
@@ -79,13 +93,31 @@ async function generateWithGoogle(options: GenerateOptions): Promise<string> {
 
   if (!res.ok) {
     const detail = await res.text().catch(() => '')
-    throw new Error(`Google AI error ${res.status}: ${detail.slice(0, 200)}`)
+    throw new Error(`Google AI ${model} error ${res.status}: ${detail.slice(0, 200)}`)
   }
 
   const data = await res.json()
-  const text = data?.candidates?.[0]?.content?.parts?.map((p: { text?: string }) => p.text || '').join('') || ''
+  const text =
+    data?.candidates?.[0]?.content?.parts
+      ?.filter((p: { thought?: boolean }) => !p.thought)
+      .map((p: { text?: string }) => p.text || '')
+      .join('') || ''
   if (!text) throw new Error('Google AI returned an empty response')
   return text
+}
+
+// Tries each candidate model until one responds, so a retired model never
+// breaks the assistant.
+async function generateWithGoogle(options: GenerateOptions): Promise<string> {
+  let lastError: unknown = null
+  for (const model of GOOGLE_MODEL_CANDIDATES) {
+    try {
+      return await generateWithGoogleModel(model, options)
+    } catch (err) {
+      lastError = err
+    }
+  }
+  throw lastError instanceof Error ? lastError : new Error('Google AI unavailable')
 }
 
 async function generateWithOllama(options: GenerateOptions): Promise<string> {

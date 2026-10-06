@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import ChatWidget from '@/lib/ai/ChatWidget'
+import ServiceWorkerRegister from '@/components/ServiceWorkerRegister'
 
 export const metadata: Metadata = {
   title: 'E-Outille par ELECTRON | Outillage Professionnel',
@@ -22,6 +23,7 @@ export default function RootLayout({
       <body className="bg-ingco-black text-white antialiased">
         {children}
         <ChatWidget />
+        <ServiceWorkerRegister />
       </body>
     </html>
   )
