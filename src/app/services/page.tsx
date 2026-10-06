@@ -152,7 +152,7 @@ export default function ServicesPage() {
               </div>
               {activeService.id === service.id && (
                 <div className="mt-4 text-center text-ingco-yellow text-sm animate-pulse">
-                  ← Cliquez pour voir les details
+                  <Icon name="arrow-left" className="w-4 h-4 inline" /> Cliquez pour voir les details
                 </div>
               )}
             </button>

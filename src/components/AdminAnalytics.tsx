@@ -40,7 +40,7 @@ export default function AdminAnalytics({ data }: { data: AnalyticsData }) {
             <Icon name="truck" className="w-6 h-6 text-ingco-yellow" />
           </div>
           <div className="text-3xl font-bold text-white">{data.totalOrders.toLocaleString()}</div>
-          <div className="text-green-500 text-sm mt-2">↑ 12% ce mois</div>
+          <div className="text-green-500 text-sm mt-2">+12% ce mois</div>
         </div>
         
         <div className="bg-ingco-dark rounded-xl p-6 border border-ingco-gray">
@@ -49,7 +49,7 @@ export default function AdminAnalytics({ data }: { data: AnalyticsData }) {
             <Icon name="card" className="w-6 h-6 text-ingco-yellow" />
           </div>
           <div className="text-3xl font-bold text-white">{data.totalRevenue.toLocaleString()}€</div>
-          <div className="text-green-500 text-sm mt-2">↑ 8% ce mois</div>
+          <div className="text-green-500 text-sm mt-2">+8% ce mois</div>
         </div>
         
         <div className="bg-ingco-dark rounded-xl p-6 border border-ingco-gray">
@@ -58,7 +58,7 @@ export default function AdminAnalytics({ data }: { data: AnalyticsData }) {
             <Icon name="tools" className="w-6 h-6 text-ingco-yellow" />
           </div>
           <div className="text-3xl font-bold text-white">{data.activeProducts}</div>
-          <div className="text-green-500 text-sm mt-2">↑ 3 nouveaux</div>
+          <div className="text-green-500 text-sm mt-2">+3 nouveaux</div>
         </div>
         
         <div className="bg-ingco-dark rounded-xl p-6 border border-ingco-gray">
@@ -67,7 +67,7 @@ export default function AdminAnalytics({ data }: { data: AnalyticsData }) {
             <Icon name="chat" className="w-6 h-6 text-ingco-yellow" />
           </div>
           <div className="text-3xl font-bold text-white">{data.subscribers.toLocaleString()}</div>
-          <div className="text-green-500 text-sm mt-2">↑ 45 nouveaux</div>
+          <div className="text-green-500 text-sm mt-2">+45 nouveaux</div>
         </div>
       </div>
 
@@ -93,7 +93,7 @@ export default function AdminAnalytics({ data }: { data: AnalyticsData }) {
             ))}
           </div>
           <Link href="/admin/orders" className="block text-center text-ingco-yellow mt-4 hover:underline">
-            Voir toutes les commandes →
+            Voir toutes les commandes <Icon name="arrow-right" className="w-4 h-4 inline" />
           </Link>
         </div>
 
@@ -115,7 +115,7 @@ export default function AdminAnalytics({ data }: { data: AnalyticsData }) {
             ))}
           </div>
           <Link href="/admin/add-product" className="block text-center text-ingco-yellow mt-4 hover:underline">
-            Ajouter un produit →
+            Ajouter un produit <Icon name="arrow-right" className="w-4 h-4 inline" />
           </Link>
         </div>
       </div>

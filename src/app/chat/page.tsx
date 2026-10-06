@@ -94,7 +94,7 @@ export default function ChatPage() {
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between py-6 border-b border-ingco-gray mb-6">
           <Link href="/" className="flex items-center gap-2 text-gray-400 hover:text-ingco-yellow transition-colors">
-            <span>←</span> Retour
+            <Icon name="arrow-left" className="w-4 h-4" /> Retour
           </Link>
           <div className="flex items-center gap-2">
             <Logo variant="horizontal" size={36} />

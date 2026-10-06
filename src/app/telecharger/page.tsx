@@ -108,8 +108,8 @@ export default function DownloadPage() {
         </div>
 
         <div className="text-center mt-12">
-          <Link href="/" className="text-ingco-yellow hover:underline">
-            ← Retour à l&apos;accueil
+          <Link href="/" className="text-ingco-yellow hover:underline inline-flex items-center gap-1">
+            <Icon name="arrow-left" className="w-4 h-4" /> Retour à l&apos;accueil
           </Link>
         </div>
       </div>

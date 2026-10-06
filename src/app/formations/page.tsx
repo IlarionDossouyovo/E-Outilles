@@ -496,7 +496,7 @@ export default function FormationsPage() {
               <p className="text-gray-400 mb-4">
                 Guide complet pour choisir le bon outil selon vos besoins...
               </p>
-              <button onClick={() => handleArticleClick('Bien choisir sa perceuse visseuse')} className="text-ingco-yellow font-semibold hover:underline">Lire la suite →</button>
+              <button onClick={() => handleArticleClick('Bien choisir sa perceuse visseuse')} className="text-ingco-yellow font-semibold hover:underline">Lire la suite <Icon name="arrow-right" className="w-4 h-4 inline" /></button>
             </div>
             
             <div className="bg-ingco-gray rounded-xl p-6">
@@ -510,7 +510,7 @@ export default function FormationsPage() {
               <p className="text-gray-400 mb-4">
                 Astuces et bonnes pratiques pour prolonger la durée de vie...
               </p>
-              <button onClick={() => handleArticleClick('Entretien des batteries lithium-ion')} className="text-ingco-yellow font-semibold hover:underline">Lire la suite →</button>
+              <button onClick={() => handleArticleClick('Entretien des batteries lithium-ion')} className="text-ingco-yellow font-semibold hover:underline">Lire la suite <Icon name="arrow-right" className="w-4 h-4 inline" /></button>
             </div>
             
             <div className="bg-ingco-gray rounded-xl p-6">
@@ -524,7 +524,7 @@ export default function FormationsPage() {
               <p className="text-gray-400 mb-4">
                 Checklist complète des équipements de protection obligatoire...
               </p>
-              <button onClick={() => handleArticleClick('Sécurité sur les chantiers')} className="text-ingco-yellow font-semibold hover:underline">Lire la suite →</button>
+              <button onClick={() => handleArticleClick('Sécurité sur les chantiers')} className="text-ingco-yellow font-semibold hover:underline">Lire la suite <Icon name="arrow-right" className="w-4 h-4 inline" /></button>
             </div>
             
             <div className="bg-ingco-gray rounded-xl p-6">
@@ -538,7 +538,7 @@ export default function FormationsPage() {
               <p className="text-gray-400 mb-4">
                 Comparatif des meilleures tronçonneuses pour professionnel...
               </p>
-              <button onClick={() => handleArticleClick('Guide d\'achat tronçonneuse')} className="text-ingco-yellow font-semibold hover:underline">Lire la suite →</button>
+              <button onClick={() => handleArticleClick('Guide d\'achat tronçonneuse')} className="text-ingco-yellow font-semibold hover:underline">Lire la suite <Icon name="arrow-right" className="w-4 h-4 inline" /></button>
             </div>
           </div>
         </div>

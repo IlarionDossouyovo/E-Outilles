@@ -324,7 +324,7 @@ export default function Home() {
 
                 <div className="mt-4 flex items-center gap-2 text-ingco-yellow text-sm">
                   <span>Blog: {category.blog}</span>
-                  <span className="group-hover:translate-x-1 transition-transform">→</span>
+                  <Icon name="arrow-right" className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </div>
               </Link>
             ))}

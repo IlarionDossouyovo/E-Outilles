@@ -111,7 +111,7 @@ export default function ProductPage() {
     return (
       <div className="min-h-screen bg-ingco-black flex flex-col items-center justify-center gap-4">
         <h1 className="text-3xl font-bold text-white">Produit non trouvé</h1>
-        <Link href="/search" className="text-ingco-yellow hover:underline">← Retour au catalogue</Link>
+        <Link href="/search" className="text-ingco-yellow hover:underline inline-flex items-center gap-1"><Icon name="arrow-left" className="w-4 h-4" /> Retour au catalogue</Link>
       </div>
     )
   }

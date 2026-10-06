@@ -100,7 +100,7 @@ export default function AdminProducts() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <Link href="/admin" className="text-gray-400 hover:text-ingco-yellow text-sm mb-2 inline-flex items-center gap-1">
-              ← Retour Dashboard
+              <Icon name="arrow-left" className="w-4 h-4" /> Retour Dashboard
             </Link>
             <h1 className="text-3xl font-bold text-white">Gestion des Produits</h1>
             <p className="text-gray-400">{products.length} produits au total</p>

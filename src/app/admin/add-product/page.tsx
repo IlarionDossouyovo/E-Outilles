@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import AdminAnalytics from '@/components/AdminAnalytics'
 import Logo from '@/components/Logo'
+import { Icon } from '@/components/Icons'
 
 interface Category {
   id: string
@@ -105,7 +106,7 @@ export default function AddProductPage() {
       <div className="pt-24 pb-16 max-w-4xl mx-auto px-4">
         {/* Header */}
         <div className="mb-8">
-          <Link href="/admin" className="text-ingco-yellow text-sm hover:underline">← Dashboard</Link>
+          <Link href="/admin" className="text-ingco-yellow text-sm hover:underline inline-flex items-center gap-1"><Icon name="arrow-left" className="w-4 h-4" /> Dashboard</Link>
           <h1 className="text-3xl font-bold text-white mt-2">Ajouter un produit</h1>
           <p className="text-gray-400">Ajoutez un nouveau produit à votre catalogue</p>
         </div>

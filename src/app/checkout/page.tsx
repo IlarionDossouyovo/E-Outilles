@@ -466,8 +466,8 @@ export default function CheckoutPage() {
                 <span className="text-ingco-yellow">{getTotal().toFixed(2)}€</span>
               </div>
             </div>
-            <Link href="/cart" className="block text-center text-gray-500 mt-4 text-sm hover:text-ingco-yellow transition-colors">
-              ← Retour au panier
+            <Link href="/cart" className="inline-flex items-center justify-center gap-1 w-full text-gray-500 mt-4 text-sm hover:text-ingco-yellow transition-colors">
+              <Icon name="arrow-left" className="w-4 h-4" /> Retour au panier
             </Link>
           </div>
         </div>

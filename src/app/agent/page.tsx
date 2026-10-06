@@ -128,7 +128,7 @@ export default function AgentDashboard() {
             {verifying ? '⏳ Vérification...' : 'Valider'}
           </button>
           <Link href="/" className="block text-center text-gray-500 text-sm mt-4 hover:text-ingco-yellow">
-            ← Retour à l'accueil
+            <span className="inline-flex items-center gap-1"><Icon name="arrow-left" className="w-4 h-4" /> Retour à l'accueil</span>
           </Link>
         </div>
       </div>
@@ -154,7 +154,7 @@ export default function AgentDashboard() {
         {/* Navigation Arrows */}
         <div className="flex items-center justify-between mb-6">
           <Link href="/admin" className="flex items-center gap-2 text-gray-400 hover:text-ingco-yellow transition-colors bg-ingco-gray px-4 py-2 rounded-lg">
-            <span>←</span> Retour Admin
+            <Icon name="arrow-left" className="w-4 h-4" /> Retour Admin
           </Link>
           <div className="flex items-center gap-2">
             <Link href="/chat" className="bg-purple-500 text-white px-3 py-2 rounded-lg text-sm hover:bg-purple-600">Chat IA</Link>
@@ -264,7 +264,7 @@ export default function AgentDashboard() {
                     <div className="flex items-center justify-between mt-3">
                       <span className="text-gray-400 text-sm">{agent.status === 'online' ? 'Actif' : 'Inactif'}</span>
                       <Link href={`/chat?agent=${agent.agentId}`} className="text-ingco-yellow text-sm hover:underline">
-                        Tester →
+                        Tester <Icon name="arrow-right" className="w-4 h-4 inline" />
                       </Link>
                     </div>
                   </div>
@@ -305,7 +305,7 @@ export default function AgentDashboard() {
                         onClick={() => alert(`${agent.name}\n\n${agent.description}\n\nFonctionnalités:\n${agent.features?.join('\n')}`)}
                         className="text-xs text-white underline"
                       >
-                        Config →
+                        Config <Icon name="arrow-right" className="w-4 h-4 inline" />
                       </button>
                     </div>
                   </div>

@@ -109,7 +109,7 @@ export default function AdminDashboard() {
         {/* Navigation Arrows */}
         <div className="flex items-center justify-between mb-6">
           <Link href="/" className="flex items-center gap-2 text-gray-400 hover:text-ingco-yellow transition-colors">
-            <span>←</span> Retour Accueil
+            <Icon name="arrow-left" className="w-4 h-4" /> Retour Accueil
           </Link>
           <div className="flex items-center gap-2">
             <Link href="/agent" className="text-gray-400 hover:text-ingco-yellow text-sm">Agents IA</Link>
