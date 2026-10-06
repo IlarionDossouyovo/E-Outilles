@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import { NavigationArrows, Icon } from '@/components/Icons'
+import Reveal from '@/components/Reveal'
 import Link from 'next/link'
-import Logo from '@/components/Logo'
 
 // Données des avantages revendeur
 const advantages = [
@@ -145,31 +145,18 @@ export default function RevendeursPage() {
   return (
     <div className="min-h-screen bg-ingco-black">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-ingco-black/95 backdrop-blur-md border-b border-ingco-gray">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Logo variant="horizontal" size={40} />
-            <div className="hidden md:flex items-center gap-8">
-              <Link href="/" className="text-gray-300 hover:text-ingco-yellow transition-colors">Accueil</Link>
-              <Link href="/categories" className="text-gray-300 hover:text-ingco-yellow transition-colors">Catégories</Link>
-              <Link href="/formations" className="text-gray-300 hover:text-ingco-yellow transition-colors">Formations</Link>
-              <Link href="/cart" aria-label="Panier" className="text-gray-300 hover:text-ingco-yellow transition-colors"><Icon name="cart" className="w-5 h-5" /></Link>
-            </div>
-          </div>
-        </div>
-      </nav>
 
       {/* Hero Section */}
       <section className="pt-24 pb-16 bg-gradient-to-b from-ingco-gray to-ingco-black">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
+          <h1 className="animate-fade-in-up text-4xl md:text-5xl font-bold text-white mb-6">
             Devenez Revendeur <span className="text-ingco-yellow">E-Outilles</span>
           </h1>
-          <p className="text-gray-400 text-lg max-w-3xl mx-auto mb-8">
+          <p className="animate-fade-in-up stagger-1 text-gray-400 text-lg max-w-3xl mx-auto mb-8">
             Rejoignez le réseau de revendeurs officiels INGCO au Benin. 
             Accédez à des tarifs préférentiels, un support exclusif et grow votre activité.
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="animate-fade-in-up stagger-2 flex flex-wrap justify-center gap-4">
             <Link href="#register" className="bg-ingco-yellow text-ingco-black px-8 py-3 rounded-xl font-bold hover:bg-yellow-400 transition-colors">
               Devenir Revendeur
             </Link>
@@ -400,11 +387,6 @@ export default function RevendeursPage() {
         <NavigationArrows current="/revendeurs" />
       </div>
 
-      <footer className="bg-ingco-gray py-8">
-        <div className="max-w-7xl mx-auto px-4 text-center text-gray-400">
-          <p>&copy; 2026 E-Outilles By ELECTRON. Tous droits réservés.</p>
-        </div>
-      </footer>
     </div>
   )
 }

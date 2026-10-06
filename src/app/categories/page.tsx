@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
-import Logo from '@/components/Logo'
 import { NavigationArrows, Icon } from '@/components/Icons'
 import { categoryImage, subcategoriesFor } from '@/lib/catalog'
 
@@ -71,22 +70,6 @@ export default function CategoriesPage() {
 
   return (
     <div className="min-h-screen bg-ingco-black">
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-ingco-black/95 backdrop-blur-md border-b border-ingco-gray">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Logo variant="horizontal" size={40} />
-            <div className="hidden md:flex items-center gap-8">
-              <Link href="/" className="text-gray-300 hover:text-ingco-yellow transition-colors">Accueil</Link>
-              <Link href="/categories" className="text-ingco-yellow font-semibold">Catégories</Link>
-              <Link href="/search" className="text-gray-300 hover:text-ingco-yellow transition-colors">Produits</Link>
-              <Link href="/blog" className="text-gray-300 hover:text-ingco-yellow transition-colors">Blog</Link>
-              <Link href="/cart" className="text-gray-300 hover:text-ingco-yellow transition-colors" aria-label="Panier">
-                <Icon name="cart" className="w-5 h-5" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
 
       <section className="pt-24 pb-12 bg-gradient-to-b from-ingco-gray to-ingco-black">
         <div className="max-w-7xl mx-auto px-4 text-center animate-fade-in-up">
@@ -243,11 +226,6 @@ export default function CategoriesPage() {
         <NavigationArrows current="/categories" />
       </div>
 
-      <footer className="bg-ingco-gray py-8">
-        <div className="max-w-7xl mx-auto px-4 text-center text-gray-400 text-sm">
-          <p>&copy; 2026 E-Outilles By ELECTRON. Tous droits réservés.</p>
-        </div>
-      </footer>
     </div>
   )
 }

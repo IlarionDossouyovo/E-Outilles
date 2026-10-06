@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import Logo from '@/components/Logo'
 import { NavigationArrows, Icon } from '@/components/Icons'
 
 interface OrderItem {

@@ -2,7 +2,6 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import prisma from '@/lib/db/prisma'
-import Logo from '@/components/Logo'
 import { NavigationArrows, Breadcrumb, Icon } from '@/components/Icons'
 import { categoryImage, categoryMeta, subcategoriesFor } from '@/lib/catalog'
 import { CATEGORY_META } from '@/lib/catalog'
@@ -59,17 +58,6 @@ export default async function CategoryDetailPage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-ingco-black">
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-ingco-black/95 backdrop-blur-md border-b border-ingco-gray">
-        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-          <Logo variant="horizontal" size={40} />
-          <div className="flex items-center gap-5">
-            <Link href="/categories" className="text-gray-300 hover:text-ingco-yellow text-sm">Catégories</Link>
-            <Link href="/cart" className="text-gray-300 hover:text-ingco-yellow" aria-label="Panier">
-              <Icon name="cart" className="w-5 h-5" />
-            </Link>
-          </div>
-        </div>
-      </nav>
 
       {/* Hero */}
       <section className="pt-24 pb-10">

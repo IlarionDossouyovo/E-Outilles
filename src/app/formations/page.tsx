@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { NavigationArrows, Icon } from '@/components/Icons'
 import Link from 'next/link'
-import Logo from '@/components/Logo'
 
 // Vidéos de formation par catégorie
 const videoModules = [
@@ -250,19 +249,6 @@ export default function FormationsPage() {
   return (
     <div className="min-h-screen bg-ingco-black">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-ingco-black/95 backdrop-blur-md border-b border-ingco-gray">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Logo variant="horizontal" size={40} />
-            <div className="hidden md:flex items-center gap-8">
-              <Link href="/" className="text-gray-300 hover:text-ingco-yellow transition-colors">Accueil</Link>
-              <Link href="/categories" className="text-gray-300 hover:text-ingco-yellow transition-colors">Catégories</Link>
-              <Link href="/revendeurs" className="text-gray-300 hover:text-ingco-yellow transition-colors">Revendeurs</Link>
-              <Link href="/cart" aria-label="Panier" className="text-gray-300 hover:text-ingco-yellow transition-colors"><Icon name="cart" className="w-5 h-5" /></Link>
-            </div>
-          </div>
-        </div>
-      </nav>
 
       {/* Hero Section */}
       <section className="pt-24 pb-16 bg-gradient-to-b from-ingco-gray to-ingco-black">
@@ -618,11 +604,6 @@ export default function FormationsPage() {
         <NavigationArrows current="/formations" />
       </div>
 
-      <footer className="bg-ingco-gray py-8">
-        <div className="max-w-7xl mx-auto px-4 text-center text-gray-400">
-          <p>&copy; 2026 E-Outilles By ELECTRON. Tous droits réservés.</p>
-        </div>
-      </footer>
     </div>
   )
 }

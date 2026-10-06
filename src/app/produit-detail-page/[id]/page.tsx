@@ -5,7 +5,6 @@ import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useCartStore } from '@/lib/store/cart'
 import { useWishlistStore } from '@/lib/store/wishlist'
-import Logo from '@/components/Logo'
 import { Icon, NavigationArrows } from '@/components/Icons'
 
 interface Product {
@@ -121,15 +120,6 @@ export default function ProductPage() {
 
   return (
     <div className="min-h-screen bg-ingco-black">
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-ingco-black/95 backdrop-blur-md border-b border-ingco-gray">
-        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-          <Logo variant="horizontal" size={40} />
-          <div className="flex items-center gap-4">
-            <Link href="/wishlist" aria-label="Favoris"><Icon name="heart" className="w-5 h-5 text-gray-300 hover:text-ingco-yellow" /></Link>
-            <Link href="/cart" aria-label="Panier"><Icon name="cart" className="w-5 h-5 text-gray-300 hover:text-ingco-yellow" /></Link>
-          </div>
-        </div>
-      </nav>
 
       {toast && (
         <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-ingco-yellow text-ingco-black px-6 py-3 rounded-xl font-bold shadow-lg">

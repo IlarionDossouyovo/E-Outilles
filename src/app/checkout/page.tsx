@@ -5,7 +5,6 @@ import { NavigationArrows, Icon } from '@/components/Icons'
 import { useCartStore } from '@/lib/store/cart'
 import Link from 'next/link'
 import PageNavigation from '@/components/PageNavigation'
-import Logo from '@/components/Logo'
 
 export default function CheckoutPage() {
   const { items, getTotal, clearCart } = useCartStore()
@@ -111,35 +110,12 @@ export default function CheckoutPage() {
     }
   }
 
-  // Navigation
-  const Nav = () => (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-ingco-black/95 backdrop-blur-md border-b border-ingco-gray">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <Logo variant="horizontal" size={40} />
-          <div className="hidden md:flex items-center gap-8">
-            <Link href="/" className="text-gray-300 hover:text-ingco-yellow transition-colors">Accueil</Link>
-            <Link href="/search" className="text-gray-300 hover:text-ingco-yellow transition-colors">Produits</Link>
-          </div>
-        </div>
-      </div>
-    </nav>
-  )
 
-  // Footer
-  const Footer = () => (
-    <footer className="bg-ingco-dark border-t border-ingco-gray py-8 mt-16">
-      <div className="max-w-7xl mx-auto px-4 text-center">
-        <p className="text-gray-500 text-sm">© 2026 E-Outilles. Tous droits réservés.</p>
-      </div>
-    </footer>
-  )
 
   // Étape 3: Confirmation
   if (step === 3) {
     return (
       <div className="min-h-screen bg-ingco-black">
-        <Nav />
         <div className="pt-24 pb-16 max-w-md mx-auto px-4 text-center">
           <div className="bg-ingco-gray rounded-3xl p-8">
             <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -172,14 +148,12 @@ export default function CheckoutPage() {
             </Link>
           </div>
         </div>
-        <Footer />
       </div>
     )
   }
 
   return (
     <div className="min-h-screen bg-ingco-black">
-      <Nav />
       <PageNavigation />
       <div className="pt-24 pb-16 max-w-4xl mx-auto px-4">
         <h1 className="text-3xl font-bold text-white mb-8">Checkout</h1>
@@ -476,7 +450,6 @@ export default function CheckoutPage() {
         <NavigationArrows current="/checkout" />
       </div>
 
-      <Footer />
     </div>
   )
 }

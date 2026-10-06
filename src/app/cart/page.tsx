@@ -4,46 +4,15 @@ import { useCartStore } from '@/lib/store/cart'
 import { Icon, NavigationArrows } from '@/components/Icons'
 import Link from 'next/link'
 import PageNavigation from '@/components/PageNavigation'
-import Logo from '@/components/Logo'
 
 export default function CartPage() {
   const { items, updateQuantity, removeItem, getTotal, clearCart } = useCartStore()
 
-  // Navigation simple
-  const Nav = () => (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-ingco-black/95 backdrop-blur-md border-b border-ingco-gray">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <Logo variant="horizontal" size={40} />
-          <div className="hidden md:flex items-center gap-8">
-            <Link href="/" className="text-gray-300 hover:text-ingco-yellow transition-colors">Accueil</Link>
-            <Link href="/search" className="text-gray-300 hover:text-ingco-yellow transition-colors">Produits</Link>
-            <Link href="/about" className="text-gray-300 hover:text-ingco-yellow transition-colors">À propos</Link>
-            <Link href="/contact" className="text-gray-300 hover:text-ingco-yellow transition-colors">Contact</Link>
-          </div>
-        </div>
-      </div>
-    </nav>
-  )
 
-  // Footer simple
-  const Footer = () => (
-    <footer className="bg-ingco-dark border-t border-ingco-gray py-8 mt-16">
-      <div className="max-w-7xl mx-auto px-4 text-center">
-        <p className="text-gray-500 text-sm">© 2026 E-Outilles. Tous droits réservés.</p>
-        <div className="flex gap-4 justify-center mt-4">
-          <Link href="/about" className="text-gray-500 hover:text-ingco-yellow text-sm">À propos</Link>
-          <Link href="/contact" className="text-gray-500 hover:text-ingco-yellow text-sm">Contact</Link>
-          <Link href="/legal" className="text-gray-500 hover:text-ingco-yellow text-sm">Mentions légales</Link>
-        </div>
-      </div>
-    </footer>
-  )
 
   if (items.length === 0) {
     return (
       <div className="min-h-screen bg-ingco-black">
-        <Nav />
         <div className="pt-24 pb-16 max-w-7xl mx-auto px-4 text-center">
           <PageNavigation />
           <Icon name="cart" className="w-16 h-16 text-gray-600 mx-auto mb-6" />
@@ -56,14 +25,12 @@ export default function CartPage() {
             Découvrir le catalogue
           </Link>
         </div>
-        <Footer />
       </div>
     )
   }
 
   return (
     <div className="min-h-screen bg-ingco-black">
-      <Nav />
       <div className="pt-24 pb-16 max-w-7xl mx-auto px-4">
         <PageNavigation />
         <h1 className="text-3xl font-bold text-white mb-8">Mon Panier</h1>
@@ -139,7 +106,6 @@ export default function CartPage() {
         <NavigationArrows current="/cart" />
       </div>
 
-      <Footer />
     </div>
   )
 }

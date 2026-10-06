@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { useCartStore } from '@/lib/store/cart'
 import { useWishlistStore } from '@/lib/store/wishlist'
 import Link from 'next/link'
-import Logo from '@/components/Logo'
 import { NavigationArrows, Icon } from '@/components/Icons'
 import { categoryImage } from '@/lib/catalog'
 
@@ -79,35 +78,6 @@ export default function SearchPage({ searchParams }: { searchParams: { category?
 
   return (
     <div className="min-h-screen bg-ingco-black">
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-ingco-black/95 backdrop-blur-md border-b border-ingco-gray">
-        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-          <Logo variant="horizontal" size={40} />
-          <div className="hidden md:flex items-center gap-8">
-            <Link href="/" className="text-gray-300 hover:text-ingco-yellow">Accueil</Link>
-            <Link href="/search" className="text-ingco-yellow">Produits</Link>
-            <Link href="/categories" className="text-gray-300 hover:text-ingco-yellow">Catégories</Link>
-            <Link href="/about" className="text-gray-300 hover:text-ingco-yellow">À propos</Link>
-          </div>
-          <div className="flex items-center gap-4">
-            <Link href="/wishlist" className="relative" aria-label="Favoris">
-              <Icon name="heart" className="w-5 h-5 text-gray-300 hover:text-ingco-yellow" />
-              {wishlistItems.length > 0 && (
-                <span className="absolute -top-2 -right-2 bg-ingco-yellow text-ingco-black text-xs w-5 h-5 rounded-full flex items-center justify-center">
-                  {wishlistItems.length}
-                </span>
-              )}
-            </Link>
-            <Link href="/cart" className="relative" aria-label="Panier">
-              <Icon name="cart" className="w-5 h-5 text-gray-300 hover:text-ingco-yellow" />
-              {cartItems.length > 0 && (
-                <span className="absolute -top-2 -right-2 bg-ingco-yellow text-ingco-black text-xs w-5 h-5 rounded-full flex items-center justify-center">
-                  {cartItems.length}
-                </span>
-              )}
-            </Link>
-          </div>
-        </div>
-      </nav>
 
       {toast && (
         <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-ingco-yellow text-ingco-black px-6 py-3 rounded-xl font-bold shadow-lg animate-pop-in">
