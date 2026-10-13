@@ -73,6 +73,33 @@ if (-not $codeOk) {
     Write-Host "AGENT_ACCESS_CODE genere dans .env." -ForegroundColor Green
 }
 
+# OLLAMA_API_URL : le chatbot utilise Ollama en secours de Google AI. Si un
+# serveur Ollama local repond, on l'active automatiquement (aucune saisie).
+$ollamaUp = $false
+try {
+    $tags = Invoke-RestMethod "http://localhost:11434/api/tags" -TimeoutSec 2 -ErrorAction Stop
+    $ollamaUp = $true
+} catch { $ollamaUp = $false }
+if ($ollamaUp) {
+    $envLines = @(Get-Content ".env" -ErrorAction SilentlyContinue)
+    $ollamaLine = -1
+    for ($i = 0; $i -lt $envLines.Count; $i++) {
+        if ($envLines[$i] -match "^\s*OLLAMA_API_URL\s*=") { $ollamaLine = $i }
+    }
+    if ($ollamaLine -ge 0) {
+        $envLines[$ollamaLine] = "OLLAMA_API_URL=http://localhost:11434"
+    } else {
+        $envLines += "OLLAMA_API_URL=http://localhost:11434"
+    }
+    if (-not ($envLines -match "^\s*OLLAMA_CHAT_MODEL\s*=")) {
+        $envLines += "OLLAMA_CHAT_MODEL=llama3.2:latest"
+    }
+    Set-Content ".env" $envLines
+    Write-Host "Ollama detecte - active dans .env." -ForegroundColor Green
+} else {
+    Write-Host "Ollama non joignable sur localhost:11434 - laisse desactive (Google AI + demo actifs)." -ForegroundColor Yellow
+}
+
 Write-Host "== 4/7 Generation du client Prisma ==" -ForegroundColor Cyan
 npx prisma generate
 
