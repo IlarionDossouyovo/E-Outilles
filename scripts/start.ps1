@@ -16,9 +16,20 @@ param(
     [switch]$Clean
 )
 
-$ErrorActionPreference = "Stop"
+$ErrorActionPreference = "Continue"
 $Port = 3003
 $BaseUrl = "http://localhost:$Port"
+
+# Les commandes natives (npm, npx) ecrivent parfois sur stderr (avertissements)
+# et, avec ErrorActionPreference=Stop, PowerShell interrompt alors le script.
+# On verifie donc explicitement le code de sortie apres chaque etape critique.
+function Assert-LastExit {
+    param([string]$Message)
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host $Message -ForegroundColor Red
+        exit 1
+    }
+}
 
 # -Clean : supprime les artefacts regenerables pour liberer de l'espace
 # (utile quand le disque affiche ENOSPC). Ne touche ni la base ni le code.
@@ -27,7 +38,7 @@ if ($Clean) {
     foreach ($dir in @('.next', 'node_modules\.cache')) {
         if (Test-Path $dir) { Remove-Item -Recurse -Force $dir -ErrorAction SilentlyContinue }
     }
-    npm cache clean --force 2>$null | Out-Null
+    npm cache clean --force 2>&1 | Out-Null
     Write-Host "Nettoyage termine." -ForegroundColor Green
 }
 
@@ -89,6 +100,7 @@ if ($freeGB -lt 2) {
 if (-not (Test-Path "node_modules")) {
     Write-Host "== Installation des dependances ==" -ForegroundColor Cyan
     npm install
+    Assert-LastExit "Echec de npm install (verifiez l'espace disque et le reseau)."
 }
 
 # --- 3. Fichier .env ----------------------------------------
@@ -113,10 +125,14 @@ if (Test-Path $prismaClient) {
     Write-Host "Client Prisma deja genere - generate ignore." -ForegroundColor DarkGray
 } else {
     npx prisma generate
+    Assert-LastExit "Echec de prisma generate (souvent un disque plein : ENOSPC)."
 }
 
 npx prisma migrate deploy
+Assert-LastExit "Echec des migrations Prisma."
+
 npx prisma db seed
+Assert-LastExit "Echec du seed Prisma."
 
 # --- 5. Ollama (demarre s'il est installe mais inactif) -----
 $ollamaUp = Test-Ollama
@@ -148,6 +164,7 @@ if ($ollamaUp) {
 if ($Prod) {
     Write-Host "== Build de production ==" -ForegroundColor Cyan
     npm run build
+    Assert-LastExit "Echec du build (verifiez l'espace disque)."
 }
 
 # --- 7. Lancement du serveur --------------------------------
