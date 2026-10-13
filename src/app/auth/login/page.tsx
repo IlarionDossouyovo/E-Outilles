@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { loginAction } from '@/app/actions'
 import PasswordInput from '@/components/PasswordInput'
+import { safeRedirect } from '@/lib/security/redirect'
 
 export default function LoginPage() {
   const [error, setError] = useState('')
@@ -11,7 +12,7 @@ export default function LoginPage() {
   const [redirectTo, setRedirectTo] = useState('')
 
   useEffect(() => {
-    setRedirectTo(new URLSearchParams(window.location.search).get('redirect') || '')
+    setRedirectTo(safeRedirect(new URLSearchParams(window.location.search).get('redirect')))
   }, [])
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -26,11 +27,11 @@ export default function LoginPage() {
       setError(result.error)
       setRedirecting(false)
     } else if (result?.success) {
-      const redirectTo = new URLSearchParams(window.location.search).get('redirect') || '/profile'
+      const target = safeRedirect(new URLSearchParams(window.location.search).get('redirect')) || '/profile'
       // Full navigation: a client-side router.push can race the Server Action
       // cookie commit, so middleware would still see an unauthenticated request
       // and bounce back to /auth/login.
-      window.location.assign(redirectTo)
+      window.location.assign(target)
     }
   }
 

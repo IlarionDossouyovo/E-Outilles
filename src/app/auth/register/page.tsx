@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import PasswordInput from '@/components/PasswordInput'
+import { safeRedirect } from '@/lib/security/redirect'
 
 export default function RegisterPage() {
   const [name, setName] = useState('')
@@ -32,7 +33,9 @@ export default function RegisterPage() {
         return
       }
 
-      window.location.assign('/profile')
+      const target =
+        safeRedirect(new URLSearchParams(window.location.search).get('redirect')) || '/profile'
+      window.location.assign(target)
     } catch {
       setError('Erreur de connexion au serveur')
       setLoading(false)

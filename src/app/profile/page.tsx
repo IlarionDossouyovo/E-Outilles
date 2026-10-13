@@ -36,13 +36,23 @@ export default function ProfilePage() {
   const [user, setUser] = useState<User | null>(null)
   const [orders, setOrders] = useState<Order[]>([])
   const [activeTab, setActiveTab] = useState('orders')
+  const [accessDenied, setAccessDenied] = useState(false)
   const router = useRouter()
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('error') === 'acces_refuse') {
+      setAccessDenied(true)
+      // Drop the param so the notice is not replayed on refresh/back.
+      window.history.replaceState({}, '', '/profile')
+    }
+  }, [])
 
   useEffect(() => {
     fetch('/api/auth/me')
       .then(async (res) => {
         if (res.status === 401) {
-          router.push('/auth/login')
+          router.push('/auth/login?redirect=/profile')
           return null
         }
         return res.json()
@@ -53,7 +63,7 @@ export default function ProfilePage() {
           setOrders(data.orders || [])
         }
       })
-      .catch(() => router.push('/auth/login'))
+      .catch(() => router.push('/auth/login?redirect=/profile'))
   }, [router])
 
   const handleLogout = async () => {
@@ -68,6 +78,12 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-ingco-black pt-24 pb-16">
       <div className="max-w-7xl mx-auto px-4">
         <PageNavigation backLabel="Accueil" />
+
+        {accessDenied && (
+          <div className="bg-red-500/15 border border-red-500/40 text-red-300 px-4 py-3 rounded-xl mb-6 text-sm">
+            Accès refusé : cette section est réservée aux administrateurs.
+          </div>
+        )}
         
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">

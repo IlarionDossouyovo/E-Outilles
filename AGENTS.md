@@ -168,4 +168,12 @@ Persistent notes for working on the E-Outilles codebase.
   `/vendeur` are admin-protected by middleware.
 - Dashboards reachable from the footer bottom bar: Espace client, Espace
   vendeur, Agents IA, Administration.
+- Redirects: `next/navigation` `redirect()` on a static page emits a client
+  NEXT_REDIRECT payload (no HTTP 3xx/Location), so curl can't follow it — use
+  the browser to verify. `/cgu` -> `/terms`, `/rgpd` -> `/privacy`,
+  `/orders` -> `/profile`.
+- Access control: a signed-in non-admin hitting an admin route is sent to
+  `/profile?error=acces_refuse` (notice shown, param stripped). Post-login
+  `?redirect=` goes through `safeRedirect()` in `src/lib/security/redirect.ts`
+  (same-site absolute paths only; blocks `//evil.com` and `https://`).
 

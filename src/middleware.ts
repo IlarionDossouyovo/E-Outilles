@@ -24,8 +24,10 @@ export async function middleware(request: NextRequest) {
   }
 
   if (rule.role === 'admin' && user.role !== 'admin') {
+    // Send a signed-in non-admin to their account page with a notice, rather
+    // than to the homepage where the error param is silently dropped.
     const url = request.nextUrl.clone()
-    url.pathname = '/'
+    url.pathname = '/profile'
     url.search = '?error=acces_refuse'
     return NextResponse.redirect(url)
   }
