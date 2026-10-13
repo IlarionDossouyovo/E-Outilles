@@ -230,3 +230,16 @@ Persistent notes for working on the E-Outilles codebase.
   `user.isFounder` from the session - never show that link to plain admins,
   or they hit the "Acces refuse" notice. `isFounder` is computed server-side at
   login (`actions.ts`) and returned by `GET /api/auth/me`.
+
+- Navigation: the public `Header` (`src/components/Header.tsx`) main nav lists
+  the marketing pages only (categories, produits, chat, formations, revendeurs,
+  blog, services, contact, fondateur). The mobile panel adds role-aware links
+  (Espace vendeur always; Administration for admins; Agents IA for the founder)
+  by reading `getSessionAction()`. The homepage "Explorer" section mirrors this
+  so the vendor/account spaces are reachable from the landing page.
+- Product counts: the catalogue seeds ~71 products, not 500+. Keep the marketing
+  copy (home, about, fondateur) in sync with `prisma/seed.ts`.
+- Integrations are env-driven and reported live by `GET /api/admin/settings`:
+  `googleAI`, `ollama`/`ollamaReachable`, `resend`, `stripe`, `stripeWebhook`.
+  Stripe absent => card payment disabled at checkout (fallback: cash on delivery
+  or Mobile Money). Ollama absent => the chatbot uses the demo fallback.
