@@ -7,11 +7,12 @@ export async function POST(request: NextRequest) {
     
     // Only create payment intent if Stripe is configured
     if (!isStripeConfigured()) {
-      // Return mock response for development
-      return NextResponse.json({ 
-        clientSecret: 'mock_client_secret_for_development',
-        message: 'Stripe not configured - using mock mode'
-      })
+      // Never return a fake client secret: the browser would show a payment
+      // form that can never succeed.
+      return NextResponse.json(
+        { error: 'Stripe non configuré' },
+        { status: 503 }
+      )
     }
     
     const Stripe = (await import('stripe')).default

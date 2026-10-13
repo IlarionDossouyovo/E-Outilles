@@ -34,6 +34,7 @@ export default function AgentDashboard() {
   const [codeInput, setCodeInput] = useState('')
   const [error, setError] = useState('')
   const [verifying, setVerifying] = useState(false)
+  const [configAgent, setConfigAgent] = useState<typeof allAgents[number] | null>(null)
   const [stats, setStats] = useState({
     totalConversations: 0,
     activeAgents: allAgents.filter(a => a.status === 'online').length,
@@ -310,8 +311,8 @@ export default function AgentDashboard() {
                     </div>
                     <div className="mt-2 flex items-center justify-between">
                       <span className="text-white/60 text-xs">{agent.conversations} conv.</span>
-                      <button 
-                        onClick={() => alert(`${agent.name}\n\n${agent.description}\n\nFonctionnalités:\n${agent.features?.join('\n')}`)}
+                      <button
+                        onClick={() => setConfigAgent(agent)}
                         className="text-xs text-white underline"
                       >
                         Config <Icon name="arrow-right" className="w-4 h-4 inline" />
@@ -347,6 +348,48 @@ export default function AgentDashboard() {
           </Link>
         </div>
       </div>
+
+      {configAgent && (
+        <div
+          className="fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={() => setConfigAgent(null)}
+        >
+          <div
+            className="bg-ingco-gray rounded-2xl p-6 max-w-md w-full max-h-[85vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <Icon name={configAgent.icon as never} className="w-8 h-8 text-ingco-yellow" />
+                <div>
+                  <h3 className="text-lg font-bold text-white">{configAgent.name}</h3>
+                  <span className={`text-xs px-2 py-0.5 rounded ${configAgent.status === 'online' ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-400'}`}>
+                    {configAgent.status === 'online' ? 'En ligne' : 'Hors ligne'}
+                  </span>
+                </div>
+              </div>
+              <button onClick={() => setConfigAgent(null)} className="text-gray-400 hover:text-white" aria-label="Fermer">
+                <Icon name="x" className="w-5 h-5" />
+              </button>
+            </div>
+            <p className="text-gray-300 text-sm mb-4">{configAgent.description}</p>
+            <p className="text-ingco-yellow text-sm font-semibold mb-2">Fonctionnalités</p>
+            <ul className="space-y-1 mb-6">
+              {configAgent.features.map((f: string) => (
+                <li key={f} className="text-gray-300 text-sm flex items-start gap-2">
+                  <Icon name="check" className="w-4 h-4 text-green-400 mt-0.5" /> {f}
+                </li>
+              ))}
+            </ul>
+            <Link
+              href={`/chat?agent=${configAgent.agentId}`}
+              className="block text-center bg-ingco-yellow text-ingco-black py-3 rounded-xl font-bold hover:bg-yellow-400"
+            >
+              Tester cet agent
+            </Link>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
