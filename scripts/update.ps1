@@ -84,7 +84,10 @@ if (-not $codeOk) {
     } else {
         Add-Content ".env" "AGENT_ACCESS_CODE=$agentCode"
     }
-    Write-Host "AGENT_ACCESS_CODE genere dans .env." -ForegroundColor Green
+    Write-Host ""
+    Write-Host "Code d'acces Agents IA genere : $agentCode" -ForegroundColor Yellow
+    Write-Host "Notez-le : il faudra le saisir sur la page /agent." -ForegroundColor Yellow
+    Write-Host ""
 }
 
 # OLLAMA_API_URL : le chatbot utilise Ollama en secours de Google AI. Si un
