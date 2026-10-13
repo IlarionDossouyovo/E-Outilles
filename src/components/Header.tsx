@@ -17,6 +17,7 @@ interface NavItem {
 const NAV: NavItem[] = [
   { href: '/categories', label: 'Catégories' },
   { href: '/search', label: 'Produits' },
+  { href: '/chat', label: 'Assistant IA' },
   { href: '/formations', label: 'Formations' },
   { href: '/revendeurs', label: 'Revendeurs' },
   { href: '/blog', label: 'Blog' },

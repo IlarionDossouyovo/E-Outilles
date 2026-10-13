@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import AdminAnalytics from '@/components/AdminAnalytics'
 import Logo from '@/components/Logo'
+import AdminNav from '@/components/AdminNav'
 import { Icon } from '@/components/Icons'
 
 interface Subscriber {
@@ -57,10 +58,7 @@ export default function NewsletterPage() {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-ingco-black/95 backdrop-blur-md border-b border-ingco-gray">
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
           <Logo variant="horizontal" size={40} />
-          <div className="hidden md:flex items-center gap-6">
-            <Link href="/" className="text-gray-300 hover:text-ingco-yellow">Accueil</Link>
-            <Link href="/admin" className="text-gray-300 hover:text-ingco-yellow">Dashboard</Link>
-          </div>
+          <AdminNav />
         </div>
       </nav>
 

@@ -153,4 +153,11 @@ Persistent notes for working on the E-Outilles codebase.
   client falls back to Web Speech. Client playback: `src/lib/ai/useVoice.ts`.
 - Diagnostics: `GET /api/health` reports database status, product count and
   which integrations are configured (never the secret values).
+- Assistant IA: full-page chat at `/chat` (agent selector, voice, quick
+  prompts) plus the floating `ChatWidget`. The header nav now links to
+  `/chat` as "Assistant IA" so visitors can find it.
+- Admin: `/admin/customers` lists customers with order count and total spent
+  (admin-only `GET /api/customers`, never returns password/reset tokens).
+  Every admin page uses the shared `src/components/AdminNav.tsx` (Dashboard,
+  Produits, Ajouter, Commandes, Clients, Newsletter, Parametres, Agents IA).
 

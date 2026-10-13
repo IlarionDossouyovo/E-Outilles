@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import AdminAnalytics from '@/components/AdminAnalytics'
 import Logo from '@/components/Logo'
+import AdminNav from '@/components/AdminNav'
 import { Icon } from '@/components/Icons'
 
 interface RecentOrder {
@@ -92,13 +93,7 @@ export default function AdminDashboard() {
             <Logo variant="horizontal" size={40} />
             <span className="bg-ingco-yellow text-ingco-black text-xs px-2 py-1 rounded ml-2">Admin</span>
           </div>
-          <div className="hidden md:flex items-center gap-6">
-            <Link href="/" className="text-gray-300 hover:text-ingco-yellow">Accueil</Link>
-            <Link href="/admin" className="text-ingco-yellow">Dashboard</Link>
-            <Link href="/admin/products" className="text-gray-300 hover:text-ingco-yellow">Produits</Link>
-            <Link href="/admin/add-product" className="text-gray-300 hover:text-ingco-yellow">Ajouter</Link>
-            <Link href="/contact" className="text-gray-300 hover:text-ingco-yellow">Messages</Link>
-          </div>
+          <AdminNav />
           <div className="flex items-center gap-4">
             <span className="text-gray-400 text-sm flex items-center gap-2"><Icon name="user" className="w-4 h-4" /> Admin</span>
           </div>
