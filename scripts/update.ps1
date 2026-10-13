@@ -89,12 +89,43 @@ if (-not $codeOk) {
 
 # OLLAMA_API_URL : le chatbot utilise Ollama en secours de Google AI. Si un
 # serveur Ollama local repond, on l'active automatiquement (aucune saisie).
-$ollamaUp = $false
-try {
-    $tags = Invoke-RestMethod "http://localhost:11434/api/tags" -TimeoutSec 2 -ErrorAction Stop
-    $ollamaUp = $true
-} catch { $ollamaUp = $false }
+function Test-Ollama {
+    try {
+        Invoke-RestMethod "http://localhost:11434/api/tags" -TimeoutSec 2 -ErrorAction Stop | Out-Null
+        return $true
+    } catch { return $false }
+}
+
+$ollamaUp = Test-Ollama
+
+# Ollama installe mais pas demarre : on le lance en arriere-plan puis on
+# re-teste. Sur Windows l'app de bureau le demarre d'habitude ; ceci couvre
+# le cas ou seul le binaire CLI est present.
+if (-not $ollamaUp) {
+    $ollamaCmd = Get-Command ollama -ErrorAction SilentlyContinue
+    if ($ollamaCmd) {
+        Write-Host "Ollama installe mais non joignable - demarrage..." -ForegroundColor Yellow
+        Start-Process -FilePath $ollamaCmd.Source -ArgumentList "serve" -WindowStyle Hidden | Out-Null
+        for ($i = 0; $i -lt 10; $i++) {
+            Start-Sleep -Seconds 1
+            if (Test-Ollama) { $ollamaUp = $true; break }
+        }
+    }
+}
+
 if ($ollamaUp) {
+    # Modele de chat : on verifie qu'il est bien telecharge, sinon on le pull.
+    $modelName = "llama3.2"
+    try {
+        $models = & ollama list 2>$null
+        if (-not ($models -match [regex]::Escape($modelName))) {
+            Write-Host "Telechargement du modele Ollama '$modelName' (peut prendre quelques minutes)..." -ForegroundColor Yellow
+            & ollama pull $modelName
+        }
+    } catch {
+        Write-Host "Verification du modele Ollama ignoree (CLI 'ollama' indisponible)." -ForegroundColor Yellow
+    }
+
     $envLines = @(Get-Content ".env" -ErrorAction SilentlyContinue)
     $ollamaLine = -1
     for ($i = 0; $i -lt $envLines.Count; $i++) {
@@ -112,6 +143,7 @@ if ($ollamaUp) {
     Write-Host "Ollama detecte - active dans .env." -ForegroundColor Green
 } else {
     Write-Host "Ollama non joignable sur localhost:11434 - laisse desactive (Google AI + demo actifs)." -ForegroundColor Yellow
+    Write-Host "Pour l'activer : installez Ollama (winget install Ollama.Ollama), lancez-le, puis relancez ce script." -ForegroundColor Yellow
 }
 
 Write-Host "== 4/7 Generation du client Prisma ==" -ForegroundColor Cyan
