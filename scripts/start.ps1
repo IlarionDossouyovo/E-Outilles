@@ -5,18 +5,31 @@
 #  Options :
 #     -Prod        build + serveur de production (npm start)
 #     -NoBrowser   ne pas ouvrir le navigateur
+#     -Clean       vide .next et les caches npm avant de demarrer
 #  Fait tout : dependances, .env, Prisma (generate/migrate/seed),
 #  Ollama, puis lance le serveur sur http://localhost:3003
 # ============================================================
 
 param(
     [switch]$Prod,
-    [switch]$NoBrowser
+    [switch]$NoBrowser,
+    [switch]$Clean
 )
 
 $ErrorActionPreference = "Stop"
 $Port = 3003
 $BaseUrl = "http://localhost:$Port"
+
+# -Clean : supprime les artefacts regenerables pour liberer de l'espace
+# (utile quand le disque affiche ENOSPC). Ne touche ni la base ni le code.
+if ($Clean) {
+    Write-Host "== Nettoyage (.next, caches npm) ==" -ForegroundColor Cyan
+    foreach ($dir in @('.next', 'node_modules\.cache')) {
+        if (Test-Path $dir) { Remove-Item -Recurse -Force $dir -ErrorAction SilentlyContinue }
+    }
+    npm cache clean --force 2>$null | Out-Null
+    Write-Host "Nettoyage termine." -ForegroundColor Green
+}
 
 function Test-PortBusy {
     param([int]$Port)
@@ -58,6 +71,20 @@ if (-not (Get-Command npm -ErrorAction SilentlyContinue)) {
     exit 1
 }
 
+# --- 1b. Espace disque (ENOSPC = disque plein) --------------
+$drive = (Get-Item $PWD).PSDrive
+$freeGB = [math]::Round($drive.Free / 1GB, 1)
+if ($freeGB -lt 2) {
+    Write-Host "Alerte : il ne reste que $freeGB Go libres sur $($drive.Name):." -ForegroundColor Red
+    Write-Host "Next.js et Prisma ont besoin d'espace (build + moteurs). Liberez de la place :" -ForegroundColor Yellow
+    Write-Host "  - Corbeille : vider la corbeille" -ForegroundColor Gray
+    Write-Host "  - Fichiers temporaires : touche Windows + R -> tapez %temp% -> tout supprimer" -ForegroundColor Gray
+    Write-Host "  - Caches npm : npm cache clean --force" -ForegroundColor Gray
+    Write-Host "  - Caches Next : Remove-Item -Recurse -Force .next" -ForegroundColor Gray
+    Write-Host "  - Ollama (modeles lourds) : ollama list puis ollama rm <modele>" -ForegroundColor Gray
+    exit 1
+}
+
 # --- 2. Dependances -----------------------------------------
 if (-not (Test-Path "node_modules")) {
     Write-Host "== Installation des dependances ==" -ForegroundColor Cyan
@@ -75,9 +102,19 @@ if (-not (Test-Path ".env")) {
     }
 }
 
-# --- 4. Prisma (generate + migrate + seed idempotent) -------
+# --- 4. Prisma (generate si necessaire + migrate + seed) ----
 Write-Host "== Prisma ==" -ForegroundColor Cyan
-npx prisma generate
+
+# `prisma generate` recopie un moteur de ~15 Mo. On ne le relance que si le
+# client n'a pas encore ete genere (sinon il fait echouer tout le script
+# quand le disque est plein, alors que le client existe deja).
+$prismaClient = "node_modules\.prisma\client\index.js"
+if (Test-Path $prismaClient) {
+    Write-Host "Client Prisma deja genere - generate ignore." -ForegroundColor DarkGray
+} else {
+    npx prisma generate
+}
+
 npx prisma migrate deploy
 npx prisma db seed
 
@@ -123,7 +160,7 @@ if ($Prod) {
     Start-Process -FilePath "cmd.exe" -ArgumentList "/k npm run dev" | Out-Null
 }
 
-if (Wait-Http -Url $BaseUrl -TimeoutSec 90) {
+if (Wait-Http -Url $BaseUrl -TimeoutSec 120) {
     Write-Host "Serveur pret : $BaseUrl" -ForegroundColor Green
     Write-Host "Admin : $BaseUrl/admin  (admin@e-outilles.com / admin123)" -ForegroundColor Green
     Write-Host "Demo  : demo@e-outilles.com / demo123" -ForegroundColor Green

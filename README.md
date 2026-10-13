@@ -53,6 +53,13 @@ powershell -ExecutionPolicy Bypass -File .\scripts\start.ps1
 
 Ou double-cliquez sur `demarrer.bat` à la racine du projet.
 
+Si le disque est plein (`ENOSPC: no space left on device`), libérez de l'espace
+puis relancez avec `-Clean` (vide `.next` et les caches npm) :
+
+```powershell
+.\scripts\start.ps1 -Clean
+```
+
 > Les catégories de la page `/categories/[slug]` s'appuient sur le catalogue
 > statique (`src/lib/catalog.ts`) et se construisent même si la base est vide.
 > Le seed reste nécessaire pour afficher les produits, articles et comptes de démo.
