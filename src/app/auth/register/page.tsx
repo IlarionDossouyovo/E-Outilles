@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import PasswordInput from '@/components/PasswordInput'
 
 export default function RegisterPage() {
@@ -12,7 +11,6 @@ export default function RegisterPage() {
   const [country, setCountry] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -34,8 +32,7 @@ export default function RegisterPage() {
         return
       }
 
-      router.push('/profile')
-      router.refresh()
+      window.location.assign('/profile')
     } catch {
       setError('Erreur de connexion au serveur')
       setLoading(false)

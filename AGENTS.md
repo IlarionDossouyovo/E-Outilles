@@ -129,4 +129,21 @@ Persistent notes for working on the E-Outilles codebase.
   generates it into `.env` when missing/placeholder and prints it at the end.
 - DB seed (`prisma/seed.ts`) creates the admin + demo users; `dev.db` is
   gitignored and rebuilt by `npx prisma db seed`.
+- Discoverability: footer has an "Administration" link; the login page shows
+  admin credentials and a notice when redirected from a protected route.
+- BUG FIXED: after login, `router.push(redirect)` raced the Server Action
+  cookie commit, so middleware still saw an unauthenticated request and
+  bounced back to `/auth/login?redirect=…` (only visible for middleware-
+  protected targets like `/admin`; `/profile` worked because it is not gated).
+  Login/register now use `window.location.assign(...)` for a full navigation.
+
+## AI provider & email config (session 2026-10-05)
+- `GOOGLE_AI_MODEL` default is `gemini-3.1-flash-lite`: the `-latest` aliases
+  are frequently 503 and older pinned models (`gemini-2.5-flash`,
+  `gemini-2.0-flash`) are retired (404). Candidate list retries on 404/429/503
+  only; auth errors and timeouts fail fast, plus a 60s circuit breaker per
+  provider in `generateText` so a dead provider never blocks a chat turn.
+- Resend: `RESEND_API_KEY` works, but until the domain (`e-outilles.fr`) is
+  verified at resend.com/domains, only sends to the Resend account address
+  succeed; use `FROM_EMAIL=E-Outilles <onboarding@resend.dev>` meanwhile.
 

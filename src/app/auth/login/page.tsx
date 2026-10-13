@@ -3,13 +3,16 @@
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { loginAction } from '@/app/actions'
-import { useRouter } from 'next/navigation'
 import PasswordInput from '@/components/PasswordInput'
 
 export default function LoginPage() {
   const [error, setError] = useState('')
   const [redirecting, setRedirecting] = useState(false)
-  const router = useRouter()
+  const [redirectTo, setRedirectTo] = useState('')
+
+  useEffect(() => {
+    setRedirectTo(new URLSearchParams(window.location.search).get('redirect') || '')
+  }, [])
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -24,8 +27,10 @@ export default function LoginPage() {
       setRedirecting(false)
     } else if (result?.success) {
       const redirectTo = new URLSearchParams(window.location.search).get('redirect') || '/profile'
-      router.push(redirectTo)
-      router.refresh()
+      // Full navigation: a client-side router.push can race the Server Action
+      // cookie commit, so middleware would still see an unauthenticated request
+      // and bounce back to /auth/login.
+      window.location.assign(redirectTo)
     }
   }
 
@@ -34,6 +39,12 @@ export default function LoginPage() {
       <div className="max-w-md mx-auto px-4">
         <div className="bg-ingco-gray rounded-2xl p-8">
           <h1 className="text-3xl font-bold text-white text-center mb-8">Connexion</h1>
+
+          {redirectTo.startsWith('/admin') && (
+            <div className="bg-ingco-yellow/15 border border-ingco-yellow/40 text-ingco-yellow px-4 py-3 rounded-xl mb-4 text-sm">
+              Cette page est réservée à l&apos;administration. Connectez-vous avec un compte administrateur.
+            </div>
+          )}
 
           {error && (
             <div className="bg-red-500/20 border border-red-500 text-red-400 px-4 py-2 rounded-xl mb-4">
@@ -91,6 +102,15 @@ export default function LoginPage() {
             <div className="bg-ingco-dark rounded-xl p-3 text-center">
               <p className="text-gray-400 text-sm">Email: <span className="text-white">demo@e-outilles.com</span></p>
               <p className="text-gray-400 text-sm">Mot de passe: <span className="text-white">demo123</span></p>
+            </div>
+
+            <div className="mt-4 bg-ingco-yellow/10 border border-ingco-yellow/30 rounded-xl p-3 text-center">
+              <p className="text-ingco-yellow text-sm font-semibold mb-1">Accès administration</p>
+              <p className="text-gray-400 text-sm">Email: <span className="text-white">admin@e-outilles.com</span></p>
+              <p className="text-gray-400 text-sm">Mot de passe: <span className="text-white">admin123</span></p>
+              <Link href="/admin" className="text-ingco-yellow text-sm hover:underline mt-2 inline-block">
+                Aller au tableau de bord admin
+              </Link>
             </div>
           </div>
         </div>

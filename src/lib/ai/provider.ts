@@ -41,15 +41,17 @@ export function isOllamaConfigured(): boolean {
   return Boolean(process.env.OLLAMA_API_URL)
 }
 
-export const GOOGLE_AI_MODEL = process.env.GOOGLE_AI_MODEL || 'gemini-flash-lite-latest'
+export const GOOGLE_AI_MODEL = process.env.GOOGLE_AI_MODEL || 'gemini-3.1-flash-lite'
 // Tried in order until one succeeds (models are retired or overloaded).
+// NOTE: the "-latest" aliases are convenient but flaky (frequent 503); the
+// pinned lite model is the reliable default.
 const GOOGLE_MODEL_CANDIDATES = Array.from(
   new Set([
     GOOGLE_AI_MODEL,
-    'gemini-flash-lite-latest',
-    'gemini-flash-latest',
-    'gemini-3.8-flash',
     'gemini-3.1-flash-lite',
+    'gemini-3.8-flash',
+    'gemini-flash-latest',
+    'gemini-flash-lite-latest',
   ])
 )
 const OLLAMA_URL = process.env.OLLAMA_API_URL || 'http://localhost:11434'
@@ -108,14 +110,14 @@ async function generateWithGoogleModel(
   return text
 }
 
-// Tries each candidate model until one responds, so a retired model never
-// breaks the assistant. Only "model not found" (404) is retried across
-// candidates: auth, network and timeout errors affect every model equally, so
-// retrying them just multiplies latency before the caller falls back.
+// Tries each candidate model until one responds, so a retired or overloaded
+// model never breaks the assistant. Only model-availability errors are retried
+// across candidates: auth errors and network timeouts affect every model
+// equally, so retrying them just multiplies latency before the caller falls back.
 interface GoogleError extends Error {
   status?: number
 }
-const RETRYABLE_GOOGLE_STATUS = new Set([404])
+const RETRYABLE_GOOGLE_STATUS = new Set([404, 429, 503])
 
 async function generateWithGoogle(options: GenerateOptions): Promise<string> {
   let lastError: unknown = null

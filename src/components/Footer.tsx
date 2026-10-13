@@ -100,6 +100,7 @@ export default function Footer() {
             <Link href="/legal" className="text-gray-500 hover:text-ingco-yellow transition-colors">Mentions légales</Link>
             <Link href="/privacy" className="text-gray-500 hover:text-ingco-yellow transition-colors">RGPD</Link>
             <Link href="/terms" className="text-gray-500 hover:text-ingco-yellow transition-colors">CGV</Link>
+            <Link href="/admin" className="text-gray-500 hover:text-ingco-yellow transition-colors">Administration</Link>
           </div>
         </div>
       </div>
