@@ -26,10 +26,29 @@ Le script `scripts/start.ps1` fait tout en une commande : dépendances, `.env`,
 Prisma (generate + migrate + seed), Ollama, puis lance le serveur sur le port
 3003 et ouvre le navigateur.
 
+> Si vous êtes **déjà dans PowerShell** (invite `PS C:\E-Outilles>`), lancez le
+> script directement — ne tapez pas `powershell` devant :
+
 ```powershell
+# Développement
+.\scripts\start.ps1
+
+# Production (build + npm start)
+.\scripts\start.ps1 -Prod
+```
+
+Si le script est bloqué par la politique d'exécution, autorisez-le pour la
+session en cours :
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\scripts\start.ps1
+```
+
+Depuis **cmd.exe** (ou si `powershell` n'est pas dans le PATH), utilisez :
+
+```cmd
 powershell -ExecutionPolicy Bypass -File .\scripts\start.ps1
-# serveur de production (build + npm start) :
-powershell -ExecutionPolicy Bypass -File .\scripts\start.ps1 -Prod
 ```
 
 Ou double-cliquez sur `demarrer.bat` à la racine du projet.
