@@ -103,6 +103,13 @@ Persistent notes for working on the E-Outilles codebase.
 - Checkout has only two form steps (1 livraison, 2 paiement); step 3 is the
   confirmation screen. `handleSubmit` advances while `step < 2` — do not restore
   `< 3`, which made the final submit a no-op that never called `/api/orders`.
+- Card payment is gated on `GET /api/payments/status` (`{ card: boolean }`),
+  because `STRIPE_SECRET_KEY` is server-only. Without Stripe the option is
+  disabled and labelled "Bientot disponible"; with Stripe the order is handed
+  to Stripe Checkout (the webhook marks it paid). Never render a raw card
+  number/expiry/CVC form — card data is collected only on Stripe's page.
+- Mobile Money is an offline instruction rendered in the confirmation screen
+  (order stays `pending`); no aggregator (FedaPay/CinetPay/PayDunya) is wired.
 
 ## Founder page (session 2026-10-05)
 - `/fondateur` (server component, exports `metadata`) is the founder profile.
