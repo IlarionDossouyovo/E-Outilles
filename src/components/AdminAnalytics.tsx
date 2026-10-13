@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { Icon } from '@/components/Icons'
 
-interface AnalyticsData {
+export interface AdminAnalyticsData {
   totalOrders: number
   totalRevenue: number
   activeProducts: number
@@ -29,7 +29,7 @@ const statusLabels: Record<string, { label: string; color: string }> = {
   delivered: { label: 'livré', color: 'bg-green-500' }
 }
 
-export default function AdminAnalytics({ data }: { data: AnalyticsData }) {
+export default function AdminAnalytics({ data }: { data: AdminAnalyticsData }) {
   return (
     <div className="space-y-8">
       {/* Stats Cards */}
@@ -40,7 +40,7 @@ export default function AdminAnalytics({ data }: { data: AnalyticsData }) {
             <Icon name="truck" className="w-6 h-6 text-ingco-yellow" />
           </div>
           <div className="text-3xl font-bold text-white">{data.totalOrders.toLocaleString()}</div>
-          <div className="text-green-500 text-sm mt-2">+12% ce mois</div>
+          
         </div>
         
         <div className="bg-ingco-dark rounded-xl p-6 border border-ingco-gray">
@@ -49,7 +49,7 @@ export default function AdminAnalytics({ data }: { data: AnalyticsData }) {
             <Icon name="card" className="w-6 h-6 text-ingco-yellow" />
           </div>
           <div className="text-3xl font-bold text-white">{data.totalRevenue.toLocaleString()}€</div>
-          <div className="text-green-500 text-sm mt-2">+8% ce mois</div>
+          
         </div>
         
         <div className="bg-ingco-dark rounded-xl p-6 border border-ingco-gray">
@@ -58,7 +58,7 @@ export default function AdminAnalytics({ data }: { data: AnalyticsData }) {
             <Icon name="tools" className="w-6 h-6 text-ingco-yellow" />
           </div>
           <div className="text-3xl font-bold text-white">{data.activeProducts}</div>
-          <div className="text-green-500 text-sm mt-2">+3 nouveaux</div>
+          
         </div>
         
         <div className="bg-ingco-dark rounded-xl p-6 border border-ingco-gray">
@@ -67,7 +67,7 @@ export default function AdminAnalytics({ data }: { data: AnalyticsData }) {
             <Icon name="chat" className="w-6 h-6 text-ingco-yellow" />
           </div>
           <div className="text-3xl font-bold text-white">{data.subscribers.toLocaleString()}</div>
-          <div className="text-green-500 text-sm mt-2">+45 nouveaux</div>
+          
         </div>
       </div>
 

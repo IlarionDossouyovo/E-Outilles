@@ -7,6 +7,7 @@ import AdminAnalytics from '@/components/AdminAnalytics'
 import Logo from '@/components/Logo'
 import AdminNav from '@/components/AdminNav'
 import { Icon } from '@/components/Icons'
+import { useAdminAnalytics } from '@/hooks/useAdminAnalytics'
 
 interface Category {
   id: string
@@ -28,6 +29,7 @@ export default function AddProductPage() {
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const { data: analytics } = useAdminAnalytics()
 
   useEffect(() => {
     fetch('/api/categories')
@@ -109,26 +111,7 @@ export default function AddProductPage() {
         </div>
 
         {/* Analytics */}
-        <AdminAnalytics data={{
-          totalOrders: 1247,
-          totalRevenue: 89450,
-          activeProducts: 523,
-          subscribers: 3421,
-          recentOrders: [
-            { id: 'ORD-001', customer: 'Jean Kouassi', amount: 459.99, status: 'pending', date: '16/04/2026' },
-            { id: 'ORD-002', customer: 'Marie Diallo', amount: 189.00, status: 'shipped', date: '15/04/2026' },
-            { id: 'ORD-003', customer: 'Paul Okonkwo', amount: 899.50, status: 'delivered', date: '15/04/2026' },
-            { id: 'ORD-004', customer: 'Anne Mensah', amount: 234.00, status: 'processing', date: '14/04/2026' },
-            { id: 'ORD-005', customer: 'Pierre Ngoma', amount: 567.00, status: 'pending', date: '14/04/2026' },
-          ],
-          topProducts: [
-            { name: 'Perceuse visseuse INGCO 20V', sales: 89, revenue: 8011 },
-            { name: 'Marteau perforateur SDS Max', sales: 45, revenue: 11249 },
-            { name: 'Kit de clés mécaniques 50 pièces', sales: 67, revenue: 5359 },
-            { name: 'Tronçonneuse thermique 45cm', sales: 34, revenue: 10196 },
-            { name: 'Multimètre numérique professionnel', sales: 78, revenue: 4679 },
-          ]
-        }} />
+        <AdminAnalytics data={analytics} />
 
         <form onSubmit={handleSubmit} className="bg-ingco-gray rounded-2xl p-6 space-y-6">
           {/* Nom du produit */}

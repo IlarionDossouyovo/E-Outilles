@@ -6,6 +6,7 @@ import AdminAnalytics from '@/components/AdminAnalytics'
 import Logo from '@/components/Logo'
 import AdminNav from '@/components/AdminNav'
 import { Icon } from '@/components/Icons'
+import { useAdminAnalytics } from '@/hooks/useAdminAnalytics'
 
 interface AdminOrder {
   id: string
@@ -35,6 +36,7 @@ export default function AdminOrdersPage() {
   const [filter, setFilter] = useState('all')
   const [search, setSearch] = useState('')
   const [error, setError] = useState('')
+  const { data: analytics } = useAdminAnalytics()
 
   useEffect(() => {
     fetch('/api/orders')
@@ -119,20 +121,7 @@ export default function AdminOrdersPage() {
         )}
 
         {/* Analytics */}
-        <AdminAnalytics data={{
-          totalOrders: orders.length,
-          totalRevenue: orders.reduce((sum, o) => sum + o.amount, 0),
-          activeProducts: 523,
-          subscribers: 3421,
-          recentOrders: orders.slice(0, 5).map(o => ({ ...o, status: o.status })),
-          topProducts: [
-            { name: 'Perceuse visseuse INGCO 20V', sales: 89, revenue: 8011 },
-            { name: 'Marteau perforateur SDS Max', sales: 45, revenue: 11249 },
-            { name: 'Kit de clés mécaniques 50 pièces', sales: 67, revenue: 5359 },
-            { name: 'Tronçonneuse thermique 45cm', sales: 34, revenue: 10196 },
-            { name: 'Multimètre numérique professionnel', sales: 78, revenue: 4679 },
-          ]
-        }} />
+        <AdminAnalytics data={analytics} />
 
         {/* Filters */}
         <div className="flex flex-col md:flex-row gap-4 mb-6">

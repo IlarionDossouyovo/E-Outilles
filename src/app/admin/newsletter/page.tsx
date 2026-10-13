@@ -6,6 +6,7 @@ import AdminAnalytics from '@/components/AdminAnalytics'
 import Logo from '@/components/Logo'
 import AdminNav from '@/components/AdminNav'
 import { Icon } from '@/components/Icons'
+import { useAdminAnalytics } from '@/hooks/useAdminAnalytics'
 
 interface Subscriber {
   id: string
@@ -30,6 +31,7 @@ export default function NewsletterPage() {
   const [result, setResult] = useState<string>('')
   const [error, setError] = useState<string>('')
   const [subscribers, setSubscribers] = useState<Subscriber[]>([])
+  const { data: analytics } = useAdminAnalytics()
 
   useEffect(() => {
     fetch('/api/newsletter')
@@ -94,26 +96,7 @@ export default function NewsletterPage() {
         </div>
 
         {/* Analytics */}
-        <AdminAnalytics data={{
-          totalOrders: 1247,
-          totalRevenue: 89450,
-          activeProducts: 523,
-          subscribers: subscribers.length,
-          recentOrders: [
-            { id: 'ORD-001', customer: 'Jean Kouassi', amount: 459.99, status: 'pending', date: '16/04/2026' },
-            { id: 'ORD-002', customer: 'Marie Diallo', amount: 189.00, status: 'shipped', date: '15/04/2026' },
-            { id: 'ORD-003', customer: 'Paul Okonkwo', amount: 899.50, status: 'delivered', date: '15/04/2026' },
-            { id: 'ORD-004', customer: 'Anne Mensah', amount: 234.00, status: 'processing', date: '14/04/2026' },
-            { id: 'ORD-005', customer: 'Pierre Ngoma', amount: 567.00, status: 'pending', date: '14/04/2026' },
-          ],
-          topProducts: [
-            { name: 'Perceuse visseuse INGCO 20V', sales: 89, revenue: 8011 },
-            { name: 'Marteau perforateur SDS Max', sales: 45, revenue: 11249 },
-            { name: 'Kit de clés mécaniques 50 pièces', sales: 67, revenue: 5359 },
-            { name: 'Tronçonneuse thermique 45cm', sales: 34, revenue: 10196 },
-            { name: 'Multimètre numérique professionnel', sales: 78, revenue: 4679 },
-          ]
-        }} />
+        <AdminAnalytics data={analytics} />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Composer */}
