@@ -3,6 +3,7 @@ import './globals.css'
 import ChatWidget from '@/lib/ai/ChatWidget'
 import ServiceWorkerRegister from '@/components/ServiceWorkerRegister'
 import SiteChrome from '@/components/SiteChrome'
+import MarketingTracker from '@/components/marketing/MarketingTracker'
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://e-outilles.com'
@@ -46,6 +47,7 @@ export default function RootLayout({
         <SiteChrome>{children}</SiteChrome>
         <ChatWidget />
         <ServiceWorkerRegister />
+        <MarketingTracker />
       </body>
     </html>
   )

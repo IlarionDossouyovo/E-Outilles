@@ -91,6 +91,10 @@ model Order {
   paymentMethod   String?
   paymentId       String?
   notes           String?
+  // Attribution marketing (premier UTM vu par le client, propagé au checkout)
+  utmSource       String?
+  utmMedium       String?
+  utmCampaign     String?
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
   items           OrderItem[]
@@ -187,4 +191,20 @@ model Setting {
   key       String   @id
   value     String
   updatedAt DateTime @updatedAt
+}
+
+// Visite attribuée à un canal marketing (une ligne par page vue avec UTM).
+// Alimente le tableau de bord /admin/marketing.
+model TrafficEvent {
+  id          String   @id @default(cuid())
+  path        String
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+  utmContent  String?
+  referrer    String?
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([utmSource])
 }

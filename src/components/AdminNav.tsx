@@ -11,6 +11,7 @@ const SECTIONS = [
   { href: '/admin/add-product', label: 'Ajouter' },
   { href: '/admin/orders', label: 'Commandes' },
   { href: '/admin/customers', label: 'Clients' },
+  { href: '/admin/marketing', label: 'Marketing' },
   { href: '/admin/newsletter', label: 'Newsletter' },
   { href: '/admin/settings', label: 'Parametres' },
 ]

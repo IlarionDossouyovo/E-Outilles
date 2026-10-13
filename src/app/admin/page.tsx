@@ -223,7 +223,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="mt-8 grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div className="mt-8 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           <Link href="/admin/add-product" className="bg-ingco-gray p-4 rounded-xl text-center hover:bg-ingco-dark transition-colors block">
             <Icon name="grid" className="w-6 h-6 text-ingco-yellow mx-auto mb-2" />
             <span className="text-white text-sm">Ajouter produit</span>
@@ -235,6 +235,10 @@ export default function AdminDashboard() {
           <Link href="/admin/newsletter" className="bg-ingco-gray p-4 rounded-xl text-center hover:bg-ingco-dark transition-colors block">
             <Icon name="chat" className="w-6 h-6 text-ingco-yellow mx-auto mb-2" />
             <span className="text-white text-sm">Newsletter</span>
+          </Link>
+          <Link href="/admin/marketing" className="bg-ingco-gray p-4 rounded-xl text-center hover:bg-ingco-dark transition-colors block">
+            <Icon name="megaphone" className="w-6 h-6 text-ingco-yellow mx-auto mb-2" />
+            <span className="text-white text-sm">Marketing</span>
           </Link>
           <FounderLink className="bg-ingco-gray p-4 rounded-xl text-center hover:bg-ingco-dark transition-colors block">
             <Icon name="user" className="w-6 h-6 text-ingco-yellow mx-auto mb-2" />

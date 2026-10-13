@@ -9,6 +9,7 @@ export type IconName =
   | 'download' | 'qr' | 'arrow-left' | 'arrow-right' | 'chevron-left' | 'chevron-right'
   | 'check' | 'warning' | 'spinner' | 'star' | 'truck' | 'shield' | 'wrench' | 'zap'
   | 'camera' | 'image' | 'mic' | 'volume' | 'volume-off' | 'paperclip' | 'x' | 'send'
+  | 'share' | 'facebook' | 'instagram' | 'tiktok' | 'youtube' | 'linkedin' | 'twitter' | 'whatsapp' | 'megaphone'
 
 const PATHS: Record<IconName, ReactNode> = {
   home: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10.5L12 3l9 7.5M5 9.5V21h5v-6h4v6h5V9.5" />,
@@ -48,6 +49,15 @@ const PATHS: Record<IconName, ReactNode> = {
   paperclip: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 11.5l-8.5 8.5a5 5 0 01-7-7l8-8a3.5 3.5 0 015 5l-8 8a2 2 0 01-3-3l7-7" />,
   x: <path strokeLinecap="round" strokeWidth={2} d="M6 6l12 12M18 6L6 18" />,
   send: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />,
+  share: <><circle cx="18" cy="5" r="2.5" strokeWidth={2} /><circle cx="6" cy="12" r="2.5" strokeWidth={2} /><circle cx="18" cy="19" r="2.5" strokeWidth={2} /><path strokeWidth={2} d="M8.2 10.8l7.6-4.2M8.2 13.2l7.6 4.2" /></>,
+  megaphone: <><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 11v2a1 1 0 001 1h2l4 3V7L6 10H4a1 1 0 00-1 1z" /><path strokeLinecap="round" strokeWidth={2} d="M14 8a4 4 0 010 8M17 6a7 7 0 010 12" /></>,
+  facebook: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 8.5V7a1.5 1.5 0 011.5-1.5H17V3h-2.5A3.5 3.5 0 0011 6.5v2H9v3h2V21h3v-9.5h2.2l.5-3H14z" />,
+  instagram: <><rect x="3.5" y="3.5" width="17" height="17" rx="4.5" strokeWidth={2} /><circle cx="12" cy="12" r="3.8" strokeWidth={2} /><circle cx="17" cy="7" r="1" fill="currentColor" /></>,
+  tiktok: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 4c.4 2.2 1.9 3.6 4 3.8v2.7c-1.5.1-2.9-.3-4-1.1v5.9a5.3 5.3 0 11-5.3-5.3c.3 0 .6 0 .9.1v2.8a2.5 2.5 0 101.7 2.4V4H15z" />,
+  youtube: <><rect x="2.5" y="6" width="19" height="12" rx="3.5" strokeWidth={2} /><path strokeWidth={2} fill="currentColor" d="M10.5 9.5l4.5 2.5-4.5 2.5z" /></>,
+  linkedin: <><rect x="3.5" y="3.5" width="17" height="17" rx="2.5" strokeWidth={2} /><path strokeLinecap="round" strokeWidth={2} d="M8 10.5V17M8 7.6v.1M12 17v-3.6a2 2 0 014 0V17" /></>,
+  twitter: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4l7 9.2M4 20l6.4-6.4M20 4l-7 7.6M20 20l-6.6-8.6M4 4h3l13 16h-3L4 4z" />,
+  whatsapp: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3a9 9 0 00-7.7 13.6L3 21l4.5-1.3A9 9 0 1012 3zm-2.5 4.5c.2 0 .4 0 .5.4l.7 1.6c.1.2 0 .4-.1.6l-.5.6c-.1.2-.2.3 0 .6a7 7 0 003.1 2.7c.3.1.4 0 .6-.1l.6-.7c.2-.2.3-.2.6-.1l1.6.8c.3.2.4.3.3.5-.1.9-1.2 1.7-2.2 1.7-2.6 0-6.5-3.9-6.5-6.4 0-1 .8-2 1.7-2.2z" />,
 }
 
 export function Icon({ name, className = 'w-5 h-5' }: { name: IconName; className?: string }) {

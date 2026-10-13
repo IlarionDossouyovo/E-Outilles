@@ -6,6 +6,7 @@ import { useCartStore } from '@/lib/store/cart'
 import { useHydrated } from '@/lib/useHydrated'
 import Link from 'next/link'
 import PageNavigation from '@/components/PageNavigation'
+import { readAttribution } from '@/components/marketing/MarketingTracker'
 
 export default function CheckoutPage() {
   const { items, getTotal, clearCart } = useCartStore()
@@ -72,6 +73,8 @@ export default function CheckoutPage() {
       shippingCountry: formData.country,
       paymentMethod,
       notes: formData.note,
+      // First-touch marketing attribution captured by MarketingTracker.
+      ...readAttribution(),
       items: items.map(item => ({
         productId: item.id,
         quantity: item.quantity,

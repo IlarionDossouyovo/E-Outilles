@@ -17,6 +17,29 @@ export interface StoreSettings {
   cardEnabled: boolean
   emailNotifications: boolean
   smsNotifications: boolean
+  // Marketing: per-channel value (URL, handle or ID) keyed by channel id.
+  // Also holds UTM defaults and the GA/Meta pixel ids.
+  marketing: MarketingSettings
+}
+
+export interface MarketingSettings {
+  channels: Record<string, string>
+  defaultUtmSource: string
+  defaultUtmMedium: string
+  gaMeasurementId: string
+  metaPixelId: string
+  tiktokPixelId: string
+  whatsappOrderNumber: string
+}
+
+export const DEFAULT_MARKETING: MarketingSettings = {
+  channels: {},
+  defaultUtmSource: '',
+  defaultUtmMedium: 'social',
+  gaMeasurementId: '',
+  metaPixelId: '',
+  tiktokPixelId: '',
+  whatsappOrderNumber: '',
 }
 
 export const DEFAULT_SETTINGS: StoreSettings = {
@@ -35,4 +58,5 @@ export const DEFAULT_SETTINGS: StoreSettings = {
   cardEnabled: true,
   emailNotifications: true,
   smsNotifications: false,
+  marketing: { ...DEFAULT_MARKETING },
 }

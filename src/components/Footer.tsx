@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Logo from '@/components/Logo'
+import SocialLinks from '@/components/marketing/SocialLinks'
 
 // Slugs must match the Category.slug values in the database (see prisma/seed).
 const CATEGORIES = [
@@ -91,6 +92,8 @@ export default function Footer() {
                 <span key={p} className="bg-ingco-gray px-3 py-1 rounded text-xs text-gray-400">{p}</span>
               ))}
             </div>
+            <h4 className="text-white font-semibold mt-6 mb-3">Suivez-nous</h4>
+            <SocialLinks />
           </div>
         </div>
 

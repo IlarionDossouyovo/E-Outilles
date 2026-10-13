@@ -243,3 +243,20 @@ Persistent notes for working on the E-Outilles codebase.
   `googleAI`, `ollama`/`ollamaReachable`, `resend`, `stripe`, `stripeWebhook`.
   Stripe absent => card payment disabled at checkout (fallback: cash on delivery
   or Mobile Money). Ollama absent => the chatbot uses the demo fallback.
+
+- Marketing system (`src/lib/marketing/`, `/admin/marketing`):
+  - `channels.ts` defines the two channel families: SALES_CHANNELS (where a
+    customer can buy) and TRAFFIC_CHANNELS (social, ads, SEO, email). Per-channel
+    URLs/handles live in `StoreSettings.marketing.channels` (keyed by channel id),
+    edited from `/admin/marketing` and persisted via `/api/admin/settings`.
+  - Attribution: `MarketingTracker` (mounted in `layout.tsx`) keeps first-touch
+    UTM + external referrer in `sessionStorage` (`eoutilles.attribution`) and
+    beacons each page to `POST /api/marketing/track` (rows in `TrafficEvent`).
+    `checkout` spreads `readAttribution()` into the order payload, and
+    `/api/orders` stores `utmSource/utmMedium/utmCampaign` on the Order.
+  - `analytics.ts` aggregates TrafficEvent + Order rows into channel and campaign
+    stats; served by admin-only `GET /api/marketing/analytics?days=30`.
+  - Public `GET /api/marketing/channels` exposes only configured channel values,
+    consumed by `SocialLinks` in the footer (renders nothing if none are set).
+  - `buildCampaignUrl()` powers the UTM link generator in the admin dashboard.
+

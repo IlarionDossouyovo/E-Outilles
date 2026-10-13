@@ -55,10 +55,23 @@ export async function POST(request: Request) {
       customerName,
       customerEmail,
       phone,
+      utmSource,
+      utmMedium,
+      utmCampaign,
     } = body
 
     if (!Array.isArray(items) || items.length === 0) {
       return NextResponse.json({ error: 'Panier vide' }, { status: 400 })
+    }
+
+    // Attribution marketing: only keep short strings, never trust the client
+    // for anything but analytics.
+    const cleanUtm = (v: unknown) =>
+      typeof v === 'string' && v.trim() ? v.trim().slice(0, 120) : null
+    const attribution = {
+      utmSource: cleanUtm(utmSource),
+      utmMedium: cleanUtm(utmMedium),
+      utmCampaign: cleanUtm(utmCampaign),
     }
 
     const session = await getSession()
@@ -117,6 +130,7 @@ export async function POST(request: Request) {
         paymentMethod,
         notes,
         status: 'pending',
+        ...attribution,
         items: { create: orderItems }
       },
       include: { items: { include: { product: true } } }
