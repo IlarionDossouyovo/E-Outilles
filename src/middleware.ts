@@ -33,9 +33,10 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  if (rule.role === 'admin' && user.role !== 'admin') {
+  if (rule.role === 'admin' && user.role !== 'admin' && !isFounderEmail(user.email)) {
     // Send a signed-in non-admin to their account page with a notice, rather
-    // than to the homepage where the error param is silently dropped.
+    // than to the homepage where the error param is silently dropped. The
+    // founder is an admin by definition, even if the role column lags behind.
     const url = request.nextUrl.clone()
     url.pathname = '/profile'
     url.search = '?error=acces_refuse'

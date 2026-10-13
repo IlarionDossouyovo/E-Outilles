@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import Logo from '@/components/Logo'
 import AuthButton from '@/components/AuthButton'
 import { Icon } from '@/components/Icons'
+import { getSessionAction } from '@/app/actions'
 import { useCartStore } from '@/lib/store/cart'
 import { useWishlistStore } from '@/lib/store/wishlist'
 
@@ -23,6 +24,7 @@ const NAV: NavItem[] = [
   { href: '/blog', label: 'Blog' },
   { href: '/services', label: 'Services' },
   { href: '/contact', label: 'Contact' },
+  { href: '/fondateur', label: 'Le fondateur' },
 ]
 
 export default function Header() {
@@ -30,6 +32,8 @@ export default function Header() {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [isFounder, setIsFounder] = useState(false)
 
   const cartCount = useCartStore((s) => s.items.reduce((n, i) => n + i.quantity, 0))
   const wishlistCount = useWishlistStore((s) => s.items.length)
@@ -40,6 +44,17 @@ export default function Header() {
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  // Role-aware links (Administration / Agents IA / Espace vendeur) so the
+  // mobile menu exposes every space the signed-in user can actually open.
+  useEffect(() => {
+    getSessionAction()
+      .then((result) => {
+        setIsAdmin(result.user?.role === 'admin')
+        setIsFounder(Boolean(result.user?.isFounder))
+      })
+      .catch(() => {})
   }, [])
 
   // Close the mobile panel whenever the route changes.
@@ -166,15 +181,39 @@ export default function Header() {
             </Link>
           ))}
           <Link
-            href="/fondateur"
+            href="/vendeur"
             className={`block px-3 py-3 rounded-xl transition-colors ${
-              isActive('/fondateur')
+              isActive('/vendeur')
                 ? 'bg-ingco-yellow/10 text-ingco-yellow font-semibold'
                 : 'text-gray-300 hover:bg-ingco-gray/60 hover:text-ingco-yellow'
             }`}
           >
-            Le fondateur
+            Espace vendeur
           </Link>
+          {isAdmin && (
+            <Link
+              href="/admin"
+              className={`block px-3 py-3 rounded-xl transition-colors ${
+                isActive('/admin')
+                  ? 'bg-ingco-yellow/10 text-ingco-yellow font-semibold'
+                  : 'text-gray-300 hover:bg-ingco-gray/60 hover:text-ingco-yellow'
+              }`}
+            >
+              Administration
+            </Link>
+          )}
+          {isFounder && (
+            <Link
+              href="/agent"
+              className={`block px-3 py-3 rounded-xl transition-colors ${
+                isActive('/agent')
+                  ? 'bg-ingco-yellow/10 text-ingco-yellow font-semibold'
+                  : 'text-gray-300 hover:bg-ingco-gray/60 hover:text-ingco-yellow'
+              }`}
+            >
+              Agents IA
+            </Link>
+          )}
           <div className="pt-3 mt-2 border-t border-ingco-gray flex items-center gap-3">
             <div className="flex-1">
               <AuthButton />

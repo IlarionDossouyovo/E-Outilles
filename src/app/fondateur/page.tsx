@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 
 const STATS = [
   { value: FOUNDER.since, label: 'Année de création' },
-  { value: '500+', label: 'Produits INGCO' },
+  { value: '70+', label: 'Produits INGCO' },
   { value: '50+', label: 'Pays livrés' },
   { value: '200+', label: 'Revendeurs partenaires' },
 ]

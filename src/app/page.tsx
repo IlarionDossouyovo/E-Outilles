@@ -211,7 +211,7 @@ export default function Home() {
 
               <div className="animate-fade-in-up stagger-4 grid grid-cols-2 md:grid-cols-4 gap-6 mt-14">
                 {[
-                  { value: '500+', label: 'Produits' },
+                  { value: '70+', label: 'Produits' },
                   { value: '50+', label: 'Pays livrés' },
                   { value: '24h', label: 'Livraison' },
                   { value: '100%', label: 'Satisfait ou remboursé' },
@@ -407,7 +407,7 @@ export default function Home() {
             </h2>
             <p className="text-gray-400 max-w-2xl mx-auto mb-8 relative">
               Rejoignez notre réseau de revendeurs et accédez à des marges avantageuses,
-              un catalogue de 500+ produits et un support client dédié.
+              un catalogue de 70+ produits et un support client dédié.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center relative">
               <Link
@@ -424,6 +424,52 @@ export default function Home() {
               </Link>
             </div>
           </Reveal>
+        </div>
+      </section>
+
+      {/* EXPLORER - expose every space of the app (incl. vendor/account) */}
+      <section className="py-20 md:py-28 bg-ingco-dark border-t border-ingco-gray">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Reveal className="text-center mb-14">
+            <span className="text-ingco-yellow text-sm font-semibold uppercase tracking-widest">Navigation</span>
+            <h2 className="text-3xl md:text-5xl font-extrabold mt-3 mb-4">
+              <span className="text-white">Tout le site en </span>
+              <span className="text-ingco-yellow">un coup d&apos;œil</span>
+            </h2>
+            <p className="text-gray-400 max-w-2xl mx-auto">
+              Accédez directement à chaque espace : catalogue, formations, réseau revendeur et services.
+            </p>
+          </Reveal>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {([
+              { href: '/categories', icon: 'grid', title: 'Catégories', text: 'Parcourir le catalogue par métier' },
+              { href: '/search', icon: 'search', title: 'Produits', text: 'Rechercher et comparer les outils' },
+              { href: '/chat', icon: 'chat', title: 'Assistant IA', text: 'Conseils et choix d\u2019outillage' },
+              { href: '/formations', icon: 'star', title: 'Formations', text: 'Montez en compétences' },
+              { href: '/revendeurs', icon: 'truck', title: 'Revendeurs', text: 'Rejoindre le réseau INGCO' },
+              { href: '/services', icon: 'wrench', title: 'Services', text: 'SAV, location et conseil' },
+              { href: '/blog', icon: 'blog', title: 'Blog', text: 'Guides et actualités outillage' },
+              { href: '/fondateur', icon: 'user', title: 'Le fondateur', text: 'Notre histoire et notre vision' },
+              { href: '/vendeur', icon: 'tools', title: 'Espace vendeur', text: 'Tableau de bord revendeur' },
+            ] as const).map((s, i) => (
+              <Reveal key={s.href} delay={(i % 3) * 70}>
+                <Link
+                  href={s.href}
+                  className="card-premium group h-full flex items-start gap-4 bg-ingco-gray rounded-2xl p-6 border border-white/5 hover:border-ingco-yellow/30"
+                >
+                  <div className="w-11 h-11 shrink-0 rounded-xl bg-ingco-yellow/15 flex items-center justify-center">
+                    <Icon name={s.icon} className="w-5 h-5 text-ingco-yellow" />
+                  </div>
+                  <div>
+                    <h3 className="text-white font-bold group-hover:text-ingco-yellow transition-colors">{s.title}</h3>
+                    <p className="text-gray-500 text-sm mt-1">{s.text}</p>
+                  </div>
+                  <Icon name="arrow-right" className="w-4 h-4 ml-auto shrink-0 text-ingco-yellow transition-transform group-hover:translate-x-1" />
+                </Link>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 

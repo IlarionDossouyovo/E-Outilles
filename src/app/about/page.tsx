@@ -54,7 +54,7 @@ export default function About() {
             <h2 className="text-2xl font-bold text-white text-center mb-8">E-Outilles en chiffres</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               <div className="text-center">
-                <div className="text-3xl md:text-4xl font-bold text-ingco-yellow">500+</div>
+                <div className="text-3xl md:text-4xl font-bold text-ingco-yellow">70+</div>
                 <div className="text-gray-500">Produits</div>
               </div>
               <div className="text-center">
