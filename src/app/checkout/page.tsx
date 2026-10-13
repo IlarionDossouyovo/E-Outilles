@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { NavigationArrows, Icon } from '@/components/Icons'
 import { useCartStore } from '@/lib/store/cart'
 import { useHydrated } from '@/lib/useHydrated'
@@ -10,6 +10,9 @@ import PageNavigation from '@/components/PageNavigation'
 export default function CheckoutPage() {
   const { items, getTotal, clearCart } = useCartStore()
   const hydrated = useHydrated()
+  // Stripe readiness is resolved by the server: the secret key is not
+  // available in the browser bundle, so a local check would always be false.
+  const [stripeReady, setStripeReady] = useState(false)
   const [step, setStep] = useState(1) // 1: livraison, 2: paiement, 3: confirmation
   const [paymentMethod, setPaymentMethod] = useState('cod')
   const [loading, setLoading] = useState(false)
@@ -31,6 +34,16 @@ export default function CheckoutPage() {
     operator: '',
     phone: ''
   })
+  const [momoNotice, setMomoNotice] = useState('')
+
+  useEffect(() => {
+    let active = true
+    fetch('/api/payments/status')
+      .then((r) => r.json())
+      .then((d) => { if (active && d?.card) setStripeReady(true) })
+      .catch(() => {})
+    return () => { active = false }
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -38,6 +51,11 @@ export default function CheckoutPage() {
     // Step 1 (livraison) -> step 2 (paiement). Step 2 is the final submit.
     if (step < 2) {
       setStep(step + 1)
+      return
+    }
+
+    if (paymentMethod === 'card' && !stripeReady) {
+      setError('Le paiement par carte n’est pas encore activé. Choisissez le paiement à la livraison ou Mobile Money.')
       return
     }
 
@@ -100,7 +118,15 @@ export default function CheckoutPage() {
       }
 
       if (paymentMethod === 'momo') {
-        alert(`Paiement Mobile Money\n\nNumero: ${momoData.phone}\nOperateur: ${momoData.operator}\nMontant: ${(result.order?.total ?? getTotal()).toFixed(2)} EUR\n\nUn code de paiement vous sera envoye par SMS.`)
+        const op = momoData.operator ? momoData.operator.toUpperCase() : 'Mobile Money'
+        setMomoNotice(
+          `Instruction de paiement Mobile Money\n\n` +
+          `Opérateur : ${op}\n` +
+          `Numéro : ${momoData.phone || 'non renseigné'}\n` +
+          `Montant : ${(result.order?.total ?? getTotal()).toFixed(2)} €\n\n` +
+          `Un code de paiement vous sera envoyé par SMS au numéro indiqué. ` +
+          `Votre commande reste « en attente » jusqu'à confirmation du paiement.`
+        )
       }
 
       clearCart()
@@ -146,6 +172,14 @@ export default function CheckoutPage() {
               <p className="text-white font-bold">{finalCount} produit(s)</p>
               <p className="text-ingco-yellow font-bold text-xl">{finalTotal.toFixed(2)}€</p>
             </div>
+            {momoNotice && (
+              <div className="bg-ingco-dark border border-ingco-yellow/40 rounded-xl p-4 mb-6 text-left">
+                <p className="text-ingco-yellow font-bold mb-2 flex items-center gap-2">
+                  <Icon name="phone" className="w-4 h-4" /> Instruction de paiement
+                </p>
+                <pre className="text-gray-300 text-sm whitespace-pre-wrap font-sans">{momoNotice}</pre>
+              </div>
+            )}
             <Link href="/" className="block bg-ingco-yellow text-ingco-black py-3 rounded-xl font-bold hover:bg-yellow-400">
               Retour à l'accueil
             </Link>
@@ -296,15 +330,23 @@ export default function CheckoutPage() {
                       <Icon name="phone" className="w-6 h-6 text-ingco-yellow" />
                     </div>
                     <div 
-                      onClick={() => setPaymentMethod('card')}
-                      className={`flex items-center gap-4 p-4 rounded-xl cursor-pointer border-2 transition-all ${paymentMethod === 'card' ? 'bg-ingco-black border-ingco-yellow' : 'bg-ingco-black border-ingco-dark hover:border-gray-600'}`}
+                      onClick={() => stripeReady && setPaymentMethod('card')}
+                      className={`flex items-center gap-4 p-4 rounded-xl border-2 transition-all ${
+                        !stripeReady
+                          ? 'bg-ingco-black border-ingco-dark opacity-50 cursor-not-allowed'
+                          : paymentMethod === 'card'
+                            ? 'bg-ingco-black border-ingco-yellow cursor-pointer'
+                            : 'bg-ingco-black border-ingco-dark hover:border-gray-600 cursor-pointer'
+                      }`}
                     >
-                      <input type="radio" name="payment" checked={paymentMethod === 'card'} onChange={() => setPaymentMethod('card')} className="w-5 h-5 accent-ingco-yellow" />
+                      <input type="radio" name="payment" disabled={!stripeReady} checked={paymentMethod === 'card'} onChange={() => setPaymentMethod('card')} className="w-5 h-5 accent-ingco-yellow" />
                       <div className="flex-1">
                         <p className="text-white font-bold">Carte bancaire</p>
                         <p className="text-gray-400 text-sm">Visa, Mastercard</p>
-                        <p className="text-green-400 text-xs mt-1">Sécurisé par Stripe</p>
-                        {paymentMethod === 'card' && <span className="inline-block mt-2 text-xs bg-ingco-yellow/20 text-ingco-yellow px-2 py-1 rounded">Sélectionné</span>}
+                        {stripeReady
+                          ? <p className="text-green-400 text-xs mt-1">Paiement sécurisé par Stripe</p>
+                          : <p className="text-yellow-400 text-xs mt-1">Bientôt disponible</p>}
+                        {paymentMethod === 'card' && stripeReady && <span className="inline-block mt-2 text-xs bg-ingco-yellow/20 text-ingco-yellow px-2 py-1 rounded">Sélectionné</span>}
                       </div>
                       <Icon name="card" className="w-6 h-6 text-ingco-yellow" />
                     </div>
@@ -346,51 +388,16 @@ export default function CheckoutPage() {
                   )}
 
                   {/* Card Payment Form */}
-                  {paymentMethod === 'card' && (
+                  {paymentMethod === 'card' && stripeReady && (
                     <div className="mt-6 p-4 bg-ingco-black rounded-xl border border-ingco-dark">
-                      <h3 className="text-white font-bold mb-4">Détails de la carte</h3>
-                      <div className="space-y-4">
-                        <div>
-                          <label className="text-gray-400 text-sm mb-2 block">Numéro de carte</label>
-                          <input
-                            type="text"
-                            placeholder="1234 5678 9012 3456"
-                            maxLength={19}
-                            className="w-full bg-ingco-dark border border-ingco-gray rounded-xl px-4 py-3 text-white focus:border-ingco-yellow focus:outline-none"
-                          />
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <label className="text-gray-400 text-sm mb-2 block">Date d'expiration</label>
-                            <input
-                              type="text"
-                              placeholder="MM/AA"
-                              maxLength={5}
-                              className="w-full bg-ingco-dark border border-ingco-gray rounded-xl px-4 py-3 text-white focus:border-ingco-yellow focus:outline-none"
-                            />
-                          </div>
-                          <div>
-                            <label className="text-gray-400 text-sm mb-2 block">CVC</label>
-                            <input
-                              type="text"
-                              placeholder="123"
-                              maxLength={3}
-                              className="w-full bg-ingco-dark border border-ingco-gray rounded-xl px-4 py-3 text-white focus:border-ingco-yellow focus:outline-none"
-                            />
-                          </div>
-                        </div>
-                        <div>
-                          <label className="text-gray-400 text-sm mb-2 block">Nom sur la carte</label>
-                          <input
-                            type="text"
-                            placeholder="JOHN DOE"
-                            className="w-full bg-ingco-dark border border-ingco-gray rounded-xl px-4 py-3 text-white focus:border-ingco-yellow focus:outline-none"
-                          />
-                        </div>
-                        <div className="flex items-center gap-2 mt-2">
-                          <Icon name="shield" className="w-4 h-4 text-green-400" />
-                          <span className="text-gray-400 text-sm">Paiement sécurisé par Stripe</span>
-                        </div>
+                      <h3 className="text-white font-bold mb-4">Paiement sécurisé</h3>
+                      <p className="text-gray-300 text-sm">
+                        Vous serez redirigé vers la page de paiement sécurisée Stripe pour saisir
+                        vos informations bancaires. E-Outilles ne stocke jamais vos données de carte.
+                      </p>
+                      <div className="flex items-center gap-2 mt-4">
+                        <Icon name="shield" className="w-4 h-4 text-green-400" />
+                        <span className="text-gray-400 text-sm">Paiement chiffré et sécurisé par Stripe</span>
                       </div>
                     </div>
                   )}

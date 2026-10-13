@@ -34,6 +34,7 @@ export default function AdminOrdersPage() {
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('all')
   const [search, setSearch] = useState('')
+  const [error, setError] = useState('')
 
   useEffect(() => {
     fetch('/api/orders')
@@ -70,15 +71,21 @@ export default function AdminOrdersPage() {
   })
 
   const updateStatus = async (orderId: string, newStatus: string) => {
-    const res = await fetch(`/api/orders/${orderId}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: newStatus }),
-    })
-    if (res.ok) {
-      setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus } : o))
-    } else {
-      alert('Erreur lors de la mise a jour du statut')
+    setError('')
+    try {
+      const res = await fetch(`/api/orders/${orderId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      })
+      if (res.ok) {
+        setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus } : o))
+      } else {
+        const data = await res.json().catch(() => ({}))
+        setError(data.error || 'Erreur lors de la mise à jour du statut.')
+      }
+    } catch {
+      setError('Erreur de connexion au serveur.')
     }
   }
 
@@ -104,6 +111,12 @@ export default function AdminOrdersPage() {
             <p className="text-gray-400">{orders.length} commandes</p>
           </div>
         </div>
+
+        {error && (
+          <div className="mb-6 bg-red-500/10 border border-red-500/40 text-red-300 text-sm rounded-xl px-4 py-3 flex items-center gap-2">
+            <Icon name="warning" className="w-4 h-4" /> {error}
+          </div>
+        )}
 
         {/* Analytics */}
         <AdminAnalytics data={{
