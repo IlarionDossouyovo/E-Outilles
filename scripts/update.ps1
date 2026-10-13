@@ -1,10 +1,24 @@
 # ============================================================
 #  E-Outilles - Mise a jour locale (PowerShell)
 #  Usage : ouvrir PowerShell dans C:\E-Outilles puis executer :
-#     powershell -ExecutionPolicy Bypass -File .\scripts\update.ps1
+#     Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+#     .\scripts\update.ps1
+#  (Arretez d'abord 'npm run dev' : Prisma ne peut pas regenerer son
+#   moteur tant que le serveur le verrouille.)
 # ============================================================
 
 $ErrorActionPreference = "Stop"
+
+# Prisma remplace query_engine-windows.dll.node a chaque generate ; si un
+# serveur Next.js tourne, Windows verrouille le fichier et la commande echoue
+# en EPERM. On refuse donc de continuer tant que le port 3003 est occupe.
+$busy = Get-NetTCPConnection -LocalPort 3003 -State Listen -ErrorAction SilentlyContinue
+if ($busy) {
+    Write-Host "Le port 3003 est utilise (serveur 'npm run dev' probablement actif)." -ForegroundColor Red
+    Write-Host "Arretez-le (Ctrl+C dans sa fenetre) puis relancez ce script." -ForegroundColor Red
+    Write-Host "Pour liberer d'urgence : Get-Process node | Stop-Process -Force" -ForegroundColor Yellow
+    exit 1
+}
 
 Write-Host "== 1/7 Recuperation du code ==" -ForegroundColor Cyan
 git fetch origin
