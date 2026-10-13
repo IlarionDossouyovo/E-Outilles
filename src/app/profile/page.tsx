@@ -104,9 +104,19 @@ export default function ProfilePage() {
 
         {accessDenied && (
           <div className="bg-red-500/15 border border-red-500/40 text-red-300 px-4 py-3 rounded-xl mb-6 text-sm">
-            {accessDenied === 'founder'
-              ? "Accès refusé : le système d'agents IA est réservé au fondateur de l'entreprise."
-              : 'Accès refusé : cette section est réservée aux administrateurs.'}
+            {accessDenied === 'founder' ? (
+              <>
+                Accès refusé : le système d&apos;agents IA est réservé au fondateur de l&apos;entreprise.
+                {user?.email && (
+                  <span className="block mt-1 text-red-200/80">
+                    Vous êtes connecté en tant que <strong>{user.email}</strong>. Déconnectez-vous,
+                    puis reconnectez-vous avec le compte fondateur pour accéder à <strong>/agent</strong>.
+                  </span>
+                )}
+              </>
+            ) : (
+              'Accès refusé : cette section est réservée aux administrateurs.'
+            )}
           </div>
         )}
         
