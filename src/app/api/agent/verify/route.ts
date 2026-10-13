@@ -17,14 +17,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Accès refusé' }, { status: 403 })
   }
 
-  const { code } = await request.json()
+  const { code } = await request.json().catch(() => ({ code: '' }))
   const expected = process.env.AGENT_ACCESS_CODE
 
+  // A signed-in admin is trusted; the code is only a second factor when set.
   if (!expected) {
-    return NextResponse.json(
-      { error: "Code d'accès non configuré (AGENT_ACCESS_CODE)" },
-      { status: 500 }
-    )
+    return NextResponse.json({ valid: true })
   }
 
   if (!code || !safeEqual(String(code), expected)) {

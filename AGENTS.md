@@ -160,4 +160,12 @@ Persistent notes for working on the E-Outilles codebase.
   (admin-only `GET /api/customers`, never returns password/reset tokens).
   Every admin page uses the shared `src/components/AdminNav.tsx` (Dashboard,
   Produits, Ajouter, Commandes, Clients, Newsletter, Parametres, Agents IA).
+- Footer category links MUST use the real `Category.slug` values from the DB
+  (`construction`, `power-tools`, `cordless-tools`, `hand-tools`, `automotive`,
+  `garden`, ...), not French labels — mismatched slugs return 404.
+- Agents IA (`/agent`): a signed-in admin is unlocked automatically; the
+  `AGENT_ACCESS_CODE` (when set) is only a second factor. `/agent` and
+  `/vendeur` are admin-protected by middleware.
+- Dashboards reachable from the footer bottom bar: Espace client, Espace
+  vendeur, Agents IA, Administration.
 

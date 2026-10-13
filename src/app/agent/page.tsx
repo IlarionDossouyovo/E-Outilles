@@ -44,10 +44,26 @@ export default function AgentDashboard() {
   })
 
   // Access is validated server-side (admin session + AGENT_ACCESS_CODE).
+  // A signed-in admin is unlocked automatically; the code is only required
+  // when AGENT_ACCESS_CODE is set as a second factor.
   useEffect(() => {
     if (sessionStorage.getItem('agent_access') === 'granted') {
       setAccessGranted(true)
+      return
     }
+    fetch('/api/agent/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: '' }),
+    })
+      .then(async (res) => {
+        const data = await res.json().catch(() => ({}))
+        if (res.ok && data.valid) {
+          sessionStorage.setItem('agent_access', 'granted')
+          setAccessGranted(true)
+        }
+      })
+      .catch(() => {})
   }, [])
 
   // Real agent counters derived from the orders data.

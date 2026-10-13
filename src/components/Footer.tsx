@@ -1,12 +1,14 @@
 import Link from 'next/link'
 import Logo from '@/components/Logo'
 
+// Slugs must match the Category.slug values in the database (see prisma/seed).
 const CATEGORIES = [
   { href: '/categories/construction', label: 'Construction & BTP' },
-  { href: '/categories/electricite', label: 'Électricité' },
-  { href: '/categories/garage', label: 'Garage Auto' },
-  { href: '/categories/jardinage', label: 'Jardinage' },
-  { href: '/categories/outils-sans-fil', label: 'Outils sans fil' },
+  { href: '/categories/power-tools', label: 'Outils Électriques' },
+  { href: '/categories/cordless-tools', label: 'Outils Sans Fil' },
+  { href: '/categories/hand-tools', label: 'Outils à Main' },
+  { href: '/categories/automotive', label: 'Garage Auto' },
+  { href: '/categories/garden', label: 'Jardinage' },
 ]
 
 const ENTREPRISE = [
@@ -97,6 +99,9 @@ export default function Footer() {
             © 2026 E-Outilles. Tous droits réservés. Projet dropshipping INGCO.
           </p>
           <div className="flex flex-wrap justify-center gap-4 text-sm">
+            <Link href="/profile" className="text-gray-500 hover:text-ingco-yellow transition-colors">Espace client</Link>
+            <Link href="/vendeur" className="text-gray-500 hover:text-ingco-yellow transition-colors">Espace vendeur</Link>
+            <Link href="/agent" className="text-gray-500 hover:text-ingco-yellow transition-colors">Agents IA</Link>
             <Link href="/legal" className="text-gray-500 hover:text-ingco-yellow transition-colors">Mentions légales</Link>
             <Link href="/privacy" className="text-gray-500 hover:text-ingco-yellow transition-colors">RGPD</Link>
             <Link href="/terms" className="text-gray-500 hover:text-ingco-yellow transition-colors">CGV</Link>
