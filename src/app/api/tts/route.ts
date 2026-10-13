@@ -7,8 +7,14 @@ import { isGoogleAIConfigured, GOOGLE_AI_MODEL } from '@/lib/ai/provider'
 const TTS_MODEL = process.env.GOOGLE_AI_TTS_MODEL || 'gemini-3.8-flash-tts'
 const DEFAULT_VOICE = process.env.GOOGLE_AI_TTS_VOICE || 'Kore'
 const TTS_MODEL_CANDIDATES = Array.from(
-  new Set([TTS_MODEL, 'gemini-2.5-flash-preview-tts', 'gemini-3.8-flash-tts'])
+  new Set([TTS_MODEL, 'gemini-3.8-flash-tts', 'gemini-2.5-flash-preview-tts'])
 )
+
+// The preview TTS models reject a bare transcript with 400 INVALID_ARGUMENT
+// ("model tried to generate text") unless the prompt explicitly asks for audio.
+function ttsPrompt(text: string, model: string): string {
+  return model.includes('preview-tts') ? `Lis ce texte à voix haute :\n${text}` : text
+}
 
 interface TtsPayload {
   text?: string
@@ -35,18 +41,19 @@ export async function POST(request: NextRequest) {
     }
 
     const key = (process.env.GOOGLE_AI_API_KEY || process.env.GEMINI_API_KEY) as string
-    const payload = JSON.stringify({
-      contents: [{ parts: [{ text: clean }] }],
-      generationConfig: {
-        responseModalities: ['AUDIO'],
-        speechConfig: {
-          voiceConfig: { prebuiltVoiceConfig: { voiceName: voice || DEFAULT_VOICE } },
-        },
-      },
-    })
 
     let lastError = ''
     for (const model of TTS_MODEL_CANDIDATES) {
+      const payload = JSON.stringify({
+        contents: [{ parts: [{ text: ttsPrompt(clean, model) }] }],
+        generationConfig: {
+          responseModalities: ['AUDIO'],
+          speechConfig: {
+            voiceConfig: { prebuiltVoiceConfig: { voiceName: voice || DEFAULT_VOICE } },
+          },
+        },
+      })
+
       const res = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
         {
@@ -67,10 +74,17 @@ export async function POST(request: NextRequest) {
         (p: { inlineData?: { data?: string; mimeType?: string } }) => p?.inlineData?.data
       )
       const base64Audio = part?.inlineData?.data
-      const mimeType = part?.inlineData?.mimeType || 'audio/L16;rate=24000'
+      const mimeType: string = part?.inlineData?.mimeType || 'audio/wav'
 
       if (!base64Audio) {
         lastError = `${model}: aucun audio`
+        continue
+      }
+
+      // Raw L16 PCM is not directly playable by the browser <audio> element;
+      // let the client fall back to Web Speech instead of serving a broken blob.
+      if (mimeType.includes('L16')) {
+        lastError = `${model}: format PCM non pris en charge`
         continue
       }
 

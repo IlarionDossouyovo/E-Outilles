@@ -146,4 +146,11 @@ Persistent notes for working on the E-Outilles codebase.
 - Resend: `RESEND_API_KEY` works, but until the domain (`e-outilles.fr`) is
   verified at resend.com/domains, only sends to the Resend account address
   succeed; use `FROM_EMAIL=E-Outilles <onboarding@resend.dev>` meanwhile.
+- TTS (`/api/tts`): default `gemini-3.8-flash-tts` (returns playable WAV).
+  The preview model (`gemini-2.5-flash-preview-tts`) needs an explicit
+  "lis ce texte à voix haute" instruction and returns raw L16 PCM, which the
+  browser `<audio>` element cannot play — the route now skips L16 so the
+  client falls back to Web Speech. Client playback: `src/lib/ai/useVoice.ts`.
+- Diagnostics: `GET /api/health` reports database status, product count and
+  which integrations are configured (never the secret values).
 
