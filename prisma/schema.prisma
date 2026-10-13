@@ -26,6 +26,7 @@ model User {
   updatedAt     DateTime  @updatedAt
   orders        Order[]
   wishlist      WishlistItem[]
+  conversations AiConversation[]
 }
 
 // Catégorie de produits
@@ -146,4 +147,37 @@ model ResellerRequest {
   message   String?
   status    String   @default("new") // new, contacted, approved, rejected
   createdAt DateTime @default(now())
+}
+
+// Conversation avec un agent IA (persistée pour historique et reprise)
+model AiConversation {
+  id        String    @id @default(cuid())
+  userId    String?
+  user      User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  guestId   String?
+  agentId   String    @default("assistant")
+  title     String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  messages  AiMessage[]
+
+  @@index([userId])
+  @@index([guestId])
+  @@index([updatedAt])
+}
+
+// Message d'une conversation IA
+model AiMessage {
+  id             String         @id @default(cuid())
+  conversationId String
+  conversation   AiConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role           String // user | assistant
+  content        String
+  agentId        String?
+  provider       String?
+  hasAttachment  Boolean        @default(false)
+  attachmentName String?
+  createdAt      DateTime       @default(now())
+
+  @@index([conversationId])
 }

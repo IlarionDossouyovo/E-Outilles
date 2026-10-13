@@ -179,6 +179,14 @@ Persistent notes for working on the E-Outilles codebase.
   handsfree mode (`startHandsFree`), server Gemini TTS with Web Speech
   fallback, and per-message replay. Vision attachments: `useAttachments`.
   Both `/chat` and the floating `ChatWidget` expose mic, camera and file input.
+- Conversation persistence: `AiConversation` / `AiMessage` models. `POST
+  /api/chat` stores both turns and returns a `conversationId`. Guests are
+  tracked with an httpOnly `eo_guest` cookie (`src/lib/ai/conversations.ts`),
+  signed-in users by `userId`; lookups are always owner-scoped (another
+  visitor reading an id gets 404). `GET/DELETE /api/conversations` lists or
+  clears the caller's history; `GET/DELETE /api/conversations/[id]` resumes or
+  removes one. `/chat` restores the latest conversation on load and shows a
+  history panel.
 - Dashboards reachable from the footer bottom bar: Espace client, Espace
   vendeur, Agents IA, Administration.
 - Redirects: `next/navigation` `redirect()` on a static page emits a client

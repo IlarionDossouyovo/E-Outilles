@@ -29,6 +29,7 @@ export default function ChatWidget() {
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [voiceReplies, setVoiceReplies] = useState(false)
+  const [conversationId, setConversationId] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { speak, stop, speaking, listen, stopListening, listening, supported } = useVoice()
@@ -59,11 +60,12 @@ export default function ChatWidget() {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: clean, history, media }),
+        body: JSON.stringify({ message: clean, history, media, conversationId }),
       })
       const data = await res.json()
       const reply = data.error || data.response || "Désolé, je n'ai pas pu répondre."
       setMessages((prev) => [...prev, { id: (Date.now() + 1).toString(), role: 'assistant', content: reply }])
+      if (data.conversationId) setConversationId(data.conversationId)
       if (voiceReplies && !data.error) speak(reply)
     } catch {
       setMessages((prev) => [

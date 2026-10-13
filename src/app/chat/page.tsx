@@ -15,6 +15,14 @@ interface Message {
   fileName?: string
 }
 
+interface ConversationSummary {
+  id: string
+  agentId: string
+  title: string
+  updatedAt: string
+  messageCount: number
+}
+
 interface AgentOption {
   id: string
   name: string
@@ -41,6 +49,9 @@ export default function ChatPage() {
   const [agents, setAgents] = useState<AgentOption[]>(FALLBACK_AGENTS)
   const [isFounder, setIsFounder] = useState(false)
   const [voiceReplies, setVoiceReplies] = useState(false)
+  const [conversationId, setConversationId] = useState<string | null>(null)
+  const [conversations, setConversations] = useState<ConversationSummary[]>([])
+  const [historyOpen, setHistoryOpen] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const cameraInputRef = useRef<HTMLInputElement>(null)
@@ -72,6 +83,61 @@ export default function ChatPage() {
     if (requested) setAgentId(requested)
   }, [])
 
+  const loadConversations = useCallback(() => {
+    fetch('/api/conversations')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => data?.conversations && setConversations(data.conversations))
+      .catch(() => {})
+  }, [])
+
+  // Restore the most recent conversation on first load.
+  useEffect(() => {
+    loadConversations()
+    fetch('/api/conversations')
+      .then((res) => (res.ok ? res.json() : null))
+      .then(async (data) => {
+        const latest = data?.conversations?.[0]
+        if (!latest) return
+        const detail = await fetch(`/api/conversations/${latest.id}`).then((r) => (r.ok ? r.json() : null))
+        if (!detail?.messages?.length) return
+        setConversationId(detail.id)
+        setAgentId(detail.agentId)
+        setMessages(
+          detail.messages.map((m: { role: 'user' | 'assistant'; content: string; agentId?: string; attachmentName?: string | null }) => ({
+            role: m.role,
+            content: m.content,
+            agentId: m.agentId,
+            fileName: m.attachmentName || undefined,
+          }))
+        )
+      })
+      .catch(() => {})
+  }, [loadConversations])
+
+  const openConversation = useCallback(async (id: string) => {
+    const detail = await fetch(`/api/conversations/${id}`).then((r) => (r.ok ? r.json() : null))
+    if (!detail) return
+    setConversationId(detail.id)
+    setAgentId(detail.agentId)
+    setMessages(
+      detail.messages.map((m: { role: 'user' | 'assistant'; content: string; agentId?: string; attachmentName?: string | null }) => ({
+        role: m.role,
+        content: m.content,
+        agentId: m.agentId,
+        fileName: m.attachmentName || undefined,
+      }))
+    )
+    setHistoryOpen(false)
+  }, [])
+
+  const newConversation = useCallback(() => {
+    setConversationId(null)
+    setMessages([
+      { role: 'assistant', content: "Bonjour ! Je suis l'assistant E-Outille By ELECTRON. Comment puis-je vous aider ?", agentId: 'assistant' },
+    ])
+    setHistoryOpen(false)
+  }, [])
+
   const sendMessage = useCallback(
     async (text?: string) => {
       const clean = (text ?? input).trim()
@@ -94,11 +160,22 @@ export default function ChatPage() {
         const res = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: clean, history, agentId, media }),
+          body: JSON.stringify({
+            message: clean,
+            history,
+            agentId,
+            media,
+            conversationId,
+            attachmentName: attachments[0]?.name,
+          }),
         })
         const data = await res.json()
         const reply = data.error || data.response || "Désolé, je n'ai pas pu répondre."
         setMessages((prev) => [...prev, { role: 'assistant', content: reply, agentId: data.agentId }])
+        if (data.conversationId) {
+          setConversationId(data.conversationId)
+          loadConversations()
+        }
         if (voiceReplies && !data.error) speak(reply)
       } catch {
         setMessages((prev) => [...prev, { role: 'assistant', content: 'Désolé, une erreur est survenue.' }])
@@ -108,7 +185,7 @@ export default function ChatPage() {
         setLoading(false)
       }
     },
-    [input, attachments, loading, messages, agentId, voiceReplies, speak, clear]
+    [input, attachments, loading, messages, agentId, voiceReplies, speak, clear, conversationId, loadConversations]
   )
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -155,6 +232,22 @@ export default function ChatPage() {
             <Logo variant="horizontal" size={36} />
           </div>
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => setHistoryOpen((v) => !v)}
+              title="Historique des conversations"
+              className="flex items-center gap-1 text-sm px-3 py-2 rounded-lg bg-ingco-gray text-gray-300 hover:text-ingco-yellow transition-colors"
+            >
+              <Icon name="blog" className="w-4 h-4" />
+              Historique{conversations.length > 0 ? ` (${conversations.length})` : ''}
+            </button>
+            <button
+              onClick={newConversation}
+              title="Nouvelle conversation"
+              className="flex items-center gap-1 text-sm px-3 py-2 rounded-lg bg-ingco-gray text-gray-300 hover:text-ingco-yellow transition-colors"
+            >
+              <Icon name="chat" className="w-4 h-4" />
+              Nouveau
+            </button>
             {supported.speak && (
               <button
                 onClick={toggleVoice}
@@ -169,6 +262,32 @@ export default function ChatPage() {
             )}
           </div>
         </div>
+
+        {historyOpen && (
+          <div className="mb-4 bg-ingco-gray/60 border border-ingco-dark rounded-2xl p-3 max-h-60 overflow-y-auto">
+            {conversations.length === 0 ? (
+              <p className="text-gray-400 text-sm text-center py-3">Aucune conversation enregistrée pour l&apos;instant.</p>
+            ) : (
+              <ul className="space-y-1">
+                {conversations.map((c) => (
+                  <li key={c.id}>
+                    <button
+                      onClick={() => openConversation(c.id)}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex items-center justify-between gap-2 ${
+                        c.id === conversationId ? 'bg-ingco-yellow text-ingco-black font-semibold' : 'text-gray-200 hover:bg-gray-700'
+                      }`}
+                    >
+                      <span className="truncate">{c.title}</span>
+                      <span className={`text-xs shrink-0 ${c.id === conversationId ? 'text-ingco-black/70' : 'text-gray-500'}`}>
+                        {c.messageCount} msg
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
 
         {isFounder && (
           <div className="mb-4 text-xs text-purple-300 bg-purple-500/10 border border-purple-500/30 rounded-xl px-4 py-2">

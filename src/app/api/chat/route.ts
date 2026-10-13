@@ -4,6 +4,14 @@ import { AGENTS, PUBLIC_AGENT_IDS, isAgentId, routeToAgent, agentSupportsVision,
 import type { ChatTurn, InlineMedia } from '@/lib/ai/provider'
 import { getSession } from '@/lib/security/auth'
 import { isFounderEmail } from '@/lib/security/founder'
+import { prisma } from '@/lib/db/prisma'
+import {
+  resolveIdentity,
+  attachGuestCookie,
+  ownerWhere,
+  appendMessage,
+  ensureTitle,
+} from '@/lib/ai/conversations'
 
 // Max attachment size (base64 payload) and allowed media types.
 const MAX_MEDIA_BYTES = 6 * 1024 * 1024
@@ -99,6 +107,37 @@ export async function POST(request: NextRequest) {
     const effectiveMessage =
       message || "Analyse ce document/photo et décris ce que tu observes, puis réponds à ma demande."
 
+    // Resolve (or create) the conversation this turn belongs to.
+    const { userId, guestId, isNewGuest } = await resolveIdentity(request)
+    const requestedConversationId = typeof body?.conversationId === 'string' ? body.conversationId : null
+
+    let conversation = requestedConversationId
+      ? await prisma.aiConversation.findFirst({
+          where: { id: requestedConversationId, ...ownerWhere(userId, guestId) },
+        })
+      : null
+
+    if (!conversation) {
+      conversation = await prisma.aiConversation.create({
+        data: { userId, guestId, agentId, title: null },
+      })
+    } else if (conversation.agentId !== agentId) {
+      conversation = await prisma.aiConversation.update({
+        where: { id: conversation.id },
+        data: { agentId },
+      })
+    }
+
+    // Store the user turn before generating, so history is never lost.
+    await appendMessage(conversation.id, {
+      role: 'user',
+      content: effectiveMessage,
+      agentId,
+      hasAttachment: media.length > 0,
+      attachmentName: media.length > 0 ? String(body?.attachmentName || '').slice(0, 120) || null : null,
+    })
+    await ensureTitle(conversation.id, message || effectiveMessage)
+
     const reply = await generateAgentReply({
       agentId,
       message: effectiveMessage,
@@ -108,12 +147,22 @@ export async function POST(request: NextRequest) {
       fallback: getDemoResponse(effectiveMessage, agentId),
     })
 
-    return NextResponse.json({
+    // Persist the assistant reply.
+    await appendMessage(conversation.id, {
+      role: 'assistant',
+      content: reply.text,
+      agentId: reply.agentId,
+      provider: reply.provider,
+    })
+
+    const response = NextResponse.json({
       response: reply.text,
       agentId: reply.agentId,
       provider: reply.provider,
       model: reply.model,
+      conversationId: conversation.id,
     })
+    return isNewGuest ? attachGuestCookie(response, guestId) : response
   } catch (error) {
     console.error('Chat error:', error)
     return NextResponse.json(
