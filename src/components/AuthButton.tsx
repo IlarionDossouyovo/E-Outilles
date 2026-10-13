@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { getSessionAction, logoutAction } from '@/app/actions'
 import type { SessionUser } from '@/lib/security/session'
-import { isFounderEmail } from '@/lib/security/founder'
 
 export default function AuthButton() {
   const [user, setUser] = useState<SessionUser | null>(null)
@@ -44,7 +43,7 @@ export default function AuthButton() {
             Administration
           </Link>
         )}
-        {isFounderEmail(user.email) && (
+        {user.isFounder && (
           <Link
             href="/agent"
             className="text-sm font-semibold text-ingco-yellow hover:text-yellow-400 transition-colors"

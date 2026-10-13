@@ -22,6 +22,9 @@ export interface SessionUser {
   name?: string | null
   role: string
   country?: string | null
+  // Computed at sign-in (server-side) so the client never needs the founder
+  // e-mail to decide whether to show founder-only links.
+  isFounder?: boolean
 }
 
 function bytesToB64url(bytes: Uint8Array): string {

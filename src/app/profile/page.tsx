@@ -13,6 +13,7 @@ interface User {
   name: string
   role: string
   country?: string
+  isFounder?: boolean
 }
 
 interface Order {
@@ -117,20 +118,20 @@ export default function ProfilePage() {
           </div>
           <div className="flex flex-wrap gap-3">
             {user.role === 'admin' && (
-              <>
-                <Link
-                  href="/admin"
-                  className="bg-ingco-yellow text-ingco-black px-4 py-2 rounded-xl font-medium hover:bg-yellow-400 transition-colors"
-                >
-                  Tableau de bord admin
-                </Link>
-                <Link
-                  href="/agent"
-                  className="border border-ingco-yellow text-ingco-yellow px-4 py-2 rounded-xl font-medium hover:bg-ingco-yellow hover:text-ingco-black transition-colors"
-                >
-                  Agents IA
-                </Link>
-              </>
+              <Link
+                href="/admin"
+                className="bg-ingco-yellow text-ingco-black px-4 py-2 rounded-xl font-medium hover:bg-yellow-400 transition-colors"
+              >
+                Tableau de bord admin
+              </Link>
+            )}
+            {user.isFounder && (
+              <Link
+                href="/agent"
+                className="border border-ingco-yellow text-ingco-yellow px-4 py-2 rounded-xl font-medium hover:bg-ingco-yellow hover:text-ingco-black transition-colors"
+              >
+                Agents IA
+              </Link>
             )}
             <button
               onClick={handleLogout}

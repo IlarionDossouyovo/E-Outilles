@@ -2,6 +2,8 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { getSessionAction } from '@/app/actions'
 
 const SECTIONS = [
   { href: '/admin', label: 'Dashboard' },
@@ -11,15 +13,25 @@ const SECTIONS = [
   { href: '/admin/customers', label: 'Clients' },
   { href: '/admin/newsletter', label: 'Newsletter' },
   { href: '/admin/settings', label: 'Parametres' },
-  { href: '/agent', label: 'Agents IA' },
 ]
 
 export default function AdminNav() {
   const pathname = usePathname() || '/admin'
+  const [isFounder, setIsFounder] = useState(false)
+
+  useEffect(() => {
+    getSessionAction()
+      .then((result) => setIsFounder(Boolean(result.user?.isFounder)))
+      .catch(() => {})
+  }, [])
+
+  const sections = isFounder
+    ? [...SECTIONS, { href: '/agent', label: 'Agents IA' }]
+    : SECTIONS
 
   return (
     <div className="hidden md:flex items-center gap-6">
-      {SECTIONS.map((s) => {
+      {sections.map((s) => {
         const active = pathname === s.href || pathname.startsWith(`${s.href}/`)
         return (
           <Link

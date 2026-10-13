@@ -101,7 +101,6 @@ export default function Footer() {
           <div className="flex flex-wrap justify-center gap-4 text-sm">
             <Link href="/profile" className="text-gray-500 hover:text-ingco-yellow transition-colors">Espace client</Link>
             <Link href="/vendeur" className="text-gray-500 hover:text-ingco-yellow transition-colors">Espace vendeur</Link>
-            <Link href="/agent" className="text-gray-500 hover:text-ingco-yellow transition-colors">Agents IA</Link>
             <Link href="/legal" className="text-gray-500 hover:text-ingco-yellow transition-colors">Mentions légales</Link>
             <Link href="/privacy" className="text-gray-500 hover:text-ingco-yellow transition-colors">RGPD</Link>
             <Link href="/terms" className="text-gray-500 hover:text-ingco-yellow transition-colors">CGV</Link>

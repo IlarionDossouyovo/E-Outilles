@@ -224,3 +224,9 @@ Persistent notes for working on the E-Outilles codebase.
   jump down the page (reproduced at ~424px under throttled network).
 - `/profile` renders a skeleton instead of returning `null` while `/api/auth/me`
   resolves, so the page does not blank out then pop in.
+
+- Founder-only UI: `/agent` is founder-only (middleware). The link to it is
+  rendered by `FounderLink` (`src/components/FounderLink.tsx`), which reads
+  `user.isFounder` from the session - never show that link to plain admins,
+  or they hit the "Acces refuse" notice. `isFounder` is computed server-side at
+  login (`actions.ts`) and returned by `GET /api/auth/me`.

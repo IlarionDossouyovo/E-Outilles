@@ -10,6 +10,7 @@ import {
   verifySessionToken,
   SessionUser,
 } from '@/lib/security/session'
+import { isFounderEmail } from '@/lib/security/founder'
 
 export async function loginAction(formData: FormData) {
   const email = String(formData.get('email') || '').trim().toLowerCase()
@@ -30,6 +31,7 @@ export async function loginAction(formData: FormData) {
     name: user.name,
     role: user.role,
     country: user.country,
+    isFounder: isFounderEmail(user.email),
   }
 
   const token = await createSessionToken(sessionUser)
@@ -54,5 +56,8 @@ export async function logoutAction() {
 export async function getSessionAction() {
   const cookieStore = await cookies()
   const user = await verifySessionToken(cookieStore.get(SESSION_COOKIE)?.value)
+  if (user && user.isFounder === undefined) {
+    user.isFounder = isFounderEmail(user.email)
+  }
   return { user }
 }

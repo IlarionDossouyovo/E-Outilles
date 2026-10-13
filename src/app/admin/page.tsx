@@ -5,6 +5,7 @@ import Link from 'next/link'
 import AdminAnalytics from '@/components/AdminAnalytics'
 import Logo from '@/components/Logo'
 import AdminNav from '@/components/AdminNav'
+import FounderLink from '@/components/FounderLink'
 import { Icon } from '@/components/Icons'
 
 interface RecentOrder {
@@ -107,7 +108,7 @@ export default function AdminDashboard() {
             <Icon name="arrow-left" className="w-4 h-4" /> Retour Accueil
           </Link>
           <div className="flex items-center gap-2">
-            <Link href="/agent" className="text-gray-400 hover:text-ingco-yellow text-sm">Agents IA</Link>
+            <FounderLink className="text-gray-400 hover:text-ingco-yellow text-sm">Agents IA</FounderLink>
             <span className="text-gray-600">|</span>
             <Link href="/" className="text-gray-400 hover:text-ingco-yellow text-sm">Accueil</Link>
           </div>
@@ -235,10 +236,10 @@ export default function AdminDashboard() {
             <Icon name="chat" className="w-6 h-6 text-ingco-yellow mx-auto mb-2" />
             <span className="text-white text-sm">Newsletter</span>
           </Link>
-          <Link href="/agent" className="bg-ingco-gray p-4 rounded-xl text-center hover:bg-ingco-dark transition-colors block">
+          <FounderLink className="bg-ingco-gray p-4 rounded-xl text-center hover:bg-ingco-dark transition-colors block">
             <Icon name="user" className="w-6 h-6 text-ingco-yellow mx-auto mb-2" />
             <span className="text-white text-sm">Agents IA</span>
-          </Link>
+          </FounderLink>
           <Link href="/admin/settings" className="bg-ingco-gray p-4 rounded-xl text-center hover:bg-ingco-dark transition-colors block">
             <Icon name="settings" className="w-6 h-6 text-ingco-yellow mx-auto mb-2" />
             <span className="text-white text-sm">Paramètres</span>

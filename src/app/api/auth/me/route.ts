@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/security/auth'
 import { prisma } from '@/lib/db/prisma'
+import { isFounderEmail } from '@/lib/security/founder'
 
 export async function GET() {
   try {
@@ -25,7 +26,7 @@ export async function GET() {
     })
 
     return NextResponse.json({
-      user,
+      user: { ...user, isFounder: isFounderEmail(user.email) },
       orders: orders.map((o) => ({
         id: o.id,
         date: o.createdAt,
