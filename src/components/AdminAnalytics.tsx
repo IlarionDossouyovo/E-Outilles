@@ -29,7 +29,17 @@ const statusLabels: Record<string, { label: string; color: string }> = {
   delivered: { label: 'livré', color: 'bg-green-500' }
 }
 
-export default function AdminAnalytics({ data }: { data: AdminAnalyticsData }) {
+const SLOTS = 5
+
+// Pads the list to a fixed number of rows so the panel height stays constant
+// between the loading state and the loaded state. Without this the empty panel
+// is short, then grows by up to five rows when the fetch resolves, pushing the
+// filters and order table below it down the page.
+function padRows<T>(items: T[]): Array<T | null> {
+  return Array.from({ length: SLOTS }, (_, i) => items[i] ?? null)
+}
+
+export default function AdminAnalytics({ data, loading = false }: { data: AdminAnalyticsData; loading?: boolean }) {
   return (
     <div className="space-y-8">
       {/* Stats Cards */}
@@ -39,35 +49,47 @@ export default function AdminAnalytics({ data }: { data: AdminAnalyticsData }) {
             <span className="text-gray-400">Total Commandes</span>
             <Icon name="truck" className="w-6 h-6 text-ingco-yellow" />
           </div>
-          <div className="text-3xl font-bold text-white">{data.totalOrders.toLocaleString()}</div>
-          
+          {loading ? (
+            <div className="h-9 w-20 rounded-md bg-ingco-gray animate-pulse" />
+          ) : (
+            <div className="text-3xl font-bold text-white">{data.totalOrders.toLocaleString()}</div>
+          )}
         </div>
-        
+
         <div className="bg-ingco-dark rounded-xl p-6 border border-ingco-gray">
           <div className="flex items-center justify-between mb-4">
             <span className="text-gray-400">Revenu Total</span>
             <Icon name="card" className="w-6 h-6 text-ingco-yellow" />
           </div>
-          <div className="text-3xl font-bold text-white">{data.totalRevenue.toLocaleString()}€</div>
-          
+          {loading ? (
+            <div className="h-9 w-24 rounded-md bg-ingco-gray animate-pulse" />
+          ) : (
+            <div className="text-3xl font-bold text-white">{data.totalRevenue.toLocaleString()}€</div>
+          )}
         </div>
-        
+
         <div className="bg-ingco-dark rounded-xl p-6 border border-ingco-gray">
           <div className="flex items-center justify-between mb-4">
             <span className="text-gray-400">Produits</span>
             <Icon name="tools" className="w-6 h-6 text-ingco-yellow" />
           </div>
-          <div className="text-3xl font-bold text-white">{data.activeProducts}</div>
-          
+          {loading ? (
+            <div className="h-9 w-16 rounded-md bg-ingco-gray animate-pulse" />
+          ) : (
+            <div className="text-3xl font-bold text-white">{data.activeProducts}</div>
+          )}
         </div>
-        
+
         <div className="bg-ingco-dark rounded-xl p-6 border border-ingco-gray">
           <div className="flex items-center justify-between mb-4">
             <span className="text-gray-400">Abonnés</span>
             <Icon name="chat" className="w-6 h-6 text-ingco-yellow" />
           </div>
-          <div className="text-3xl font-bold text-white">{data.subscribers.toLocaleString()}</div>
-          
+          {loading ? (
+            <div className="h-9 w-20 rounded-md bg-ingco-gray animate-pulse" />
+          ) : (
+            <div className="text-3xl font-bold text-white">{data.subscribers.toLocaleString()}</div>
+          )}
         </div>
       </div>
 
@@ -77,21 +99,32 @@ export default function AdminAnalytics({ data }: { data: AdminAnalyticsData }) {
         <div className="bg-ingco-dark rounded-xl p-6 border border-ingco-gray">
           <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2"><Icon name="truck" className="w-5 h-5 text-ingco-yellow" /> Commandes Récentes</h3>
           <div className="space-y-3">
-            {data.recentOrders.map((order) => (
-              <div key={order.id} className="flex items-center justify-between p-3 bg-ingco-black rounded-lg">
-                <div>
-                  <div className="text-white font-medium">{order.customer}</div>
-                  <div className="text-gray-500 text-sm">{order.id} • {order.date}</div>
+            {padRows(data.recentOrders).map((order, index) =>
+              order ? (
+                <div key={order.id} className="flex items-center justify-between p-3 bg-ingco-black rounded-lg">
+                  <div>
+                    <div className="text-white font-medium">{order.customer}</div>
+                    <div className="text-gray-500 text-sm">{order.id} • {order.date}</div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-white font-bold">{order.amount}€</div>
+                    <span className={`text-xs px-2 py-1 rounded ${statusLabels[order.status]?.color} text-white`}>
+                      {statusLabels[order.status]?.label || order.status}
+                    </span>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <div className="text-white font-bold">{order.amount}€</div>
-                  <span className={`text-xs px-2 py-1 rounded ${statusLabels[order.status]?.color} text-white`}>
-                    {statusLabels[order.status]?.label || order.status}
-                  </span>
-                </div>
-              </div>
-            ))}
+              ) : (
+                <div
+                  key={`slot-${index}`}
+                  className={`h-[4.25rem] rounded-lg ${loading ? 'bg-ingco-black animate-pulse' : 'bg-ingco-black/40'}`}
+                  aria-hidden
+                />
+              )
+            )}
           </div>
+          {!loading && data.recentOrders.length === 0 && (
+            <p className="text-gray-500 text-sm text-center mt-4">Aucune commande pour le moment</p>
+          )}
           <Link href="/admin/orders" className="block text-center text-ingco-yellow mt-4 hover:underline">
             Voir toutes les commandes <Icon name="arrow-right" className="w-4 h-4 inline" />
           </Link>
@@ -101,19 +134,30 @@ export default function AdminAnalytics({ data }: { data: AdminAnalyticsData }) {
         <div className="bg-ingco-dark rounded-xl p-6 border border-ingco-gray">
           <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2"><Icon name="star" className="w-5 h-5 text-ingco-yellow" /> Produits Populaires</h3>
           <div className="space-y-3">
-            {data.topProducts.map((product, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-ingco-black rounded-lg">
-                <div className="flex items-center gap-3">
-                  <span className="text-gray-500 font-bold">#{index + 1}</span>
-                  <span className="text-white">{product.name}</span>
+            {padRows(data.topProducts).map((product, index) =>
+              product ? (
+                <div key={`${product.name}-${index}`} className="flex items-center justify-between p-3 bg-ingco-black rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <span className="text-gray-500 font-bold">#{index + 1}</span>
+                    <span className="text-white">{product.name}</span>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-ingco-yellow font-bold">{product.revenue}€</div>
+                    <div className="text-gray-500 text-sm">{product.sales} ventes</div>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <div className="text-ingco-yellow font-bold">{product.revenue}€</div>
-                  <div className="text-gray-500 text-sm">{product.sales} ventes</div>
-                </div>
-              </div>
-            ))}
+              ) : (
+                <div
+                  key={`slot-${index}`}
+                  className={`h-[4.25rem] rounded-lg ${loading ? 'bg-ingco-black animate-pulse' : 'bg-ingco-black/40'}`}
+                  aria-hidden
+                />
+              )
+            )}
           </div>
+          {!loading && data.topProducts.length === 0 && (
+            <p className="text-gray-500 text-sm text-center mt-4">Aucune vente enregistrée</p>
+          )}
           <Link href="/admin/add-product" className="block text-center text-ingco-yellow mt-4 hover:underline">
             Ajouter un produit <Icon name="arrow-right" className="w-4 h-4 inline" />
           </Link>

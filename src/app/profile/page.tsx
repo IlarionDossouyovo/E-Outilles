@@ -73,7 +73,28 @@ export default function ProfilePage() {
     router.refresh()
   }
 
-  if (!user) return null
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-ingco-black pt-24 pb-16">
+        <div className="max-w-7xl mx-auto px-4">
+          <PageNavigation backLabel="Accueil" />
+          <div className="animate-pulse space-y-6">
+            <div className="h-9 w-56 rounded-lg bg-ingco-gray" />
+            <div className="flex gap-2">
+              {[0, 1, 2, 3].map((i) => (
+                <div key={i} className="h-10 w-28 rounded-xl bg-ingco-gray" />
+              ))}
+            </div>
+            <div className="space-y-4">
+              {[0, 1, 2].map((i) => (
+                <div key={i} className="h-24 rounded-xl bg-ingco-gray" />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-ingco-black pt-24 pb-16">

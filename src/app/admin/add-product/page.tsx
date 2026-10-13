@@ -29,7 +29,7 @@ export default function AddProductPage() {
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const { data: analytics } = useAdminAnalytics()
+  const { data: analytics, loading: analyticsLoading } = useAdminAnalytics()
 
   useEffect(() => {
     fetch('/api/categories')
@@ -111,7 +111,7 @@ export default function AddProductPage() {
         </div>
 
         {/* Analytics */}
-        <AdminAnalytics data={analytics} />
+        <AdminAnalytics data={analytics} loading={analyticsLoading} />
 
         <form onSubmit={handleSubmit} className="bg-ingco-gray rounded-2xl p-6 space-y-6">
           {/* Nom du produit */}

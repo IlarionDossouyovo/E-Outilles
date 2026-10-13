@@ -20,6 +20,20 @@ npx prisma db seed      # données de démonstration (upsert, réexécutable)
 npm run dev             # http://localhost:3003
 ```
 
+### Démarrage automatique (Windows)
+
+Le script `scripts/start.ps1` fait tout en une commande : dépendances, `.env`,
+Prisma (generate + migrate + seed), Ollama, puis lance le serveur sur le port
+3003 et ouvre le navigateur.
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\start.ps1
+# serveur de production (build + npm start) :
+powershell -ExecutionPolicy Bypass -File .\scripts\start.ps1 -Prod
+```
+
+Ou double-cliquez sur `demarrer.bat` à la racine du projet.
+
 > Les catégories de la page `/categories/[slug]` s'appuient sur le catalogue
 > statique (`src/lib/catalog.ts`) et se construisent même si la base est vide.
 > Le seed reste nécessaire pour afficher les produits, articles et comptes de démo.

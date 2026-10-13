@@ -36,7 +36,7 @@ export default function AdminOrdersPage() {
   const [filter, setFilter] = useState('all')
   const [search, setSearch] = useState('')
   const [error, setError] = useState('')
-  const { data: analytics } = useAdminAnalytics()
+  const { data: analytics, loading: analyticsLoading } = useAdminAnalytics()
 
   useEffect(() => {
     fetch('/api/orders')
@@ -121,7 +121,7 @@ export default function AdminOrdersPage() {
         )}
 
         {/* Analytics */}
-        <AdminAnalytics data={analytics} />
+        <AdminAnalytics data={analytics} loading={analyticsLoading} />
 
         {/* Filters */}
         <div className="flex flex-col md:flex-row gap-4 mb-6">

@@ -215,3 +215,12 @@ Persistent notes for working on the E-Outilles codebase.
   `?redirect=` goes through `safeRedirect()` in `src/lib/security/redirect.ts`
   (same-site absolute paths only; blocks `//evil.com` and `https://`).
 
+
+- Admin dashboards: `AdminAnalytics` is fed by `useAdminAnalytics()`
+  (`src/hooks/useAdminAnalytics.ts`), which derives orders/revenue/products/
+  subscribers and top products from the live APIs. It reserves a fixed five-row
+  height (skeletons while `loading`) so the panels never change height between
+  load and loaded states - otherwise the filters and order table below them
+  jump down the page (reproduced at ~424px under throttled network).
+- `/profile` renders a skeleton instead of returning `null` while `/api/auth/me`
+  resolves, so the page does not blank out then pop in.

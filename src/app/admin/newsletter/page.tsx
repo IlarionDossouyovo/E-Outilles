@@ -31,7 +31,7 @@ export default function NewsletterPage() {
   const [result, setResult] = useState<string>('')
   const [error, setError] = useState<string>('')
   const [subscribers, setSubscribers] = useState<Subscriber[]>([])
-  const { data: analytics } = useAdminAnalytics()
+  const { data: analytics, loading: analyticsLoading } = useAdminAnalytics()
 
   useEffect(() => {
     fetch('/api/newsletter')
@@ -96,7 +96,7 @@ export default function NewsletterPage() {
         </div>
 
         {/* Analytics */}
-        <AdminAnalytics data={analytics} />
+        <AdminAnalytics data={analytics} loading={analyticsLoading} />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Composer */}
