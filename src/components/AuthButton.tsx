@@ -34,19 +34,19 @@ export default function AuthButton() {
 
   if (user) {
     return (
-      <div className="flex items-center gap-4">
+      <div className="flex flex-wrap items-center gap-3">
         {user.role === 'admin' && (
           <Link
             href="/admin"
             className="text-sm font-semibold text-ingco-yellow hover:text-yellow-400 transition-colors"
           >
-            Admin
+            Administration
           </Link>
         )}
         <Link href="/profile" className="text-sm hover:text-ingco-yellow transition-colors">
-          {user.name || user.email}
+          Mon compte
         </Link>
-        <button 
+        <button
           onClick={handleLogout}
           className="text-sm text-red-500 hover:text-red-400 transition-colors"
         >
