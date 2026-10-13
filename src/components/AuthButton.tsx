@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { getSessionAction, logoutAction } from '@/app/actions'
 import type { SessionUser } from '@/lib/security/session'
+import { isFounderEmail } from '@/lib/security/founder'
 
 export default function AuthButton() {
   const [user, setUser] = useState<SessionUser | null>(null)
@@ -36,20 +37,20 @@ export default function AuthButton() {
     return (
       <div className="flex flex-wrap items-center gap-3">
         {user.role === 'admin' && (
-          <>
-            <Link
-              href="/admin"
-              className="text-sm font-semibold text-ingco-yellow hover:text-yellow-400 transition-colors"
-            >
-              Administration
-            </Link>
-            <Link
-              href="/agent"
-              className="text-sm font-semibold text-ingco-yellow hover:text-yellow-400 transition-colors"
-            >
-              Agents IA
-            </Link>
-          </>
+          <Link
+            href="/admin"
+            className="text-sm font-semibold text-ingco-yellow hover:text-yellow-400 transition-colors"
+          >
+            Administration
+          </Link>
+        )}
+        {isFounderEmail(user.email) && (
+          <Link
+            href="/agent"
+            className="text-sm font-semibold text-ingco-yellow hover:text-yellow-400 transition-colors"
+          >
+            Agents IA
+          </Link>
         )}
         <Link href="/profile" className="text-sm hover:text-ingco-yellow transition-colors">
           Mon compte

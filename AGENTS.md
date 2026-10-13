@@ -163,9 +163,22 @@ Persistent notes for working on the E-Outilles codebase.
 - Footer category links MUST use the real `Category.slug` values from the DB
   (`construction`, `power-tools`, `cordless-tools`, `hand-tools`, `automotive`,
   `garden`, ...), not French labels — mismatched slugs return 404.
-- Agents IA (`/agent`): a signed-in admin is unlocked automatically; the
-  `AGENT_ACCESS_CODE` (when set) is only a second factor. `/agent` and
-  `/vendeur` are admin-protected by middleware.
+- Agents IA (`/agent`): FOUNDER-ONLY. The registry is `src/lib/ai/agents.ts`
+  (12 agents). Public chat exposes only `PUBLIC_AGENT_IDS`; internal agents
+  (project, analytics, marketing, hr, finance, legal, sourcing) require the
+  founder. `requireFounder()` / `isFounderEmail()` in
+  `src/lib/security/founder.ts` (founder = `FOUNDER_EMAIL` env or
+  `FOUNDER.email`). Middleware sends a non-founder signed-in user to
+  `/profile?error=founder_only`. The optional `AGENT_ACCESS_CODE` is only a
+  second factor.
+- AI capabilities: agents declare `capabilities` (`text`/`vision`/`voice`/
+  `reasoning`/`tools`). `GET /api/ai/agents` returns the agents allowed for the
+  current visitor (public vs founder). Vision (`POST /api/chat` with `media[]`)
+  is validated per agent via `agentSupportsVision`; only images/PDF up to 6 MB.
+- Premium voice: `useVoice` supports one-shot dictation (`listen`), continuous
+  handsfree mode (`startHandsFree`), server Gemini TTS with Web Speech
+  fallback, and per-message replay. Vision attachments: `useAttachments`.
+  Both `/chat` and the floating `ChatWidget` expose mic, camera and file input.
 - Dashboards reachable from the footer bottom bar: Espace client, Espace
   vendeur, Agents IA, Administration.
 - Redirects: `next/navigation` `redirect()` on a static page emits a client

@@ -3,7 +3,7 @@
 // Pass 2 produces the final answer grounded in that analysis.
 
 import { prisma } from '@/lib/db/prisma'
-import { generateText, extractJson, type ChatTurn } from './provider'
+import { generateText, extractJson, type ChatTurn, type InlineMedia } from './provider'
 import { AGENTS, reasoningInstruction, type AgentId } from './agents'
 
 export interface ReasoningAnalysis {
@@ -108,6 +108,7 @@ export interface GenerateAgentReplyInput {
   message: string
   history: ChatTurn[]
   useReasoning?: boolean
+  media?: InlineMedia[]
   fallback: string
 }
 
@@ -121,14 +122,16 @@ export interface AgentReply {
 
 // Pass 2: final answer, grounded in the analysis and real products.
 export async function generateAgentReply(input: GenerateAgentReplyInput): Promise<AgentReply> {
-  const { agentId, message, history, fallback } = input
+  const { agentId, message, history, media, fallback } = input
   const agent = AGENTS[agentId]
   const useReasoning = input.useReasoning ?? agent.reasoning
 
   let reasoning: ReasoningAnalysis | null = null
   let catalogContext = ''
 
-  if (useReasoning) {
+  if (useReasoning && !media?.length) {
+    // Skip the analysis pass when an image is attached: a vision turn is
+    // better answered directly, and the analysis model call would not see it.
     try {
       reasoning = await analyze(message, history, agentId)
       if (reasoning.products.length > 0) {
@@ -155,6 +158,7 @@ export async function generateAgentReply(input: GenerateAgentReplyInput): Promis
         ...history.slice(-6),
         { role: 'user', content: message },
       ],
+      media,
       temperature: agentId === 'support' || agentId === 'tracking' ? 0.4 : 0.7,
       maxOutputTokens: 900,
     },

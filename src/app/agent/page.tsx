@@ -43,8 +43,8 @@ export default function AgentDashboard() {
     satisfaction: 0,
   })
 
-  // Access is validated server-side (admin session + AGENT_ACCESS_CODE).
-  // A signed-in admin is unlocked automatically; the code is only required
+  // Access is validated server-side (founder session + optional AGENT_ACCESS_CODE).
+  // A signed-in founder is unlocked automatically; the code is only required
   // when AGENT_ACCESS_CODE is set as a second factor.
   useEffect(() => {
     if (sessionStorage.getItem('agent_access') === 'granted') {

@@ -36,13 +36,14 @@ export default function ProfilePage() {
   const [user, setUser] = useState<User | null>(null)
   const [orders, setOrders] = useState<Order[]>([])
   const [activeTab, setActiveTab] = useState('orders')
-  const [accessDenied, setAccessDenied] = useState(false)
+  const [accessDenied, setAccessDenied] = useState<'admin' | 'founder' | null>(null)
   const router = useRouter()
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
-    if (params.get('error') === 'acces_refuse') {
-      setAccessDenied(true)
+    const error = params.get('error')
+    if (error === 'acces_refuse' || error === 'founder_only') {
+      setAccessDenied(error === 'founder_only' ? 'founder' : 'admin')
       // Drop the param so the notice is not replayed on refresh/back.
       window.history.replaceState({}, '', '/profile')
     }
@@ -81,7 +82,9 @@ export default function ProfilePage() {
 
         {accessDenied && (
           <div className="bg-red-500/15 border border-red-500/40 text-red-300 px-4 py-3 rounded-xl mb-6 text-sm">
-            Accès refusé : cette section est réservée aux administrateurs.
+            {accessDenied === 'founder'
+              ? "Accès refusé : le système d'agents IA est réservé au fondateur de l'entreprise."
+              : 'Accès refusé : cette section est réservée aux administrateurs.'}
           </div>
         )}
         

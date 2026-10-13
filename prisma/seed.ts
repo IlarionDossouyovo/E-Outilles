@@ -11,6 +11,8 @@ const prisma = new PrismaClient()
 // Seed users (passwords hashed with bcrypt)
 const seedUsers = [
   { email: 'admin@e-outilles.com', password: 'admin123', name: 'Admin', role: 'admin' },
+  // Founder account: the only account allowed to reach the AI agent system.
+  { email: 'ilarion@e-outilles.com', password: 'fondateur2026', name: 'Ilarion Dossou-Yovo', role: 'admin' },
   { email: 'demo@e-outilles.com', password: 'demo123', name: 'Demo User', role: 'customer' },
 ]
 

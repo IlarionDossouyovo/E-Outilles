@@ -8,6 +8,7 @@ export type IconName =
   | 'settings' | 'user' | 'info' | 'phone' | 'tools' | 'key' | 'logout'
   | 'download' | 'qr' | 'arrow-left' | 'arrow-right' | 'chevron-left' | 'chevron-right'
   | 'check' | 'warning' | 'spinner' | 'star' | 'truck' | 'shield' | 'wrench' | 'zap'
+  | 'camera' | 'image' | 'mic' | 'volume' | 'volume-off' | 'paperclip' | 'x' | 'send'
 
 const PATHS: Record<IconName, ReactNode> = {
   home: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10.5L12 3l9 7.5M5 9.5V21h5v-6h4v6h5V9.5" />,
@@ -39,6 +40,14 @@ const PATHS: Record<IconName, ReactNode> = {
   shield: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6l7-3z" />,
   wrench: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.7 6.3a4 4 0 01-5.4 5.4L4 17l3 3 5.3-5.3a4 4 0 005.4-5.4l-2.5 2.5-2.5-2.5 2-2.5z" />,
   zap: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 2L4 14h7l-1 8 9-12h-7l1-8z" />,
+  camera: <><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h3l1.5-2h7L17 8h3a1 1 0 011 1v9a1 1 0 01-1 1H4a1 1 0 01-1-1V9a1 1 0 011-1z" /><circle cx="12" cy="13" r="3.2" strokeWidth={2} /></>,
+  image: <><rect x="3" y="4" width="18" height="16" rx="2" strokeWidth={2} /><circle cx="8.5" cy="9.5" r="1.5" strokeWidth={2} /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 18l5-5 4 4 3-3 4 4" /></>,
+  mic: <><rect x="9" y="3" width="6" height="11" rx="3" strokeWidth={2} /><path strokeLinecap="round" strokeWidth={2} d="M5 11a7 7 0 0014 0M12 18v3M8 21h8" /></>,
+  volume: <><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5L6 9H3v6h3l5 4z" /><path strokeLinecap="round" strokeWidth={2} d="M15.5 8.5a5 5 0 010 7M18.5 6a9 9 0 010 12" /></>,
+  'volume-off': <><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5L6 9H3v6h3l5 4z" /><path strokeLinecap="round" strokeWidth={2} d="M16 9l5 6M21 9l-5 6" /></>,
+  paperclip: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 11.5l-8.5 8.5a5 5 0 01-7-7l8-8a3.5 3.5 0 015 5l-8 8a2 2 0 01-3-3l7-7" />,
+  x: <path strokeLinecap="round" strokeWidth={2} d="M6 6l12 12M18 6L6 18" />,
+  send: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />,
 }
 
 export function Icon({ name, className = 'w-5 h-5' }: { name: IconName; className?: string }) {

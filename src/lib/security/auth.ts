@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers'
 import { prisma } from '@/lib/db/prisma'
 import { SESSION_COOKIE, SessionUser, verifySessionToken } from '@/lib/security/session'
+import { isFounderEmail } from '@/lib/security/founder'
 
 export type { SessionUser as User }
 
@@ -31,5 +32,13 @@ export function hasRole(user: SessionUser | null, role: string): boolean {
 export async function requireAdmin(): Promise<SessionUser | null> {
   const user = await getSession()
   if (!user || user.role !== 'admin') return null
+  return user
+}
+
+// Require the company founder. Only the founder may reach the AI agent
+// system; a regular admin is not enough.
+export async function requireFounder(): Promise<SessionUser | null> {
+  const user = await getSession()
+  if (!user || !isFounderEmail(user.email)) return null
   return user
 }

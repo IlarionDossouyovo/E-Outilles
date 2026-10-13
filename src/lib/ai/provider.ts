@@ -9,8 +9,16 @@ export interface ChatTurn {
   content: string
 }
 
+// An image or document attached to a user turn (base64, no data: prefix).
+export interface InlineMedia {
+  mimeType: string
+  data: string
+}
+
 export interface GenerateOptions {
   messages: ChatTurn[]
+  // Media attached to the LAST user turn (vision / document analysis).
+  media?: InlineMedia[]
   temperature?: number
   maxOutputTokens?: number
   json?: boolean
@@ -64,12 +72,22 @@ async function generateWithGoogleModel(
   const key = (process.env.GOOGLE_AI_API_KEY || process.env.GEMINI_API_KEY) as string
   const systemMessages = options.messages.filter((m) => m.role === 'system')
   const turns = options.messages.filter((m) => m.role !== 'system')
+  const lastUserIndex = turns.map((m) => m.role).lastIndexOf('user')
 
   const body: Record<string, unknown> = {
-    contents: turns.map((m) => ({
-      role: m.role === 'assistant' ? 'model' : 'user',
-      parts: [{ text: m.content }],
-    })),
+    contents: turns.map((m, i) => {
+      const parts: Record<string, unknown>[] = [{ text: m.content }]
+      // Attach media (images / documents) to the final user turn.
+      if (options.media?.length && i === lastUserIndex) {
+        for (const item of options.media) {
+          parts.push({ inlineData: { mimeType: item.mimeType, data: item.data } })
+        }
+      }
+      return {
+        role: m.role === 'assistant' ? 'model' : 'user',
+        parts,
+      }
+    }),
     generationConfig: {
       temperature: options.temperature ?? 0.6,
       maxOutputTokens: options.maxOutputTokens ?? 1024,
@@ -134,12 +152,21 @@ async function generateWithGoogle(options: GenerateOptions): Promise<string> {
 }
 
 async function generateWithOllama(options: GenerateOptions): Promise<string> {
+  const messages = options.messages.map((m, i) => {
+    const base: Record<string, unknown> = { role: m.role, content: m.content }
+    // Ollama expects raw base64 images on the message itself.
+    if (options.media?.length && m.role === 'user' && i === options.messages.length - 1) {
+      base.images = options.media.map((item) => item.data)
+    }
+    return base
+  })
+
   const res = await fetch(`${OLLAMA_URL}/api/chat`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       model: OLLAMA_MODEL,
-      messages: options.messages,
+      messages,
       stream: false,
       options: { temperature: options.temperature ?? 0.6 },
       ...(options.json ? { format: 'json' } : {}),
