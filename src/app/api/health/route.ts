@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db/prisma'
-import { isGoogleAIConfigured, isOllamaConfigured, GOOGLE_AI_MODEL } from '@/lib/ai/provider'
+import { isGoogleAIConfigured, isOllamaConfigured, isOllamaReachable, GOOGLE_AI_MODEL } from '@/lib/ai/provider'
 import { isStripeConfigured, isStripeWebhookConfigured } from '@/lib/payments/config'
 
 // Diagnostics: reports which integrations are wired up without leaking secrets.
@@ -26,7 +26,7 @@ export async function GET() {
     productCount,
     ai: {
       google: { configured: isGoogleAIConfigured(), model: GOOGLE_AI_MODEL },
-      ollama: { configured: isOllamaConfigured() },
+      ollama: { configured: isOllamaConfigured(), reachable: await isOllamaReachable() },
       fallback: 'demo',
     },
     email: {

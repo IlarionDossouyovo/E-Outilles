@@ -11,6 +11,7 @@ import { DEFAULT_SETTINGS, type StoreSettings } from '@/lib/settings/defaults'
 interface IntegrationStatus {
   googleAI: boolean
   ollama: boolean
+  ollamaReachable: boolean
   resend: boolean
   stripe: boolean
   stripeWebhook: boolean
@@ -153,7 +154,18 @@ export default function SettingsPage() {
             {integrations ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <StatusBadge ok={integrations.googleAI} label="Google AI (Gemini)" />
-                <StatusBadge ok={integrations.ollama} label="Ollama (local)" />
+                <div className="flex items-center justify-between p-3 bg-ingco-dark rounded-xl">
+                  <span className="text-gray-300 text-sm">Ollama (local)</span>
+                  <span className={`text-xs font-bold px-2 py-1 rounded-full ${
+                    integrations.ollamaReachable
+                      ? 'bg-green-500/20 text-green-400'
+                      : integrations.ollama
+                        ? 'bg-yellow-500/20 text-yellow-400'
+                        : 'bg-red-500/20 text-red-400'
+                  }`}>
+                    {integrations.ollamaReachable ? 'En ligne' : integrations.ollama ? 'Injoignable' : 'Non configuré'}
+                  </span>
+                </div>
                 <StatusBadge ok={integrations.resend} label="Resend (emails)" />
                 <StatusBadge ok={integrations.stripe} label="Stripe (paiements)" />
                 <StatusBadge ok={integrations.stripeWebhook} label="Stripe webhook" />

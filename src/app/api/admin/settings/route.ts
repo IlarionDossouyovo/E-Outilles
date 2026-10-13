@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAdmin } from '@/lib/security/auth'
 import { getSettings, saveSettings } from '@/lib/settings/store'
-import { isGoogleAIConfigured, isOllamaConfigured } from '@/lib/ai/provider'
+import { isGoogleAIConfigured, isOllamaConfigured, isOllamaReachable } from '@/lib/ai/provider'
 import { isStripeConfigured, isStripeWebhookConfigured } from '@/lib/payments/config'
 
 // Admin-only store settings + live integration status.
@@ -20,6 +20,7 @@ export async function GET() {
     integrations: {
       googleAI: isGoogleAIConfigured(),
       ollama: isOllamaConfigured(),
+      ollamaReachable: await isOllamaReachable(),
       resend: resendConfigured,
       stripe: isStripeConfigured(),
       stripeWebhook: isStripeWebhookConfigured(),

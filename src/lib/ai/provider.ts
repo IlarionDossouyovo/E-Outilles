@@ -49,6 +49,20 @@ export function isOllamaConfigured(): boolean {
   return Boolean(process.env.OLLAMA_API_URL)
 }
 
+// Pings the Ollama server so status pages can tell "configured" from
+// "actually reachable". Short timeout: a dead host must not slow the page.
+export async function isOllamaReachable(): Promise<boolean> {
+  if (!isOllamaConfigured()) return false
+  try {
+    const res = await fetch(`${process.env.OLLAMA_API_URL}/api/tags`, {
+      signal: AbortSignal.timeout(1500),
+    })
+    return res.ok
+  } catch {
+    return false
+  }
+}
+
 export const GOOGLE_AI_MODEL = process.env.GOOGLE_AI_MODEL || 'gemini-3.1-flash-lite'
 // Tried in order until one succeeds (models are retired or overloaded).
 // NOTE: the "-latest" aliases are convenient but flaky (frequent 503); the
