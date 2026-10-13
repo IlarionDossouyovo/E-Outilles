@@ -4,16 +4,9 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Logo from '@/components/Logo'
 import { Icon } from '@/components/Icons'
+import { FOUNDER } from '@/lib/founder'
 
-const founder = {
-  name: 'Ilarion Dossouyovo',
-  role: 'Fondateur & PDG',
-  email: 'ilarion@e-outilles.com',
-  phone: '+229 01 977 003 47',
-  avatar: 'user',
-  since: '2024',
-  vision: 'Démocratiser l\'accès aux outils professionnels de qualité pour tous les artisans du monde'
-}
+const founder = FOUNDER
 
 // Agents IA — source unique de vérité partagée avec l'API (/api/chat).
 import { AGENT_LIST } from '@/lib/ai/agents'

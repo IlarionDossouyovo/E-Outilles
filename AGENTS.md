@@ -89,3 +89,26 @@ Persistent notes for working on the E-Outilles codebase.
   breaks `npm start`. `scripts/update.ps1` generates a 48-char secret into `.env`
   when the value is absent or still a `changez-…` placeholder.
 
+## Cart / wishlist hydration (session 2026-10-05)
+- `useCartStore` / `useWishlistStore` persist to localStorage. Their data exists
+  only on the client, so rendering it during SSR (empty) then hydrating (filled)
+  caused React hydration errors #418/#423/#425 on `/cart`, `/checkout`,
+  `/wishlist`. Gate that markup with `useHydrated()` (`src/lib/useHydrated.ts`):
+  render a stable empty shell server-side, show items only after mount.
+  Any new component that reads a persisted store must do the same.
+- Product `images` is a JSON array string. Normalize it with
+  `parseImages()` / `firstImage()` from `src/lib/images.ts` when storing into the
+  cart/wishlist (store `image` is a plain path, not the raw JSON) and when
+  rendering. Never render `item.image` as text.
+- Checkout has only two form steps (1 livraison, 2 paiement); step 3 is the
+  confirmation screen. `handleSubmit` advances while `step < 2` — do not restore
+  `< 3`, which made the final submit a no-op that never called `/api/orders`.
+
+## Founder page (session 2026-10-05)
+- `/fondateur` (server component, exports `metadata`) is the founder profile.
+  Shared data lives in `src/lib/founder.ts` (`FOUNDER`), also consumed by the
+  agent dashboard (`/agent`) so the identity stays single-sourced. Contact
+  helpers: `founderMailto()`, `founderTel()`, `founderWhatsApp()`.
+- Linked from the footer (Entreprise), the mobile nav, a teaser card on `/about`,
+  and the sitemap.
+

@@ -129,6 +129,37 @@ export default function About() {
         </div>
       </section>
 
+      {/* Fondateur */}
+      <section className="pb-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Reveal>
+            <Link
+              href="/fondateur"
+              className="group block bg-ingco-gray rounded-3xl p-8 md:p-10 card-premium"
+            >
+              <div className="flex flex-col md:flex-row items-center gap-8">
+                <div className="w-24 h-24 shrink-0 rounded-2xl bg-gradient-to-br from-ingco-yellow to-yellow-600 flex items-center justify-center">
+                  <span className="text-4xl font-black text-black">ID</span>
+                </div>
+                <div className="flex-1 text-center md:text-left">
+                  <p className="text-ingco-yellow font-bold tracking-widest text-xs uppercase mb-2">
+                    Le fondateur
+                  </p>
+                  <h2 className="text-2xl font-bold text-white mb-2">Ilarion Dossouyovo</h2>
+                  <p className="text-gray-400">
+                    Découvrez le parcours, la vision et l&apos;engagement du fondateur
+                    d&apos;E-Outilles pour l&apos;outillage professionnel en Afrique de l&apos;Ouest.
+                  </p>
+                </div>
+                <span className="inline-flex items-center gap-2 text-ingco-yellow font-semibold group-hover:gap-3 transition-all">
+                  En savoir plus <Icon name="arrow-right" className="w-4 h-4" />
+                </span>
+              </div>
+            </Link>
+          </Reveal>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="py-16 bg-ingco-dark">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

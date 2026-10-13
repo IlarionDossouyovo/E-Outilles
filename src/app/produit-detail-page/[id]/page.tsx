@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useCartStore } from '@/lib/store/cart'
 import { useWishlistStore } from '@/lib/store/wishlist'
+import { firstImage } from '@/lib/images'
 import { Icon, NavigationArrows } from '@/components/Icons'
 
 interface Product {
@@ -54,7 +55,7 @@ export default function ProductPage() {
       id: product.id,
       name: product.name,
       price: product.price,
-      image: product.images,
+      image: firstImage(product.images),
       category: product.category?.name || '',
     }
     for (let i = 0; i < quantity; i++) addItem(payload)
@@ -71,7 +72,7 @@ export default function ProductPage() {
         id: product.id,
         name: product.name,
         price: product.price,
-        image: product.images,
+        image: firstImage(product.images),
         category: product.category?.name || '',
       })
       showToast('Ajouté aux favoris')

@@ -3,11 +3,13 @@
 import { useState } from 'react'
 import { NavigationArrows, Icon } from '@/components/Icons'
 import { useCartStore } from '@/lib/store/cart'
+import { useHydrated } from '@/lib/useHydrated'
 import Link from 'next/link'
 import PageNavigation from '@/components/PageNavigation'
 
 export default function CheckoutPage() {
   const { items, getTotal, clearCart } = useCartStore()
+  const hydrated = useHydrated()
   const [step, setStep] = useState(1) // 1: livraison, 2: paiement, 3: confirmation
   const [paymentMethod, setPaymentMethod] = useState('cod')
   const [loading, setLoading] = useState(false)
@@ -33,7 +35,8 @@ export default function CheckoutPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (step < 3) {
+    // Step 1 (livraison) -> step 2 (paiement). Step 2 is the final submit.
+    if (step < 2) {
       setStep(step + 1)
       return
     }
@@ -416,7 +419,7 @@ export default function CheckoutPage() {
               <h2 className="text-xl font-bold text-white">Votre commande</h2>
             </div>
             <div className="space-y-3 mb-4 max-h-40 overflow-y-auto">
-              {items.map((item) => (
+              {hydrated && items.map((item) => (
                 <div key={item.id} className="flex justify-between items-center text-sm bg-ingco-black/50 p-2 rounded-lg">
                   <div className="flex-1 mr-2">
                     <span className="text-gray-200">{item.name}</span>
@@ -429,7 +432,7 @@ export default function CheckoutPage() {
             <div className="border-t border-gray-700 pt-3 space-y-2">
               <div className="flex justify-between text-gray-400">
                 <span>Sous-total</span>
-                <span className="text-gray-300">{getTotal().toFixed(2)}€</span>
+                <span className="text-gray-300">{(hydrated ? getTotal() : 0).toFixed(2)}€</span>
               </div>
               <div className="flex justify-between text-gray-400">
                 <span>Livraison</span>
@@ -437,7 +440,7 @@ export default function CheckoutPage() {
               </div>
               <div className="flex justify-between text-white font-bold text-xl pt-2 border-t border-gray-700">
                 <span>Total</span>
-                <span className="text-ingco-yellow">{getTotal().toFixed(2)}€</span>
+                <span className="text-ingco-yellow">{(hydrated ? getTotal() : 0).toFixed(2)}€</span>
               </div>
             </div>
             <Link href="/cart" className="inline-flex items-center justify-center gap-1 w-full text-gray-500 mt-4 text-sm hover:text-ingco-yellow transition-colors">

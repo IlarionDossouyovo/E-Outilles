@@ -11,6 +11,7 @@ const CATEGORIES = [
 
 const ENTREPRISE = [
   { href: '/about', label: 'À propos' },
+  { href: '/fondateur', label: 'Le fondateur' },
   { href: '/revendeurs', label: 'Devenir revendeur' },
   { href: '/blog', label: 'Blog' },
   { href: '/services', label: 'Services' },

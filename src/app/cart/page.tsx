@@ -1,29 +1,37 @@
 'use client'
 
 import { useCartStore } from '@/lib/store/cart'
+import { useHydrated } from '@/lib/useHydrated'
 import { Icon, NavigationArrows } from '@/components/Icons'
 import Link from 'next/link'
 import PageNavigation from '@/components/PageNavigation'
 
 export default function CartPage() {
   const { items, updateQuantity, removeItem, getTotal, clearCart } = useCartStore()
+  const hydrated = useHydrated()
 
-
-
-  if (items.length === 0) {
+  // The cart lives in localStorage: render a stable shell on the server and
+  // only show persisted items after mount to avoid a hydration mismatch.
+  if (!hydrated || items.length === 0) {
     return (
       <div className="min-h-screen bg-ingco-black">
         <div className="pt-24 pb-16 max-w-7xl mx-auto px-4 text-center">
           <PageNavigation />
           <Icon name="cart" className="w-16 h-16 text-gray-600 mx-auto mb-6" />
-          <h1 className="text-3xl font-bold text-white mb-4">Votre panier est vide</h1>
-          <p className="text-gray-400 mb-8">Découvrez notre catalogue et ajoutez des produits</p>
-          <Link 
-            href="/search"
-            className="bg-ingco-yellow text-ingco-black px-8 py-3 rounded-xl font-bold hover:bg-yellow-400 transition-colors inline-block"
-          >
-            Découvrir le catalogue
-          </Link>
+          <h1 className="text-3xl font-bold text-white mb-4">
+            {hydrated ? 'Votre panier est vide' : '\u00a0'}
+          </h1>
+          {hydrated && (
+            <>
+              <p className="text-gray-400 mb-8">Découvrez notre catalogue et ajoutez des produits</p>
+              <Link
+                href="/search"
+                className="bg-ingco-yellow text-ingco-black px-8 py-3 rounded-xl font-bold hover:bg-yellow-400 transition-colors inline-block"
+              >
+                Découvrir le catalogue
+              </Link>
+            </>
+          )}
         </div>
       </div>
     )
@@ -40,12 +48,13 @@ export default function CartPage() {
           <div className="lg:col-span-2 space-y-4">
             {items.map((item) => (
               <div key={item.id} className="bg-ingco-gray rounded-2xl p-4 flex gap-4">
-                <div className="w-24 h-24 bg-ingco-dark rounded-xl flex items-center justify-center text-4xl">
-                  {item.image}
+                <div className="w-24 h-24 bg-ingco-dark rounded-xl overflow-hidden flex items-center justify-center shrink-0">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={item.image} alt={item.name} className="w-full h-full object-contain p-2" />
                 </div>
                 <div className="flex-1">
                   <h3 className="text-white font-bold">{item.name}</h3>
-                  <p className="text-ingco-yellow font-bold">{item.price}€</p>
+                  <p className="text-ingco-yellow font-bold">{item.price.toFixed(2)}€</p>
                   <div className="flex items-center gap-3 mt-2">
                     <button 
                       onClick={() => updateQuantity(item.id, item.quantity - 1)}

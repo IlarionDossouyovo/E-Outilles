@@ -164,6 +164,16 @@ export default function Header() {
               {item.label}
             </Link>
           ))}
+          <Link
+            href="/fondateur"
+            className={`block px-3 py-3 rounded-xl transition-colors ${
+              isActive('/fondateur')
+                ? 'bg-ingco-yellow/10 text-ingco-yellow font-semibold'
+                : 'text-gray-300 hover:bg-ingco-gray/60 hover:text-ingco-yellow'
+            }`}
+          >
+            Le fondateur
+          </Link>
           <div className="pt-3 mt-2 border-t border-ingco-gray flex items-center gap-3">
             <div className="flex-1">
               <AuthButton />

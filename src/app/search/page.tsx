@@ -6,6 +6,7 @@ import { useWishlistStore } from '@/lib/store/wishlist'
 import Link from 'next/link'
 import { NavigationArrows, Icon } from '@/components/Icons'
 import { categoryImage } from '@/lib/catalog'
+import { firstImage } from '@/lib/images'
 
 export const dynamic = 'force-dynamic'
 
@@ -18,15 +19,6 @@ interface Product {
   images: string
   stock?: number
   category?: { name: string; slug: string } | null
-}
-
-function firstImage(images: string): string | null {
-  try {
-    const parsed = JSON.parse(images)
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed[0] : null
-  } catch {
-    return null
-  }
 }
 
 export default function SearchPage({ searchParams }: { searchParams: { category?: string } }) {
@@ -166,7 +158,7 @@ export default function SearchPage({ searchParams }: { searchParams: { category?
                             id: product.id,
                             name: product.name,
                             price: product.price,
-                            image: product.images,
+                            image: firstImage(product.images),
                             category: product.category?.name || '',
                           })
                         }
@@ -184,7 +176,7 @@ export default function SearchPage({ searchParams }: { searchParams: { category?
                               id: product.id,
                               name: product.name,
                               price: product.price,
-                              image: product.images,
+                              image: firstImage(product.images),
                               category: product.category?.name || '',
                             })
                             showToast('Ajouté aux favoris')
