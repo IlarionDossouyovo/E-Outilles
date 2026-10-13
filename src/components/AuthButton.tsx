@@ -35,6 +35,14 @@ export default function AuthButton() {
   if (user) {
     return (
       <div className="flex items-center gap-4">
+        {user.role === 'admin' && (
+          <Link
+            href="/admin"
+            className="text-sm font-semibold text-ingco-yellow hover:text-yellow-400 transition-colors"
+          >
+            Admin
+          </Link>
+        )}
         <Link href="/profile" className="text-sm hover:text-ingco-yellow transition-colors">
           {user.name || user.email}
         </Link>

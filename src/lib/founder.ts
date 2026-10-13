@@ -19,9 +19,11 @@ export interface FounderExpertise {
 }
 
 export const FOUNDER = {
-  name: 'Ilarion Dossouyovo',
-  role: 'Fondateur & PDG',
+  fullName: 'DOSSOU-YOVO ATTIOGBE Yélian Auguste Ilarion',
+  name: 'Ilarion DOSSOU-YOVO ATTIOGBE',
+  shortName: 'Ilarion Dossou-Yovo',
   initials: 'ID',
+  role: 'Fondateur & PDG',
   email: 'ilarion@e-outilles.com',
   phone: '+229 01 977 003 47',
   whatsapp: '+229 01 977 003 47',
@@ -32,7 +34,7 @@ export const FOUNDER = {
     "Démocratiser l'accès aux outils professionnels de qualité pour tous les artisans du monde.",
   tagline: "De l'idée au terrain : rendre l'outillage pro accessible à chaque artisan africain.",
   bio: [
-    "Entrepreneur béninois basé à Cotonou, Ilarion Dossouyovo fonde E-Outilles en 2024 avec une conviction simple : un artisan ne devrait jamais choisir entre la qualité de ses outils et la rentabilité de son activité.",
+    "Entrepreneur béninois basé à Cotonou, Ilarion Dossou-Yovo Attiogbé fonde E-Outilles en 2024 avec une conviction simple : un artisan ne devrait jamais choisir entre la qualité de ses outils et la rentabilité de son activité.",
     "En s'appuyant sur un partenariat direct avec le fabricant INGCO et une chaîne logistique optimisée entre l'Asie et l'Afrique de l'Ouest, il transforme le dropshipping en un modèle vertueux : pas de stock initial pour le revendeur, des prix justes pour le client final et une qualité professionnelle garantie.",
     "De la sélection des gammes à la formation des revendeurs, il pilote aujourd'hui le développement produit, les partenariats et l'expansion régionale de la plateforme.",
   ] as string[],

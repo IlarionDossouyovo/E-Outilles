@@ -109,6 +109,24 @@ Persistent notes for working on the E-Outilles codebase.
   Shared data lives in `src/lib/founder.ts` (`FOUNDER`), also consumed by the
   agent dashboard (`/agent`) so the identity stays single-sourced. Contact
   helpers: `founderMailto()`, `founderTel()`, `founderWhatsApp()`.
+- Name fields: `fullName` = "DOSSOU-YOVO ATTIOGBE Yélian Auguste Ilarion"
+  (legal, shown italic under the title), `name` = "Ilarion DOSSOU-YOVO ATTIOGBE"
+  (display), `shortName` = "Ilarion Dossou-Yovo".
 - Linked from the footer (Entreprise), the mobile nav, a teaser card on `/about`,
   and the sitemap.
+
+## Admin area & agent dashboard access (session 2026-10-05)
+- The admin pages are not "missing": `/admin`, `/admin/products`, `/admin/orders`,
+  `/admin/add-product`, `/admin/settings`, `/admin/newsletter` all exist and are
+  gated by `src/middleware.ts` (redirect to `/auth/login?redirect=…` when the
+  session cookie is absent). Log in with the seeded admin account
+  `admin@e-outilles.com / admin123`.
+- Discovery gap fixed: `AuthButton` now shows an Admin link when
+  `user.role === 'admin'`, and `/profile` shows "Tableau de bord admin" /
+  "Agents IA" buttons for admins.
+- `/agent` requires an extra shared code (`AGENT_ACCESS_CODE`, verified in
+  `/api/agent/verify`), separate from the admin role. `scripts/update.ps1`
+  generates it into `.env` when missing/placeholder and prints it at the end.
+- DB seed (`prisma/seed.ts`) creates the admin + demo users; `dev.db` is
+  gitignored and rebuilt by `npx prisma db seed`.
 

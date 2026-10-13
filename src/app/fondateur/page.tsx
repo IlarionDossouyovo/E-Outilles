@@ -8,11 +8,11 @@ import { FOUNDER, founderMailto, founderTel, founderWhatsApp } from '@/lib/found
 export const metadata: Metadata = {
   title: 'Le Fondateur | E-Outilles par ELECTRON',
   description:
-    "Rencontrez Ilarion Dossouyovo, fondateur et PDG d'E-Outilles : parcours, vision et engagement pour rendre l'outillage professionnel INGCO accessible aux artisans d'Afrique de l'Ouest.",
+    "Rencontrez Ilarion Dossou-Yovo Attiogbé (DOSSOU-YOVO ATTIOGBE Yélian Auguste Ilarion), fondateur et PDG d'E-Outilles : parcours, vision et engagement pour rendre l'outillage professionnel INGCO accessible aux artisans d'Afrique de l'Ouest.",
   alternates: { canonical: '/fondateur' },
   openGraph: {
     type: 'profile',
-    title: 'Ilarion Dossouyovo - Fondateur & PDG | E-Outilles',
+    title: 'Ilarion Dossou-Yovo Attiogbé - Fondateur & PDG | E-Outilles',
     description:
       "De l'idée au terrain : rendre l'outillage professionnel accessible à chaque artisan africain.",
     url: '/fondateur',
@@ -55,7 +55,8 @@ export default function FounderPage() {
               <p className="text-ingco-yellow font-bold tracking-widest text-sm uppercase mb-3">
                 Le fondateur
               </p>
-              <h1 className="text-4xl md:text-5xl font-bold text-white mb-3">{FOUNDER.name}</h1>
+              <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">{FOUNDER.name}</h1>
+              <p className="text-gray-500 text-sm md:text-base italic mb-3">{FOUNDER.fullName}</p>
               <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto md:mx-0 mb-6">
                 {FOUNDER.tagline}
               </p>

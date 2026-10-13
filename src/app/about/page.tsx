@@ -145,7 +145,7 @@ export default function About() {
                   <p className="text-ingco-yellow font-bold tracking-widest text-xs uppercase mb-2">
                     Le fondateur
                   </p>
-                  <h2 className="text-2xl font-bold text-white mb-2">Ilarion Dossouyovo</h2>
+                  <h2 className="text-2xl font-bold text-white mb-2">Ilarion Dossou-Yovo Attiogbé</h2>
                   <p className="text-gray-400">
                     Découvrez le parcours, la vision et l&apos;engagement du fondateur
                     d&apos;E-Outilles pour l&apos;outillage professionnel en Afrique de l&apos;Ouest.

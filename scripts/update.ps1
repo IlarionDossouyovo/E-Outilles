@@ -49,6 +49,30 @@ if (-not $secretOk) {
     Write-Host "SESSION_SECRET genere dans .env." -ForegroundColor Green
 }
 
+# AGENT_ACCESS_CODE : code du tableau de bord Agents IA. On en genere un si
+# absent/placeholder et on l'affiche, sinon l'admin ne peut pas valider l'acces.
+$envLines = @(Get-Content ".env" -ErrorAction SilentlyContinue)
+$codeLine = -1
+$codeOk = $false
+for ($i = 0; $i -lt $envLines.Count; $i++) {
+    if ($envLines[$i] -match "^\s*AGENT_ACCESS_CODE\s*=\s*(.*)$") {
+        $codeLine = $i
+        $value = $Matches[1].Trim()
+        if ($value -and $value -notmatch "changez|votre|CHANGE|code-secret") { $codeOk = $true; $agentCode = $value }
+    }
+}
+if (-not $codeOk) {
+    $chars = (48..122) | ForEach-Object { [char]$_ } | Where-Object { $_ -match "[A-Za-z0-9]" }
+    $agentCode = -join (1..16 | ForEach-Object { $chars | Get-Random })
+    if ($codeLine -ge 0) {
+        $envLines[$codeLine] = "AGENT_ACCESS_CODE=$agentCode"
+        Set-Content ".env" $envLines
+    } else {
+        Add-Content ".env" "AGENT_ACCESS_CODE=$agentCode"
+    }
+    Write-Host "AGENT_ACCESS_CODE genere dans .env." -ForegroundColor Green
+}
+
 Write-Host "== 4/7 Generation du client Prisma ==" -ForegroundColor Cyan
 npx prisma generate
 
@@ -66,3 +90,5 @@ npm run build
 Write-Host ""
 Write-Host "Termine. Lancez le serveur avec : npm run dev" -ForegroundColor Green
 Write-Host "Comptes de demo : admin@e-outilles.com / admin123  -  demo@e-outilles.com / demo123" -ForegroundColor Green
+Write-Host "Espace admin : http://localhost:3003/admin (connectez-vous avec le compte admin)" -ForegroundColor Green
+Write-Host "Code Agents IA (page /agent) : $agentCode" -ForegroundColor Green
