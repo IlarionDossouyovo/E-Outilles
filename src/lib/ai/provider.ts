@@ -93,7 +93,9 @@ async function generateWithGoogleModel(
 
   if (!res.ok) {
     const detail = await res.text().catch(() => '')
-    throw new Error(`Google AI ${model} error ${res.status}: ${detail.slice(0, 200)}`)
+    const error: GoogleError = new Error(`Google AI ${model} error ${res.status}: ${detail.slice(0, 200)}`)
+    error.status = res.status
+    throw error
   }
 
   const data = await res.json()
@@ -107,7 +109,14 @@ async function generateWithGoogleModel(
 }
 
 // Tries each candidate model until one responds, so a retired model never
-// breaks the assistant.
+// breaks the assistant. Only "model not found" (404) is retried across
+// candidates: auth, network and timeout errors affect every model equally, so
+// retrying them just multiplies latency before the caller falls back.
+interface GoogleError extends Error {
+  status?: number
+}
+const RETRYABLE_GOOGLE_STATUS = new Set([404])
+
 async function generateWithGoogle(options: GenerateOptions): Promise<string> {
   let lastError: unknown = null
   for (const model of GOOGLE_MODEL_CANDIDATES) {
@@ -115,6 +124,8 @@ async function generateWithGoogle(options: GenerateOptions): Promise<string> {
       return await generateWithGoogleModel(model, options)
     } catch (err) {
       lastError = err
+      const status = (err as GoogleError)?.status
+      if (!(status !== undefined && RETRYABLE_GOOGLE_STATUS.has(status))) break
     }
   }
   throw lastError instanceof Error ? lastError : new Error('Google AI unavailable')
@@ -143,22 +154,38 @@ async function generateWithOllama(options: GenerateOptions): Promise<string> {
 
 // Ordered provider chain. Google AI -> Ollama. The caller supplies a demo
 // fallback via `fallback`.
+//
+// A short circuit breaker prevents a provider that just failed (unreachable
+// host, invalid key) from blocking every request for the full timeout. After a
+// failure we skip it for COOLDOWN_MS so the assistant stays responsive and
+// falls through to the next provider immediately.
+const COOLDOWN_MS = 60_000
+let googleDownUntil = 0
+let ollamaDownUntil = 0
+const now = () => Date.now()
+
 export async function generateText(
   options: GenerateOptions,
   fallback?: string
 ): Promise<GenerateResult> {
-  if (isGoogleAIConfigured()) {
+  if (isGoogleAIConfigured() && now() >= googleDownUntil) {
     try {
-      return { text: await generateWithGoogle(options), provider: 'google', model: GOOGLE_AI_MODEL }
+      const text = await generateWithGoogle(options)
+      googleDownUntil = 0
+      return { text, provider: 'google', model: GOOGLE_AI_MODEL }
     } catch (err) {
+      googleDownUntil = now() + COOLDOWN_MS
       console.error('Google AI failed, trying fallback:', err)
     }
   }
 
-  if (isOllamaConfigured()) {
+  if (isOllamaConfigured() && now() >= ollamaDownUntil) {
     try {
-      return { text: await generateWithOllama(options), provider: 'ollama', model: OLLAMA_MODEL }
+      const text = await generateWithOllama(options)
+      ollamaDownUntil = 0
+      return { text, provider: 'ollama', model: OLLAMA_MODEL }
     } catch (err) {
+      ollamaDownUntil = now() + COOLDOWN_MS
       console.error('Ollama failed, using demo fallback:', err)
     }
   }
