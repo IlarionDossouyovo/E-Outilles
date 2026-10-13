@@ -27,6 +27,8 @@ export default function NewsletterPage() {
   const [body, setBody] = useState('')
   const [template, setTemplate] = useState('')
   const [sending, setSending] = useState(false)
+  const [result, setResult] = useState<string>('')
+  const [error, setError] = useState<string>('')
   const [subscribers, setSubscribers] = useState<Subscriber[]>([])
 
   useEffect(() => {
@@ -36,12 +38,33 @@ export default function NewsletterPage() {
       .catch(err => console.error('Error fetching subscribers:', err))
   }, [])
 
-  const handleSend = () => {
+  const handleSend = async () => {
+    if (!subject.trim() || !body.trim()) {
+      setError('Renseignez un objet et un contenu avant d’envoyer.')
+      return
+    }
     setSending(true)
-    setTimeout(() => {
+    setResult('')
+    setError('')
+    try {
+      const res = await fetch('/api/newsletter/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subject, body }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        setError(data.error || 'Envoi impossible')
+        return
+      }
+      setResult(`Campagne envoyée : ${data.sent}/${data.total} abonnés${data.failed ? ` (${data.failed} échec(s))` : ''}.`)
+      setSubject('')
+      setBody('')
+    } catch {
+      setError('Erreur de connexion au serveur')
+    } finally {
       setSending(false)
-      alert(`Newsletter "${subject}" envoyée à ${subscribers.filter(s => s.status === 'active').length} abonnés!`)
-    }, 2000)
+    }
   }
 
   const selectTemplate = (id: string) => {
@@ -150,6 +173,13 @@ export default function NewsletterPage() {
               >
                 {sending ? 'Envoi en cours...' : `Envoyer à ${subscribers.filter(s => s.status === 'active').length} abonnés`}
               </button>
+
+              {result && (
+                <div className="bg-green-500/10 border border-green-500/30 text-green-400 rounded-xl px-4 py-3 text-sm">{result}</div>
+              )}
+              {error && (
+                <div className="bg-red-500/10 border border-red-500/30 text-red-400 rounded-xl px-4 py-3 text-sm">{error}</div>
+              )}
             </div>
           </div>
 
