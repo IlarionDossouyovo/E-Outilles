@@ -160,6 +160,13 @@ Persistent notes for working on the E-Outilles codebase.
   (admin-only `GET /api/customers`, never returns password/reset tokens).
   Every admin page uses the shared `src/components/AdminNav.tsx` (Dashboard,
   Produits, Ajouter, Commandes, Clients, Newsletter, Parametres, Agents IA).
+- Store settings: `/admin/settings` persists to the `Setting` table via
+  `GET/PUT /api/admin/settings` (admin-only, 403 otherwise). The payload is
+  whitelisted by `sanitizeSettings` in `src/lib/settings/store.ts` (unknown
+  keys dropped). The page also shows live integration status (Google AI,
+  Ollama, Resend, Stripe, webhook) and real analytics. `src/lib/settings/defaults.ts`
+  is the client-safe shape/defaults (no Prisma import) — import defaults from
+  there in client components to avoid bundling Prisma.
 - Footer category links MUST use the real `Category.slug` values from the DB
   (`construction`, `power-tools`, `cordless-tools`, `hand-tools`, `automotive`,
   `garden`, ...), not French labels — mismatched slugs return 404.

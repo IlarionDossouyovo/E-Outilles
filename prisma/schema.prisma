@@ -181,3 +181,10 @@ model AiMessage {
 
   @@index([conversationId])
 }
+
+// Réglages de la boutique (clé/valeur JSON, édités depuis /admin/settings)
+model Setting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}

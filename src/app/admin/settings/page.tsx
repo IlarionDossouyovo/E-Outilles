@@ -1,33 +1,129 @@
 'use client'
 
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import AdminAnalytics from '@/components/AdminAnalytics'
 import Logo from '@/components/Logo'
 import AdminNav from '@/components/AdminNav'
 import { Icon } from '@/components/Icons'
+import { DEFAULT_SETTINGS, type StoreSettings } from '@/lib/settings/defaults'
+
+interface IntegrationStatus {
+  googleAI: boolean
+  ollama: boolean
+  resend: boolean
+  stripe: boolean
+  stripeWebhook: boolean
+}
+
+interface AnalyticsData {
+  totalOrders: number
+  totalRevenue: number
+  activeProducts: number
+  subscribers: number
+  recentOrders: Array<{ id: string; customer: string; amount: number; status: string; date: string }>
+  topProducts: Array<{ name: string; sales: number; revenue: number }>
+}
+
+const EMPTY_ANALYTICS: AnalyticsData = {
+  totalOrders: 0,
+  totalRevenue: 0,
+  activeProducts: 0,
+  subscribers: 0,
+  recentOrders: [],
+  topProducts: [],
+}
+
+function StatusBadge({ ok, label }: { ok: boolean; label: string }) {
+  return (
+    <div className="flex items-center justify-between p-3 bg-ingco-dark rounded-xl">
+      <span className="text-gray-300 text-sm">{label}</span>
+      <span className={`text-xs font-bold px-2 py-1 rounded-full ${ok ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+        {ok ? 'Configuré' : 'Non configuré'}
+      </span>
+    </div>
+  )
+}
 
 export default function SettingsPage() {
-  const [settings, setSettings] = useState({
-    shopName: 'E-Outilles',
-    email: 'contact@eoutilles.com',
-    phone: '+229 01 977 003 47',
-    address: 'Cotonou, Bénin',
-    currency: 'EUR',
-    timezone: 'Africa/Porto-Novo',
-    shippingFree: '50',
-    shippingCost: '5',
-    taxRate: '18',
-    codFee: '0',
-    stripeEnabled: false,
-    momoEnabled: true,
-    emailNotifications: true,
-    smsNotifications: false
-  })
+  const [settings, setSettings] = useState<StoreSettings>(DEFAULT_SETTINGS)
+  const [integrations, setIntegrations] = useState<IntegrationStatus | null>(null)
+  const [analytics, setAnalytics] = useState<AnalyticsData>(EMPTY_ANALYTICS)
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [saved, setSaved] = useState(false)
+  const [error, setError] = useState('')
 
-  const handleSave = () => {
-    alert('Paramètres enregistrés!')
+  const load = useCallback(async () => {
+    setLoading(true)
+    try {
+      const [settingsRes, orders, products, subs] = await Promise.all([
+        fetch('/api/admin/settings').then((r) => (r.ok ? r.json() : null)).catch(() => null),
+        fetch('/api/orders').then((r) => (r.ok ? r.json() : [])).catch(() => []),
+        fetch('/api/products?limit=1000').then((r) => (r.ok ? r.json() : [])).catch(() => []),
+        fetch('/api/newsletter').then((r) => (r.ok ? r.json() : [])).catch(() => []),
+      ])
+      if (settingsRes?.settings) setSettings(settingsRes.settings)
+      if (settingsRes?.integrations) setIntegrations(settingsRes.integrations)
+
+      const orderList: Array<{ id: string; total: number; status: string; createdAt: string; user?: { name?: string | null; email?: string } }> = Array.isArray(orders) ? orders : orders?.orders || []
+      const productList: Array<{ id: string; name: string; price: number; stock: number; sales?: number }> = Array.isArray(products) ? products : products?.products || []
+      const subList: Array<unknown> = Array.isArray(subs) ? subs : []
+
+      const revenue = orderList.reduce((sum, o) => sum + (Number(o.total) || 0), 0)
+      const topProducts = productList
+        .map((p) => ({ name: p.name, sales: Number(p.sales) || 0, revenue: (Number(p.sales) || 0) * (Number(p.price) || 0) }))
+        .sort((a, b) => b.revenue - a.revenue)
+        .slice(0, 5)
+
+      setAnalytics({
+        totalOrders: orderList.length,
+        totalRevenue: Math.round(revenue * 100) / 100,
+        activeProducts: productList.length,
+        subscribers: subList.length,
+        recentOrders: orderList.slice(0, 5).map((o) => ({
+          id: o.id,
+          customer: o.user?.name || o.user?.email || 'Client',
+          amount: Number(o.total) || 0,
+          status: o.status,
+          date: new Date(o.createdAt).toLocaleDateString('fr-FR'),
+        })),
+        topProducts,
+      })
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  useEffect(() => { load() }, [load])
+
+  const handleSave = async () => {
+    setSaving(true)
+    setError('')
+    setSaved(false)
+    try {
+      const res = await fetch('/api/admin/settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(settings),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        setError(data.error || 'Enregistrement impossible')
+        return
+      }
+      if (data.settings) setSettings(data.settings)
+      setSaved(true)
+      setTimeout(() => setSaved(false), 3000)
+    } catch {
+      setError('Erreur de connexion au serveur')
+    } finally {
+      setSaving(false)
+    }
   }
+
+  const update = <K extends keyof StoreSettings>(key: K, value: StoreSettings[K]) =>
+    setSettings((s) => ({ ...s, [key]: value }))
 
   return (
     <div className="min-h-screen bg-ingco-black">
@@ -48,28 +144,28 @@ export default function SettingsPage() {
         </div>
 
         {/* Analytics */}
-        <AdminAnalytics data={{
-          totalOrders: 1247,
-          totalRevenue: 89450,
-          activeProducts: 523,
-          subscribers: 3421,
-          recentOrders: [
-            { id: 'ORD-001', customer: 'Jean Kouassi', amount: 459.99, status: 'pending', date: '16/04/2026' },
-            { id: 'ORD-002', customer: 'Marie Diallo', amount: 189.00, status: 'shipped', date: '15/04/2026' },
-            { id: 'ORD-003', customer: 'Paul Okonkwo', amount: 899.50, status: 'delivered', date: '15/04/2026' },
-            { id: 'ORD-004', customer: 'Anne Mensah', amount: 234.00, status: 'processing', date: '14/04/2026' },
-            { id: 'ORD-005', customer: 'Pierre Ngoma', amount: 567.00, status: 'pending', date: '14/04/2026' },
-          ],
-          topProducts: [
-            { name: 'Perceuse visseuse INGCO 20V', sales: 89, revenue: 8011 },
-            { name: 'Marteau perforateur SDS Max', sales: 45, revenue: 11249 },
-            { name: 'Kit de clés mécaniques 50 pièces', sales: 67, revenue: 5359 },
-            { name: 'Tronçonneuse thermique 45cm', sales: 34, revenue: 10196 },
-            { name: 'Multimètre numérique professionnel', sales: 78, revenue: 4679 },
-          ]
-        }} />
+        {!loading && <AdminAnalytics data={analytics} />}
 
         <div className="space-y-6">
+          {/* État des intégrations */}
+          <div className="bg-ingco-gray rounded-2xl p-6">
+            <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2"><Icon name="zap" className="w-5 h-5 text-ingco-yellow" /> État des intégrations</h2>
+            {integrations ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <StatusBadge ok={integrations.googleAI} label="Google AI (Gemini)" />
+                <StatusBadge ok={integrations.ollama} label="Ollama (local)" />
+                <StatusBadge ok={integrations.resend} label="Resend (emails)" />
+                <StatusBadge ok={integrations.stripe} label="Stripe (paiements)" />
+                <StatusBadge ok={integrations.stripeWebhook} label="Stripe webhook" />
+              </div>
+            ) : (
+              <p className="text-gray-400 text-sm">Chargement…</p>
+            )}
+            <p className="text-gray-500 text-xs mt-3">
+              Les clés se définissent dans le fichier <code className="text-ingco-yellow">.env</code> ; redémarrez le serveur après modification.
+            </p>
+          </div>
+
           {/* Informations boutique */}
           <div className="bg-ingco-gray rounded-2xl p-6">
             <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2"><Icon name="info" className="w-5 h-5 text-ingco-yellow" /> Informations boutique</h2>
@@ -79,7 +175,7 @@ export default function SettingsPage() {
                 <input
                   type="text"
                   value={settings.shopName}
-                  onChange={(e) => setSettings({...settings, shopName: e.target.value})}
+                  onChange={(e) => update('shopName', e.target.value)}
                   className="w-full bg-ingco-black border border-ingco-dark rounded-xl px-4 py-3 text-white"
                 />
               </div>
@@ -88,7 +184,7 @@ export default function SettingsPage() {
                 <input
                   type="email"
                   value={settings.email}
-                  onChange={(e) => setSettings({...settings, email: e.target.value})}
+                  onChange={(e) => update('email', e.target.value)}
                   className="w-full bg-ingco-black border border-ingco-dark rounded-xl px-4 py-3 text-white"
                 />
               </div>
@@ -97,7 +193,7 @@ export default function SettingsPage() {
                 <input
                   type="tel"
                   value={settings.phone}
-                  onChange={(e) => setSettings({...settings, phone: e.target.value})}
+                  onChange={(e) => update('phone', e.target.value)}
                   className="w-full bg-ingco-black border border-ingco-dark rounded-xl px-4 py-3 text-white"
                 />
               </div>
@@ -106,7 +202,7 @@ export default function SettingsPage() {
                 <input
                   type="text"
                   value={settings.address}
-                  onChange={(e) => setSettings({...settings, address: e.target.value})}
+                  onChange={(e) => update('address', e.target.value)}
                   className="w-full bg-ingco-black border border-ingco-dark rounded-xl px-4 py-3 text-white"
                 />
               </div>
@@ -121,7 +217,7 @@ export default function SettingsPage() {
                 <label className="text-gray-400 text-sm mb-2 block">Devise</label>
                 <select
                   value={settings.currency}
-                  onChange={(e) => setSettings({...settings, currency: e.target.value})}
+                  onChange={(e) => update('currency', e.target.value)}
                   className="w-full bg-ingco-black border border-ingco-dark rounded-xl px-4 py-3 text-white"
                 >
                   <option value="EUR">EUR (Euro)</option>
@@ -133,12 +229,12 @@ export default function SettingsPage() {
                 <label className="text-gray-400 text-sm mb-2 block">Fuseau horaire</label>
                 <select
                   value={settings.timezone}
-                  onChange={(e) => setSettings({...settings, timezone: e.target.value})}
+                  onChange={(e) => update('timezone', e.target.value)}
                   className="w-full bg-ingco-black border border-ingco-dark rounded-xl px-4 py-3 text-white"
                 >
                   <option value="Africa/Porto-Novo">Bénin (WAT)</option>
                   <option value="Africa/Dakar">Sénégal (GMT)</option>
-                  <option value="Africa/Abidjan">Côte d'Ivoire (GMT)</option>
+                  <option value="Africa/Abidjan">Côte d&apos;Ivoire (GMT)</option>
                   <option value="Europe/Paris">France (CET)</option>
                 </select>
               </div>
@@ -154,7 +250,7 @@ export default function SettingsPage() {
                 <input
                   type="number"
                   value={settings.shippingFree}
-                  onChange={(e) => setSettings({...settings, shippingFree: e.target.value})}
+                  onChange={(e) => update('shippingFree', Number(e.target.value))}
                   className="w-full bg-ingco-black border border-ingco-dark rounded-xl px-4 py-3 text-white"
                 />
               </div>
@@ -163,7 +259,7 @@ export default function SettingsPage() {
                 <input
                   type="number"
                   value={settings.shippingCost}
-                  onChange={(e) => setSettings({...settings, shippingCost: e.target.value})}
+                  onChange={(e) => update('shippingCost', Number(e.target.value))}
                   className="w-full bg-ingco-black border border-ingco-dark rounded-xl px-4 py-3 text-white"
                 />
               </div>
@@ -172,7 +268,7 @@ export default function SettingsPage() {
                 <input
                   type="number"
                   value={settings.taxRate}
-                  onChange={(e) => setSettings({...settings, taxRate: e.target.value})}
+                  onChange={(e) => update('taxRate', Number(e.target.value))}
                   className="w-full bg-ingco-black border border-ingco-dark rounded-xl px-4 py-3 text-white"
                 />
               </div>
@@ -188,21 +284,23 @@ export default function SettingsPage() {
                   <div className="text-white font-medium">Paiement à la livraison (COD)</div>
                   <div className="text-gray-500 text-sm">Frais: {settings.codFee}€</div>
                 </div>
-                <input type="checkbox" defaultChecked className="w-5 h-5 accent-ingco-yellow" />
+                <input type="checkbox" checked={settings.codEnabled} onChange={(e) => update('codEnabled', e.target.checked)} className="w-5 h-5 accent-ingco-yellow" />
               </label>
               <label className="flex items-center justify-between p-4 bg-ingco-dark rounded-xl">
                 <div>
                   <div className="text-white font-medium">Argent mobile</div>
                   <div className="text-gray-500 text-sm">MTN, Moov, Orange Money</div>
                 </div>
-                <input type="checkbox" defaultChecked className="w-5 h-5 accent-ingco-yellow" />
+                <input type="checkbox" checked={settings.momoEnabled} onChange={(e) => update('momoEnabled', e.target.checked)} className="w-5 h-5 accent-ingco-yellow" />
               </label>
               <label className="flex items-center justify-between p-4 bg-ingco-dark rounded-xl">
                 <div>
                   <div className="text-white font-medium">Carte bancaire</div>
-                  <div className="text-gray-500 text-sm">Visa, Mastercard - Bientôt</div>
+                  <div className="text-gray-500 text-sm">
+                    Visa, Mastercard — {integrations?.stripe ? 'actif' : 'clé Stripe requise'}
+                  </div>
                 </div>
-                <input type="checkbox" disabled className="w-5 h-5 accent-gray-500" />
+                <input type="checkbox" checked={settings.cardEnabled} onChange={(e) => update('cardEnabled', e.target.checked)} className="w-5 h-5 accent-ingco-yellow" />
               </label>
             </div>
           </div>
@@ -216,24 +314,29 @@ export default function SettingsPage() {
                   <div className="text-white font-medium">Courriel de notification</div>
                   <div className="text-gray-500 text-sm">Nouvelle commande, contact...</div>
                 </div>
-                <input type="checkbox" defaultChecked className="w-5 h-5 accent-ingco-yellow" />
+                <input type="checkbox" checked={settings.emailNotifications} onChange={(e) => update('emailNotifications', e.target.checked)} className="w-5 h-5 accent-ingco-yellow" />
               </label>
               <label className="flex items-center justify-between p-4 bg-ingco-dark rounded-xl">
                 <div>
                   <div className="text-white font-medium">Notifications SMS</div>
                   <div className="text-gray-500 text-sm">Alertes importantes</div>
                 </div>
-                <input type="checkbox" className="w-5 h-5 accent-ingco-yellow" />
+                <input type="checkbox" checked={settings.smsNotifications} onChange={(e) => update('smsNotifications', e.target.checked)} className="w-5 h-5 accent-ingco-yellow" />
               </label>
             </div>
           </div>
 
+          {error && (
+            <div className="bg-red-500/10 border border-red-500/30 text-red-400 rounded-xl px-4 py-3 text-sm">{error}</div>
+          )}
+
           {/* Enregistrer */}
           <button
             onClick={handleSave}
-            className="w-full bg-ingco-yellow text-ingco-black py-4 rounded-xl font-bold hover:bg-yellow-400 transition-colors"
+            disabled={saving}
+            className="w-full bg-ingco-yellow text-ingco-black py-4 rounded-xl font-bold hover:bg-yellow-400 transition-colors disabled:opacity-60"
           >
-            <Icon name="check" className="w-4 h-4 inline" /> Enregistrer les paramètres
+            <Icon name="check" className="w-4 h-4 inline" /> {saving ? 'Enregistrement…' : saved ? 'Paramètres enregistrés !' : 'Enregistrer les paramètres'}
           </button>
         </div>
       </div>
