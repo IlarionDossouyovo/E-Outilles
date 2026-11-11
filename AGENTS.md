@@ -454,3 +454,27 @@ Persistent notes for working on the E-Outilles codebase.
   "+8/+5/+12% ce mois" deltas. Replaced with real values derived from `/api/orders`
   (average basket, real this-month order/customer counts). Do not put fake ratings
   or review counts in dashboards — there is no review system in the DB.
+
+## Brand palette, contact API & dev-cache gotcha (session 2026-11-11)
+- Category accents MUST stay in the brand family. `src/lib/catalog.ts` exports
+  `BRAND_ACCENTS` (gold/bronze/steel) and every `CATEGORY_META.color` uses it;
+  `prisma/seed.ts` mirrors the exact same hex values per category. The cards
+  render `${color}22`, so any rainbow value (blue/green/red) reads off-brand.
+  If you add a category, pick a `BRAND_ACCENTS` value and copy it to the seed.
+- `/api/contact` now returns `{ success, emailDelivered }`. It used to answer
+  `success:true` whenever the message was merely *stored*, even when the email
+  never went out — misleading. `emailDelivered:false` means the row is saved
+  but no mail was sent (e.g. unverified sender domain). Never claim delivery
+  you did not perform.
+- Email sending order in `src/lib/email/sendEmail.ts`: Brevo HTTP API → Resend →
+  SMTP (nodemailer) → dev log. In the sandbox Brevo's API returns 403
+  `unauthorized_IP` and SMTP returns `525 Unauthorized IP` — both are Brevo
+  IP-allowlist blocks, NOT bad credentials. Add the outbound IP to Brevo's
+  allowlist (or deploy on Render/Vercel whose IPs are allowlisted) to send for
+  real; nothing else needs changing.
+- STALE `.next` CACHE = broken interactivity. Running `npm run build` while
+  `next dev` is running leaves dev serving 404s for every `/_next/static/*`
+  chunk, so React never hydrates and buttons (chat send, forms) silently do
+  nothing while the page still renders. Fix: stop dev, `rm -rf .next`, restart
+  `npm run dev`. Always check `/tmp/dev.log` for `GET /_next/static/... 404`
+  before debugging "nothing happens when I click".
