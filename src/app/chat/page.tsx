@@ -63,11 +63,17 @@ export default function ChatPage() {
   const activeAgent = agents.find((a) => a.id === agentId) || agents[0]
   const canUseVision = activeAgent?.capabilities.includes('vision')
 
-  // Seed the greeting once, using the active locale.
+  // Seed the greeting once, using the active locale. If the visitor switches
+  // language before sending anything, the still-untouched greeting follows.
+  const greetingRef = useRef('')
   useEffect(() => {
-    setMessages((prev) =>
-      prev.length === 0 ? [{ role: 'assistant', content: t('chat.greeting'), agentId: 'assistant' }] : prev
-    )
+    const greeting = t('chat.greeting')
+    setMessages((prev) => {
+      const untouched = prev.length === 0 || (prev.length === 1 && prev[0].role === 'assistant' && prev[0].content === greetingRef.current)
+      if (!untouched) return prev
+      return [{ role: 'assistant', content: greeting, agentId: 'assistant' }]
+    })
+    greetingRef.current = greeting
   }, [t])
 
   useEffect(() => {
