@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import ChatWidget from '@/lib/ai/ChatWidget'
 import ServiceWorkerRegister from '@/components/ServiceWorkerRegister'
@@ -38,6 +38,13 @@ export const metadata: Metadata = {
     title: SITE_TITLE,
     description: SITE_DESCRIPTION,
   },
+}
+
+export const viewport: Viewport = {
+  themeColor: '#FFC400',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
 }
 
 export default function RootLayout({
