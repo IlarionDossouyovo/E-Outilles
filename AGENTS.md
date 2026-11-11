@@ -397,3 +397,37 @@ Persistent notes for working on the E-Outilles codebase.
   collapse to icons below `sm` so the three-column bar never overflows a phone.
 - Agent card gradients stay inside the INGCO yellow/amber/grey family (no purple/
   blue/teal/red) so the dashboards match the brand palette.
+
+## Integrations, tokens & deploy wiring (session 2026-11-11)
+- All third-party tokens live ONLY in `.env` (git-ignored): `NEON_API_KEY`,
+  `VERCEL_TOKEN`, `RENDER_API_KEY`, `BREVO_API_KEY`, `RESEND_API_KEY`,
+  `GOOGLE_AI_API_KEY`, plus the Brevo SMTP relay (`SMTP_HOST=smtp-relay.brevo.com`,
+  `SMTP_USER`, `SMTP_PASSWORD`). Never commit them; `.env.bak*` is git-ignored.
+- Neon: project `mute-base-60520292`, production branch `br-morning-dust-b9pz2g77`.
+  Pooled host `ep-aged-dawn-b9dw3ihq-pooler.c-7.eu-central-1.aws.neon.tech` is
+  `DATABASE_URL`; `DIRECT_URL` is the non-pooled host. `npx prisma migrate status`
+  -> "Database schema is up to date". 71 products / 15 categories / 3 users.
+- Vercel: project `e-outilles-6jwi` (`prj_pFmj0vJtHBzhHCfI2L8xqR71AAJK`, team
+  `team_8CTGirwmwkNXnaQdguhGFuc3`), linked to GitHub `main`, auto-deploys.
+  Env vars are managed via `POST /v10/projects/{id}/env` (19 keys). `GET
+  /v2/user` returns 404 for this token but project/deploy endpoints work.
+- Render: service `e-outilles` = `srv-dbq7ppl9fdbs73dkkmg0`, health
+  `/api/health`, auto-deploys from `main`. Update a key with
+  `PUT /v1/services/{id}/env-vars/{KEY}`. The Render copy of `BREVO_API_KEY` /
+  `RESEND_API_KEY` was refreshed to match `.env`.
+- Both prod envs return `{"status":"ok","database":"ok"}`: Vercel
+  `https://e-outilles-6jwi.vercel.app`, Render `https://e-outilles.onrender.com`.
+- Email is Brevo-first (verified sender), Resend fallback. A live test send to
+  the account address returns HTTP 201. `FROM_EMAIL` = the Brevo account address
+  until a sending domain is verified.
+- Google AI key is valid; free-tier `generateContent` returns HTTP 429 once the
+  daily quota is hit (not an auth error). Gemini TTS `/api/tts` returns a real
+  RIFF/WAVE file (verified header).
+- Geo auto-translation: `GET /api/geo` reads `x-vercel-ip-country` / `cf-ipcountry`
+  / `x-country-code` / `x-geo-country` then `Accept-Language`, mapping country ->
+  locale (`localeForCountry`). Behind Vercel the real edge country is used; a
+  spoofed header is ignored (Vercel overrides it), which is expected.
+- Mobile Money: `StoreSettings.mobileMoneyNumber` (default `+229 01 977 003 47`)
+  is editable at `/admin/settings` and exposed by `GET /api/marketing/channels`;
+  the checkout confirmation tells the buyer where to send the payment. Orders
+  stay `pending` (offline instruction, no aggregator wired).
