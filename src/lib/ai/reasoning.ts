@@ -22,6 +22,10 @@ export interface ReasoningAnalysis {
   sentiment: string
   missingInfo: string[]
   plan: string[]
+  // Concrete next step the agent commits to, so the answer ends on an action.
+  nextAction: string
+  // Facts the agent must not assert (no data to back them): kept out of the reply.
+  unknowns: string[]
   productQuery: string | null
   products: { name: string; price: number; slug: string }[]
 }
@@ -31,6 +35,8 @@ interface AnalysisPayload {
   sentiment?: string
   missingInfo?: string[]
   plan?: string[]
+  nextAction?: string
+  unknowns?: string[]
   productQuery?: string | null
 }
 
@@ -75,14 +81,21 @@ export async function analyze(
 ): Promise<ReasoningAnalysis> {
   const agent = agentOverride ?? AGENTS[agentId]
   const analysisPrompt = `Tu es le raisonnement interne de l'agent "${agent.name}" (${agent.department}).
-Analyse le dernier message utilisateur comme le ferait un expert humain, puis renvoie UNIQUEMENT un JSON valide:
+Tu penses comme un professionnel humain expérimenté de ce département: tu comprends
+l'intention réelle derrière les mots, tu repères l'urgence et l'émotion, et tu prépares
+une réponse honnête, utile et cohérente avec le rôle de l'agent.
+Analyse le dernier message utilisateur, puis renvoie UNIQUEMENT un JSON valide:
 {
   "intent": "intention principale en une phrase",
   "sentiment": "état émotionnel probable du client en un mot (neutre, pressé, inquiet, satisfait, frustré...)",
   "missingInfo": ["informations manquantes, max 3"],
   "plan": ["étapes de réponse, max 4"],
+  "nextAction": "l'action concrète que tu proposes au client à la fin, en une phrase",
+  "unknowns": ["faits que tu ne peux pas affirmer faute de données (prix exact, délai précis, référence...), max 3"],
   "productQuery": "requête courte pour chercher dans le catalogue, ou null"
 }
+Sois rigoureux: si une information n'est pas dans le contexte entreprise, mets-la dans "unknowns"
+plutôt que de l'inventer.
 ${toneInstructionFor(agent.tone)}`
 
   const result = await generateText(
@@ -108,6 +121,8 @@ ${toneInstructionFor(agent.tone)}`
     sentiment: parsed?.sentiment || 'neutre',
     missingInfo: Array.isArray(parsed?.missingInfo) ? parsed!.missingInfo!.slice(0, 3) : [],
     plan: Array.isArray(parsed?.plan) ? parsed!.plan!.slice(0, 4) : [],
+    nextAction: parsed?.nextAction || '',
+    unknowns: Array.isArray(parsed?.unknowns) ? parsed!.unknowns!.slice(0, 3) : [],
     productQuery: parsed?.productQuery ?? null,
     products: [],
   }
@@ -174,6 +189,15 @@ export async function generateAgentReply(input: GenerateAgentReplyInput): Promis
       }
       if (reasoning.missingInfo.length > 0) {
         context += `\nSi c'est nécessaire pour bien répondre, demande: ${reasoning.missingInfo.join(' ; ')}.`
+      }
+      if (reasoning.plan.length > 0) {
+        context += `\nPlan interne à suivre (sans le nommer): ${reasoning.plan.join(' -> ')}.`
+      }
+      if (reasoning.nextAction) {
+        context += `\nTermine par cette action concrète: ${reasoning.nextAction}.`
+      }
+      if (reasoning.unknowns.length > 0) {
+        context += `\nNe présente jamais comme certain (dis simplement que tu vérifies ou poses la question): ${reasoning.unknowns.join(' ; ')}.`
       }
     } catch (err) {
       console.error('Reasoning pass failed, continuing without it:', err)
