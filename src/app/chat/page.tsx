@@ -68,8 +68,11 @@ export default function ChatPage() {
   const greetingRef = useRef('')
   useEffect(() => {
     const greeting = t('chat.greeting')
+    // Capture the previous value first: the state updater runs after this
+    // effect body, so reading the ref inside it would already see the new text.
+    const previous = greetingRef.current
     setMessages((prev) => {
-      const untouched = prev.length === 0 || (prev.length === 1 && prev[0].role === 'assistant' && prev[0].content === greetingRef.current)
+      const untouched = prev.length === 0 || (prev.length === 1 && prev[0].role === 'assistant' && prev[0].content === previous)
       if (!untouched) return prev
       return [{ role: 'assistant', content: greeting, agentId: 'assistant' }]
     })
