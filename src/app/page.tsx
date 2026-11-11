@@ -15,7 +15,7 @@ const categories = [
     products: ['Perceuses', 'Meuleuses', 'Scies', 'Marteau perforateur'],
     blog: 'Guide outils électriques 2026',
     description: 'Outils électriques professionnels',
-    color: 'from-red-500 to-red-700'
+    color: 'from-ingco-yellow to-yellow-600'
   },
   {
     id: 'cordless-tools',
@@ -23,7 +23,7 @@ const categories = [
     products: ['Perceuses visseuses', 'Clés à chocs', 'Scies circulaires'],
     blog: 'Avantages outils sans fil',
     description: 'Liberté sans fil pour pros',
-    color: 'from-blue-600 to-blue-800'
+    color: 'from-yellow-400 to-yellow-600'
   },
   {
     id: 'hand-tools',
@@ -31,7 +31,7 @@ const categories = [
     products: ['Clés', 'Tournevis', 'Pinces', 'Marteaux'],
     blog: 'Trousse outils essentielle',
     description: 'Outils à main professionnels',
-    color: 'from-blue-500 to-blue-700'
+    color: 'from-gray-400 to-gray-600'
   },
   {
     id: 'air-tools',
@@ -39,7 +39,7 @@ const categories = [
     products: ['Compresseurs', 'Clés à chocs pneumatiques', 'Pistolets'],
     blog: 'Guide compresseurs',
     description: 'Outils pneumatiques pros',
-    color: 'from-sky-500 to-sky-700'
+    color: 'from-gray-600 to-gray-800'
   },
   {
     id: 'measuring',
@@ -47,7 +47,7 @@ const categories = [
     products: ['Niveaux laser', 'Multimètres', 'Détecteurs'],
     blog: 'Précision mesures',
     description: 'Instruments de mesure',
-    color: 'from-purple-500 to-purple-700'
+    color: 'from-ingco-yellow to-amber-600'
   },
   {
     id: 'garden',
@@ -55,7 +55,7 @@ const categories = [
     products: ['Tondeuses', 'Tronçonneuses', 'Taille-haies'],
     blog: 'Entretien jardin pro',
     description: 'Équipement paysagement',
-    color: 'from-green-500 to-green-700'
+    color: 'from-ingco-yellow to-yellow-700'
   },
   {
     id: 'automotive',
@@ -63,7 +63,7 @@ const categories = [
     products: ['Crics', 'Chandelles', 'Clés à chocs'],
     blog: 'Outils mécanicien',
     description: 'Équipement garage auto',
-    color: 'from-orange-500 to-orange-700'
+    color: 'from-amber-500 to-amber-700'
   },
   {
     id: 'drilling',
@@ -71,7 +71,7 @@ const categories = [
     products: ['Burins', 'Disques', 'Scies trépans'],
     blog: 'Guide forage professionnel',
     description: 'Accessoires forage',
-    color: 'from-gray-500 to-gray-700'
+    color: 'from-gray-600 to-gray-800'
   },
   {
     id: 'welding',
@@ -79,7 +79,7 @@ const categories = [
     products: ['Machines à souder', 'Masques', 'Electrodes'],
     blog: 'Initiation soudure MMA',
     description: 'Équipement soudure',
-    color: 'from-red-600 to-red-800'
+    color: 'from-amber-700 to-yellow-800'
   },
   {
     id: 'generators',
@@ -87,7 +87,7 @@ const categories = [
     products: ['Groupes électrogènes', 'Inverters'],
     blog: 'Choisir générateur',
     description: 'Alimentation électrique',
-    color: 'from-yellow-600 to-yellow-800'
+    color: 'from-ingco-yellow to-yellow-700'
   },
   {
     id: 'construction',
@@ -103,7 +103,7 @@ const categories = [
     products: ['Pompes submersibles', 'Pompes surface'],
     blog: 'Gestion eaux',
     description: 'Pompes et irrigation',
-    color: 'from-cyan-500 to-cyan-700'
+    color: 'from-gray-400 to-gray-600'
   },
   {
     id: 'safety',
@@ -111,7 +111,7 @@ const categories = [
     products: ['Casques', 'Gants', 'Chaussures', 'Lunettes'],
     blog: 'EPI obligatoires',
     description: 'Équipements protection',
-    color: 'from-yellow-500 to-yellow-700'
+    color: 'from-yellow-400 to-yellow-600'
   },
   {
     id: 'storage',
@@ -119,7 +119,7 @@ const categories = [
     products: ['Caisse à outils', 'Coffrets', 'Armoires'],
     blog: 'Organisation atelier',
     description: 'Rangement outils',
-    color: 'from-teal-500 to-teal-700'
+    color: 'from-gray-500 to-gray-700'
   },
   {
     id: 'accessories',
@@ -127,7 +127,7 @@ const categories = [
     products: ['Batteries', 'Chargeurs', 'Disques', 'Forets'],
     blog: 'Choisir accessoires',
     description: 'Accessoires tous outils',
-    color: 'from-indigo-500 to-indigo-700'
+    color: 'from-ingco-yellow to-amber-500'
   }
 ]
 
@@ -147,7 +147,7 @@ export default function Home() {
     <div className="bg-ingco-black">
       {/* HERO */}
       <section className="relative overflow-hidden min-h-[92vh] flex items-center pt-28 pb-20">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-950/20 to-black">
+        <div className="absolute inset-0 bg-gradient-to-br from-ingco-dark via-ingco-gray/40 to-ingco-black">
           <div className="absolute inset-0 opacity-40">
             <div
               className="absolute inset-0 animate-grid"
@@ -162,10 +162,10 @@ export default function Home() {
           </div>
           <div className="absolute -top-32 -left-32 w-[600px] h-[600px] bg-gradient-to-br from-yellow-500/25 to-transparent rounded-full blur-[120px] animate-float" />
           <div
-            className="absolute -bottom-32 -right-32 w-[600px] h-[600px] bg-gradient-to-tl from-purple-600/25 to-transparent rounded-full blur-[120px] animate-float"
+            className="absolute -bottom-32 -right-32 w-[600px] h-[600px] bg-gradient-to-tl from-ingco-yellow/20 to-transparent rounded-full blur-[120px] animate-float"
             style={{ animationDelay: '1.5s' }}
           />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-r from-blue-500/20 to-transparent rounded-full blur-[100px] animate-glow" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-r from-yellow-500/15 to-transparent rounded-full blur-[100px] animate-glow" />
           <div
             className="absolute inset-0 opacity-[0.04]"
             style={{

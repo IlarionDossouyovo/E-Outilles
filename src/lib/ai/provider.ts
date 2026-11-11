@@ -67,13 +67,14 @@ export async function isOllamaReachable(): Promise<boolean> {
   }
 }
 
-export const GOOGLE_AI_MODEL = process.env.GOOGLE_AI_MODEL || 'gemini-3.1-flash-lite'
+export const GOOGLE_AI_MODEL = process.env.GOOGLE_AI_MODEL || 'gemini-3.5-flash'
 // Tried in order until one succeeds (models are retired or overloaded).
-// NOTE: the "-latest" aliases are convenient but flaky (frequent 503); the
-// pinned lite model is the reliable default.
+// NOTE: the "-latest" aliases are convenient but flaky (frequent 503); a pinned
+// flash model is the reliable default. 3.1-flash-lite is a lighter fallback.
 const GOOGLE_MODEL_CANDIDATES = Array.from(
   new Set([
     GOOGLE_AI_MODEL,
+    'gemini-3.5-flash',
     'gemini-3.1-flash-lite',
     'gemini-3.8-flash',
     'gemini-flash-latest',
