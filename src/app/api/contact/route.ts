@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { sendEmail } from '@/lib/email/sendEmail'
+import { prisma } from '@/lib/db/prisma'
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,6 +13,17 @@ export async function POST(request: NextRequest) {
         { error: 'Tous les champs sont requis' },
         { status: 400 }
       )
+    }
+
+    // Persist first so the message is never lost when email delivery is down.
+    let stored = false
+    try {
+      await prisma.contactMessage.create({
+        data: { name, email, subject, message },
+      })
+      stored = true
+    } catch (err) {
+      console.error('Failed to store contact message:', err)
     }
 
     // Create email content
@@ -67,9 +79,11 @@ export async function POST(request: NextRequest) {
     `
 
     // Send email to admin
+    const adminEmail =
+      process.env.CONTACT_EMAIL || process.env.FOUNDER_EMAIL || 'contact@e-outilles.com'
     const adminEmailSent = await sendEmail({
-      to: 'admin@eoutilles.com',
-      subject: `[E-Outelles] Nouveau message: ${subject}`,
+      to: adminEmail,
+      subject: `[E-Outilles] Nouveau message: ${subject}`,
       html: adminHtml
     })
 
@@ -113,7 +127,7 @@ export async function POST(request: NextRequest) {
       html: userHtml
     })
 
-    if (adminEmailSent || userEmailSent) {
+    if (adminEmailSent || userEmailSent || stored) {
       return NextResponse.json(
         { success: true, message: 'Message envoyé avec succès!' },
         { status: 200 }

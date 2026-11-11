@@ -154,6 +154,18 @@ model ResellerRequest {
   createdAt DateTime @default(now())
 }
 
+// Messages du formulaire de contact. Persistés pour qu'aucune demande ne soit
+// perdue lorsque la livraison email est indisponible (IP non autorisée, etc.).
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String
+  message   String
+  status    String   @default("new") // new, read, replied
+  createdAt DateTime @default(now())
+}
+
 // Conversation avec un agent IA (persistée pour historique et reprise)
 model AiConversation {
   id        String    @id @default(cuid())

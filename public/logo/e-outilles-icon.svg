@@ -1,51 +1,78 @@
 <svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="E-Outille par ELECTRON">
   <defs>
-    <radialGradient id="bg" cx="50%" cy="38%" r="78%">
-      <stop offset="0%" stop-color="#1E1E1E"/>
-      <stop offset="60%" stop-color="#121212"/>
-      <stop offset="100%" stop-color="#0B0B0B"/>
+    <radialGradient id="bg" cx="42%" cy="30%" r="88%">
+      <stop offset="0%" stop-color="#262626"/>
+      <stop offset="55%" stop-color="#141414"/>
+      <stop offset="100%" stop-color="#080808"/>
     </radialGradient>
+    <linearGradient id="edge" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFE680" stop-opacity="0.85"/>
+      <stop offset="45%" stop-color="#FFC400" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#FFB300" stop-opacity="0.7"/>
+    </linearGradient>
     <linearGradient id="steel" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#F2F2F2"/>
-      <stop offset="45%" stop-color="#C2C2C2"/>
-      <stop offset="100%" stop-color="#7C7C7C"/>
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="42%" stop-color="#CFCFCF"/>
+      <stop offset="100%" stop-color="#6E6E6E"/>
     </linearGradient>
-    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#FFDE59"/>
-      <stop offset="45%" stop-color="#FFC400"/>
-      <stop offset="100%" stop-color="#E8A200"/>
+    <linearGradient id="gold" x1="8%" y1="0%" x2="92%" y2="100%">
+      <stop offset="0%" stop-color="#FFF0AE"/>
+      <stop offset="42%" stop-color="#FFC400"/>
+      <stop offset="100%" stop-color="#E39A00"/>
     </linearGradient>
-    <linearGradient id="bolt" x1="20%" y1="0%" x2="80%" y2="100%">
-      <stop offset="0%" stop-color="#FFF3B0"/>
-      <stop offset="55%" stop-color="#FFD400"/>
-      <stop offset="100%" stop-color="#FFAE00"/>
+    <linearGradient id="bolt" x1="18%" y1="0%" x2="82%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="38%" stop-color="#FFF6C2"/>
+      <stop offset="100%" stop-color="#FFC400"/>
     </linearGradient>
-    <linearGradient id="halo" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#FFC400" stop-opacity="0.30"/>
+    <linearGradient id="sweep" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.14"/>
+      <stop offset="52%" stop-color="#FFFFFF" stop-opacity="0.03"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFC400" stop-opacity="0.34"/>
       <stop offset="100%" stop-color="#FFC400" stop-opacity="0"/>
-    </linearGradient>
+    </radialGradient>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="1.6" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
   </defs>
-  <rect width="128" height="128" rx="26" fill="url(#bg)"/>
-  <rect x="1.5" y="1.5" width="125" height="125" rx="24.5" fill="none" stroke="#FFC400" stroke-opacity="0.28" stroke-width="1.5"/>
+
+  <rect width="128" height="128" rx="28" fill="url(#bg)"/>
+  <rect x="1.6" y="1.6" width="124.8" height="124.8" rx="26.4" fill="none" stroke="url(#edge)" stroke-width="2"/>
+  <path d="M6 40 Q64 -6 122 34 L122 6 Q122 4 120 4 L8 4 Q6 4 6 6 Z" fill="url(#sweep)"/>
+
   <g transform="translate(64 64)">
-    <circle r="50" fill="url(#halo)"/>
+    <circle r="52" fill="url(#halo)"/>
     <g fill="url(#steel)">
-      <rect x="-4.5" y="-49" width="9" height="11" rx="2"/>
-      <rect x="-4.5" y="38" width="9" height="11" rx="2"/>
-      <rect x="-49" y="-4.5" width="11" height="9" rx="2"/>
-      <rect x="38" y="-4.5" width="11" height="9" rx="2"/>
-      <rect x="-4" y="-45" width="8" height="10" rx="2" transform="rotate(30)"/>
-      <rect x="-4" y="35" width="8" height="10" rx="2" transform="rotate(30)"/>
-      <rect x="-4" y="-45" width="8" height="10" rx="2" transform="rotate(-30)"/>
-      <rect x="-4" y="35" width="8" height="10" rx="2" transform="rotate(-30)"/>
-      <rect x="-4" y="-44" width="8" height="9" rx="2" transform="rotate(60)"/>
-      <rect x="-4" y="35" width="8" height="9" rx="2" transform="rotate(60)"/>
-      <rect x="-4" y="-44" width="8" height="9" rx="2" transform="rotate(-60)"/>
-      <rect x="-4" y="35" width="8" height="9" rx="2" transform="rotate(-60)"/>
+      <rect x="-4.6" y="-49" width="9.2" height="12" rx="2.4"/>
+      <rect x="-4.6" y="37" width="9.2" height="12" rx="2.4"/>
+      <rect x="-49" y="-4.6" width="12" height="9.2" rx="2.4"/>
+      <rect x="37" y="-4.6" width="12" height="9.2" rx="2.4"/>
+      <rect x="-4.2" y="-45" width="8.4" height="11" rx="2.2" transform="rotate(30)"/>
+      <rect x="-4.2" y="34" width="8.4" height="11" rx="2.2" transform="rotate(30)"/>
+      <rect x="-4.2" y="-45" width="8.4" height="11" rx="2.2" transform="rotate(-30)"/>
+      <rect x="-4.2" y="34" width="8.4" height="11" rx="2.2" transform="rotate(-30)"/>
+      <rect x="-4.2" y="-44" width="8.4" height="10" rx="2.2" transform="rotate(60)"/>
+      <rect x="-4.2" y="34" width="8.4" height="10" rx="2.2" transform="rotate(60)"/>
+      <rect x="-4.2" y="-44" width="8.4" height="10" rx="2.2" transform="rotate(-60)"/>
+      <rect x="-4.2" y="34" width="8.4" height="10" rx="2.2" transform="rotate(-60)"/>
     </g>
     <circle r="41" fill="none" stroke="url(#steel)" stroke-width="3.4"/>
-    <circle r="33" fill="none" stroke="url(#gold)" stroke-width="2.4"/>
-    <path d="M-19 -18 H11 L16 -12 V-5 L10 1 H-6 V7 H13 L18 13 V20 H-19 V-18 Z" fill="url(#gold)"/>
+    <circle r="41" fill="none" stroke="#FFFFFF" stroke-opacity="0.22" stroke-width="1" stroke-dasharray="30 130" stroke-linecap="round"/>
+    <circle r="33" fill="none" stroke="url(#gold)" stroke-width="2.6"/>
+    <path
+      d="M-19 -18 H11 L16 -12 V-5 L10 1 H-6 V7 H13 L18 13 V20 H-19 V-18 Z"
+      fill="url(#gold)"
+      filter="url(#glow)"
+    />
+    <path d="M-19 -18 H11 L16 -12 V-5 L10 1 H-6 V7 H13 L18 13 V20 H-19 V-18 Z" fill="none" stroke="#FFE9A8" stroke-opacity="0.55" stroke-width="0.8"/>
     <path d="M9 -26 L-4 -4 H3 L-6 20 L12 -6 H4 L12 -26 Z" fill="url(#bolt)"/>
+    <path d="M9 -26 L-4 -4 H3 L-6 20" fill="none" stroke="#FFFFFF" stroke-opacity="0.75" stroke-width="0.7" stroke-linecap="round"/>
   </g>
 </svg>

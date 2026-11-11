@@ -10,6 +10,14 @@ interface EmailOptions {
   text?: string
 }
 
+// Parses "Name <email>" or a bare address into its parts.
+function parseFrom(fromEmail: string): { name: string; email: string } {
+  const match = fromEmail.match(/^\s*(.*?)\s*<([^>]+)>\s*$/)
+  return match
+    ? { name: match[1] || 'E-Outilles', email: match[2] }
+    : { name: '', email: fromEmail.trim() }
+}
+
 // Brevo (ex-SendGrid FR) transactional API. Returns true on a 2xx response.
 async function sendWithBrevo(
   apiKey: string,
@@ -17,10 +25,8 @@ async function sendWithBrevo(
   { to, subject, html, text }: EmailOptions
 ): Promise<boolean> {
   // Brevo wants { name, email }; accept "Name <email>" or a bare address.
-  const match = fromEmail.match(/^\s*(.*?)\s*<([^>]+)>\s*$/)
-  const sender = match
-    ? { name: match[1] || 'E-Outilles', email: match[2] }
-    : { name: 'E-Outilles', email: fromEmail }
+  const parsed = parseFrom(fromEmail)
+  const sender = { name: parsed.name || 'E-Outilles', email: parsed.email }
 
   try {
     const res = await fetch('https://api.brevo.com/v3/smtp/email', {
@@ -88,8 +94,12 @@ export async function sendEmail({ to, subject, html, text }: EmailOptions): Prom
   const smtpUser = process.env.SMTP_USER || ''
   const smtpPassword = process.env.SMTP_PASSWORD || ''
 
-  // If no SMTP configured, log the email (development mode)
-  if (!smtpHost || smtpHost === 'localhost') {
+  // Real SMTP delivery (Brevo relay, Gmail, etc.) via nodemailer. This is the
+  // transport that actually works from the sandbox and from Render, where the
+  // Brevo HTTP API is blocked for unlisted IPs and Resend needs a verified
+  // domain. Previously this branch called fetch() on a raw SMTP port, which can
+  // only ever fail ("bad port").
+  if (!smtpHost) {
     console.log('📧 Email (development mode - logged only):')
     console.log(`To: ${to}`)
     console.log(`Subject: ${subject}`)
@@ -98,21 +108,27 @@ export async function sendEmail({ to, subject, html, text }: EmailOptions): Prom
   }
 
   try {
-    // Use nodemailer-like API (can be implemented with actual SMTP library)
-    const response = await fetch(`http://${smtpHost}:${smtpPort}/api/send`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        from: fromEmail,
-        to,
-        subject,
-        html
-      })
+    const nodemailer = await import('nodemailer')
+    const port = Number(smtpPort) || 587
+    const transporter = nodemailer.createTransport({
+      host: smtpHost,
+      port,
+      secure: port === 465,
+      auth: smtpUser ? { user: smtpUser, pass: smtpPassword } : undefined,
     })
 
-    return response.ok
+    const from = parseFrom(fromEmail)
+    await transporter.sendMail({
+      from: from.name ? `${from.name} <${from.email}>` : from.email,
+      to,
+      subject,
+      html,
+      text: text || html.replace(/<[^>]*>/g, ''),
+    })
+    console.log('✅ Email sent via SMTP')
+    return true
   } catch (error) {
-    console.error('Failed to send email:', error)
+    console.error('❌ Failed to send email via SMTP:', error)
     return false
   }
 }

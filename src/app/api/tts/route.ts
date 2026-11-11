@@ -26,6 +26,40 @@ const LANGUAGE_NAMES: Record<string, string> = {
   pt: 'portugais',
 }
 
+// Wraps raw 16-bit little-endian PCM (what the preview TTS model returns) in a
+// RIFF/WAV header so the browser <audio> element can play it. Without this the
+// premium voice is silently dropped and the client falls back to Web Speech.
+function pcm16ToWav(pcm: Buffer, sampleRate = 24000, channels = 1): Buffer {
+  const bitsPerSample = 16
+  const byteRate = (sampleRate * channels * bitsPerSample) / 8
+  const blockAlign = (channels * bitsPerSample) / 8
+  const header = Buffer.alloc(44)
+  header.write('RIFF', 0)
+  header.writeUInt32LE(36 + pcm.length, 4)
+  header.write('WAVE', 8)
+  header.write('fmt ', 12)
+  header.writeUInt32LE(16, 16)
+  header.writeUInt16LE(1, 20) // PCM
+  header.writeUInt16LE(channels, 22)
+  header.writeUInt32LE(sampleRate, 24)
+  header.writeUInt32LE(byteRate, 28)
+  header.writeUInt16LE(blockAlign, 32)
+  header.writeUInt16LE(bitsPerSample, 34)
+  header.write('data', 36)
+  header.writeUInt32LE(pcm.length, 40)
+  return Buffer.concat([header, pcm])
+}
+
+// The model reports its rate as "audio/L16;rate=24000".
+function sampleRateFromMime(mimeType: string): number {
+  const match = mimeType.match(/rate=(\d+)/)
+  return match ? Number(match[1]) : 24000
+}
+
+// Distinct quota buckets per voice, so a spent allowance on one voice does not
+// disable voice output entirely.
+const VOICE_CANDIDATES = Array.from(new Set([DEFAULT_VOICE, 'Kore', 'Aoede', 'Puck']))
+
 function languageName(lang?: string): string | null {
   if (!lang) return null
   const base = lang.toLowerCase().split('-')[0]
@@ -73,66 +107,76 @@ export async function POST(request: NextRequest) {
 
     const key = (process.env.GOOGLE_AI_API_KEY || process.env.GEMINI_API_KEY) as string
 
+    const requestedVoice = voice || DEFAULT_VOICE
+    const voices = Array.from(new Set([requestedVoice, ...VOICE_CANDIDATES]))
+
     let lastError = ''
     for (const model of TTS_MODEL_CANDIDATES) {
-      const payload = JSON.stringify({
-        contents: [{ parts: [{ text: ttsPrompt(clean, model, lang) }] }],
-        generationConfig: {
-          responseModalities: ['AUDIO'],
-          speechConfig: {
-            voiceConfig: { prebuiltVoiceConfig: { voiceName: voice || DEFAULT_VOICE } },
+      for (const voiceName of voices) {
+        const payload = JSON.stringify({
+          contents: [{ parts: [{ text: ttsPrompt(clean, model, lang) }] }],
+          generationConfig: {
+            responseModalities: ['AUDIO'],
+            speechConfig: {
+              voiceConfig: { prebuiltVoiceConfig: { voiceName } },
+            },
           },
-        },
-      })
+        })
 
-      const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
-          body: payload,
-          signal: AbortSignal.timeout(25000),
+        let res: Response
+        try {
+          res = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+              body: payload,
+              signal: AbortSignal.timeout(25000),
+            }
+          )
+        } catch (err) {
+          lastError = `${model}/${voiceName}: ${(err as Error).message}`
+          continue
         }
-      )
 
-      if (!res.ok) {
-        lastError = `${model}: ${res.status}`
-        // 429 = quota exhausted for this model. Trying the next candidate would
-        // add a full round trip (and its timeout) before the client can fall
-        // back to Web Speech, so answer immediately instead.
-        if (res.status === 429) break
-        continue
+        if (!res.ok) {
+          lastError = `${model}/${voiceName}: ${res.status}`
+          // 429 (quota) and 404 (retired model) are model-level failures: move on
+          // to the next model instead of retrying every voice on it.
+          if (res.status === 429 || res.status === 404) break
+          continue
+        }
+
+        const data = await res.json()
+        const part = data?.candidates?.[0]?.content?.parts?.find(
+          (p: { inlineData?: { data?: string; mimeType?: string } }) => p?.inlineData?.data
+        )
+        const base64Audio = part?.inlineData?.data
+        const mimeType: string = part?.inlineData?.mimeType || 'audio/wav'
+
+        if (!base64Audio) {
+          lastError = `${model}/${voiceName}: aucun audio`
+          continue
+        }
+
+        const raw = Buffer.from(base64Audio, 'base64')
+        // The preview model returns headerless L16 PCM; wrap it so the browser
+        // can play the premium voice instead of falling back to Web Speech.
+        const isPcm = mimeType.includes('L16') || mimeType.includes('pcm')
+        const audio = isPcm ? pcm16ToWav(raw, sampleRateFromMime(mimeType)) : raw
+        const contentType = isPcm ? 'audio/wav' : mimeType
+
+        return new NextResponse(new Uint8Array(audio), {
+          status: 200,
+          headers: {
+            'Content-Type': contentType,
+            'Cache-Control': 'no-store',
+            'X-TTS-Provider': 'google',
+            'X-TTS-Model': model,
+            'X-TTS-Voice': voiceName,
+          },
+        })
       }
-
-      const data = await res.json()
-      const part = data?.candidates?.[0]?.content?.parts?.find(
-        (p: { inlineData?: { data?: string; mimeType?: string } }) => p?.inlineData?.data
-      )
-      const base64Audio = part?.inlineData?.data
-      const mimeType: string = part?.inlineData?.mimeType || 'audio/wav'
-
-      if (!base64Audio) {
-        lastError = `${model}: aucun audio`
-        continue
-      }
-
-      // Raw L16 PCM is not directly playable by the browser <audio> element;
-      // let the client fall back to Web Speech instead of serving a broken blob.
-      if (mimeType.includes('L16')) {
-        lastError = `${model}: format PCM non pris en charge`
-        continue
-      }
-
-      const audio = Buffer.from(base64Audio, 'base64')
-      return new NextResponse(audio, {
-        status: 200,
-        headers: {
-          'Content-Type': mimeType,
-          'Cache-Control': 'no-store',
-          'X-TTS-Provider': 'google',
-          'X-TTS-Model': model,
-        },
-      })
     }
 
     console.error('Google TTS failed:', lastError)
