@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { NavigationArrows, Icon } from '@/components/Icons'
 import Link from 'next/link'
+import { LocalizedText } from '@/components/LocalizedText'
 
 // Vidéos de formation par catégorie
 const videoModules = [
@@ -210,18 +211,18 @@ export default function FormationsPage() {
       <section className="pt-24 pb-16 bg-gradient-to-b from-ingco-gray to-ingco-black">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            Formations <span className="text-ingco-yellow">Revendeurs</span>
+            <LocalizedText text="Formations" /> <span className="text-ingco-yellow"><LocalizedText text="Revendeurs" /></span>
           </h1>
           <p className="text-gray-400 text-lg max-w-3xl mx-auto mb-8">
-            Développez vos compétences et celles de votre équipe avec nos formations professionnelles. 
-            Tout inclus pour les revendeurs agréés E-Outilles.
+            <LocalizedText text="Développez vos compétences et celles de votre équipe avec nos formations professionnelles." />
+            {' '}<LocalizedText text="Tout inclus pour les revendeurs agréés E-Outilles." />
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link href="#formations" className="bg-ingco-yellow text-ingco-black px-8 py-3 rounded-xl font-bold hover:bg-yellow-400 transition-colors">
-              Découvrir les Formations
+              <LocalizedText text="Découvrir les Formations" />
             </Link>
             <Link href="/revendeurs" className="bg-ingco-gray text-white px-8 py-3 rounded-xl font-bold hover:bg-gray-700 transition-colors">
-              Devenir Revendeur
+              <LocalizedText text="Devenir Revendeur" />
             </Link>
           </div>
         </div>
@@ -233,19 +234,19 @@ export default function FormationsPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             <div>
               <div className="text-4xl font-bold text-ingco-yellow mb-2">4</div>
-              <div className="text-gray-400">Formations</div>
+              <div className="text-gray-400"><LocalizedText text="Formations" /></div>
             </div>
             <div>
               <div className="text-4xl font-bold text-ingco-yellow mb-2">8</div>
-              <div className="text-gray-400">Jours de formation</div>
+              <div className="text-gray-400"><LocalizedText text="Jours de formation" /></div>
             </div>
             <div>
               <div className="text-4xl font-bold text-ingco-yellow mb-2">100%</div>
-              <div className="text-gray-400">Certifications</div>
+              <div className="text-gray-400"><LocalizedText text="Certifications" /></div>
             </div>
             <div>
-              <div className="text-4xl font-bold text-ingco-yellow mb-2">Gratuit</div>
-              <div className="text-gray-400">Pour revendeurs</div>
+              <div className="text-4xl font-bold text-ingco-yellow mb-2"><LocalizedText text="Gratuit" /></div>
+              <div className="text-gray-400"><LocalizedText text="Pour revendeurs" /></div>
             </div>
           </div>
         </div>
@@ -255,7 +256,7 @@ export default function FormationsPage() {
       <section id="formations" className="py-16 bg-ingco-black">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-white text-center mb-12">
-            Nos Formations
+            <LocalizedText text="Nos Formations" />
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {formations.map((formation) => (
@@ -264,38 +265,38 @@ export default function FormationsPage() {
                   <div className="flex items-start gap-4 mb-4">
                     <Icon name={formation.icon as never} className="w-12 h-12 text-ingco-yellow" />
                     <div>
-                      <h3 className="text-xl font-bold text-white">{formation.title}</h3>
+                      <h3 className="text-xl font-bold text-white"><LocalizedText text={formation.title} /></h3>
                       <div className="flex gap-4 mt-2 text-sm text-gray-400">
-                        <span className="flex items-center gap-1"><Icon name="spinner" className="w-4 h-4" /> {formation.duration}</span>
-                        <span className="flex items-center gap-1"><Icon name="blog" className="w-4 h-4" /> {formation.level}</span>
-                        <span className="flex items-center gap-1"><Icon name="star" className="w-4 h-4" /> {formation.price}</span>
+                        <span className="flex items-center gap-1"><Icon name="spinner" className="w-4 h-4" /> <LocalizedText text={formation.duration} /></span>
+                        <span className="flex items-center gap-1"><Icon name="blog" className="w-4 h-4" /> <LocalizedText text={formation.level} /></span>
+                        <span className="flex items-center gap-1"><Icon name="star" className="w-4 h-4" /> <LocalizedText text={formation.price} /></span>
                       </div>
                     </div>
                   </div>
-                  <p className="text-gray-400 mb-6">{formation.description}</p>
+                  <p className="text-gray-400 mb-6"><LocalizedText text={formation.description} /></p>
                   
                   <button
                     onClick={() => toggleFormation(formation.id)}
                     className="text-ingco-yellow font-semibold hover:underline"
                   >
-                    {expandedFormation === formation.id ? '▼ Masquer le programme' : '▶ Voir le programme'}
+                    {expandedFormation === formation.id ? <LocalizedText text="▼ Masquer le programme" /> : <LocalizedText text="▶ Voir le programme" />}
                   </button>
 
                   {expandedFormation === formation.id && (
                     <div className="mt-6 pt-6 border-t border-gray-700">
-                      <h4 className="font-bold text-white mb-3">Programme:</h4>
+                      <h4 className="font-bold text-white mb-3"><LocalizedText text="Programme:" /></h4>
                       <ul className="space-y-2 mb-6">
                         {formation.program.map((item, i) => (
                           <li key={i} className="text-gray-400 flex items-center gap-2">
-                            <Icon name="check" className="w-4 h-4 text-ingco-yellow shrink-0" /> {item}
+                            <Icon name="check" className="w-4 h-4 text-ingco-yellow shrink-0" /> <LocalizedText text={item} />
                           </li>
                         ))}
                       </ul>
-                      <h4 className="font-bold text-white mb-3">Avantages:</h4>
+                      <h4 className="font-bold text-white mb-3"><LocalizedText text="Avantages:" /></h4>
                       <ul className="space-y-2">
                         {formation.benefits.map((benefit, i) => (
                           <li key={i} className="text-gray-400 flex items-center gap-2">
-                            <Icon name="star" className="w-4 h-4 text-green-500 shrink-0" /> {benefit}
+                            <Icon name="star" className="w-4 h-4 text-green-500 shrink-0" /> <LocalizedText text={benefit} />
                           </li>
                         ))}
                       </ul>
@@ -312,17 +313,17 @@ export default function FormationsPage() {
       <section className="py-16 bg-ingco-gray">
         <div className="max-w-4xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-white text-center mb-4">
-            Calendrier des Formations 2026
+            <LocalizedText text="Calendrier des Formations 2026" />
           </h2>
           <p className="text-gray-400 text-center mb-12">
-            Planifiez votre année de formation
+            <LocalizedText text="Planifiez votre année de formation" />
           </p>
           <div className="bg-ingco-black rounded-2xl p-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {schedule.map((item, index) => (
                 <div key={index} className="flex items-center gap-4 p-4 bg-ingco-gray rounded-xl">
-                  <div className="text-ingco-yellow font-bold w-28">{item.month}</div>
-                  <div className="text-white">{item.event}</div>
+                  <div className="text-ingco-yellow font-bold w-28"><LocalizedText text={item.month} /></div>
+                  <div className="text-white"><LocalizedText text={item.event} /></div>
                 </div>
               ))}
             </div>
@@ -334,15 +335,15 @@ export default function FormationsPage() {
       <section className="py-16 bg-ingco-black">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-white text-center mb-4 flex items-center justify-center gap-3">
-            <Icon name="chat" className="w-8 h-8 text-ingco-yellow" /> Vidéos de Formation
+            <Icon name="chat" className="w-8 h-8 text-ingco-yellow" /> <LocalizedText text="Vidéos de Formation" />
           </h2>
           <p className="text-gray-400 text-center mb-12">
-            Apprenez à utiliser les produits INGCO grâce à nos tutoriels vidéo
+            <LocalizedText text="Apprenez à utiliser les produits INGCO grâce à nos tutoriels vidéo" />
           </p>
           
           {videoModules.map((module, index) => (
             <div key={index} className="mb-12">
-              <h3 className="text-xl font-bold text-ingco-yellow mb-4">{module.category}</h3>
+              <h3 className="text-xl font-bold text-ingco-yellow mb-4"><LocalizedText text={module.category} /></h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {module.videos.map((video, vIndex) => (
                   <a
@@ -358,7 +359,7 @@ export default function FormationsPage() {
                       <Icon name={video.thumbnail as never} className="w-14 h-14 text-ingco-yellow/80" />
                     </div>
                     <div className="p-4">
-                      <h4 className="text-white font-semibold mb-2">{video.title}</h4>
+                      <h4 className="text-white font-semibold mb-2"><LocalizedText text={video.title} /></h4>
                       <div className="flex items-center gap-2 text-gray-400 text-sm">
                         <Icon name="chat" className="w-4 h-4" />
                         <span>{video.duration}</span>
@@ -375,7 +376,7 @@ export default function FormationsPage() {
               onClick={() => handleVideoClick('Toutes les vidéos')}
               className="bg-ingco-yellow text-ingco-black px-8 py-3 rounded-xl font-bold hover:bg-yellow-400 transition-colors"
             >
-              Voir toutes les vidéos
+              <LocalizedText text="Voir toutes les vidéos" />
             </button>
           </div>
         </div>
@@ -385,10 +386,10 @@ export default function FormationsPage() {
       <section className="py-16 bg-ingco-gray">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-white text-center mb-4 flex items-center justify-center gap-3">
-            <Icon name="download" className="w-8 h-8 text-ingco-yellow" /> Ressources PDF à Télécharger
+            <Icon name="download" className="w-8 h-8 text-ingco-yellow" /> <LocalizedText text="Ressources PDF à Télécharger" />
           </h2>
           <p className="text-gray-400 text-center mb-12">
-            Guides techniques, catalogues et fiches produit
+            <LocalizedText text="Guides techniques, catalogues et fiches produit" />
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -397,17 +398,17 @@ export default function FormationsPage() {
                 <div className="flex items-start gap-4">
                   <Icon name="download" className="w-9 h-9 text-ingco-yellow" />
                   <div>
-                    <h4 className="text-white font-bold mb-2">{resource.title}</h4>
+                    <h4 className="text-white font-bold mb-2"><LocalizedText text={resource.title} /></h4>
                     <div className="flex items-center gap-3 text-sm text-gray-400 mb-4">
-                      <span className="bg-ingco-gray px-2 py-1 rounded">{resource.type}</span>
-                      <span>{resource.category}</span>
+                      <span className="bg-ingco-gray px-2 py-1 rounded"><LocalizedText text={resource.type} /></span>
+                      <span><LocalizedText text={resource.category} /></span>
                     </div>
                     <a
                       href={resource.download}
                       download
                       className="bg-ingco-yellow text-ingco-black px-4 py-2 rounded-lg font-semibold text-sm hover:bg-yellow-400 transition-colors flex items-center gap-2 w-fit"
                     >
-                      <Icon name="download" className="w-4 h-4" /> Télécharger
+                      <Icon name="download" className="w-4 h-4" /> <LocalizedText text="Télécharger" />
                     </a>
                   </div>
                 </div>
@@ -421,10 +422,10 @@ export default function FormationsPage() {
       <section className="py-16 bg-ingco-black">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-white text-center mb-4 flex items-center justify-center gap-3">
-            <Icon name="blog" className="w-8 h-8 text-ingco-yellow" /> Articles &amp; Tutoriels
+            <Icon name="blog" className="w-8 h-8 text-ingco-yellow" /> <LocalizedText text="Articles & Tutoriels" />
           </h2>
           <p className="text-gray-400 text-center mb-12">
-            Des contenus détaillés pour approfondir vos connaissances
+            <LocalizedText text="Des contenus détaillés pour approfondir vos connaissances" />
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -432,56 +433,56 @@ export default function FormationsPage() {
               <div className="flex items-center gap-4 mb-4">
                 <Icon name="tools" className="w-8 h-8 text-ingco-yellow" />
                 <div>
-                  <h4 className="text-white font-bold">Bien choisir sa perceuse visseuse</h4>
-                  <span className="text-gray-400 text-sm">Outils Électriques</span>
+                  <h4 className="text-white font-bold"><LocalizedText text="Bien choisir sa perceuse visseuse" /></h4>
+                  <span className="text-gray-400 text-sm"><LocalizedText text="Outils Électriques" /></span>
                 </div>
               </div>
               <p className="text-gray-400 mb-4">
-                Guide complet pour choisir le bon outil selon vos besoins...
+                <LocalizedText text="Guide complet pour choisir le bon outil selon vos besoins..." />
               </p>
-              <Link href="/blog/guide-outils-sans-fil-20v" className="text-ingco-yellow font-semibold hover:underline inline-flex items-center gap-1">Lire la suite <Icon name="arrow-right" className="w-4 h-4 inline" /></Link>
+              <Link href="/blog/guide-outils-sans-fil-20v" className="text-ingco-yellow font-semibold hover:underline inline-flex items-center gap-1"><LocalizedText text="Lire la suite" /> <Icon name="arrow-right" className="w-4 h-4 inline" /></Link>
             </div>
             
             <div className="bg-ingco-gray rounded-xl p-6">
               <div className="flex items-center gap-4 mb-4">
                 <Icon name="zap" className="w-8 h-8 text-ingco-yellow" />
                 <div>
-                  <h4 className="text-white font-bold">Entretien des batteries lithium-ion</h4>
-                  <span className="text-gray-400 text-sm">Outils Sans Fil</span>
+                  <h4 className="text-white font-bold"><LocalizedText text="Entretien des batteries lithium-ion" /></h4>
+                  <span className="text-gray-400 text-sm"><LocalizedText text="Outils Sans Fil" /></span>
                 </div>
               </div>
               <p className="text-gray-400 mb-4">
-                Astuces et bonnes pratiques pour prolonger la durée de vie...
+                <LocalizedText text="Astuces et bonnes pratiques pour prolonger la durée de vie..." />
               </p>
-              <Link href="/blog/maintenance-preventive-outils" className="text-ingco-yellow font-semibold hover:underline inline-flex items-center gap-1">Lire la suite <Icon name="arrow-right" className="w-4 h-4 inline" /></Link>
+              <Link href="/blog/maintenance-preventive-outils" className="text-ingco-yellow font-semibold hover:underline inline-flex items-center gap-1"><LocalizedText text="Lire la suite" /> <Icon name="arrow-right" className="w-4 h-4 inline" /></Link>
             </div>
             
             <div className="bg-ingco-gray rounded-xl p-6">
               <div className="flex items-center gap-4 mb-4">
                 <Icon name="shield" className="w-8 h-8 text-ingco-yellow" />
                 <div>
-                  <h4 className="text-white font-bold">Sécurité sur les chantier</h4>
-                  <span className="text-gray-400 text-sm">Sécurité</span>
+                  <h4 className="text-white font-bold"><LocalizedText text="Sécurité sur les chantier" /></h4>
+                  <span className="text-gray-400 text-sm"><LocalizedText text="Sécurité" /></span>
                 </div>
               </div>
               <p className="text-gray-400 mb-4">
-                Checklist complète des équipements de protection obligatoire...
+                <LocalizedText text="Checklist complète des équipements de protection obligatoire..." />
               </p>
-              <Link href="/blog/epis-obligatoires-chantier" className="text-ingco-yellow font-semibold hover:underline inline-flex items-center gap-1">Lire la suite <Icon name="arrow-right" className="w-4 h-4 inline" /></Link>
+              <Link href="/blog/epis-obligatoires-chantier" className="text-ingco-yellow font-semibold hover:underline inline-flex items-center gap-1"><LocalizedText text="Lire la suite" /> <Icon name="arrow-right" className="w-4 h-4 inline" /></Link>
             </div>
             
             <div className="bg-ingco-gray rounded-xl p-6">
               <div className="flex items-center gap-4 mb-4">
                 <Icon name="tools" className="w-8 h-8 text-ingco-yellow" />
                 <div>
-                  <h4 className="text-white font-bold">Guide d'achat tronçonneuse</h4>
-                  <span className="text-gray-400 text-sm">Jardinage</span>
+                  <h4 className="text-white font-bold"><LocalizedText text="Guide d'achat tronçonneuse" /></h4>
+                  <span className="text-gray-400 text-sm"><LocalizedText text="Jardinage" /></span>
                 </div>
               </div>
               <p className="text-gray-400 mb-4">
-                Comparatif des meilleures tronçonneuses pour professionnel...
+                <LocalizedText text="Comparatif des meilleures tronçonneuses pour professionnel..." />
               </p>
-              <Link href="/blog/entretien-tronconneuse" className="text-ingco-yellow font-semibold hover:underline inline-flex items-center gap-1">Lire la suite <Icon name="arrow-right" className="w-4 h-4 inline" /></Link>
+              <Link href="/blog/entretien-tronconneuse" className="text-ingco-yellow font-semibold hover:underline inline-flex items-center gap-1"><LocalizedText text="Lire la suite" /> <Icon name="arrow-right" className="w-4 h-4 inline" /></Link>
             </div>
           </div>
         </div>
@@ -491,28 +492,28 @@ export default function FormationsPage() {
       <section className="py-16 bg-ingco-black">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-white text-center mb-12">
-            Pourquoi se former?
+            <LocalizedText text="Pourquoi se former?" />
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-ingco-gray rounded-2xl p-8 text-center">
               <Icon name="blog" className="w-12 h-12 text-ingco-yellow mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-white mb-3">Augmentez vos Ventes</h3>
+              <h3 className="text-xl font-bold text-white mb-3"><LocalizedText text="Augmentez vos Ventes" /></h3>
               <p className="text-gray-400">
-                Un revendeur formé conseil mieux ses clients et augmente son chiffre d'affaires.
+                <LocalizedText text="Un revendeur formé conseil mieux ses clients et augmente son chiffre d'affaires." />
               </p>
             </div>
             <div className="bg-ingco-gray rounded-2xl p-8 text-center">
               <Icon name="star" className="w-12 h-12 text-ingco-yellow mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-white mb-3">Gagnez en Credibilité</h3>
+              <h3 className="text-xl font-bold text-white mb-3"><LocalizedText text="Gagnez en Credibilité" /></h3>
               <p className="text-gray-400">
-                La certification INGCO rassure vos clients et différencie votre magasin.
+                <LocalizedText text="La certification INGCO rassure vos clients et différencie votre magasin." />
               </p>
             </div>
             <div className="bg-ingco-gray rounded-2xl p-8 text-center">
               <Icon name="user" className="w-12 h-12 text-ingco-yellow mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-white mb-3">Support Prioritaire</h3>
+              <h3 className="text-xl font-bold text-white mb-3"><LocalizedText text="Support Prioritaire" /></h3>
               <p className="text-gray-400">
-                Accédez au support technique dédié et résolvez les problèmes rapidement.
+                <LocalizedText text="Accédez au support technique dédié et résolvez les problèmes rapidement." />
               </p>
             </div>
           </div>
@@ -523,13 +524,13 @@ export default function FormationsPage() {
       <section className="py-16 bg-ingco-gray">
         <div className="max-w-3xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-white text-center mb-12">
-            Questions Fréquentes
+            <LocalizedText text="Questions Fréquentes" />
           </h2>
           <div className="space-y-4">
             {faqs.map((faq, index) => (
               <div key={index} className="bg-ingco-black rounded-xl p-6">
-                <h3 className="text-lg font-bold text-white mb-2">{faq.question}</h3>
-                <p className="text-gray-400">{faq.answer}</p>
+                <h3 className="text-lg font-bold text-white mb-2"><LocalizedText text={faq.question} /></h3>
+                <p className="text-gray-400"><LocalizedText text={faq.answer} /></p>
               </div>
             ))}
           </div>
@@ -540,17 +541,17 @@ export default function FormationsPage() {
       <section className="py-16 bg-ingco-black">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold text-white mb-4">
-            Prêt à vous former?
+            <LocalizedText text="Prêt à vous former?" />
           </h2>
           <p className="text-gray-400 mb-8">
-            Rejoignez notre programme de formation et devenez un expert INGCO
+            <LocalizedText text="Rejoignez notre programme de formation et devenez un expert INGCO" />
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link href="/revendeurs" className="bg-ingco-yellow text-ingco-black px-8 py-3 rounded-xl font-bold hover:bg-yellow-400 transition-colors">
-              Devenir Revendeur
+              <LocalizedText text="Devenir Revendeur" />
             </Link>
             <Link href="/contact" className="bg-ingco-gray text-white px-8 py-3 rounded-xl font-bold hover:bg-gray-700 transition-colors">
-              Nous Contacter
+              <LocalizedText text="Nous Contacter" />
             </Link>
           </div>
         </div>
@@ -572,7 +573,7 @@ export default function FormationsPage() {
             <div>
               <p className="text-white text-sm font-medium">{modalMessage}</p>
               <Link href="/contact" className="text-ingco-yellow text-xs font-semibold hover:underline">
-                Nous contacter pour y accéder
+                <LocalizedText text="Nous contacter pour y accéder" />
               </Link>
             </div>
           </div>
