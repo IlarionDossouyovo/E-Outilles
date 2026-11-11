@@ -362,3 +362,10 @@ Persistent notes for working on the E-Outilles codebase.
   into an English/Spanish/Portuguese session.
 - `POST /api/chat` never returns a non-200 for chat content (only 400 for invalid
   input); the client reads `data.error || data.response`.
+
+- Chat UI (`/chat`): agent names/descriptions resolve through `localizeText`
+  (registry stays French); the greeting re-seeds when the locale changes as long
+  as the visitor has not sent anything yet; the header's History/New/Voice labels
+  collapse to icons below `sm` so the three-column bar never overflows a phone.
+- Agent card gradients stay inside the INGCO yellow/amber/grey family (no purple/
+  blue/teal/red) so the dashboards match the brand palette.
