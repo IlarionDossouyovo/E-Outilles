@@ -24,7 +24,7 @@ const categories = [
     slug: 'power-tools',
     description: 'Perceuses, Meuleuses, Scies, Marteau perforateur',
     icon: '⚡',
-    color: '#EF4444'
+    color: '#FFB300'
   },
   {
     id: 'cordless-tools',
@@ -32,7 +32,7 @@ const categories = [
     slug: 'cordless-tools',
     description: 'Perceuses, Visseuses, Clé à chocs sans fil',
     icon: '🔋',
-    color: '#2563EB'
+    color: '#CC9000'
   },
   {
     id: 'hand-tools',
@@ -40,7 +40,7 @@ const categories = [
     slug: 'hand-tools',
     description: 'Clés, Tournevis, Pinces, Marteaux',
     icon: '🔧',
-    color: '#3B82F6'
+    color: '#B45309'
   },
   {
     id: 'air-tools',
@@ -48,7 +48,7 @@ const categories = [
     slug: 'air-tools',
     description: 'Compresseurs, Pistolets, Clé à chocs pneumatique',
     icon: '💨',
-    color: '#0EA5E9'
+    color: '#6E6E6E'
   },
   {
     id: 'measuring',
@@ -56,7 +56,7 @@ const categories = [
     slug: 'measuring',
     description: 'Niveaux laser, Mètres, Détecteurs',
     icon: '📏',
-    color: '#8B5CF6'
+    color: '#FFD54D'
   },
   {
     id: 'garden',
@@ -64,7 +64,7 @@ const categories = [
     slug: 'garden',
     description: 'Tondeuses, Tronçonneuses, Taille-haies',
     icon: '🌿',
-    color: '#22C55E'
+    color: '#8A6700'
   },
   {
     id: 'automotive',
@@ -72,7 +72,7 @@ const categories = [
     slug: 'automotive',
     description: 'Crics, Chandelles, Démonte-valves, Extracteurs',
     icon: '🚗',
-    color: '#F97316'
+    color: '#D97706'
   },
   {
     id: 'drilling',
@@ -80,7 +80,7 @@ const categories = [
     slug: 'drilling',
     description: 'Burins, Scies trépans, Disques',
     icon: '🔩',
-    color: '#6B7280'
+    color: '#4B5563'
   },
   {
     id: 'welding',
@@ -88,7 +88,7 @@ const categories = [
     slug: 'welding',
     description: 'Machines à souder, Electrodes, Masques',
     icon: '🔥',
-    color: '#DC2626'
+    color: '#D97706'
   },
   {
     id: 'generators',
@@ -96,7 +96,7 @@ const categories = [
     slug: 'generators',
     description: 'Groupes électrogènes, Convertisseurs',
     icon: '⚙️',
-    color: '#CA8A04'
+    color: '#A67400'
   },
   {
     id: 'construction',
@@ -104,7 +104,7 @@ const categories = [
     slug: 'construction',
     description: 'Vibreurs à béton, Aiguilles vibrantes',
     icon: '🏗️',
-    color: '#D97706'
+    color: '#E6A200'
   },
   {
     id: 'pumps',
@@ -112,7 +112,7 @@ const categories = [
     slug: 'pumps',
     description: 'Pompes à eau, Pulvérisateurs',
     icon: '💧',
-    color: '#06B6D4'
+    color: '#6E6E6E'
   },
   {
     id: 'safety',
@@ -120,7 +120,7 @@ const categories = [
     slug: 'safety',
     description: 'Casques, Gants, Lunettes, Chaussures',
     icon: '🦺',
-    color: '#EAB308'
+    color: '#FFC400'
   },
   {
     id: 'storage',
@@ -128,7 +128,7 @@ const categories = [
     slug: 'storage',
     description: 'Caisses à outils, Armoires, Coffrets',
     icon: '🧰',
-    color: '#14B8A6'
+    color: '#CC9000'
   },
   {
     id: 'accessories',
@@ -136,7 +136,7 @@ const categories = [
     slug: 'accessories',
     description: 'Batteries, Chargeurs, Lames, Disques',
     icon: '🪛',
-    color: '#4F46E5'
+    color: '#4B5563'
   }
 ]
 

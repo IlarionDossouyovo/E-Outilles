@@ -127,17 +127,32 @@ export async function POST(request: NextRequest) {
       html: userHtml
     })
 
-    if (adminEmailSent || userEmailSent || stored) {
+    if (adminEmailSent || userEmailSent) {
       return NextResponse.json(
-        { success: true, message: 'Message envoyé avec succès!' },
+        { success: true, emailDelivered: true, message: 'Message envoyé avec succès!' },
         { status: 200 }
       )
-    } else {
+    }
+
+    if (stored) {
+      // The message is safely stored even though no email went out (e.g. the
+      // sending domain is not verified yet). Report that honestly instead of
+      // claiming a delivery that did not happen.
       return NextResponse.json(
-        { error: "Erreur lors de l'envoi du message" },
-        { status: 500 }
+        {
+          success: true,
+          emailDelivered: false,
+          message:
+            'Votre message a bien été enregistré. Notre équipe vous répondra rapidement.',
+        },
+        { status: 200 }
       )
     }
+
+    return NextResponse.json(
+      { error: "Erreur lors de l'envoi du message" },
+      { status: 500 }
+    )
   } catch (error) {
     console.error('Contact API error:', error)
     return NextResponse.json(
