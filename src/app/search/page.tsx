@@ -90,7 +90,7 @@ export default function SearchPage({ searchParams }: { searchParams: { category?
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Rechercher un outil..."
+              placeholder={t('search.placeholder')}
               className="w-full bg-ingco-gray border border-ingco-dark rounded-xl pl-10 pr-4 py-3 text-white focus:border-ingco-yellow focus:outline-none"
             />
           </div>
@@ -185,7 +185,7 @@ export default function SearchPage({ searchParams }: { searchParams: { category?
                             showToast('Ajouté aux favoris')
                           }
                         }}
-                        aria-label="Favoris"
+                        aria-label={t('search.favorite')}
                         className={`px-3 rounded-lg border ${isInWishlist(product.id) ? 'border-ingco-yellow text-ingco-yellow' : 'border-ingco-gray text-gray-400'}`}
                       >
                         <Icon name="heart" className="w-5 h-5" />

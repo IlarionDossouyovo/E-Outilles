@@ -663,6 +663,9 @@ const TABLE: Record<string, Row> = {
   'Politique de confidentialité': ['Privacy policy', 'Política de privacidad', 'Política de privacidade'],
   'Ce document juridique est fourni en français, langue de référence.': ['This legal document is provided in French, the reference language.', 'Este documento jurídico se facilita en francés, la lengua de referencia.', 'Este documento jurídico é fornecido em francês, a língua de referência.'],
   'Dernière mise à jour : Octobre 2026': ['Last updated: October 2026', 'Última actualización: octubre de 2026', 'Última atualização: outubro de 2026'],
+  'Aucun article pour le moment.': ['No articles yet.', 'Aún no hay artículos.', 'Ainda não há artigos.'],
+  'Produit non trouvé': ['Product not found', 'Producto no encontrado', 'Produto não encontrado'],
+  'Mentions légales': ['Legal notice', 'Aviso legal', 'Informação legal'],
 }
 
 const LOCALE_INDEX: Record<Exclude<Locale, 'fr'>, number> = { en: 0, es: 1, pt: 2 }

@@ -138,7 +138,7 @@ export default async function BlogPage({ searchParams }: { searchParams: { categ
             ))
           ) : (
             <div className="col-span-full text-center py-12">
-              <p className="text-gray-400">Aucun article pour le moment.</p>
+              <p className="text-gray-400"><LocalizedText text="Aucun article pour le moment." /></p>
               <Link href="/contact" className="text-ingco-yellow hover:underline mt-2 inline-block">
                 Soumettre un article
               </Link>

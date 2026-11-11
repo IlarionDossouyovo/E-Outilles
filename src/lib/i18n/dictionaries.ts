@@ -465,6 +465,14 @@ const fr: Dictionary = {
   'vendor.status.cancelled': 'Annulé',
   'vendor.rights': 'Tous droits réservés.',
   'home.heroAlt': 'Outillage professionnel INGCO',
+  'search.placeholder': 'Rechercher un outil...',
+  'search.favorite': 'Favoris',
+  'nl.placeholder': 'Votre email...',
+  'nl.send': 'Envoi...',
+  'nl.subscribe': "S'abonner",
+  'nl.ok': 'Merci ! Votre inscription est confirmée.',
+  'nl.error': 'Une erreur est survenue',
+  'nl.connError': 'Erreur de connexion au serveur',
 }
 
 const en: Dictionary = {
@@ -922,6 +930,14 @@ const en: Dictionary = {
   'vendor.status.cancelled': 'Cancelled',
   'vendor.rights': 'All rights reserved.',
   'home.heroAlt': 'Professional INGCO power tools',
+  'search.placeholder': 'Search a tool...',
+  'search.favorite': 'Wishlist',
+  'nl.placeholder': 'Your email...',
+  'nl.send': 'Sending...',
+  'nl.subscribe': 'Subscribe',
+  'nl.ok': 'Thank you! Your subscription is confirmed.',
+  'nl.error': 'An error occurred',
+  'nl.connError': 'Server connection error',
 }
 
 const es: Dictionary = {
@@ -1379,6 +1395,14 @@ const es: Dictionary = {
   'vendor.status.cancelled': 'Cancelado',
   'vendor.rights': 'Todos los derechos reservados.',
   'home.heroAlt': 'Herramientas profesionales INGCO',
+  'search.placeholder': 'Buscar una herramienta...',
+  'search.favorite': 'Favoritos',
+  'nl.placeholder': 'Tu correo...',
+  'nl.send': 'Enviando...',
+  'nl.subscribe': 'Suscribirse',
+  'nl.ok': '¡Gracias! Tu suscripción está confirmada.',
+  'nl.error': 'Se ha producido un error',
+  'nl.connError': 'Error de conexión con el servidor',
 }
 
 const pt: Dictionary = {
@@ -1836,6 +1860,14 @@ const pt: Dictionary = {
   'vendor.status.cancelled': 'Cancelado',
   'vendor.rights': 'Todos os direitos reservados.',
   'home.heroAlt': 'Ferramentas profissionais INGCO',
+  'search.placeholder': 'Pesquisar uma ferramenta...',
+  'search.favorite': 'Favoritos',
+  'nl.placeholder': 'O seu email...',
+  'nl.send': 'A enviar...',
+  'nl.subscribe': 'Subscrever',
+  'nl.ok': 'Obrigado! A sua subscrição está confirmada.',
+  'nl.error': 'Ocorreu um erro',
+  'nl.connError': 'Erro de ligação ao servidor',
 }
 
 export const DICTIONARIES: Record<Locale, Dictionary> = { fr, en, es, pt }
