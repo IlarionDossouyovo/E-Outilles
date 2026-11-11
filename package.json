@@ -11,7 +11,8 @@
     "start": "next start --port 3003",
     "lint": "next lint",
     "postinstall": "prisma generate",
-    "migrate:deploy": "node scripts/migrate-deploy.mjs"
+    "migrate:deploy": "node scripts/migrate-deploy.mjs",
+    "check:i18n": "node scripts/check-i18n.mjs"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",

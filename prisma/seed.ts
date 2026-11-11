@@ -207,7 +207,7 @@ const products = [
   {
     name: 'Pince multiprise professionnelle',
     slug: 'pince-multiprise',
-    description: 'Pince multiprise professionnelle REG. 10 положений. Chrome vanadium.',
+    description: 'Pince multiprise professionnelle REG. 10 positions. Chrome vanadium.',
     price: 34.99,
     comparePrice: 44.99,
     sku: 'HT-PLIER-001',
