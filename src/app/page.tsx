@@ -232,7 +232,7 @@ export default function Home() {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={categoryImage('power-tools')}
-                  alt="Outillage professionnel INGCO"
+                  alt={t('home.heroAlt')}
                   className="w-full max-h-[340px] object-contain drop-shadow-2xl"
                 />
               </div>
@@ -310,7 +310,7 @@ export default function Home() {
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={categoryImage(category.id)}
-                      alt={category.name}
+                      alt={localizeText(category.name, locale)}
                       loading="lazy"
                       className="card-icon max-h-20 object-contain"
                     />
@@ -364,7 +364,7 @@ export default function Home() {
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={product.image}
-                      alt={product.name}
+                      alt={localizeText(product.name, locale)}
                       loading="lazy"
                       className="card-icon max-h-40 object-contain"
                     />

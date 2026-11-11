@@ -464,6 +464,7 @@ const fr: Dictionary = {
   'vendor.status.delivered': 'Livré',
   'vendor.status.cancelled': 'Annulé',
   'vendor.rights': 'Tous droits réservés.',
+  'home.heroAlt': 'Outillage professionnel INGCO',
 }
 
 const en: Dictionary = {
@@ -920,6 +921,7 @@ const en: Dictionary = {
   'vendor.status.delivered': 'Delivered',
   'vendor.status.cancelled': 'Cancelled',
   'vendor.rights': 'All rights reserved.',
+  'home.heroAlt': 'Professional INGCO power tools',
 }
 
 const es: Dictionary = {
@@ -1376,6 +1378,7 @@ const es: Dictionary = {
   'vendor.status.delivered': 'Entregado',
   'vendor.status.cancelled': 'Cancelado',
   'vendor.rights': 'Todos los derechos reservados.',
+  'home.heroAlt': 'Herramientas profesionales INGCO',
 }
 
 const pt: Dictionary = {
@@ -1832,6 +1835,7 @@ const pt: Dictionary = {
   'vendor.status.delivered': 'Entregue',
   'vendor.status.cancelled': 'Cancelado',
   'vendor.rights': 'Todos os direitos reservados.',
+  'home.heroAlt': 'Ferramentas profissionais INGCO',
 }
 
 export const DICTIONARIES: Record<Locale, Dictionary> = { fr, en, es, pt }
