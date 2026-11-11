@@ -55,6 +55,9 @@ function withLocaleCookie(response: NextResponse, locale: string): NextResponse 
     maxAge: 60 * 60 * 24 * 365,
     sameSite: 'lax',
   })
+  // <html lang> is rendered statically as "fr" (see src/app/layout.tsx); this
+  // header carries the detected locale to crawlers and proxies in the meantime.
+  response.headers.set('Content-Language', locale)
   return response
 }
 
