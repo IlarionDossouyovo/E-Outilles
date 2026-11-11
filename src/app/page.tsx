@@ -5,6 +5,7 @@ import { NavigationArrows, Icon } from '@/components/Icons'
 import Reveal from '@/components/Reveal'
 import { categoryImage } from '@/lib/catalog'
 import { useLanguage } from '@/lib/i18n/LanguageProvider'
+import { localizeText, localizeList } from '@/lib/i18n/content'
 
 // Données des catégories par métier - 15 catégories INGCO
 const categories = [
@@ -141,7 +142,7 @@ const featuredProducts = [
 ]
 
 export default function Home() {
-  const { t } = useLanguage()
+  const { t, locale } = useLanguage()
   return (
     <div className="bg-ingco-black">
       {/* HERO */}
@@ -315,14 +316,14 @@ export default function Home() {
                     />
                   </div>
                   <h3 className="text-xl font-bold text-white mb-2 group-hover:text-ingco-yellow transition-colors">
-                    {category.name}
+                    {localizeText(category.name, locale)}
                   </h3>
-                  <p className="text-gray-500 text-sm mb-4">{category.description}</p>
+                  <p className="text-gray-500 text-sm mb-4">{localizeText(category.description, locale)}</p>
 
                   <div className="border-t border-ingco-dark pt-4">
                     <p className="text-xs text-gray-500 mb-2">{t('home.categories.keyProducts')}</p>
                     <div className="flex flex-wrap gap-2">
-                      {category.products.slice(0, 3).map((product, idx) => (
+                      {localizeList(category.products, locale).slice(0, 3).map((product, idx) => (
                         <span key={idx} className="text-xs bg-ingco-dark px-2 py-1 rounded text-gray-400">
                           {product}
                         </span>
@@ -331,7 +332,7 @@ export default function Home() {
                   </div>
 
                   <div className="mt-4 flex items-center gap-2 text-ingco-yellow text-sm font-medium">
-                    <span className="line-clamp-1">Blog: {category.blog}</span>
+                    <span className="line-clamp-1">Blog: {localizeText(category.blog, locale)}</span>
                     <Icon name="arrow-right" className="w-4 h-4 shrink-0 transition-transform group-hover:translate-x-1" />
                   </div>
                 </Link>
@@ -370,9 +371,9 @@ export default function Home() {
                   </Link>
                   <div className="p-6">
                     <Link href={`/categories/${product.category}`} className="text-xs text-ingco-yellow mb-2 uppercase tracking-wide hover:underline block">
-                      {categories.find((c) => c.id === product.category)?.name}
+                      {localizeText(categories.find((c) => c.id === product.category)?.name, locale)}
                     </Link>
-                    <h3 className="text-lg font-bold text-white mb-3 line-clamp-2">{product.name}</h3>
+                    <h3 className="text-lg font-bold text-white mb-3 line-clamp-2">{localizeText(product.name, locale)}</h3>
                     <div className="flex items-center justify-between">
                       <span className="text-2xl font-extrabold text-ingco-yellow">{product.price}€</span>
                       <Link

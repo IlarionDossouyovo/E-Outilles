@@ -4,6 +4,9 @@ import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { NavigationArrows, Icon } from '@/components/Icons'
 import { categoryImage, subcategoriesFor } from '@/lib/catalog'
+import { useLanguage } from '@/lib/i18n/LanguageProvider'
+import { localizeText, localizeList } from '@/lib/i18n/content'
+import { LocalizedText } from '@/components/LocalizedText'
 
 interface Category {
   id: string
@@ -35,6 +38,7 @@ function firstImage(images: string): string | null {
 }
 
 export default function CategoriesPage() {
+  const { t, locale } = useLanguage()
   const [categories, setCategories] = useState<Category[]>([])
   const [products, setProducts] = useState<Product[]>([])
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
@@ -74,10 +78,10 @@ export default function CategoriesPage() {
       <section className="pt-24 pb-12 bg-gradient-to-b from-ingco-gray to-ingco-black">
         <div className="max-w-7xl mx-auto px-4 text-center animate-fade-in-up">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
-            Catégories de Produits
+            <LocalizedText text="Catégories de Produits" />
           </h1>
           <p className="text-gray-400 text-base sm:text-lg">
-            Trouvez tous vos outils professionnels par catégorie et sous-catégorie
+            <LocalizedText text="Trouvez tous vos outils professionnels par catégorie et sous-catégorie" />
           </p>
         </div>
       </section>
@@ -98,7 +102,7 @@ export default function CategoriesPage() {
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={categoryImage(cat.slug)} alt="" className="w-6 h-6 object-contain rounded" />
-              <span className="text-sm sm:text-base whitespace-nowrap">{cat.name}</span>
+              <span className="text-sm sm:text-base whitespace-nowrap">{localizeText(cat.name, locale)}</span>
             </button>
           ))}
         </div>
@@ -115,10 +119,10 @@ export default function CategoriesPage() {
                   <img src={categoryImage(current.slug)} alt={current.name} className="w-12 h-12 object-contain" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-white">{current.name}</h2>
-                  <p className="text-gray-400 text-sm">{current.description}</p>
+                  <h2 className="text-2xl font-bold text-white">{localizeText(current.name, locale)}</h2>
+                  <p className="text-gray-400 text-sm">{localizeText(current.description, locale)}</p>
                   <span className="inline-block mt-1 text-ingco-yellow text-sm font-semibold">
-                    {countFor(current)} produits
+                    {countFor(current)} <LocalizedText text="produits" />
                   </span>
                 </div>
               </div>
@@ -127,13 +131,13 @@ export default function CategoriesPage() {
                   href={`/categories/${current.slug}`}
                   className="bg-ingco-gray border border-ingco-yellow/40 text-ingco-yellow px-6 py-3 rounded-xl font-bold hover:bg-ingco-yellow/10 transition-all text-center"
                 >
-                  Page catégorie
+                  <LocalizedText text="Page catégorie" />
                 </Link>
                 <Link
                   href={`/search?category=${current.slug}`}
                   className="bg-ingco-yellow text-ingco-black px-6 py-3 rounded-xl font-bold hover:bg-yellow-400 transition-all hover:scale-105 text-center"
                 >
-                  Voir tous les produits
+                  <LocalizedText text="Voir tous les produits" />
                 </Link>
               </div>
             </div>
@@ -141,9 +145,9 @@ export default function CategoriesPage() {
             {/* Sub-categories */}
             {subcategoriesFor(current.slug).length > 0 && (
               <div className="mb-6">
-                <h3 className="text-white font-semibold mb-3 text-sm uppercase tracking-wide">Sous-catégories</h3>
+                <h3 className="text-white font-semibold mb-3 text-sm uppercase tracking-wide">{t('categories.subcategories')}</h3>
                 <div className="flex flex-wrap gap-2">
-                  {subcategoriesFor(current.slug).map((sub) => (
+                  {localizeList(subcategoriesFor(current.slug), locale).map((sub) => (
                     <Link
                       key={sub}
                       href={`/categories/${current.slug}#${encodeURIComponent(sub.toLowerCase().replace(/\s+/g, '-'))}`}
@@ -176,7 +180,7 @@ export default function CategoriesPage() {
                           <img src={categoryImage(p.category?.slug)} alt={p.name} className="max-h-24 object-contain card-icon" />
                         )}
                       </div>
-                      <p className="text-white text-sm font-semibold line-clamp-2">{p.name}</p>
+                      <p className="text-white text-sm font-semibold line-clamp-2">{localizeText(p.name, locale)}</p>
                       <p className="text-ingco-yellow font-bold mt-1">{p.price.toFixed(2)}€</p>
                     </Link>
                   )
@@ -211,10 +215,10 @@ export default function CategoriesPage() {
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={categoryImage(cat.slug)} alt={cat.name} className="max-h-24 sm:max-h-28 object-contain card-icon" />
                 </div>
-                <h3 className="text-white font-bold text-base sm:text-lg mb-1 group-hover:text-ingco-yellow transition-colors">{cat.name}</h3>
-                <p className="text-gray-500 text-xs sm:text-sm line-clamp-2 mb-2">{cat.description}</p>
+                <h3 className="text-white font-bold text-base sm:text-lg mb-1 group-hover:text-ingco-yellow transition-colors">{localizeText(cat.name, locale)}</h3>
+                <p className="text-gray-500 text-xs sm:text-sm line-clamp-2 mb-2">{localizeText(cat.description, locale)}</p>
                 <span className="inline-block text-ingco-yellow text-xs font-semibold">
-                  {countFor(cat)} produits
+                  {countFor(cat)} {t('categories.products')}
                 </span>
               </Link>
             ))}

@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { NavigationArrows, Icon } from '@/components/Icons'
 import Reveal from '@/components/Reveal'
 import Link from 'next/link'
+import { LocalizedText } from '@/components/LocalizedText'
 
 // Données des avantages revendeur
 const advantages = [
@@ -189,7 +190,7 @@ export default function RevendeursPage() {
       <section className="py-16 bg-ingco-gray">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-white text-center mb-4">
-            15 Catégories de Produits
+            <LocalizedText text="15 Catégories de Produits" />
           </h2>
           <p className="text-gray-400 text-center mb-12">
             Toute la gamme INGCO disponible pour vos clients

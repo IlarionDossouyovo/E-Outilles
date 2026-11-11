@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 import prisma from '@/lib/db/prisma'
 import { NavigationArrows, Icon } from '@/components/Icons'
+import { LocalizedText } from '@/components/LocalizedText'
 import NewsletterForm from '@/components/NewsletterForm'
 import { blogCategoryImage } from '@/lib/catalog'
 
@@ -83,6 +84,7 @@ export default async function BlogPage({ searchParams }: { searchParams: { categ
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={blogCategoryImage(cat)} alt="" className="w-6 h-6 object-cover rounded-full" />
+                <LocalizedText text={cat} />
                 {cat}
               </Link>
             )
@@ -117,7 +119,7 @@ export default async function BlogPage({ searchParams }: { searchParams: { categ
                       </span>
                     </div>
                     <h2 className="text-xl font-bold text-white mb-2 group-hover:text-ingco-yellow transition-colors line-clamp-2">
-                      {post.title}
+                      <LocalizedText text={post.title} />
                     </h2>
                     <p className="text-gray-400 text-sm mb-4 line-clamp-2">
                       {post.excerpt || post.content?.slice(0, 100)}

@@ -11,6 +11,9 @@ import type { Locale } from './config'
 export type Dictionary = Record<string, string>
 
 const fr: Dictionary = {
+  'categories.subcategories': 'Sous-catégories',
+  'categories.products': 'produits',
+
   'common.search': 'Rechercher',
   'common.cart': 'Panier',
   'common.wishlist': 'Favoris',
@@ -152,6 +155,9 @@ const fr: Dictionary = {
 }
 
 const en: Dictionary = {
+  'categories.subcategories': 'Sub-categories',
+  'categories.products': 'products',
+
   'common.search': 'Search',
   'common.cart': 'Cart',
   'common.wishlist': 'Wishlist',
@@ -293,6 +299,9 @@ const en: Dictionary = {
 }
 
 const es: Dictionary = {
+  'categories.subcategories': 'Subcategorías',
+  'categories.products': 'productos',
+
   'common.search': 'Buscar',
   'common.cart': 'Carrito',
   'common.wishlist': 'Favoritos',
@@ -434,6 +443,9 @@ const es: Dictionary = {
 }
 
 const pt: Dictionary = {
+  'categories.subcategories': 'Subcategorias',
+  'categories.products': 'produtos',
+
   'common.search': 'Pesquisar',
   'common.cart': 'Carrinho',
   'common.wishlist': 'Favoritos',

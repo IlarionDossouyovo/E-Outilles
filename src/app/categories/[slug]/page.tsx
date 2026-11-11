@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import prisma from '@/lib/db/prisma'
 import { NavigationArrows, Breadcrumb, Icon } from '@/components/Icons'
 import { categoryImage, categoryMeta, subcategoriesFor, dbSlugFor, CATEGORY_META } from '@/lib/catalog'
+import { LocalizedText } from '@/components/LocalizedText'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -115,11 +116,11 @@ export default async function CategoryDetailPage({ params }: Props) {
                 <img src={categoryImage(slug)} alt={name} className="w-24 h-24 sm:w-32 sm:h-32 object-contain animate-float" />
               </div>
               <div>
-                <span className="text-ingco-yellow text-sm font-semibold uppercase tracking-wide">Catégorie</span>
-                <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mt-1 mb-3">{name}</h1>
-                <p className="text-gray-300 max-w-2xl">{description}</p>
+                <span className="text-ingco-yellow text-sm font-semibold uppercase tracking-wide"><LocalizedText text="Catégorie" /></span>
+                <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mt-1 mb-3"><LocalizedText text={name} /></h1>
+                <p className="text-gray-300 max-w-2xl"><LocalizedText text={description} /></p>
                 {typeof productCount === 'number' && (
-                  <p className="text-ingco-yellow font-bold mt-3">{productCount} produits disponibles</p>
+                  <p className="text-ingco-yellow font-bold mt-3">{productCount} <LocalizedText text="produits disponibles" /></p>
                 )}
               </div>
             </div>
@@ -130,7 +131,7 @@ export default async function CategoryDetailPage({ params }: Props) {
       {/* Sub-categories */}
       {subs.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 pb-8">
-          <h2 className="text-white font-bold text-xl mb-4">Sous-catégories</h2>
+          <h2 className="text-white font-bold text-xl mb-4"><LocalizedText text="Sous-catégories" /></h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {subs.map((sub, i) => (
               <div
@@ -140,9 +141,9 @@ export default async function CategoryDetailPage({ params }: Props) {
                 style={{ animationDelay: `${i * 0.05}s` }}
               >
                 <Icon name="wrench" className="w-6 h-6 text-ingco-yellow mb-2 card-icon" />
-                <p className="text-white font-semibold text-sm">{sub}</p>
+                <p className="text-white font-semibold text-sm"><LocalizedText text={sub} /></p>
                 <Link href={`/search?category=${slug}`} className="text-ingco-yellow text-xs hover:underline">
-                  Voir les produits
+                  <LocalizedText text="Voir les produits" />
                 </Link>
               </div>
             ))}
@@ -152,12 +153,12 @@ export default async function CategoryDetailPage({ params }: Props) {
 
       {/* Products */}
       <section className="max-w-7xl mx-auto px-4 pb-10">
-        <h2 className="text-white font-bold text-xl mb-4">Produits {name}</h2>
+        <h2 className="text-white font-bold text-xl mb-4"><LocalizedText text="Produits" /> <LocalizedText text={name} /></h2>
         {products.length === 0 ? (
           <div className="bg-ingco-gray rounded-2xl p-10 text-center text-gray-400">
-            Aucun produit dans cette catégorie pour le moment.
+            <LocalizedText text="Aucun produit dans cette catégorie pour le moment." />
             <div className="mt-4">
-              <Link href="/search" className="text-ingco-yellow hover:underline">Parcourir tout le catalogue</Link>
+              <Link href="/search" className="text-ingco-yellow hover:underline"><LocalizedText text="Parcourir tout le catalogue" /></Link>
             </div>
           </div>
         ) : (
@@ -175,7 +176,7 @@ export default async function CategoryDetailPage({ params }: Props) {
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={img || categoryImage(slug)} alt={p.name} className="max-h-28 object-contain card-icon" />
                   </div>
-                  <p className="text-white text-sm font-semibold line-clamp-2 group-hover:text-ingco-yellow transition-colors">{p.name}</p>
+                  <p className="text-white text-sm font-semibold line-clamp-2 group-hover:text-ingco-yellow transition-colors"><LocalizedText text={p.name} /></p>
                   <p className="text-ingco-yellow font-bold mt-1">{p.price.toFixed(2)}€</p>
                   {p.stock <= 0 && <span className="text-red-400 text-xs">Rupture de stock</span>}
                 </Link>
@@ -188,7 +189,7 @@ export default async function CategoryDetailPage({ params }: Props) {
       {/* Related blog posts */}
       {posts.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 pb-12">
-          <h2 className="text-white font-bold text-xl mb-4">Articles liés</h2>
+          <h2 className="text-white font-bold text-xl mb-4"><LocalizedText text="Articles liés" /></h2>
           <div className="grid sm:grid-cols-3 gap-4">
             {posts.map((post) => (
               <Link
@@ -201,8 +202,8 @@ export default async function CategoryDetailPage({ params }: Props) {
                   <img src={post.image} alt={post.title} className="w-full h-36 object-cover" />
                 )}
                 <div className="p-4">
-                  <span className="text-ingco-yellow text-xs uppercase">{post.category}</span>
-                  <h3 className="text-white font-semibold mt-1 line-clamp-2">{post.title}</h3>
+                  <span className="text-ingco-yellow text-xs uppercase"><LocalizedText text={post.category} /></span>
+                  <h3 className="text-white font-semibold mt-1 line-clamp-2"><LocalizedText text={post.title} /></h3>
                 </div>
               </Link>
             ))}

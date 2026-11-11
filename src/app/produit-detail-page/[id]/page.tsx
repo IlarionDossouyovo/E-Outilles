@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useCartStore } from '@/lib/store/cart'
+import { LocalizedText } from '@/components/LocalizedText'
 import { useWishlistStore } from '@/lib/store/wishlist'
 import { firstImage } from '@/lib/images'
 import { Icon, NavigationArrows } from '@/components/Icons'
@@ -136,7 +137,7 @@ export default function ProductPage() {
           {product.category && (
             <>
               <span>›</span>
-              <Link href={`/categories/${product.category.slug}`} className="hover:text-ingco-yellow">{product.category.name}</Link>
+              <Link href={`/categories/${product.category.slug}`} className="hover:text-ingco-yellow"><LocalizedText text={product.category.name} /></Link>
             </>
           )}
         </div>
@@ -153,10 +154,10 @@ export default function ProductPage() {
 
           <div>
             {product.category && (
-              <span className="text-xs text-ingco-yellow uppercase">{product.category.name}</span>
+              <span className="text-xs text-ingco-yellow uppercase"><LocalizedText text={product.category.name} /></span>
             )}
-            <h1 className="text-4xl font-bold text-white mt-2 mb-4">{product.name}</h1>
-            <p className="text-gray-400 text-lg mb-6">{product.description}</p>
+            <h1 className="text-4xl font-bold text-white mt-2 mb-4"><LocalizedText text={product.name} /></h1>
+            <p className="text-gray-400 text-lg mb-6"><LocalizedText text={product.description} /></p>
 
             <div className="flex items-center gap-3 mb-4">
               <span className="text-4xl font-bold text-ingco-yellow">{product.price.toFixed(2)}€</span>

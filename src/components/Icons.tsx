@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
+import { LocalizedText } from './LocalizedText'
 
 // Real SVG icon set (no emoji) used across the app.
 
@@ -111,7 +112,7 @@ export function NavigationArrows({
       >
         <Icon name="chevron-left" className="w-5 h-5 text-ingco-yellow group-hover:-translate-x-0.5 transition-transform" />
         <Icon name={prev.icon} className="w-4 h-4 text-gray-400 hidden sm:block" />
-        {showLabels && <span className="hidden md:inline text-sm text-gray-300 group-hover:text-white">{prev.label}</span>}
+        {showLabels && <span className="hidden md:inline text-sm text-gray-300 group-hover:text-white"><LocalizedText text={prev.label} /></span>}
       </Link>
 
       <Link
@@ -119,7 +120,7 @@ export function NavigationArrows({
         className="group flex items-center gap-2 px-3 sm:px-4 py-2.5 bg-ingco-gray rounded-xl border border-white/5 hover:border-ingco-yellow/40 hover:bg-ingco-yellow/10 transition-all"
         aria-label={`Page suivante : ${next.label}`}
       >
-        {showLabels && <span className="hidden md:inline text-sm text-gray-300 group-hover:text-white">{next.label}</span>}
+        {showLabels && <span className="hidden md:inline text-sm text-gray-300 group-hover:text-white"><LocalizedText text={next.label} /></span>}
         <Icon name={next.icon} className="w-4 h-4 text-gray-400 hidden sm:block" />
         <Icon name="chevron-right" className="w-5 h-5 text-ingco-yellow group-hover:translate-x-0.5 transition-transform" />
       </Link>
@@ -131,15 +132,15 @@ export function Breadcrumb({ items }: { items: { label: string; href?: string }[
   return (
     <nav className="flex items-center flex-wrap gap-2 text-sm text-gray-400 mb-4" aria-label="Fil d'Ariane">
       <Link href="/" className="hover:text-ingco-yellow inline-flex items-center gap-1">
-        <Icon name="home" className="w-4 h-4" /> Accueil
+        <Icon name="home" className="w-4 h-4" /> <LocalizedText text="Accueil" />
       </Link>
       {items.map((item, i) => (
         <span key={i} className="flex items-center gap-2">
           <Icon name="chevron-right" className="w-3.5 h-3.5 text-gray-600" />
           {item.href ? (
-            <Link href={item.href} className="hover:text-ingco-yellow">{item.label}</Link>
+            <Link href={item.href} className="hover:text-ingco-yellow"><LocalizedText text={item.label} /></Link>
           ) : (
-            <span className="text-white">{item.label}</span>
+            <span className="text-white"><LocalizedText text={item.label} /></span>
           )}
         </span>
       ))}

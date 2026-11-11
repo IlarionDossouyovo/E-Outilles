@@ -307,3 +307,23 @@ Persistent notes for working on the E-Outilles codebase.
   `gemini-3.8-flash-tts` for voice both return 200.
 - Deployment target: Vercel or Render. `DEPLOIEMENT.md` lists every dashboard
   URL and which variable each service provides.
+
+## Automatic translation (session 2026-11-11)
+- UI chrome is translated by `src/lib/i18n/dictionaries.ts` (flat `namespace.key`
+  keys, four locales fr/en/es/pt). Locale resolution lives in
+  `src/lib/i18n/LanguageProvider.tsx`: `?lang=` > localStorage > `GET /api/geo`
+  (CDN country header) > browser language > `fr`. The chosen locale is mirrored
+  to `localStorage` and to the `eo_locale` cookie.
+- Catalogue copy (category names/descriptions, sub-categories, the 71 product
+  names, blog titles, product descriptions) is stored in French in the DB and the
+  static catalog, so it cannot use the key dictionary. It is translated by
+  `src/lib/i18n/content.ts` (`localizeText` / `localizeList`, keyed by the exact
+  French string). Client components call it directly; server components render
+  `<LocalizedText text={...} />` (`src/components/LocalizedText.tsx`), which reads
+  the locale from context and swaps the text on the client without making the
+  page dynamic. Unknown strings fall back to French.
+- `/api/geo` returns `{ country, locale, detected }`; it reads `x-vercel-ip-country`,
+  `cf-ipcountry`, `x-country-code`, `x-geo-country`, and falls back to
+  `Accept-Language` when no country header is present.
+- When adding catalogue content, add its French string to `content.ts` or it will
+  render in French for every locale.

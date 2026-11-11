@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Logo from '@/components/Logo'
 import SocialLinks from '@/components/marketing/SocialLinks'
 import { useLanguage } from '@/lib/i18n/LanguageProvider'
+import { LocalizedText } from '@/components/LocalizedText'
 
 // Slugs must match the Category.slug values in the database (see prisma/seed).
 const CATEGORIES = [
@@ -62,7 +63,7 @@ export default function Footer() {
             <ul className="space-y-2 text-gray-500 text-sm">
               {CATEGORIES.map((c) => (
                 <li key={c.href}>
-                  <Link href={c.href} className="hover:text-ingco-yellow transition-colors">{c.label}</Link>
+                  <Link href={c.href} className="hover:text-ingco-yellow transition-colors"><LocalizedText text={c.label} /></Link>
                 </li>
               ))}
             </ul>

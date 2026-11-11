@@ -4,6 +4,7 @@ import prisma from '@/lib/db/prisma'
 import { notFound } from 'next/navigation'
 import { NavigationArrows, Breadcrumb, Icon } from '@/components/Icons'
 import { blogCategoryImage } from '@/lib/catalog'
+import { LocalizedText } from '@/components/LocalizedText'
 
 function ShareButtons({ title, slug }: { title: string; slug: string }) {
   const base = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://e-outilles.com'
@@ -103,7 +104,7 @@ export default async function BlogPostPage({ params }: Props) {
           </div>
           
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            {post.title}
+            <LocalizedText text={post.title} />
           </h1>
           
           {post.excerpt && (
@@ -158,7 +159,7 @@ export default async function BlogPostPage({ params }: Props) {
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={blogCategoryImage(p.category)} alt="" className="w-10 h-10 object-cover rounded-lg inline-block mr-3 align-middle" />
-                <span className="text-white align-middle">{p.title}</span>
+                <span className="text-white align-middle"><LocalizedText text={p.title} /></span>
               </Link>
             )))}
           </div>

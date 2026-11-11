@@ -63,6 +63,13 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     } catch {
       // storage unavailable (private mode): keep the in-memory value only
     }
+    // Mirror to a cookie so server components (e.g. /categories/[slug]) can
+    // translate database content on the same request as the client UI.
+    try {
+      document.cookie = `eo_locale=${next};path=/;max-age=31536000;samesite=lax`
+    } catch {
+      // cookies unavailable: server components fall back to French content
+    }
     document.documentElement.lang = localeMeta(next).htmlLang
   }, [])
 

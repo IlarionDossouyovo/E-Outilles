@@ -6,6 +6,7 @@ import { useWishlistStore } from '@/lib/store/wishlist'
 import Link from 'next/link'
 import { NavigationArrows, Icon } from '@/components/Icons'
 import { categoryImage } from '@/lib/catalog'
+import { LocalizedText } from '@/components/LocalizedText'
 import { firstImage } from '@/lib/images'
 
 export const dynamic = 'force-dynamic'
@@ -96,9 +97,9 @@ export default function SearchPage({ searchParams }: { searchParams: { category?
             onChange={(e) => setCategory(e.target.value)}
             className="bg-ingco-gray border border-ingco-dark rounded-xl px-4 py-3 text-white focus:border-ingco-yellow focus:outline-none"
           >
-            <option value="Tous">Toutes les catégories</option>
+            <option value="Tous"><LocalizedText text="Toutes les catégories" /></option>
             {categories.map((c) => (
-              <option key={c.slug} value={c.slug}>{c.name}</option>
+              <option key={c.slug} value={c.slug}><LocalizedText text={c.name} /></option>
             ))}
           </select>
           <select
@@ -106,13 +107,13 @@ export default function SearchPage({ searchParams }: { searchParams: { category?
             onChange={(e) => setSortBy(e.target.value)}
             className="bg-ingco-gray border border-ingco-dark rounded-xl px-4 py-3 text-white focus:border-ingco-yellow focus:outline-none"
           >
-            <option value="name">Nom A-Z</option>
-            <option value="price-asc">Prix croissant</option>
-            <option value="price-desc">Prix décroissant</option>
+            <option value="name"><LocalizedText text="Nom A-Z" /></option>
+            <option value="price-asc"><LocalizedText text="Prix croissant" /></option>
+            <option value="price-desc"><LocalizedText text="Prix décroissant" /></option>
           </select>
         </div>
 
-        <p className="text-gray-400 mb-6">{filteredProducts.length} produit(s)</p>
+        <p className="text-gray-400 mb-6">{filteredProducts.length} <LocalizedText text="produit(s)" /></p>
 
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
           {loading ? (
@@ -140,10 +141,10 @@ export default function SearchPage({ searchParams }: { searchParams: { category?
                   </Link>
                   <div className="p-4">
                     <Link href={`/categories/${product.category?.slug}`} className="text-xs text-ingco-yellow uppercase hover:underline">
-                      {product.category?.name || 'Catégorie'}
+                      <LocalizedText text={product.category?.name || 'Catégorie'} />
                     </Link>
                     <Link href={`/produit-detail-page/${product.slug || product.id}`}>
-                      <h3 className="text-white font-bold mt-1 line-clamp-2 group-hover:text-ingco-yellow transition-colors">{product.name}</h3>
+                      <h3 className="text-white font-bold mt-1 line-clamp-2 group-hover:text-ingco-yellow transition-colors"><LocalizedText text={product.name} /></h3>
                     </Link>
                     <div className="flex items-center gap-2 mt-2">
                       <p className="text-ingco-yellow font-bold text-xl">{product.price.toFixed(2)}€</p>
