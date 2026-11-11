@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { logoutAction } from '@/app/actions'
 import PageNavigation from '@/components/PageNavigation'
+import { useTranslation } from '@/lib/i18n/LanguageProvider'
 
 interface User {
   id: string
@@ -39,6 +40,7 @@ export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState('orders')
   const [accessDenied, setAccessDenied] = useState<'admin' | 'founder' | null>(null)
   const router = useRouter()
+  const { t } = useTranslation()
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -78,7 +80,7 @@ export default function ProfilePage() {
     return (
       <div className="min-h-screen bg-ingco-black pt-24 pb-16">
         <div className="max-w-7xl mx-auto px-4">
-          <PageNavigation backLabel="Accueil" />
+          <PageNavigation backLabel={t('common.home')} />
           <div className="animate-pulse space-y-6">
             <div className="h-9 w-56 rounded-lg bg-ingco-gray" />
             <div className="flex gap-2">
@@ -100,22 +102,21 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-ingco-black pt-24 pb-16">
       <div className="max-w-7xl mx-auto px-4">
-        <PageNavigation backLabel="Accueil" />
+        <PageNavigation backLabel={t('common.home')} />
 
         {accessDenied && (
           <div className="bg-red-500/15 border border-red-500/40 text-red-300 px-4 py-3 rounded-xl mb-6 text-sm">
             {accessDenied === 'founder' ? (
               <>
-                Accès refusé : le système d&apos;agents IA est réservé au fondateur de l&apos;entreprise.
+                {t('profile.accessDeniedFounder')}
                 {user?.email && (
                   <span className="block mt-1 text-red-200/80">
-                    Vous êtes connecté en tant que <strong>{user.email}</strong>. Déconnectez-vous,
-                    puis reconnectez-vous avec le compte fondateur pour accéder à <strong>/agent</strong>.
+                    {t('profile.founderHint').replace('{email}', user.email || '')}
                   </span>
                 )}
               </>
             ) : (
-              'Accès refusé : cette section est réservée aux administrateurs.'
+              t('profile.accessDeniedAdmin')
             )}
           </div>
         )}
@@ -123,7 +124,7 @@ export default function ProfilePage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-white">Mon Profil</h1>
+            <h1 className="text-3xl font-bold text-white">{t('profile.title')}</h1>
             <p className="text-gray-400">{user.name || user.email}</p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -132,7 +133,7 @@ export default function ProfilePage() {
                 href="/admin"
                 className="bg-ingco-yellow text-ingco-black px-4 py-2 rounded-xl font-medium hover:bg-yellow-400 transition-colors"
               >
-                Tableau de bord admin
+                {t('profile.adminDashboard')}
               </Link>
             )}
             {user.isFounder && (
@@ -140,14 +141,14 @@ export default function ProfilePage() {
                 href="/agent"
                 className="border border-ingco-yellow text-ingco-yellow px-4 py-2 rounded-xl font-medium hover:bg-ingco-yellow hover:text-ingco-black transition-colors"
               >
-                Agents IA
+                {t('profile.agents')}
               </Link>
             )}
             <button
               onClick={handleLogout}
               className="border border-red-500 text-red-500 px-4 py-2 rounded-xl hover:bg-red-500 hover:text-white transition-colors"
             >
-              Deconnexion
+              {t('common.logout')}
             </button>
           </div>
         </div>
@@ -164,10 +165,10 @@ export default function ProfilePage() {
                   : 'bg-ingco-gray text-gray-400 hover:text-white'
               }`}
             >
-              {tab === 'orders' && 'Commandes'}
-              {tab === 'details' && 'Informations'}
-              {tab === 'addresses' && 'Adresses'}
-              {tab === 'settings' && 'Parametres'}
+              {tab === 'orders' && t('profile.tab.orders')}
+              {tab === 'details' && t('profile.tab.details')}
+              {tab === 'addresses' && t('profile.tab.addresses')}
+              {tab === 'settings' && t('profile.tab.settings')}
             </button>
           ))}
         </div>
@@ -178,9 +179,9 @@ export default function ProfilePage() {
             {orders.length === 0 ? (
               <div className="bg-ingco-gray rounded-xl p-8 text-center">
                 <Icon name="truck" className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-                <p className="text-gray-400">Aucune commande pour le moment</p>
+                <p className="text-gray-400">{t('profile.noOrders')}</p>
                 <Link href="/search" className="text-ingco-yellow hover:underline mt-3 inline-block">
-                  Découvrir le catalogue
+                  {t('profile.browseCatalog')}
                 </Link>
               </div>
             ) : orders.map(order => (
@@ -194,13 +195,13 @@ export default function ProfilePage() {
                       </span>
                     </div>
                     <p className="text-gray-400 text-sm mt-1">
-                      {new Date(order.date).toLocaleDateString('fr-FR')} • {order.items} produit(s)
+                      {new Date(order.date).toLocaleDateString()} • {t('profile.orderItems').replace('{n}', String(order.items))}
                     </p>
                   </div>
                   <div className="text-right">
                     <p className="text-ingco-yellow font-bold">{order.total}€</p>
                     <Link href={`/orders/${order.id}`} className="text-ingco-yellow text-sm hover:underline">
-                      Voir details
+                      {t('profile.viewDetails')}
                     </Link>
                   </div>
                 </div>
@@ -212,28 +213,28 @@ export default function ProfilePage() {
         {activeTab === 'details' && (
           <div className="bg-ingco-gray rounded-xl p-6 space-y-4 max-w-md">
             <div>
-              <label className="text-gray-400 text-sm">Nom</label>
-              <p className="text-white">{user.name || 'Non defini'}</p>
+              <label className="text-gray-400 text-sm">{t('profile.name')}</label>
+              <p className="text-white">{user.name || t('profile.notSet')}</p>
             </div>
             <div>
-              <label className="text-gray-400 text-sm">Email</label>
+              <label className="text-gray-400 text-sm">{t('profile.email')}</label>
               <p className="text-white">{user.email}</p>
             </div>
             <div>
-              <label className="text-gray-400 text-sm">Pays</label>
-              <p className="text-white">{user.country || 'Non defini'}</p>
+              <label className="text-gray-400 text-sm">{t('profile.country')}</label>
+              <p className="text-white">{user.country || t('profile.notSet')}</p>
             </div>
             <button className="text-ingco-yellow text-sm hover:underline">
-              Modifier mes informations
+              {t('profile.editInfo')}
             </button>
           </div>
         )}
 
         {activeTab === 'addresses' && (
           <div className="bg-ingco-gray rounded-xl p-6">
-            <p className="text-gray-400 mb-4">Aucune adresse enregistree</p>
+            <p className="text-gray-400 mb-4">{t('profile.noAddress')}</p>
             <button className="bg-ingco-yellow text-ingco-black px-4 py-2 rounded-xl font-medium hover:bg-yellow-400">
-              Ajouter une adresse
+              {t('profile.addAddress')}
             </button>
           </div>
         )}
@@ -241,15 +242,15 @@ export default function ProfilePage() {
         {activeTab === 'settings' && (
           <div className="bg-ingco-gray rounded-xl p-6 space-y-4 max-w-md">
             <label className="flex items-center justify-between">
-              <span className="text-white">Notifications email</span>
+              <span className="text-white">{t('profile.notifEmail')}</span>
               <input type="checkbox" defaultChecked className="w-5 h-5" />
             </label>
             <label className="flex items-center justify-between">
-              <span className="text-white">Newsletter</span>
+              <span className="text-white">{t('profile.newsletter')}</span>
               <input type="checkbox" defaultChecked className="w-5 h-5" />
             </label>
             <label className="flex items-center justify-between">
-              <span className="text-white">Notifications SMS</span>
+              <span className="text-white">{t('profile.notifSms')}</span>
               <input type="checkbox" className="w-5 h-5" />
             </label>
           </div>
