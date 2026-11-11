@@ -1,3 +1,5 @@
+import { LocalizedText } from '@/components/LocalizedText'
+
 export const metadata = {
   title: 'Politique de confidentialité - E-Outilles',
   description: 'Politique de confidentialité et protection des données personnelles',
@@ -9,7 +11,11 @@ export default function PrivacyPage() {
   return (
     <div className="min-h-screen bg-ingco-black pt-24 pb-16">
       <div className="max-w-4xl mx-auto px-4">
-        <h1 className="text-4xl font-bold text-white mb-8">Politique de confidentialité</h1>
+        <h1 className="text-4xl font-bold text-white mb-4"><LocalizedText text="Politique de confidentialité" /></h1>
+
+        <p className="text-gray-500 text-sm mb-8 border-l-2 border-ingco-yellow/60 pl-4">
+          <LocalizedText text="Ce document juridique est fourni en français, langue de référence." />
+        </p>
 
         <div className="bg-ingco-gray rounded-2xl p-8 space-y-6 text-gray-300">
           <section>
@@ -110,7 +116,7 @@ export default function PrivacyPage() {
         </div>
 
         <p className="text-gray-500 mt-8 text-center">
-          Dernière mise à jour : Octobre 2026
+          <LocalizedText text="Dernière mise à jour : Octobre 2026" />
         </p>
       </div>
     </div>

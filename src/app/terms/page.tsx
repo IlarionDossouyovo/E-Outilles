@@ -1,3 +1,5 @@
+import { LocalizedText } from '@/components/LocalizedText'
+
 export const metadata = {
   title: 'Conditions générales de vente - E-Outilles',
   description: 'Conditions générales de vente E-Outilles',
@@ -10,7 +12,11 @@ export default function TermsPage() {
   return (
     <div className="min-h-screen bg-ingco-black pt-24 pb-16">
       <div className="max-w-4xl mx-auto px-4">
-        <h1 className="text-4xl font-bold text-white mb-8">Conditions Générales de Vente</h1>
+        <h1 className="text-4xl font-bold text-white mb-4"><LocalizedText text="Conditions Générales de Vente" /></h1>
+
+        <p className="text-gray-500 text-sm mb-8 border-l-2 border-ingco-yellow/60 pl-4">
+          <LocalizedText text="Ce document juridique est fourni en français, langue de référence." />
+        </p>
 
         <div className="bg-ingco-gray rounded-2xl p-8 space-y-6 text-gray-300">
           <section>

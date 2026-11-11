@@ -659,6 +659,10 @@ const TABLE: Record<string, Row> = {
   'Des produits professionnels certifiés.': ['Certified professional products.', 'Productos profesionales certificados.', 'Produtos profissionais certificados.'],
   'Impact': ['Impact', 'Impacto', 'Impacto'],
   'L\'autonomie des artisans avant tout.': ['The autonomy of craftspeople above all.', 'La autonomía de los artesanos ante todo.', 'A autonomia dos artesãos acima de tudo.'],
+  'Conditions Générales de Vente': ['Terms and Conditions of Sale', 'Condiciones Generales de Venta', 'Condições Gerais de Venda'],
+  'Politique de confidentialité': ['Privacy policy', 'Política de privacidad', 'Política de privacidade'],
+  'Ce document juridique est fourni en français, langue de référence.': ['This legal document is provided in French, the reference language.', 'Este documento jurídico se facilita en francés, la lengua de referencia.', 'Este documento jurídico é fornecido em francês, a língua de referência.'],
+  'Dernière mise à jour : Octobre 2026': ['Last updated: October 2026', 'Última actualización: octubre de 2026', 'Última atualização: outubro de 2026'],
 }
 
 const LOCALE_INDEX: Record<Exclude<Locale, 'fr'>, number> = { en: 0, es: 1, pt: 2 }

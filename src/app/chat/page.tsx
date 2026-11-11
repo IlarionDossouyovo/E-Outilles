@@ -372,7 +372,7 @@ export default function ChatPage() {
         {attachError && (
           <div className="mb-2 text-xs text-red-400 bg-red-500/10 border border-red-500/30 rounded-lg px-3 py-2">
             {attachError}
-            <button onClick={() => setAttachError('')} className="ml-2 underline">fermer</button>
+            <button onClick={() => setAttachError('')} className="ml-2 underline">{t('common.close')}</button>
           </div>
         )}
 
