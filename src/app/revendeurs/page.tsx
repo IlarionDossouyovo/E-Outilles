@@ -5,6 +5,8 @@ import { NavigationArrows, Icon } from '@/components/Icons'
 import Reveal from '@/components/Reveal'
 import Link from 'next/link'
 import { LocalizedText } from '@/components/LocalizedText'
+import { useTranslation, useLanguage } from '@/lib/i18n/LanguageProvider'
+import { localizeText } from '@/lib/i18n/content'
 
 // Données des avantages revendeur
 const advantages = [
@@ -84,6 +86,8 @@ const faqs = [
 ]
 
 export default function RevendeursPage() {
+  const { t } = useTranslation()
+  const { locale } = useLanguage()
   const [formData, setFormData] = useState({
     companyName: '',
     contactName: '',
@@ -122,13 +126,13 @@ export default function RevendeursPage() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
-        setError(data.error || "Erreur lors de l'envoi de la demande")
+        setError(data.error || t('err.generic'))
         return
       }
 
       setSubmitted(true)
     } catch {
-      setError('Erreur de connexion au serveur')
+      setError(t('err.server'))
     } finally {
       setLoading(false)
     }
@@ -151,18 +155,18 @@ export default function RevendeursPage() {
       <section className="pt-24 pb-16 bg-gradient-to-b from-ingco-gray to-ingco-black">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <h1 className="animate-fade-in-up text-4xl md:text-5xl font-bold text-white mb-6">
-            Devenez Revendeur <span className="text-ingco-yellow">E-Outilles</span>
+            <LocalizedText text="Devenez Revendeur E-Outilles" />
           </h1>
           <p className="animate-fade-in-up stagger-1 text-gray-400 text-lg max-w-3xl mx-auto mb-8">
-            Rejoignez le réseau de revendeurs officiels INGCO au Benin. 
-            Accédez à des tarifs préférentiels, un support exclusif et grow votre activité.
+            <LocalizedText text="Rejoignez le réseau de revendeurs officiels INGCO au Benin. Accédez à des tarifs préférentiels, un support exclusif et grow votre activité." />
+
           </p>
           <div className="animate-fade-in-up stagger-2 flex flex-wrap justify-center gap-4">
             <Link href="#register" className="bg-ingco-yellow text-ingco-black px-8 py-3 rounded-xl font-bold hover:bg-yellow-400 transition-colors">
-              Devenir Revendeur
+              <LocalizedText text="Devenir Revendeur" />
             </Link>
             <Link href="#advantages" className="bg-ingco-gray text-white px-8 py-3 rounded-xl font-bold hover:bg-gray-700 transition-colors">
-              Découvrir les Avantages
+              <LocalizedText text="Découvrir les Avantages" />
             </Link>
           </div>
         </div>
@@ -172,14 +176,14 @@ export default function RevendeursPage() {
       <section id="advantages" className="py-16 bg-ingco-black">
         <div className="max-w-7xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-white text-center mb-12">
-            Pourquoi devenir revendeur?
+            <LocalizedText text="Pourquoi devenir revendeur?" />
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {advantages.map((adv, index) => (
               <div key={index} className="bg-ingco-gray rounded-2xl p-8 hover:bg-gray-700 transition-colors">
                 <Icon name={adv.icon as never} className="w-11 h-11 text-ingco-yellow mb-4" />
-                <h3 className="text-xl font-bold text-white mb-3">{adv.title}</h3>
-                <p className="text-gray-400">{adv.description}</p>
+                <h3 className="text-xl font-bold text-white mb-3"><LocalizedText text={adv.title} /></h3>
+                <p className="text-gray-400"><LocalizedText text={adv.description} /></p>
               </div>
             ))}
           </div>
@@ -193,12 +197,12 @@ export default function RevendeursPage() {
             <LocalizedText text="15 Catégories de Produits" />
           </h2>
           <p className="text-gray-400 text-center mb-12">
-            Toute la gamme INGCO disponible pour vos clients
+            <LocalizedText text="Toute la gamme INGCO disponible pour vos clients" />
           </p>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {productCategories.map((cat, index) => (
               <div key={index} className="bg-ingco-black rounded-xl p-4 text-center">
-                <span className="text-ingco-yellow font-semibold text-sm">{cat}</span>
+                <span className="text-ingco-yellow font-semibold text-sm"><LocalizedText text={cat} /></span>
               </div>
             ))}
           </div>
@@ -209,25 +213,25 @@ export default function RevendeursPage() {
       <section id="register" className="py-16 bg-ingco-black">
         <div className="max-w-3xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-white text-center mb-4">
-            Demande de Partenariat
+            <LocalizedText text="Demande de Partenariat" />
           </h2>
           <p className="text-gray-400 text-center mb-8">
-            Remplissez ce formulaire et notre équipe vous contactera sous 48h
+            <LocalizedText text="Remplissez ce formulaire et notre équipe vous contactera sous 48h" />
           </p>
 
           {submitted ? (
             <div className="bg-green-900/50 border border-green-500 rounded-2xl p-8 text-center">
               <Icon name="check" className="w-14 h-14 text-green-400 mx-auto mb-4" />
-              <h3 className="text-2xl font-bold text-white mb-2">Demande Envoyée!</h3>
+              <h3 className="text-2xl font-bold text-white mb-2"><LocalizedText text="Demande Envoyée!" /></h3>
               <p className="text-gray-400">
-                Merci pour votre intérêt. Notre équipe commerciale vous contactera sous 48h.
+                <LocalizedText text="Merci pour votre intérêt. Notre équipe commerciale vous contactera sous 48h." />
               </p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="bg-ingco-gray rounded-2xl p-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
-                  <label className="block text-gray-400 mb-2">Nom de l'entreprise *</label>
+                  <label className="block text-gray-400 mb-2"><LocalizedText text="Nom de l'entreprise *" /></label>
                   <input
                     type="text"
                     required
@@ -238,7 +242,7 @@ export default function RevendeursPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-gray-400 mb-2">Nom du contact *</label>
+                  <label className="block text-gray-400 mb-2"><LocalizedText text="Nom du contact *" /></label>
                   <input
                     type="text"
                     required
@@ -263,7 +267,7 @@ export default function RevendeursPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-gray-400 mb-2">Téléphone *</label>
+                  <label className="block text-gray-400 mb-2"><LocalizedText text="Téléphone *" /></label>
                   <input
                     type="tel"
                     required
@@ -277,7 +281,7 @@ export default function RevendeursPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
-                  <label className="block text-gray-400 mb-2">Adresse</label>
+                  <label className="block text-gray-400 mb-2"><LocalizedText text="Adresse" /></label>
                   <input
                     type="text"
                     value={formData.address}
@@ -287,7 +291,7 @@ export default function RevendeursPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-gray-400 mb-2">Ville</label>
+                  <label className="block text-gray-400 mb-2"><LocalizedText text="Ville" /></label>
                   <input
                     type="text"
                     value={formData.city}
@@ -299,7 +303,7 @@ export default function RevendeursPage() {
               </div>
 
               <div className="mb-6">
-                <label className="block text-gray-400 mb-3">Catégories d'intérêt</label>
+                <label className="block text-gray-400 mb-3"><LocalizedText text="Catégories d'intérêt" /></label>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   {productCategories.slice(0, 9).map((cat) => (
                     <button
@@ -312,20 +316,20 @@ export default function RevendeursPage() {
                           : 'bg-ingco-black text-gray-400 hover:text-white'
                       }`}
                     >
-                      {cat}
+                      <LocalizedText text={cat} />
                     </button>
                   ))}
                 </div>
               </div>
 
               <div className="mb-6">
-                <label className="block text-gray-400 mb-2">Message (optionnel)</label>
+                <label className="block text-gray-400 mb-2"><LocalizedText text="Message (optionnel)" /></label>
                 <textarea
                   value={formData.message}
                   onChange={(e) => setFormData({...formData, message: e.target.value})}
                   rows={4}
                   className="w-full bg-ingco-black border border-gray-700 rounded-xl px-4 py-3 text-white focus:border-ingco-yellow focus:outline-none"
-                  placeholder="Parlez-nous de votre activité..."
+                  placeholder={localizeText('Parlez-nous de votre activité...', locale)}
                 />
               </div>
 
@@ -334,7 +338,7 @@ export default function RevendeursPage() {
                 disabled={loading}
                 className="w-full bg-ingco-yellow text-ingco-black py-4 rounded-xl font-bold text-lg hover:bg-yellow-400 transition-colors disabled:opacity-50"
               >
-                {loading ? '⏳ Envoi...' : 'Envoyer ma Demande'}
+                {loading ? <LocalizedText text="⏳ Envoi..." /> : <LocalizedText text="Envoyer ma Demande" />}
               </button>
               {error && (
                 <div className="mt-4 bg-red-500/20 border border-red-500 text-red-400 px-4 py-3 rounded-xl text-sm">
@@ -350,13 +354,13 @@ export default function RevendeursPage() {
       <section className="py-16 bg-ingco-gray">
         <div className="max-w-3xl mx-auto px-4">
           <h2 className="text-3xl font-bold text-white text-center mb-12">
-            Questions Fréquentes
+            <LocalizedText text="Questions Fréquentes" />
           </h2>
           <div className="space-y-4">
             {faqs.map((faq, index) => (
               <div key={index} className="bg-ingco-black rounded-xl p-6">
-                <h3 className="text-lg font-bold text-white mb-2">{faq.question}</h3>
-                <p className="text-gray-400">{faq.answer}</p>
+                <h3 className="text-lg font-bold text-white mb-2"><LocalizedText text={faq.question} /></h3>
+                <p className="text-gray-400"><LocalizedText text={faq.answer} /></p>
               </div>
             ))}
           </div>
