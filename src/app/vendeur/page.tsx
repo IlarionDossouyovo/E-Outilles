@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Logo from '@/components/Logo'
 import { Icon, NavigationArrows } from '@/components/Icons'
+import { useTranslation } from '@/lib/i18n/LanguageProvider'
 
 interface VendorOrder {
   id: string
@@ -20,29 +21,26 @@ interface TopProduct {
   revenue: number
 }
 
-const statusLabels: Record<string, { label: string; color: string }> = {
-  pending: { label: 'En attente', color: 'bg-gray-500' },
-  processing: { label: 'En traitement', color: 'bg-amber-500' },
-  paid: { label: 'Payé', color: 'bg-green-600' },
-  shipped: { label: 'Expédié', color: 'bg-yellow-600' },
-  delivered: { label: 'Livré', color: 'bg-green-500' },
-  cancelled: { label: 'Annulé', color: 'bg-red-500' }
+const statusColors: Record<string, string> = {
+  pending: 'bg-gray-500',
+  processing: 'bg-amber-500',
+  paid: 'bg-green-600',
+  shipped: 'bg-yellow-600',
+  delivered: 'bg-green-500',
+  cancelled: 'bg-red-500',
 }
 
-function statusInfo(status: string) {
-  return statusLabels[status] || { label: status, color: 'bg-gray-500' }
-}
-
-const quickActions = [
-  { icon: 'grid', title: 'Gestion Stocks', desc: 'Voir et modifier les produits', link: '/admin/products' },
-  { icon: 'blog', title: 'Rapports', desc: 'Voir les statistiques', link: '/admin/orders' },
-  { icon: 'user', title: 'Clients', desc: 'Gérer les clients', link: '/profile' },
-  { icon: 'chat', title: 'Messages', desc: 'Voir les messages', link: '/chat' },
-  { icon: 'star', title: 'Formations', desc: 'Accéder aux formations', link: '/formations' },
-  { icon: 'download', title: 'Documents', desc: 'Catalogue et guides', link: '/formations' },
+const QUICK_ACTIONS = [
+  { icon: 'grid', title: 'vendor.qa.stocks', desc: 'vendor.qa.stocksDesc', link: '/admin/products' },
+  { icon: 'blog', title: 'vendor.qa.reports', desc: 'vendor.qa.reportsDesc', link: '/admin/orders' },
+  { icon: 'user', title: 'vendor.qa.clients', desc: 'vendor.qa.clientsDesc', link: '/profile' },
+  { icon: 'chat', title: 'vendor.qa.messages', desc: 'vendor.qa.messagesDesc', link: '/chat' },
+  { icon: 'star', title: 'vendor.qa.training', desc: 'vendor.qa.trainingDesc', link: '/formations' },
+  { icon: 'download', title: 'vendor.qa.documents', desc: 'vendor.qa.documentsDesc', link: '/formations' },
 ]
 
 export default function VendorDashboard() {
+  const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState('overview')
   const [vendorStats, setVendorStats] = useState({
     totalSales: 0,
@@ -114,17 +112,17 @@ export default function VendorDashboard() {
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Logo variant="horizontal" size={40} />
-            <span className="bg-ingco-yellow text-ingco-black text-xs px-2 py-1 rounded ml-2">Vendeur</span>
+            <span className="bg-ingco-yellow text-ingco-black text-xs px-2 py-1 rounded ml-2">{t('vendor.badge')}</span>
           </div>
           <div className="hidden md:flex items-center gap-6">
-            <Link href="/" className="text-gray-300 hover:text-ingco-yellow">Accueil</Link>
-            <Link href="/vendeur" className="text-ingco-yellow">Dashboard</Link>
-            <Link href="/search" className="text-gray-300 hover:text-ingco-yellow">Produits</Link>
-            <Link href="/revendeurs" className="text-gray-300 hover:text-ingco-yellow">Revendeurs</Link>
-            <Link href="/formations" className="text-gray-300 hover:text-ingco-yellow">Formations</Link>
+            <Link href="/" className="text-gray-300 hover:text-ingco-yellow">{t('vendor.nav.home')}</Link>
+            <Link href="/vendeur" className="text-ingco-yellow">{t('vendor.nav.dashboard')}</Link>
+            <Link href="/search" className="text-gray-300 hover:text-ingco-yellow">{t('vendor.nav.products')}</Link>
+            <Link href="/revendeurs" className="text-gray-300 hover:text-ingco-yellow">{t('vendor.nav.resellers')}</Link>
+            <Link href="/formations" className="text-gray-300 hover:text-ingco-yellow">{t('vendor.nav.training')}</Link>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-gray-400 text-sm flex items-center gap-2"><Icon name="user" className="w-4 h-4" /> Mon Compte</span>
+            <span className="text-gray-400 text-sm flex items-center gap-2"><Icon name="user" className="w-4 h-4" /> {t('vendor.nav.account')}</span>
           </div>
         </div>
       </nav>
@@ -132,17 +130,17 @@ export default function VendorDashboard() {
       <div className="pt-24 pb-16 max-w-7xl mx-auto px-4">
         {/* Welcome Section */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white">Bienvenue sur votre espace revendeur</h1>
-          <p className="text-gray-400">Gérez vos ventes, commandes et formations</p>
+          <h1 className="text-3xl font-bold text-white">{t('vendor.welcome')}</h1>
+          <p className="text-gray-400">{t('vendor.welcomeText')}</p>
         </div>
 
         {/* Quick Actions */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-          {quickActions.map((action, index) => (
+          {QUICK_ACTIONS.map((action, index) => (
             <Link key={index} href={action.link} className="bg-ingco-gray rounded-xl p-4 hover:bg-gray-700 transition-colors text-center">
               <Icon name={action.icon as never} className="w-7 h-7 text-ingco-yellow mx-auto mb-2" />
-              <h3 className="text-white font-semibold text-sm">{action.title}</h3>
-              <p className="text-gray-400 text-xs">{action.desc}</p>
+              <h3 className="text-white font-semibold text-sm">{t(action.title)}</h3>
+              <p className="text-gray-400 text-xs">{t(action.desc)}</p>
             </Link>
           ))}
         </div>
@@ -150,41 +148,41 @@ export default function VendorDashboard() {
         {/* Stats Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <div className="bg-ingco-gray rounded-xl p-6">
-            <div className="text-gray-400 text-sm mb-1">Ventes Totales</div>
+            <div className="text-gray-400 text-sm mb-1">{t('vendor.stats.totalSales')}</div>
             <div className="text-2xl font-bold text-white">{vendorStats.totalSales.toLocaleString()} €</div>
-            <div className="text-gray-400 text-sm">Depuis le lancement</div>
+            <div className="text-gray-400 text-sm">{t('vendor.stats.sinceLaunch')}</div>
           </div>
           <div className="bg-ingco-gray rounded-xl p-6">
-            <div className="text-gray-400 text-sm mb-1">Commandes</div>
+            <div className="text-gray-400 text-sm mb-1">{t('vendor.stats.orders')}</div>
             <div className="text-2xl font-bold text-white">{vendorStats.totalOrders}</div>
-            <div className="text-green-500 text-sm">+{vendorStats.thisMonth.orders} ce mois</div>
+            <div className="text-green-500 text-sm">{t('vendor.stats.thisMonth').replace('{n}', String(vendorStats.thisMonth.orders))}</div>
           </div>
           <div className="bg-ingco-gray rounded-xl p-6">
-            <div className="text-gray-400 text-sm mb-1">Clients</div>
+            <div className="text-gray-400 text-sm mb-1">{t('vendor.stats.customers')}</div>
             <div className="text-2xl font-bold text-white">{vendorStats.totalCustomers}</div>
-            <div className="text-green-500 text-sm">+{vendorStats.thisMonth.newCustomers} ce mois</div>
+            <div className="text-green-500 text-sm">{t('vendor.stats.thisMonth').replace('{n}', String(vendorStats.thisMonth.newCustomers))}</div>
           </div>
           <div className="bg-ingco-gray rounded-xl p-6">
-            <div className="text-gray-400 text-sm mb-1">Panier moyen</div>
+            <div className="text-gray-400 text-sm mb-1">{t('vendor.stats.basket')}</div>
             <div className="text-2xl font-bold text-white flex items-center gap-1"><Icon name="cart" className="w-5 h-5 text-ingco-yellow" /> {vendorStats.averageBasket.toLocaleString()} €</div>
-            <div className="text-gray-400 text-sm">Sur commandes valides</div>
+            <div className="text-gray-400 text-sm">{t('vendor.stats.validOrders')}</div>
           </div>
         </div>
 
         {/* This Month Stats */}
         <div className="bg-gradient-to-r from-ingco-yellow/20 to-transparent rounded-xl p-6 mb-8 border border-ingco-yellow/30">
-          <h3 className="text-xl font-bold text-white mb-4">Performances ce mois</h3>
+          <h3 className="text-xl font-bold text-white mb-4">{t('vendor.month.title')}</h3>
           <div className="grid grid-cols-3 gap-6">
             <div>
-              <div className="text-gray-400 text-sm">Ventes</div>
+              <div className="text-gray-400 text-sm">{t('vendor.month.sales')}</div>
               <div className="text-2xl font-bold text-ingco-yellow">{vendorStats.thisMonth.sales} €</div>
             </div>
             <div>
-              <div className="text-gray-400 text-sm">Commandes</div>
+              <div className="text-gray-400 text-sm">{t('vendor.month.orders')}</div>
               <div className="text-2xl font-bold text-ingco-yellow">{vendorStats.thisMonth.orders}</div>
             </div>
             <div>
-              <div className="text-gray-400 text-sm">Nouveaux clients</div>
+              <div className="text-gray-400 text-sm">{t('vendor.month.customers')}</div>
               <div className="text-2xl font-bold text-ingco-yellow">+{vendorStats.thisMonth.newCustomers}</div>
             </div>
           </div>
@@ -194,8 +192,8 @@ export default function VendorDashboard() {
           {/* Recent Orders */}
           <div className="bg-ingco-gray rounded-xl p-6">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-bold text-white">Dernières Commandes</h3>
-              <Link href="/admin/orders" className="text-ingco-yellow text-sm hover:underline">Voir tout</Link>
+              <h3 className="text-xl font-bold text-white">{t('vendor.recentOrders')}</h3>
+              <Link href="/admin/orders" className="text-ingco-yellow text-sm hover:underline">{t('vendor.viewAll')}</Link>
             </div>
             <div className="space-y-4">
               {recentOrders.map((order) => (
@@ -206,8 +204,8 @@ export default function VendorDashboard() {
                   </div>
                   <div className="text-right">
                     <div className="text-white font-bold">{order.amount} €</div>
-                    <span className={`${statusInfo(order.status).color} text-white text-xs px-2 py-1 rounded`}>
-                      {statusInfo(order.status).label}
+                    <span className={`${statusColors[order.status] || 'bg-gray-500'} text-white text-xs px-2 py-1 rounded`}>
+                      {t(`vendor.status.${order.status}`)}
                     </span>
                   </div>
                 </div>
@@ -218,8 +216,8 @@ export default function VendorDashboard() {
           {/* Top Products */}
           <div className="bg-ingco-gray rounded-xl p-6">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-bold text-white">Produits les Plus Vendus</h3>
-              <Link href="/search" className="text-ingco-yellow text-sm hover:underline">Voir tout</Link>
+              <h3 className="text-xl font-bold text-white">{t('vendor.topProducts')}</h3>
+              <Link href="/search" className="text-ingco-yellow text-sm hover:underline">{t('vendor.viewAll')}</Link>
             </div>
             <div className="space-y-4">
               {topProducts.map((product, index) => (
@@ -228,7 +226,7 @@ export default function VendorDashboard() {
                     <Icon name="tools" className="w-6 h-6 text-ingco-yellow" />
                     <div>
                       <div className="text-white font-semibold">{product.name}</div>
-                      <div className="text-gray-400 text-sm">{product.sales} ventes</div>
+                      <div className="text-gray-400 text-sm">{t('vendor.salesCount').replace('{n}', String(product.sales))}</div>
                     </div>
                   </div>
                   <div className="text-ingco-yellow font-bold">{product.revenue} €</div>
@@ -240,22 +238,22 @@ export default function VendorDashboard() {
 
         {/* Quick Links Section */}
         <div className="mt-8">
-          <h3 className="text-xl font-bold text-white mb-4">Liens Rapides</h3>
+          <h3 className="text-xl font-bold text-white mb-4">{t('vendor.quickLinks')}</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Link href="/revendeurs" className="bg-ingco-gray rounded-xl p-6 hover:bg-gray-700 transition-colors">
               <Icon name="user" className="w-8 h-8 text-ingco-yellow mb-3" />
-              <h4 className="text-white font-bold mb-2">Devenir Revendeur</h4>
-              <p className="text-gray-400 text-sm">Proposez nos produits à vos clients</p>
+              <h4 className="text-white font-bold mb-2">{t('vendor.link.reseller')}</h4>
+              <p className="text-gray-400 text-sm">{t('vendor.link.resellerDesc')}</p>
             </Link>
             <Link href="/formations" className="bg-ingco-gray rounded-xl p-6 hover:bg-gray-700 transition-colors">
               <Icon name="star" className="w-8 h-8 text-ingco-yellow mb-3" />
-              <h4 className="text-white font-bold mb-2">Formations</h4>
-              <p className="text-gray-400 text-sm">Développez vos compétences</p>
+              <h4 className="text-white font-bold mb-2">{t('vendor.qa.training')}</h4>
+              <p className="text-gray-400 text-sm">{t('vendor.link.trainingDesc')}</p>
             </Link>
             <Link href="/admin/settings" className="bg-ingco-gray rounded-xl p-6 hover:bg-gray-700 transition-colors">
               <Icon name="settings" className="w-8 h-8 text-ingco-yellow mb-3" />
-              <h4 className="text-white font-bold mb-2">Paramètres</h4>
-              <p className="text-gray-400 text-sm">Gérez votre compte</p>
+              <h4 className="text-white font-bold mb-2">{t('vendor.link.settings')}</h4>
+              <p className="text-gray-400 text-sm">{t('vendor.link.settingsDesc')}</p>
             </Link>
           </div>
         </div>
@@ -264,7 +262,7 @@ export default function VendorDashboard() {
       {/* Footer */}
       <footer className="bg-ingco-gray py-8 mt-8">
         <div className="max-w-7xl mx-auto px-4 text-center text-gray-400">
-          <p>&copy; 2026 E-Outilles By ELECTRON. Tous droits réservés.</p>
+          <p>&copy; 2026 E-Outilles By ELECTRON. {t('vendor.rights')}</p>
         </div>
       </footer>
 
