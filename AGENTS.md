@@ -469,9 +469,9 @@ Persistent notes for working on the E-Outilles codebase.
 - Email sending order in `src/lib/email/sendEmail.ts`: Brevo HTTP API → Resend →
   SMTP (nodemailer) → dev log. In the sandbox Brevo's API returns 403
   `unauthorized_IP` and SMTP returns `525 Unauthorized IP` — both are Brevo
-  IP-allowlist blocks, NOT bad credentials. Add the outbound IP to Brevo's
-  allowlist (or deploy on Render/Vercel whose IPs are allowlisted) to send for
-  real; nothing else needs changing.
+  IP-allowlist blocks, NOT bad credentials. Confirmed on Render: the same code
+  returns `emailDelivered:true` (Render IPs are allowlisted), so production
+  email works; only the local sandbox IP is blocked.
 - STALE `.next` CACHE = broken interactivity. Running `npm run build` while
   `next dev` is running leaves dev serving 404s for every `/_next/static/*`
   chunk, so React never hydrates and buttons (chat send, forms) silently do
