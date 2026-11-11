@@ -4,7 +4,7 @@ import { AGENTS, PUBLIC_AGENT_IDS, isAgentId, routeToAgent, agentSupportsVision,
 import type { ChatTurn, InlineMedia } from '@/lib/ai/provider'
 import { getSession } from '@/lib/security/auth'
 import { isFounderEmail } from '@/lib/security/founder'
-import { isLocale } from '@/lib/i18n/config'
+import { isLocale, type Locale } from '@/lib/i18n/config'
 import { prisma } from '@/lib/db/prisma'
 import {
   resolveIdentity,
@@ -121,6 +121,13 @@ const PUBLIC_INTRO: Record<string, Partial<Record<AgentId, string>>> = {
   },
 }
 
+const CHAT_ERROR: Record<string, string> = {
+  fr: "Désolé, une erreur est survenue. Réessayez dans un instant.",
+  en: "Sorry, something went wrong. Please try again in a moment.",
+  es: "Lo sentimos, ha ocurrido un error. Inténtelo de nuevo en un momento.",
+  pt: "Lamentamos, ocorreu um erro. Tente novamente dentro de instantes.",
+}
+
 function demoIntro(agentId: AgentId, locale: string): string {
   return PUBLIC_INTRO[locale]?.[agentId] || DEPARTMENT_INTRO[agentId]
 }
@@ -138,22 +145,61 @@ function getDemoResponse(message: string, agentId: AgentId, locale: string = 'fr
   return `${intro} ${agent.name} (${agent.department}). ${closing}`
 }
 
+interface MediaErrors {
+  tooMany: string
+  format: string
+  empty: string
+  tooBig: string
+  messageRequired: string
+}
+
+const MEDIA_ERRORS: Record<string, MediaErrors> = {
+  fr: {
+    tooMany: 'Maximum 3 pièces jointes par message.',
+    format: 'Format non pris en charge (images PNG/JPG/WEBP ou PDF).',
+    empty: 'Pièce jointe vide.',
+    tooBig: 'Pièce jointe trop volumineuse (max 6 Mo).',
+    messageRequired: 'Message requis',
+  },
+  en: {
+    tooMany: 'Maximum 3 attachments per message.',
+    format: 'Unsupported format (PNG/JPG/WEBP images or PDF).',
+    empty: 'Empty attachment.',
+    tooBig: 'Attachment too large (max 6 MB).',
+    messageRequired: 'Message required',
+  },
+  es: {
+    tooMany: 'Máximo 3 archivos adjuntos por mensaje.',
+    format: 'Formato no admitido (imágenes PNG/JPG/WEBP o PDF).',
+    empty: 'Archivo adjunto vacío.',
+    tooBig: 'Archivo adjunto demasiado grande (máx. 6 MB).',
+    messageRequired: 'Mensaje obligatorio',
+  },
+  pt: {
+    tooMany: 'Máximo de 3 anexos por mensagem.',
+    format: 'Formato não suportado (imagens PNG/JPG/WEBP ou PDF).',
+    empty: 'Anexo vazio.',
+    tooBig: 'Anexo demasiado grande (máx. 6 MB).',
+    messageRequired: 'Mensagem obrigatória',
+  },
+}
+
 // Parses and validates an optional media array (images / PDF documents).
-function parseMedia(raw: unknown): { media: InlineMedia[]; error?: string } {
+function parseMedia(raw: unknown, err: MediaErrors): { media: InlineMedia[]; error?: string } {
   if (!Array.isArray(raw) || raw.length === 0) return { media: [] }
-  if (raw.length > 3) return { media: [], error: 'Maximum 3 pièces jointes par message.' }
+  if (raw.length > 3) return { media: [], error: err.tooMany }
 
   const media: InlineMedia[] = []
   for (const item of raw) {
     const mimeType = String(item?.mimeType || '')
     const data = String(item?.data || '')
     if (!ALLOWED_MEDIA.test(mimeType)) {
-      return { media: [], error: 'Format non pris en charge (images PNG/JPG/WEBP ou PDF).' }
+      return { media: [], error: err.format }
     }
-    if (!data) return { media: [], error: 'Pièce jointe vide.' }
+    if (!data) return { media: [], error: err.empty }
     // Approximate decoded size from the base64 length.
     if ((data.length * 3) / 4 > MAX_MEDIA_BYTES) {
-      return { media: [], error: 'Pièce jointe trop volumineuse (max 6 Mo).' }
+      return { media: [], error: err.tooBig }
     }
     media.push({ mimeType, data })
   }
@@ -161,17 +207,20 @@ function parseMedia(raw: unknown): { media: InlineMedia[]; error?: string } {
 }
 
 export async function POST(request: NextRequest) {
+  let locale: Locale = 'fr'
   try {
     const body = await request.json()
     const message: string = (body?.message || '').toString().trim()
+    locale = isLocale(body?.locale) ? body.locale : 'fr'
 
-    const { media, error: mediaError } = parseMedia(body?.media)
+    const errors = MEDIA_ERRORS[locale] || MEDIA_ERRORS.fr
+    const { media, error: mediaError } = parseMedia(body?.media, errors)
     if (mediaError) {
       return NextResponse.json({ error: mediaError }, { status: 400 })
     }
     // A message may be empty only when a file is attached.
     if (!message && media.length === 0) {
-      return NextResponse.json({ error: 'Message requis' }, { status: 400 })
+      return NextResponse.json({ error: errors.messageRequired }, { status: 400 })
     }
 
     const requestedAgent = isAgentId(body?.agentId) ? body.agentId : null
@@ -246,8 +295,8 @@ export async function POST(request: NextRequest) {
       history,
       useReasoning,
       media,
-      fallback: getDemoResponse(effectiveMessage, agentId),
-      locale: isLocale(body?.locale) ? body.locale : undefined,
+      fallback: getDemoResponse(effectiveMessage, agentId, locale),
+      locale,
     })
 
     // Persist the assistant reply.
@@ -268,10 +317,7 @@ export async function POST(request: NextRequest) {
     return isNewGuest ? attachGuestCookie(response, guestId) : response
   } catch (error) {
     console.error('Chat error:', error)
-    return NextResponse.json(
-      { response: "Désolé, une erreur est survenue. Réessayez dans un instant." },
-      { status: 200 }
-    )
+    return NextResponse.json({ response: CHAT_ERROR[locale] }, { status: 200 })
   }
 }
 

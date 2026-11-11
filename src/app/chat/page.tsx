@@ -176,7 +176,7 @@ export default function ChatPage() {
           }),
         })
         const data = await res.json()
-        const reply = data.error || data.response || "Désolé, je n'ai pas pu répondre."
+        const reply = data.error || data.response || t('chat.noReply')
         setMessages((prev) => [...prev, { role: 'assistant', content: reply, agentId: data.agentId }])
         if (data.conversationId) {
           setConversationId(data.conversationId)
@@ -184,14 +184,14 @@ export default function ChatPage() {
         }
         if (voiceReplies && !data.error) speak(reply)
       } catch {
-        setMessages((prev) => [...prev, { role: 'assistant', content: 'Désolé, une erreur est survenue.' }])
+        setMessages((prev) => [...prev, { role: 'assistant', content: t('chat.error') }])
       } finally {
         // Revoke preview URLs we created for this message.
         sent.forEach((a) => a.previewUrl && setTimeout(() => URL.revokeObjectURL(a.previewUrl), 1000))
         setLoading(false)
       }
     },
-    [input, attachments, loading, messages, agentId, voiceReplies, speak, clear, conversationId, loadConversations, locale]
+    [input, attachments, loading, messages, agentId, voiceReplies, speak, clear, conversationId, loadConversations, locale, t]
   )
 
   const handleKeyPress = (e: React.KeyboardEvent) => {

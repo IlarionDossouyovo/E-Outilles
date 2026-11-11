@@ -75,14 +75,14 @@ export default function ChatWidget() {
         body: JSON.stringify({ message: clean, history, media, conversationId, locale }),
       })
       const data = await res.json()
-      const reply = data.error || data.response || "Désolé, je n'ai pas pu répondre."
+      const reply = data.error || data.response || t('chat.noReply')
       setMessages((prev) => [...prev, { id: (Date.now() + 1).toString(), role: 'assistant', content: reply }])
       if (data.conversationId) setConversationId(data.conversationId)
       if (voiceReplies && !data.error) speak(reply)
     } catch {
       setMessages((prev) => [
         ...prev,
-        { id: (Date.now() + 2).toString(), role: 'assistant', content: 'Désolé, une erreur est survenue.' },
+        { id: (Date.now() + 2).toString(), role: 'assistant', content: t('chat.error') },
       ])
     } finally {
       sent.forEach((a) => a.previewUrl && setTimeout(() => URL.revokeObjectURL(a.previewUrl), 1000))
