@@ -7,6 +7,7 @@ import { Icon, type IconName } from '@/components/Icons'
 import { useVoice } from '@/lib/ai/useVoice'
 import { useAttachments } from '@/lib/ai/useAttachments'
 import { useLanguage } from '@/lib/i18n/LanguageProvider'
+import { localizeText } from '@/lib/i18n/content'
 
 interface Message {
   role: 'user' | 'assistant'
@@ -42,6 +43,7 @@ const FALLBACK_AGENTS: AgentOption[] = [
 
 export default function ChatPage() {
   const { t, locale } = useLanguage()
+  const lname = (n: string) => localizeText(n, locale)
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
@@ -307,7 +309,7 @@ export default function ChatPage() {
             <button
               key={a.id}
               onClick={() => setAgentId(a.id)}
-              title={a.description}
+              title={lname(a.description)}
               className={`shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl text-sm transition-all ${
                 agentId === a.id
                   ? 'bg-ingco-yellow text-ingco-black font-bold scale-105'
@@ -315,7 +317,7 @@ export default function ChatPage() {
               }`}
             >
               <Icon name={a.icon as IconName} className="w-5 h-5" />
-              <span className="whitespace-nowrap">{a.name}</span>
+              <span className="whitespace-nowrap">{lname(a.name)}</span>
               {a.capabilities.includes('vision') && <Icon name="camera" className="w-4 h-4 opacity-70" />}
             </button>
           ))}
