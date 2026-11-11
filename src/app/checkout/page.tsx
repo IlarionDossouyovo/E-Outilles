@@ -36,12 +36,17 @@ export default function CheckoutPage() {
     phone: ''
   })
   const [momoNotice, setMomoNotice] = useState('')
+  const [merchantMomo, setMerchantMomo] = useState('')
 
   useEffect(() => {
     let active = true
     fetch('/api/payments/status')
       .then((r) => r.json())
       .then((d) => { if (active && d?.card) setStripeReady(true) })
+      .catch(() => {})
+    fetch('/api/marketing/channels')
+      .then((r) => r.json())
+      .then((d) => { if (active) setMerchantMomo(d?.mobileMoneyNumber || d?.phone || '') })
       .catch(() => {})
     return () => { active = false }
   }, [])
@@ -124,11 +129,12 @@ export default function CheckoutPage() {
         const op = momoData.operator ? momoData.operator.toUpperCase() : 'Mobile Money'
         setMomoNotice(
           `Instruction de paiement Mobile Money\n\n` +
-          `Opérateur : ${op}\n` +
-          `Numéro : ${momoData.phone || 'non renseigné'}\n` +
-          `Montant : ${(result.order?.total ?? getTotal()).toFixed(2)} €\n\n` +
-          `Un code de paiement vous sera envoyé par SMS au numéro indiqué. ` +
-          `Votre commande reste « en attente » jusqu'à confirmation du paiement.`
+          `1. Envoyez ${(result.order?.total ?? getTotal()).toFixed(2)} € au numéro marchand :\n` +
+          `   ${merchantMomo || '+229 01 977 003 47'}\n` +
+          `   Opérateur : ${op}\n` +
+          `2. Votre numéro de payeur : ${momoData.phone || 'non renseigné'}\n\n` +
+          `Indiquez le numéro de commande ${result.order?.id ?? orderId} en référence du transfert. ` +
+          `Votre commande reste « en attente » jusqu'à confirmation du paiement (généralement sous 30 min).`
         )
       }
 

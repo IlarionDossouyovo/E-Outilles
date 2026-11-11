@@ -14,6 +14,7 @@ export interface StoreSettings {
   codFee: number
   codEnabled: boolean
   momoEnabled: boolean
+  mobileMoneyNumber: string
   cardEnabled: boolean
   emailNotifications: boolean
   smsNotifications: boolean
@@ -55,6 +56,7 @@ export const DEFAULT_SETTINGS: StoreSettings = {
   codFee: 0,
   codEnabled: true,
   momoEnabled: true,
+  mobileMoneyNumber: '+229 01 977 003 47',
   cardEnabled: true,
   emailNotifications: true,
   smsNotifications: false,

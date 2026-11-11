@@ -305,6 +305,17 @@ export default function SettingsPage() {
                 </div>
                 <input type="checkbox" checked={settings.momoEnabled} onChange={(e) => update('momoEnabled', e.target.checked)} className="w-5 h-5 accent-ingco-yellow" />
               </label>
+              <div className="p-4 bg-ingco-dark rounded-xl">
+                <label className="text-gray-400 text-sm mb-2 block">Numéro Mobile Money marchand</label>
+                <input
+                  type="tel"
+                  value={settings.mobileMoneyNumber}
+                  onChange={(e) => update('mobileMoneyNumber', e.target.value)}
+                  placeholder="+229 01 977 003 47"
+                  className="w-full bg-ingco-black border border-ingco-gray rounded-xl px-4 py-3 text-white focus:border-ingco-yellow outline-none"
+                />
+                <p className="text-gray-500 text-xs mt-2">Numéro affiché au client pour envoyer le paiement (MTN, Moov, Orange Money).</p>
+              </div>
               <label className="flex items-center justify-between p-4 bg-ingco-dark rounded-xl">
                 <div>
                   <div className="text-white font-medium">Carte bancaire</div>

@@ -13,3 +13,6 @@ build/
 prisma/dev.db
 prisma/dev.db-journal
 tsconfig.tsbuildinfo
+
+.env.bak*
+.env*.bak

@@ -15,6 +15,7 @@ export async function GET() {
   return NextResponse.json({
     channels: configured,
     whatsappOrderNumber: settings.marketing?.whatsappOrderNumber || '',
+    mobileMoneyNumber: settings.mobileMoneyNumber || settings.phone,
     phone: settings.phone,
   })
 }

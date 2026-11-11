@@ -48,7 +48,7 @@ export function sanitizeSettings(input: unknown): Partial<StoreSettings> {
   if (!input || typeof input !== 'object') return {}
   const src = input as Record<string, unknown>
   const out: Partial<StoreSettings> = {}
-  const strings: (keyof StoreSettings)[] = ['shopName', 'email', 'phone', 'address', 'currency', 'timezone']
+  const strings: (keyof StoreSettings)[] = ['shopName', 'email', 'phone', 'address', 'currency', 'timezone', 'mobileMoneyNumber']
   const numbers: (keyof StoreSettings)[] = ['shippingFree', 'shippingCost', 'taxRate', 'codFee']
   const booleans: (keyof StoreSettings)[] = [
     'codEnabled', 'momoEnabled', 'cardEnabled', 'emailNotifications', 'smsNotifications',
