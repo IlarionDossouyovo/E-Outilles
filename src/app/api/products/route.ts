@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db/prisma'
 import { requireAdmin } from '@/lib/security/auth'
+import { searchTerms } from '@/lib/search'
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
@@ -17,10 +18,14 @@ export async function GET(request: Request) {
     }
     
     if (search && search.trim() !== '') {
-      where.OR = [
-        { name: { contains: search } },
-        { description: { contains: search } }
-      ]
+      const terms = searchTerms(search)
+      if (terms.length > 0) {
+        where.OR = terms.flatMap((term) => [
+          { name: term },
+          { description: term },
+          { sku: term },
+        ])
+      }
     }
 
     const products = await prisma.product.findMany({

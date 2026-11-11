@@ -8,6 +8,7 @@ import { NavigationArrows, Icon } from '@/components/Icons'
 import { categoryImage } from '@/lib/catalog'
 import { LocalizedText } from '@/components/LocalizedText'
 import { firstImage } from '@/lib/images'
+import { foldAccents } from '@/lib/search'
 import { useTranslation } from '@/lib/i18n/LanguageProvider'
 
 export const dynamic = 'force-dynamic'
@@ -16,6 +17,8 @@ interface Product {
   id: string
   name: string
   slug: string
+  description?: string | null
+  sku?: string | null
   price: number
   comparePrice?: number | null
   images: string
@@ -63,7 +66,12 @@ export default function SearchPage({ searchParams }: { searchParams: { category?
     .filter(
       (p) =>
         (category === 'Tous' || p.category?.name === category || p.category?.slug === category.toLowerCase()) &&
-        p.name.toLowerCase().includes(search.toLowerCase())
+        (() => {
+          const needle = foldAccents(search.trim().toLowerCase())
+          if (!needle) return true
+          const haystack = foldAccents(`${p.name} ${p.description || ''} ${p.sku || ''}`.toLowerCase())
+          return needle.split(/\s+/).every((word) => haystack.includes(word))
+        })()
     )
     .sort((a, b) => {
       if (sortBy === 'price-asc') return a.price - b.price

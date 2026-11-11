@@ -6,6 +6,7 @@
 // The analysis stays internal: the user only ever sees the final answer.
 
 import { prisma } from '@/lib/db/prisma'
+import { searchTerms } from '@/lib/search'
 import { generateText, extractJson, type ChatTurn, type InlineMedia } from './provider'
 import {
   AGENTS,
@@ -48,7 +49,7 @@ interface AnalysisPayload {
 }
 
 // Extracts the most meaningful search terms from a user message.
-function searchTerms(message: string): string {
+function extractKeywords(message: string): string {
   const stop = new Set([
     'je', 'tu', 'il', 'nous', 'vous', 'le', 'la', 'les', 'un', 'une', 'des', 'de', 'du',
     'et', 'ou', 'pour', 'avec', 'sans', 'sur', 'dans', 'quel', 'quelle', 'quels', 'quelles',
@@ -65,13 +66,11 @@ function searchTerms(message: string): string {
 async function findProducts(query: string, limit = 3) {
   const q = query.trim()
   if (!q) return []
-  const words = q.split(/\s+/).filter(Boolean)
+  const terms = searchTerms(q)
+  if (terms.length === 0) return []
   const products = await prisma.product.findMany({
     where: {
-      OR: words.flatMap((w) => [
-        { name: { contains: w } },
-        { description: { contains: w } },
-      ]),
+      OR: terms.flatMap((term) => [{ name: term }, { description: term }]),
     },
     select: { name: true, price: true, slug: true },
     take: limit,
@@ -140,7 +139,7 @@ ${toneInstructionFor(agent.tone)}${departmentLens(agent)}`
 
   // Tool use: only query the DB when the model asked for it, or the agent
   // reasons about products.
-  const query = analysis.productQuery || (agent.reasoning ? searchTerms(message) : '')
+  const query = analysis.productQuery || (agent.reasoning ? extractKeywords(message) : '')
   if (query) {
     try {
       analysis.products = await findProducts(query)
