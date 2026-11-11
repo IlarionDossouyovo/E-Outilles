@@ -37,51 +37,17 @@ const videoModules = [
   }
 ]
 
-// Ressources écrites (Articles/Tutoriels)
-const writtenResources = [
-  {
-    title: 'Guide complet: Choisir son outil électrique',
-    category: 'Outils Électriques',
-    type: 'Guide PDF',
-    pages: 24,
-    download: '/downloads/guide-outils-electriques.pdf'
-  },
-  {
-    title: 'Catalogue technique INGCO 2026',
-    category: 'Tous produits',
-    type: 'Catalogue',
-    pages: 120,
-    download: '/downloads/catalogue-ingco-2026.pdf'
-  },
-  {
-    title: 'Maintenance préventive des outils',
-    category: 'Technique',
-    type: 'Guide',
-    pages: 18,
-    download: '/downloads/maintenance-preventive.pdf'
-  },
-  {
-    title: 'Sécurité sur les chantiers',
-    category: 'Sécurité',
-    type: 'Guide',
-    pages: 32,
-    download: '/downloads/guide-securite-chantier.pdf'
-  },
-  {
-    title: 'Comparatif batteries 12V vs 20V',
-    category: 'Outils Sans Fil',
-    type: 'Fiche technique',
-    pages: 8,
-    download: '/downloads/comparatif-batteries.pdf'
-  },
-  {
-    title: 'Guide d\'achat: Tronçonneuse',
-    category: 'Jardinage',
-    type: 'Guide',
-    pages: 16,
-    download: '/downloads/guide-tronconneuse.pdf'
-  }
-]
+// Ressources écrites (Articles/Tutoriels). Titles/metadata come from the shared
+// registry so the page and the PDF route (GET /api/formations/[slug]) stay in
+// sync; the download link is always a real, generated PDF.
+import { TRAINING_RESOURCES } from '@/lib/formations/resources'
+const writtenResources = TRAINING_RESOURCES.map((r) => ({
+  title: r.title,
+  category: r.category,
+  type: r.type,
+  download: `/api/formations/${r.slug}`,
+}))
+
 
 // Données des formations
 const formations = [
@@ -233,16 +199,6 @@ export default function FormationsPage() {
 
   const handleVideoClick = (videoTitle: string) => {
     const msg = `Vidéo : ${videoTitle} - Bientôt disponible !`
-    showNotification(msg)
-  }
-
-  const handleDownload = (resourceTitle: string) => {
-    const msg = `Document : ${resourceTitle} - Bientôt disponible !`
-    showNotification(msg)
-  }
-
-  const handleArticleClick = (articleTitle: string) => {
-    const msg = `Article : ${articleTitle} - Bientôt disponible !`
     showNotification(msg)
   }
 
@@ -444,14 +400,15 @@ export default function FormationsPage() {
                     <h4 className="text-white font-bold mb-2">{resource.title}</h4>
                     <div className="flex items-center gap-3 text-sm text-gray-400 mb-4">
                       <span className="bg-ingco-gray px-2 py-1 rounded">{resource.type}</span>
-                      <span>{resource.pages} pages</span>
+                      <span>{resource.category}</span>
                     </div>
-                    <button 
-                      onClick={() => handleDownload(resource.title)}
-                      className="bg-ingco-yellow text-ingco-black px-4 py-2 rounded-lg font-semibold text-sm hover:bg-yellow-400 transition-colors flex items-center gap-2"
+                    <a
+                      href={resource.download}
+                      download
+                      className="bg-ingco-yellow text-ingco-black px-4 py-2 rounded-lg font-semibold text-sm hover:bg-yellow-400 transition-colors flex items-center gap-2 w-fit"
                     >
                       <Icon name="download" className="w-4 h-4" /> Télécharger
-                    </button>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -482,7 +439,7 @@ export default function FormationsPage() {
               <p className="text-gray-400 mb-4">
                 Guide complet pour choisir le bon outil selon vos besoins...
               </p>
-              <button onClick={() => handleArticleClick('Bien choisir sa perceuse visseuse')} className="text-ingco-yellow font-semibold hover:underline">Lire la suite <Icon name="arrow-right" className="w-4 h-4 inline" /></button>
+              <Link href="/blog/guide-outils-sans-fil-20v" className="text-ingco-yellow font-semibold hover:underline inline-flex items-center gap-1">Lire la suite <Icon name="arrow-right" className="w-4 h-4 inline" /></Link>
             </div>
             
             <div className="bg-ingco-gray rounded-xl p-6">
@@ -496,7 +453,7 @@ export default function FormationsPage() {
               <p className="text-gray-400 mb-4">
                 Astuces et bonnes pratiques pour prolonger la durée de vie...
               </p>
-              <button onClick={() => handleArticleClick('Entretien des batteries lithium-ion')} className="text-ingco-yellow font-semibold hover:underline">Lire la suite <Icon name="arrow-right" className="w-4 h-4 inline" /></button>
+              <Link href="/blog/maintenance-preventive-outils" className="text-ingco-yellow font-semibold hover:underline inline-flex items-center gap-1">Lire la suite <Icon name="arrow-right" className="w-4 h-4 inline" /></Link>
             </div>
             
             <div className="bg-ingco-gray rounded-xl p-6">
@@ -510,7 +467,7 @@ export default function FormationsPage() {
               <p className="text-gray-400 mb-4">
                 Checklist complète des équipements de protection obligatoire...
               </p>
-              <button onClick={() => handleArticleClick('Sécurité sur les chantiers')} className="text-ingco-yellow font-semibold hover:underline">Lire la suite <Icon name="arrow-right" className="w-4 h-4 inline" /></button>
+              <Link href="/blog/epis-obligatoires-chantier" className="text-ingco-yellow font-semibold hover:underline inline-flex items-center gap-1">Lire la suite <Icon name="arrow-right" className="w-4 h-4 inline" /></Link>
             </div>
             
             <div className="bg-ingco-gray rounded-xl p-6">
@@ -524,7 +481,7 @@ export default function FormationsPage() {
               <p className="text-gray-400 mb-4">
                 Comparatif des meilleures tronçonneuses pour professionnel...
               </p>
-              <button onClick={() => handleArticleClick('Guide d\'achat tronçonneuse')} className="text-ingco-yellow font-semibold hover:underline">Lire la suite <Icon name="arrow-right" className="w-4 h-4 inline" /></button>
+              <Link href="/blog/entretien-tronconneuse" className="text-ingco-yellow font-semibold hover:underline inline-flex items-center gap-1">Lire la suite <Icon name="arrow-right" className="w-4 h-4 inline" /></Link>
             </div>
           </div>
         </div>
@@ -603,6 +560,24 @@ export default function FormationsPage() {
       <div className="max-w-7xl mx-auto px-4 pb-8">
         <NavigationArrows current="/formations" />
       </div>
+
+      {showModal && (
+        <div
+          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] max-w-md w-[calc(100%-2rem)]"
+          role="status"
+          aria-live="polite"
+        >
+          <div className="bg-ingco-gray border-2 border-ingco-yellow rounded-xl px-5 py-4 shadow-2xl flex items-start gap-3">
+            <Icon name="chat" className="w-5 h-5 text-ingco-yellow shrink-0 mt-0.5" />
+            <div>
+              <p className="text-white text-sm font-medium">{modalMessage}</p>
+              <Link href="/contact" className="text-ingco-yellow text-xs font-semibold hover:underline">
+                Nous contacter pour y accéder
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   )

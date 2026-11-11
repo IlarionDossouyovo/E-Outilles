@@ -48,7 +48,7 @@ export default function VendorDashboard() {
     totalSales: 0,
     totalOrders: 0,
     totalCustomers: 0,
-    averageRating: 0,
+    averageBasket: 0,
     thisMonth: { sales: 0, orders: 0, newCustomers: 0 },
   })
   const [recentOrders, setRecentOrders] = useState<VendorOrder[]>([])
@@ -70,7 +70,9 @@ export default function VendorDashboard() {
           totalSales: valid.reduce((sum: number, o: { total: number }) => sum + (o.total || 0), 0),
           totalOrders: orders.length,
           totalCustomers: new Set(orders.map((o: { userId: string }) => o.userId)).size,
-          averageRating: 4.8,
+          averageBasket: valid.length
+            ? Math.round((valid.reduce((sum: number, o: { total: number }) => sum + (o.total || 0), 0) / valid.length) * 100) / 100
+            : 0,
           thisMonth: {
             sales: monthOrders.reduce((sum: number, o: { total: number }) => sum + (o.total || 0), 0),
             orders: monthOrders.length,
@@ -150,22 +152,22 @@ export default function VendorDashboard() {
           <div className="bg-ingco-gray rounded-xl p-6">
             <div className="text-gray-400 text-sm mb-1">Ventes Totales</div>
             <div className="text-2xl font-bold text-white">{vendorStats.totalSales.toLocaleString()} €</div>
-            <div className="text-green-500 text-sm">+12% ce mois</div>
+            <div className="text-gray-400 text-sm">Depuis le lancement</div>
           </div>
           <div className="bg-ingco-gray rounded-xl p-6">
             <div className="text-gray-400 text-sm mb-1">Commandes</div>
             <div className="text-2xl font-bold text-white">{vendorStats.totalOrders}</div>
-            <div className="text-green-500 text-sm">+8 ce mois</div>
+            <div className="text-green-500 text-sm">+{vendorStats.thisMonth.orders} ce mois</div>
           </div>
           <div className="bg-ingco-gray rounded-xl p-6">
             <div className="text-gray-400 text-sm mb-1">Clients</div>
             <div className="text-2xl font-bold text-white">{vendorStats.totalCustomers}</div>
-            <div className="text-green-500 text-sm">+5 ce mois</div>
+            <div className="text-green-500 text-sm">+{vendorStats.thisMonth.newCustomers} ce mois</div>
           </div>
           <div className="bg-ingco-gray rounded-xl p-6">
-            <div className="text-gray-400 text-sm mb-1">Note Moyenne</div>
-            <div className="text-2xl font-bold text-white flex items-center gap-1"><Icon name="star" className="w-5 h-5 text-ingco-yellow" /> {vendorStats.averageRating}/5</div>
-            <div className="text-gray-400 text-sm">Basé sur 89 avis</div>
+            <div className="text-gray-400 text-sm mb-1">Panier moyen</div>
+            <div className="text-2xl font-bold text-white flex items-center gap-1"><Icon name="cart" className="w-5 h-5 text-ingco-yellow" /> {vendorStats.averageBasket.toLocaleString()} €</div>
+            <div className="text-gray-400 text-sm">Sur commandes valides</div>
           </div>
         </div>
 
