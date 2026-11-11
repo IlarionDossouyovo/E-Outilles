@@ -431,3 +431,26 @@ Persistent notes for working on the E-Outilles codebase.
   is editable at `/admin/settings` and exposed by `GET /api/marketing/channels`;
   the checkout confirmation tells the buyer where to send the payment. Orders
   stay `pending` (offline instruction, no aggregator wired).
+
+## Completing half-built features (session 2026-11-11)
+- Audit method that found the gaps: enumerate `src/app/**/page.tsx` + `route.ts`,
+  grep for `TODO/FIXME/Bientôt disponible/placeholder`, extract every `href`/`fetch`
+  target and diff against the route list, then probe each route at runtime.
+- `/formations` used to render six "Télécharger" buttons that only showed a
+  "Bientôt disponible" toast, and `/downloads/*.pdf` never existed. Now the page
+  imports `TRAINING_RESOURCES` (`src/lib/formations/resources.ts`) and links to
+  `GET /api/formations/[slug]`, which generates a real PDF on demand
+  (`src/lib/formations/pdf.ts`, dependency-free base-14 Helvetica writer, WinAnsi
+  encoding for French accents). Never reintroduce a fabricated `pages:` count on a
+  resource — the PDF is 1-2 pages, so the label was removed.
+- The video cards on `/formations` called `showNotification` but the toast JSX was
+  never rendered (dead code). The toast now renders bottom-centre with a contact
+  link; video playback itself is still "bientôt disponible" until real videos exist.
+- Reseller applications (`POST /api/resellers` from `/revendeurs`) were saved but
+  unreachable. Added admin-only `GET /api/resellers`, `PATCH /api/resellers/[id]`
+  (status: new/contacted/approved/rejected) and `/admin/resellers`, wired into
+  `AdminNav`. Public POST is unchanged.
+- `/vendeur` showed a hard-coded "Note Moyenne 4.8/5 (89 avis)" and invented
+  "+8/+5/+12% ce mois" deltas. Replaced with real values derived from `/api/orders`
+  (average basket, real this-month order/customer counts). Do not put fake ratings
+  or review counts in dashboards — there is no review system in the DB.
