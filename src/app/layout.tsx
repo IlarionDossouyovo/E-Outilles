@@ -45,6 +45,9 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  // Kept static on purpose: reading cookies() here would opt every page out of
+  // static prerendering. The client provider (and the middleware cookie) handle
+  // the visitor's language; <html lang> is corrected on hydration.
   return (
     <html lang="fr">
       <body className="bg-ingco-black text-white antialiased">

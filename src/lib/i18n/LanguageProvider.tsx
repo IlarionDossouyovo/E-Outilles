@@ -52,6 +52,18 @@ function readQueryLocale(): Locale | null {
   }
 }
 
+// The middleware resolves the visitor's country and mirrors the result into a
+// cookie, so the client can pick it up without an extra /api/geo round trip.
+function readCookieLocale(): Locale | null {
+  try {
+    const match = document.cookie.match(/(?:^|;\s*)eo_locale=([^;]+)/)
+    const value = match ? decodeURIComponent(match[1]) : null
+    return isLocale(value) ? value : null
+  } catch {
+    return null
+  }
+}
+
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>(DEFAULT_LOCALE)
   const [ready, setReady] = useState(false)
@@ -84,6 +96,15 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     const stored = readStoredLocale()
     if (stored) {
       applyLocale(stored, false)
+      setReady(true)
+      return
+    }
+
+    // Middleware already resolved the country for this request: use it directly
+    // and skip the /api/geo call entirely.
+    const fromCookie = readCookieLocale()
+    if (fromCookie) {
+      applyLocale(fromCookie, false)
       setReady(true)
       return
     }
