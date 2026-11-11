@@ -6,8 +6,15 @@ import { isGoogleAIConfigured, GOOGLE_AI_MODEL } from '@/lib/ai/provider'
 
 const TTS_MODEL = process.env.GOOGLE_AI_TTS_MODEL || 'gemini-3.8-flash-tts'
 const DEFAULT_VOICE = process.env.GOOGLE_AI_TTS_VOICE || 'Kore'
+// Ordered by quality/availability. The lite model keeps its own quota bucket,
+// so a spent free-tier allowance on one model does not disable voice entirely.
 const TTS_MODEL_CANDIDATES = Array.from(
-  new Set([TTS_MODEL, 'gemini-3.8-flash-tts', 'gemini-2.5-flash-preview-tts'])
+  new Set([
+    TTS_MODEL,
+    'gemini-3.8-flash-tts',
+    'gemini-3.8-flash-lite-tts',
+    'gemini-2.5-flash-preview-tts',
+  ])
 )
 
 // Maps a BCP-47 language tag to the language name Gemini should speak in, so a
@@ -90,6 +97,10 @@ export async function POST(request: NextRequest) {
 
       if (!res.ok) {
         lastError = `${model}: ${res.status}`
+        // 429 = quota exhausted for this model. Trying the next candidate would
+        // add a full round trip (and its timeout) before the client can fall
+        // back to Web Speech, so answer immediately instead.
+        if (res.status === 429) break
         continue
       }
 
