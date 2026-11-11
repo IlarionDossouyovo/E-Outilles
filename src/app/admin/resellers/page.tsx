@@ -28,7 +28,7 @@ const STATUS_LABEL: Record<string, string> = {
 }
 const STATUS_STYLE: Record<string, string> = {
   new: 'bg-ingco-yellow/20 text-ingco-yellow',
-  contacted: 'bg-blue-500/20 text-blue-300',
+  contacted: 'bg-amber-500/20 text-amber-300',
   approved: 'bg-green-500/20 text-green-300',
   rejected: 'bg-red-500/20 text-red-300',
 }

@@ -11,7 +11,7 @@ function ShareButtons({ title, slug }: { title: string; slug: string }) {
   const url = `${base.replace(/\/$/, '')}/blog/${slug}`
   const enc = encodeURIComponent
   const links = [
-    { label: 'Facebook', href: `https://www.facebook.com/sharer/sharer.php?u=${enc(url)}`, cls: 'bg-blue-600 hover:bg-blue-700' },
+    { label: 'Facebook', href: `https://www.facebook.com/sharer/sharer.php?u=${enc(url)}`, cls: 'bg-ingco-gray hover:bg-gray-700' },
     { label: 'WhatsApp', href: `https://wa.me/?text=${enc(title + ' ' + url)}`, cls: 'bg-green-600 hover:bg-green-700' },
     { label: 'X', href: `https://twitter.com/intent/tweet?text=${enc(title)}&url=${enc(url)}`, cls: 'bg-sky-500 hover:bg-sky-600' },
     { label: 'LinkedIn', href: `https://www.linkedin.com/sharing/share-offsite/?url=${enc(url)}`, cls: 'bg-linkedin hover:opacity-90' },
