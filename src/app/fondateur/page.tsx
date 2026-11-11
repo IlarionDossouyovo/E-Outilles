@@ -4,6 +4,7 @@ import { Icon } from '@/components/Icons'
 import Reveal from '@/components/Reveal'
 import PageNavigation from '@/components/PageNavigation'
 import { FOUNDER, founderMailto, founderTel, founderWhatsApp } from '@/lib/founder'
+import { LocalizedText } from '@/components/LocalizedText'
 
 export const metadata: Metadata = {
   title: 'Le Fondateur | E-Outilles par ELECTRON',
@@ -46,26 +47,26 @@ export default function FounderPage() {
                   </span>
                 </div>
                 <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-ingco-gray border border-ingco-yellow/40 text-ingco-yellow text-xs font-semibold px-3 py-1 rounded-full whitespace-nowrap">
-                  {FOUNDER.role}
+                  <LocalizedText text={FOUNDER.role} />
                 </div>
               </div>
             </Reveal>
 
             <Reveal delay={1} className="text-center md:text-left">
               <p className="text-ingco-yellow font-bold tracking-widest text-sm uppercase mb-3">
-                Le fondateur
+                <LocalizedText text="Le fondateur" />
               </p>
               <h1 className="text-4xl md:text-5xl font-bold text-white mb-2">{FOUNDER.name}</h1>
               <p className="text-gray-500 text-sm md:text-base italic mb-3">{FOUNDER.fullName}</p>
               <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto md:mx-0 mb-6">
-                {FOUNDER.tagline}
+                <LocalizedText text={FOUNDER.tagline} />
               </p>
               <div className="flex flex-wrap justify-center md:justify-start gap-4 text-sm text-gray-400 mb-8">
                 <span className="inline-flex items-center gap-2">
-                  <Icon name="grid" className="w-4 h-4 text-ingco-yellow" /> {FOUNDER.company}
+                  <Icon name="grid" className="w-4 h-4 text-ingco-yellow" /> <LocalizedText text={FOUNDER.company} />
                 </span>
                 <span className="inline-flex items-center gap-2">
-                  <Icon name="info" className="w-4 h-4 text-ingco-yellow" /> {FOUNDER.location}
+                  <Icon name="info" className="w-4 h-4 text-ingco-yellow" /> <LocalizedText text={FOUNDER.location} />
                 </span>
               </div>
               <div className="flex flex-wrap justify-center md:justify-start gap-3">
@@ -73,7 +74,7 @@ export default function FounderPage() {
                   href={founderMailto()}
                   className="inline-flex items-center gap-2 bg-ingco-yellow text-black font-semibold px-6 py-3 rounded-xl hover:bg-yellow-400 transition-colors"
                 >
-                  <Icon name="chat" className="w-4 h-4" /> Contacter
+                  <Icon name="chat" className="w-4 h-4" /> <LocalizedText text="Contacter" />
                 </a>
                 <a
                   href={founderWhatsApp()}
@@ -87,7 +88,7 @@ export default function FounderPage() {
                   href="/revendeurs"
                   className="inline-flex items-center gap-2 bg-ingco-gray text-white font-semibold px-6 py-3 rounded-xl border border-white/10 hover:border-ingco-yellow/50 transition-colors"
                 >
-                  Devenir revendeur <Icon name="arrow-right" className="w-4 h-4" />
+                  <LocalizedText text="Devenir revendeur" /> <Icon name="arrow-right" className="w-4 h-4" />
                 </Link>
               </div>
             </Reveal>
@@ -103,7 +104,7 @@ export default function FounderPage() {
               {STATS.map((s) => (
                 <div key={s.label} className="text-center">
                   <div className="text-3xl md:text-4xl font-bold text-ingco-yellow">{s.value}</div>
-                  <div className="text-gray-500 text-sm mt-1">{s.label}</div>
+                  <div className="text-gray-500 text-sm mt-1"><LocalizedText text={s.label} /></div>
                 </div>
               ))}
             </div>
@@ -115,10 +116,10 @@ export default function FounderPage() {
       <section className="pb-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal>
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">Son parcours</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-6"><LocalizedText text="Son parcours" /></h2>
             <div className="space-y-4 text-gray-400 leading-relaxed">
               {FOUNDER.bio.map((paragraph, i) => (
-                <p key={i}>{paragraph}</p>
+                <p key={i}><LocalizedText text={paragraph} /></p>
               ))}
             </div>
           </Reveal>
@@ -129,7 +130,7 @@ export default function FounderPage() {
       <section className="pb-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal>
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-8">Les grandes étapes</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-8"><LocalizedText text="Les grandes étapes" /></h2>
           </Reveal>
           <ol className="relative border-l border-ingco-gray ml-3 space-y-8">
             {FOUNDER.milestones.map((m, i) => (
@@ -138,9 +139,9 @@ export default function FounderPage() {
                 <div className="bg-ingco-dark rounded-2xl p-5">
                   <div className="flex items-center gap-3 mb-1">
                     <span className="text-ingco-yellow font-bold">{m.year}</span>
-                    <span className="text-white font-semibold">{m.title}</span>
+                    <span className="text-white font-semibold"><LocalizedText text={m.title} /></span>
                   </div>
-                  <p className="text-gray-400 text-sm">{m.description}</p>
+                  <p className="text-gray-400 text-sm"><LocalizedText text={m.description} /></p>
                 </div>
               </Reveal>
             ))}
@@ -153,7 +154,7 @@ export default function FounderPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal>
             <h2 className="text-2xl md:text-3xl font-bold text-white text-center mb-10">
-              Ses domaines d&apos;expertise
+              <LocalizedText text="Ses domaines d'expertise" />
             </h2>
           </Reveal>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -163,8 +164,8 @@ export default function FounderPage() {
                   <div className="w-12 h-12 bg-ingco-yellow/15 rounded-xl flex items-center justify-center mb-4">
                     <Icon name={e.icon} className="w-6 h-6 text-ingco-yellow" />
                   </div>
-                  <h3 className="text-white font-bold mb-2">{e.title}</h3>
-                  <p className="text-gray-400 text-sm">{e.description}</p>
+                  <h3 className="text-white font-bold mb-2"><LocalizedText text={e.title} /></h3>
+                  <p className="text-gray-400 text-sm"><LocalizedText text={e.description} /></p>
                 </div>
               </Reveal>
             ))}
@@ -179,10 +180,10 @@ export default function FounderPage() {
             <blockquote className="bg-gradient-to-r from-ingco-yellow/20 to-transparent rounded-3xl p-8 md:p-12 border-l-4 border-ingco-yellow">
               <Icon name="star" className="w-8 h-8 text-ingco-yellow mb-4" />
               <p className="text-xl md:text-2xl text-white font-medium leading-relaxed mb-4">
-                « {FOUNDER.vision} »
+                « <LocalizedText text={FOUNDER.vision} /> »
               </p>
               <footer className="text-gray-400">
-                — {FOUNDER.name}, {FOUNDER.role}
+                — {FOUNDER.name}, <LocalizedText text={FOUNDER.role} />
               </footer>
             </blockquote>
           </Reveal>
@@ -194,15 +195,15 @@ export default function FounderPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal>
             <h2 className="text-2xl md:text-3xl font-bold text-white text-center mb-10">
-              Ses valeurs
+              <LocalizedText text="Ses valeurs" />
             </h2>
           </Reveal>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {FOUNDER.values.map((v, i) => (
               <Reveal key={v.title} delay={Math.min(i + 1, 6)} className="text-center">
                 <Icon name={v.icon} className="w-8 h-8 text-ingco-yellow mx-auto mb-3" />
-                <h3 className="text-white font-semibold">{v.title}</h3>
-                <p className="text-gray-500 text-sm mt-1">{v.description}</p>
+                <h3 className="text-white font-semibold"><LocalizedText text={v.title} /></h3>
+                <p className="text-gray-500 text-sm mt-1"><LocalizedText text={v.description} /></p>
               </Reveal>
             ))}
           </div>
@@ -214,11 +215,10 @@ export default function FounderPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal className="bg-ingco-gray rounded-3xl p-8 md:p-12 text-center">
             <h2 className="text-2xl md:text-3xl font-bold text-white mb-3">
-              Travaillons ensemble
+              <LocalizedText text="Travaillons ensemble" />
             </h2>
             <p className="text-gray-400 max-w-xl mx-auto mb-8">
-              Une question sur un produit, un projet de revente ou un partenariat ? Le fondateur et
-              son équipe vous répondent.
+              <LocalizedText text="Une question sur un produit, un projet de revente ou un partenariat ? Le fondateur et son équipe vous répondent." />
             </p>
             <div className="flex flex-wrap justify-center gap-3">
               <a
@@ -237,7 +237,7 @@ export default function FounderPage() {
                 href="/contact"
                 className="inline-flex items-center gap-2 bg-ingco-dark text-white font-semibold px-6 py-3 rounded-xl border border-white/10 hover:border-ingco-yellow/50 transition-colors"
               >
-                Formulaire de contact <Icon name="arrow-right" className="w-4 h-4" />
+                <LocalizedText text="Formulaire de contact" /> <Icon name="arrow-right" className="w-4 h-4" />
               </Link>
             </div>
           </Reveal>
