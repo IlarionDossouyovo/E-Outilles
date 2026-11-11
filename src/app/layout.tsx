@@ -19,8 +19,11 @@ export const metadata: Metadata = {
   description: SITE_DESCRIPTION,
   manifest: '/manifest.json',
   icons: {
-    icon: '/logo/e-outilles-favicon.svg',
-    apple: '/logo/e-outilles-icon.svg',
+    icon: [
+      { url: '/logo/e-outilles-favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon-32.png', sizes: '32x32', type: 'image/png' },
+    ],
+    apple: '/apple-touch-icon.png',
   },
   openGraph: {
     type: 'website',
