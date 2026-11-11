@@ -371,17 +371,17 @@ export default function RevendeursPage() {
       <section className="py-16 bg-ingco-black">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold text-white mb-4">
-            Vous avez des questions?
+            <LocalizedText text="Vous avez des questions?" />
           </h2>
           <p className="text-gray-400 mb-8">
-            Notre équipe commerciale est disponible pour répondre à toutes vos questions
+            <LocalizedText text="Notre équipe commerciale est disponible pour répondre à toutes vos questions" />
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link href="/formations" className="bg-ingco-yellow text-ingco-black px-8 py-3 rounded-xl font-bold hover:bg-yellow-400 transition-colors">
-              Voir les Formations
+              <LocalizedText text="Voir les Formations" />
             </Link>
             <Link href="/contact" className="bg-ingco-gray text-white px-8 py-3 rounded-xl font-bold hover:bg-gray-700 transition-colors">
-              Nous Contacter
+              <LocalizedText text="Nous Contacter" />
             </Link>
           </div>
         </div>

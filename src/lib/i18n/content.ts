@@ -474,6 +474,11 @@ const TABLE: Record<string, Row> = {
   'Puis-je obtenir des échantillons?': ['Can I get samples?', '¿Puedo obtener muestras?', 'Posso obter amostras?'],
   'Oui, nous proposons des tarifs préférentiels pour les échantillons destined à la démonstration en magasin.': ['Yes, we offer preferential pricing for samples intended for in-store demonstration.', 'Sí, ofrecemos precios preferentes para muestras destinadas a demostración en tienda.', 'Sim, oferecemos preços preferenciais para amostras destinadas a demonstração em loja.'],
   'Quel support technique est disponible?': ['What technical support is available?', '¿Qué soporte técnico hay disponible?', 'Que apoio técnico está disponível?'],
+  'Remplissez le formulaire de contact en sélectionnant "Devenir revendeur". Notre équipe commerciale vous contactera sous 48h.': ['Fill in the contact form and select "Become a reseller". Our sales team will contact you within 48 hours.', 'Rellene el formulario de contacto seleccionando "Ser revendedor". Nuestro equipo comercial le contactará en 48 horas.', 'Preencha o formulário de contacto selecionando "Ser revendedor". A nossa equipa comercial contactá-lo-á em 48 horas.'],
+  'Vous avez des questions?': ['Do you have any questions?', '¿Tiene alguna pregunta?', 'Tem alguma pergunta?'],
+  'Notre équipe commerciale est disponible pour répondre à toutes vos questions': ['Our sales team is available to answer all your questions', 'Nuestro equipo comercial está disponible para responder a todas sus preguntas', 'A nossa equipa comercial está disponível para responder a todas as suas perguntas'],
+  'Voir les Formations': ['View the Training', 'Ver las Formaciones', 'Ver as Formações'],
+  'Nous Contacter': ['Contact Us', 'Contactarnos', 'Contacte-nos'],
   'Vous aurez accès à notre équipe technique dédiée, aux formations produit et à une documentation complète.': ['You will have access to our dedicated technical team, product training and complete documentation.', 'Tendrá acceso a nuestro equipo técnico dedicado, formaciones de producto y documentación completa.', 'Terá acesso à nossa equipa técnica dedicada, formações de produto e documentação completa.'],
 }
 
