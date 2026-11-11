@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Logo from '@/components/Logo'
 import SocialLinks from '@/components/marketing/SocialLinks'
+import { useLanguage } from '@/lib/i18n/LanguageProvider'
 
 // Slugs must match the Category.slug values in the database (see prisma/seed).
 const CATEGORIES = [
@@ -13,24 +14,25 @@ const CATEGORIES = [
 ]
 
 const ENTREPRISE = [
-  { href: '/about', label: 'À propos' },
-  { href: '/fondateur', label: 'Le fondateur' },
-  { href: '/revendeurs', label: 'Devenir revendeur' },
-  { href: '/blog', label: 'Blog' },
-  { href: '/services', label: 'Services' },
-  { href: '/contact', label: 'Contact' },
+  { href: '/about', key: 'footer.about' },
+  { href: '/fondateur', key: 'nav.founder' },
+  { href: '/revendeurs', key: 'footer.becomeReseller' },
+  { href: '/blog', key: 'nav.blog' },
+  { href: '/services', key: 'nav.services' },
+  { href: '/contact', key: 'nav.contact' },
 ]
 
 const AIDE = [
-  { href: '/chat', label: 'Assistant IA' },
-  { href: '/telecharger', label: "Télécharger l'app" },
-  { href: '/formations', label: 'Formations' },
-  { href: '/wishlist', label: 'Mes favoris' },
+  { href: '/chat', key: 'nav.chat' },
+  { href: '/telecharger', key: 'footer.download' },
+  { href: '/formations', key: 'nav.formations' },
+  { href: '/wishlist', key: 'footer.wishlist' },
 ]
 
 const PAIEMENTS = ['Visa', 'Mastercard', 'PayPal', 'MTN', 'Orange', 'Flutterwave']
 
 export default function Footer() {
+  const { t } = useLanguage()
   return (
     <footer className="bg-ingco-dark border-t border-ingco-gray pt-14 pb-8 mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -38,7 +40,7 @@ export default function Footer() {
           <div className="col-span-2 md:col-span-1">
             <Logo variant="horizontal" size={40} />
             <p className="text-gray-500 text-sm mt-4">
-              Votre partenaire dropshipping international pour outillage professionnel INGCO.
+              {t('footer.tagline')}
             </p>
             <Link
               href="/telecharger"
@@ -48,15 +50,15 @@ export default function Footer() {
               <img src="/api/qrcode" alt="QR code application E-Outilles" className="w-16 h-16 rounded-lg bg-white p-1" />
               <span className="text-sm">
                 <span className="block text-white font-semibold group-hover:text-ingco-yellow transition-colors">
-                  Télécharger l&apos;app
+                  {t('footer.download')}
                 </span>
-                <span className="block text-gray-500 text-xs">Scannez le QR code</span>
+                <span className="block text-gray-500 text-xs">{t('footer.scanQr')}</span>
               </span>
             </Link>
           </div>
 
           <div>
-            <h4 className="text-white font-semibold mb-4">Catégories</h4>
+            <h4 className="text-white font-semibold mb-4">{t('footer.categories')}</h4>
             <ul className="space-y-2 text-gray-500 text-sm">
               {CATEGORIES.map((c) => (
                 <li key={c.href}>
@@ -67,47 +69,47 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="text-white font-semibold mb-4">Entreprise</h4>
+            <h4 className="text-white font-semibold mb-4">{t('footer.company')}</h4>
             <ul className="space-y-2 text-gray-500 text-sm">
               {ENTREPRISE.map((c) => (
                 <li key={c.href}>
-                  <Link href={c.href} className="hover:text-ingco-yellow transition-colors">{c.label}</Link>
+                  <Link href={c.href} className="hover:text-ingco-yellow transition-colors">{t(c.key)}</Link>
                 </li>
               ))}
             </ul>
           </div>
 
           <div>
-            <h4 className="text-white font-semibold mb-4">Aide</h4>
+            <h4 className="text-white font-semibold mb-4">{t('footer.help')}</h4>
             <ul className="space-y-2 text-gray-500 text-sm">
               {AIDE.map((c) => (
                 <li key={c.href}>
-                  <Link href={c.href} className="hover:text-ingco-yellow transition-colors">{c.label}</Link>
+                  <Link href={c.href} className="hover:text-ingco-yellow transition-colors">{t(c.key)}</Link>
                 </li>
               ))}
             </ul>
-            <h4 className="text-white font-semibold mt-6 mb-3">Paiements</h4>
+            <h4 className="text-white font-semibold mt-6 mb-3">{t('footer.payments')}</h4>
             <div className="flex flex-wrap gap-2">
               {PAIEMENTS.map((p) => (
                 <span key={p} className="bg-ingco-gray px-3 py-1 rounded text-xs text-gray-400">{p}</span>
               ))}
             </div>
-            <h4 className="text-white font-semibold mt-6 mb-3">Suivez-nous</h4>
+            <h4 className="text-white font-semibold mt-6 mb-3">{t('footer.follow')}</h4>
             <SocialLinks />
           </div>
         </div>
 
         <div className="border-t border-ingco-gray pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-gray-500 text-sm text-center md:text-left">
-            © 2026 E-Outilles. Tous droits réservés. Projet dropshipping INGCO.
+            © 2026 E-Outilles. {t('footer.rights')} Projet dropshipping INGCO.
           </p>
           <div className="flex flex-wrap justify-center gap-4 text-sm">
-            <Link href="/profile" className="text-gray-500 hover:text-ingco-yellow transition-colors">Espace client</Link>
-            <Link href="/vendeur" className="text-gray-500 hover:text-ingco-yellow transition-colors">Espace vendeur</Link>
-            <Link href="/legal" className="text-gray-500 hover:text-ingco-yellow transition-colors">Mentions légales</Link>
-            <Link href="/privacy" className="text-gray-500 hover:text-ingco-yellow transition-colors">RGPD</Link>
-            <Link href="/terms" className="text-gray-500 hover:text-ingco-yellow transition-colors">CGV</Link>
-            <Link href="/admin" className="text-gray-500 hover:text-ingco-yellow transition-colors">Administration</Link>
+            <Link href="/profile" className="text-gray-500 hover:text-ingco-yellow transition-colors">{t('footer.clientArea')}</Link>
+            <Link href="/vendeur" className="text-gray-500 hover:text-ingco-yellow transition-colors">{t('footer.vendorArea')}</Link>
+            <Link href="/legal" className="text-gray-500 hover:text-ingco-yellow transition-colors">{t('footer.legal')}</Link>
+            <Link href="/privacy" className="text-gray-500 hover:text-ingco-yellow transition-colors">{t('footer.gdpr')}</Link>
+            <Link href="/terms" className="text-gray-500 hover:text-ingco-yellow transition-colors">{t('footer.terms')}</Link>
+            <Link href="/admin" className="text-gray-500 hover:text-ingco-yellow transition-colors">{t('footer.admin')}</Link>
           </div>
         </div>
       </div>

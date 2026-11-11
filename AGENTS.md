@@ -260,3 +260,50 @@ Persistent notes for working on the E-Outilles codebase.
     consumed by `SocialLinks` in the footer (renders nothing if none are set).
   - `buildCampaignUrl()` powers the UTM link generator in the admin dashboard.
 
+
+## i18n auto-translation, premium AI agents & voice (session 2026-11-11)
+- i18n: `src/lib/i18n/` — `config.ts` (locales fr/en/es/pt + geo→locale map),
+  `dictionaries.ts` (130 keys × 4 locales, GENERATED from a single table; edit
+  the generator, not the file, or keep the four blocks in sync manually),
+  `LanguageProvider.tsx` (`useLanguage`/`t`). `GET /api/geo` reads
+  `x-vercel-ip-country`/`cf-ipcountry`/`accept-language`. Resolution order:
+  `?lang=` > localStorage > geo country > browser language > fr.
+- The provider mirrors the locale to `<html lang>`; `useVoice` reads
+  `document.documentElement.lang` so TTS/dictation follow the active language
+  without importing the i18n module.
+- Premium logo: `src/components/Logo.tsx` renders the gear+lightning "E" mark
+  and gradient wordmark inline (variants: horizontal/icon/stacked). Public logo
+  SVGs stay in `public/logos/`.
+- AI agents: `src/lib/ai/agents.ts` (12 agents, each with `department`, `tone`,
+  `capabilities`, `reasoning`, `systemPrompt`). `routeToAgent`, `toneInstruction`,
+  `reasoningInstruction` live there too. `src/lib/ai/reasoning.ts` does a 2-pass
+  generation: pass 1 analyses intent/sentiment/missing info and queries the
+  catalog for real products; pass 2 writes the final answer (analysis is never
+  shown). Reasoning is skipped for vision turns.
+- Voice: `src/lib/ai/useVoice.ts` — queue-based TTS (server Gemini `/api/tts`
+  → Web Speech fallback), one-shot `listen` + continuous `startHandsFree`.
+  `/api/tts` accepts `{ text, voice, lang }` and pins the spoken language.
+- Email: `src/lib/email/sendEmail.ts` now tries Resend → **Brevo**
+  (`BREVO_API_KEY`, `https://api.brevo.com/v3/smtp/email`) → SMTP/log. Health
+  reports `email.brevo.configured`.
+- Offline demo chat (`/api/chat`) is topic-aware and department-aware so replies
+  stay coherent without an AI key.
+- Deployment guide for Neon/Vercel/Render/Brevo: `DEPLOIEMENT.md`.
+
+## Cloud config: Neon / Brevo / Render / Google AI (session 2026-11-11)
+- `prisma/schema.prisma` datasource is now **postgresql** (was sqlite). The old
+  SQLite migrations were replaced by a single Postgres baseline
+  `prisma/migrations/0_init` and `migration_lock.toml` says `postgresql`.
+  Local SQLite dev is no longer the default: `DATABASE_URL` points at Neon.
+  Recreate a local DB with `npx prisma migrate deploy && npx prisma db seed`.
+- Secrets live ONLY in the gitignored `.env` (never commit it). Keys currently
+  configured there: `DATABASE_URL` (Neon pooler), `GOOGLE_AI_API_KEY` (AQ.* key),
+  `RESEND_API_KEY`, `BREVO_API_KEY` + SMTP creds, `RENDER_API_KEY`,
+  `NEON_AUTH_URL`/`NEON_AUTH_JWKS_URL`, `AWS_ENDPOINT_URL_S3` + Neon S3 keys.
+- Email transport order is now **Brevo first, Resend second** (the Brevo sender
+  `electronbusiness07@gmail.com` is verified; Resend rejects gmail senders until
+  a domain is verified). `FROM_EMAIL` must be a Brevo-verified sender.
+- Google AI works with the `AQ.` key: `gemini-3.1-flash-lite` for chat and
+  `gemini-3.8-flash-tts` for voice both return 200.
+- Deployment target: Vercel or Render. `DEPLOIEMENT.md` lists every dashboard
+  URL and which variable each service provides.

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { NavigationArrows, Icon } from '@/components/Icons'
 import Reveal from '@/components/Reveal'
 import { categoryImage } from '@/lib/catalog'
+import { useLanguage } from '@/lib/i18n/LanguageProvider'
 
 // Données des catégories par métier - 15 catégories INGCO
 const categories = [
@@ -140,6 +141,7 @@ const featuredProducts = [
 ]
 
 export default function Home() {
+  const { t } = useLanguage()
   return (
     <div className="bg-ingco-black">
       {/* HERO */}
@@ -176,21 +178,20 @@ export default function Home() {
             <div className="text-center lg:text-left">
               <div className="animate-fade-in-up inline-flex items-center gap-2 bg-ingco-gray/50 backdrop-blur rounded-full px-4 py-2 mb-6 border border-white/5">
                 <span className="w-2 h-2 bg-ingco-yellow rounded-full animate-pulse" />
-                <span className="text-gray-300 text-sm">Distribution officielle INGCO · Afrique de l&apos;Ouest</span>
+                <span className="text-gray-300 text-sm">{t('home.badge')}</span>
               </div>
 
               <h1 className="animate-fade-in-up stagger-1 text-4xl md:text-6xl xl:text-7xl font-extrabold leading-[1.05] mb-6">
-                <span className="text-white">L&apos;outillage </span>
+                <span className="text-white">{t('home.title1')}</span>
                 <span className="bg-gradient-to-r from-ingco-yellow via-yellow-300 to-ingco-yellow bg-clip-text text-transparent text-shadow-glow">
-                  professionnel
+                  {t('home.title2')}
                 </span>
                 <br />
-                <span className="text-white">accessible à tous</span>
+                <span className="text-white">{t('home.title3')}</span>
               </h1>
 
               <p className="animate-fade-in-up stagger-2 text-gray-400 text-lg md:text-xl max-w-2xl mx-auto lg:mx-0 mb-8">
-                Votre partenaire dropshipping international pour outillage professionnel.
-                Qualité INGCO, livraison mondiale, prix fabricant.
+                {t('home.subtitle')}
               </p>
 
               <div className="animate-fade-in-up stagger-3 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
@@ -198,23 +199,23 @@ export default function Home() {
                   href="/search"
                   className="group inline-flex items-center justify-center gap-2 bg-ingco-yellow text-ingco-black px-8 py-4 rounded-xl font-bold text-lg hover:bg-yellow-400 transition-all hover:scale-[1.03] hover:shadow-xl hover:shadow-ingco-yellow/30"
                 >
-                  Découvrir le catalogue
+                  {t('home.ctaCatalog')}
                   <Icon name="arrow-right" className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                 </Link>
                 <Link
                   href="/revendeurs"
                   className="inline-flex items-center justify-center gap-2 border border-ingco-gray text-white px-8 py-4 rounded-xl font-bold text-lg hover:border-ingco-yellow hover:text-ingco-yellow hover:bg-ingco-yellow/5 transition-all"
                 >
-                  Devenir revendeur
+                  {t('home.ctaReseller')}
                 </Link>
               </div>
 
               <div className="animate-fade-in-up stagger-4 grid grid-cols-2 md:grid-cols-4 gap-6 mt-14">
                 {[
-                  { value: '70+', label: 'Produits' },
-                  { value: '50+', label: 'Pays livrés' },
-                  { value: '24h', label: 'Livraison' },
-                  { value: '100%', label: 'Satisfait ou remboursé' },
+                  { value: '70+', label: t('home.stat.products') },
+                  { value: '50+', label: t('home.stat.countries') },
+                  { value: '24h', label: t('home.stat.delivery') },
+                  { value: '100%', label: t('home.stat.guarantee') },
                 ].map((stat) => (
                   <div key={stat.label} className="text-center lg:text-left">
                     <div className="text-3xl md:text-4xl font-extrabold text-ingco-yellow">{stat.value}</div>
@@ -240,8 +241,8 @@ export default function Home() {
                     <Icon name="truck" className="w-5 h-5 text-ingco-yellow" />
                   </div>
                   <div>
-                    <div className="text-white font-semibold text-sm">Livraison mondiale</div>
-                    <div className="text-gray-500 text-xs">Sans stock, sans frontière</div>
+                    <div className="text-white font-semibold text-sm">{t('home.float.shipping.title')}</div>
+                    <div className="text-gray-500 text-xs">{t('home.float.shipping.text')}</div>
                   </div>
                 </div>
               </div>
@@ -251,8 +252,8 @@ export default function Home() {
                     <Icon name="check" className="w-5 h-5 text-green-400" />
                   </div>
                   <div>
-                    <div className="text-white font-semibold text-sm">Qualité certifiée</div>
-                    <div className="text-gray-500 text-xs">Garantie fabricant</div>
+                    <div className="text-white font-semibold text-sm">{t('home.float.quality.title')}</div>
+                    <div className="text-gray-500 text-xs">{t('home.float.quality.text')}</div>
                   </div>
                 </div>
               </div>
@@ -265,10 +266,10 @@ export default function Home() {
       <section className="border-y border-ingco-gray bg-ingco-dark/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {([
-            { icon: 'truck', title: 'Dropshipping mondial', text: 'Livraison directe, sans stock' },
-            { icon: 'chat', title: 'IA Marketing', text: 'Campagnes automatisées' },
-            { icon: 'card', title: 'Paiements locaux', text: 'MTN, Orange, Flutterwave' },
-            { icon: 'shield', title: 'Paiement sécurisé', text: 'Stripe & 3D Secure' },
+            { icon: 'truck', title: t('home.trust.shipping.title'), text: t('home.trust.shipping.text') },
+            { icon: 'chat', title: t('home.trust.ai.title'), text: t('home.trust.ai.text') },
+            { icon: 'card', title: t('home.trust.payments.title'), text: t('home.trust.payments.text') },
+            { icon: 'shield', title: t('home.trust.secure.title'), text: t('home.trust.secure.text') },
           ] as const).map((f, i) => (
             <Reveal key={f.title} delay={i * 80} className="flex items-center gap-3">
               <div className="w-11 h-11 shrink-0 rounded-xl bg-ingco-yellow/15 flex items-center justify-center">
@@ -287,13 +288,13 @@ export default function Home() {
       <section id="categories" className="py-20 md:py-28 bg-ingco-dark scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal className="text-center mb-14">
-            <span className="text-ingco-yellow text-sm font-semibold uppercase tracking-widest">Catalogue</span>
+            <span className="text-ingco-yellow text-sm font-semibold uppercase tracking-widest">{t('home.categories.eyebrow')}</span>
             <h2 className="text-3xl md:text-5xl font-extrabold mt-3 mb-4">
-              <span className="text-white">Parcourir par </span>
-              <span className="text-ingco-yellow">métier</span>
+              <span className="text-white">{t('home.categories.title1')}</span>
+              <span className="text-ingco-yellow">{t('home.categories.title2')}</span>
             </h2>
             <p className="text-gray-400 max-w-2xl mx-auto">
-              Des solutions spécialisées pour chaque secteur d&apos;activité
+              {t('home.categories.subtitle')}
             </p>
           </Reveal>
 
@@ -319,7 +320,7 @@ export default function Home() {
                   <p className="text-gray-500 text-sm mb-4">{category.description}</p>
 
                   <div className="border-t border-ingco-dark pt-4">
-                    <p className="text-xs text-gray-500 mb-2">Produits clés</p>
+                    <p className="text-xs text-gray-500 mb-2">{t('home.categories.keyProducts')}</p>
                     <div className="flex flex-wrap gap-2">
                       {category.products.slice(0, 3).map((product, idx) => (
                         <span key={idx} className="text-xs bg-ingco-dark px-2 py-1 rounded text-gray-400">
@@ -344,13 +345,13 @@ export default function Home() {
       <section id="products" className="py-20 md:py-28 scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal className="text-center mb-14">
-            <span className="text-ingco-yellow text-sm font-semibold uppercase tracking-widest">Best-sellers</span>
+            <span className="text-ingco-yellow text-sm font-semibold uppercase tracking-widest">{t('home.featured.eyebrow')}</span>
             <h2 className="text-3xl md:text-5xl font-extrabold mt-3 mb-4">
-              <span className="text-white">Produits </span>
-              <span className="text-ingco-yellow">vedettes</span>
+              <span className="text-white">{t('home.featured.title1')}</span>
+              <span className="text-ingco-yellow">{t('home.featured.title2')}</span>
             </h2>
             <p className="text-gray-400 max-w-2xl mx-auto">
-              Les meilleures ventes de notre catalogue professionnel
+              {t('home.featured.subtitle')}
             </p>
           </Reveal>
 
@@ -378,7 +379,7 @@ export default function Home() {
                         href={`/categories/${product.category}`}
                         className="inline-flex items-center gap-1.5 bg-ingco-yellow text-ingco-black px-4 py-2 rounded-lg font-semibold text-sm hover:bg-yellow-400 transition-colors"
                       >
-                        Voir <Icon name="arrow-right" className="w-4 h-4" />
+                        {t('home.featured.view')} <Icon name="arrow-right" className="w-4 h-4" />
                       </Link>
                     </div>
                   </div>
@@ -389,7 +390,7 @@ export default function Home() {
 
           <Reveal className="text-center mt-12">
             <Link href="/search" className="inline-flex items-center gap-2 border border-ingco-yellow text-ingco-yellow px-8 py-3 rounded-xl font-semibold hover:bg-ingco-yellow hover:text-ingco-black transition-all">
-              Voir tous les produits <Icon name="arrow-right" className="w-4 h-4" />
+              {t('home.featured.viewAll')} <Icon name="arrow-right" className="w-4 h-4" />
             </Link>
           </Reveal>
         </div>
@@ -402,25 +403,24 @@ export default function Home() {
           <Reveal className="bg-ingco-gray rounded-3xl p-8 md:p-16 text-center border border-white/5 relative overflow-hidden">
             <div className="absolute -top-24 -right-24 w-64 h-64 bg-ingco-yellow/10 rounded-full blur-3xl" />
             <h2 className="text-3xl md:text-5xl font-extrabold mb-4 relative">
-              <span className="text-white">Prêt à démarrer votre </span>
-              <span className="text-ingco-yellow">activité dropshipping ?</span>
+              <span className="text-white">{t('home.cta.title1')}</span>
+              <span className="text-ingco-yellow">{t('home.cta.title2')}</span>
             </h2>
             <p className="text-gray-400 max-w-2xl mx-auto mb-8 relative">
-              Rejoignez notre réseau de revendeurs et accédez à des marges avantageuses,
-              un catalogue de 70+ produits et un support client dédié.
+              {t('home.cta.subtitle')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center relative">
               <Link
                 href="/auth/register"
                 className="inline-flex items-center justify-center gap-2 bg-ingco-yellow text-ingco-black px-8 py-4 rounded-xl font-bold text-lg hover:bg-yellow-400 transition-all hover:scale-[1.03]"
               >
-                Créer mon compte revendeur <Icon name="arrow-right" className="w-5 h-5" />
+                {t('home.cta.register')} <Icon name="arrow-right" className="w-5 h-5" />
               </Link>
               <Link
                 href="/auth/login"
                 className="inline-flex items-center justify-center border border-ingco-gray text-white px-8 py-4 rounded-xl font-bold text-lg hover:border-ingco-yellow hover:text-ingco-yellow transition-all"
               >
-                Me connecter
+                {t('home.cta.login')}
               </Link>
             </div>
           </Reveal>
@@ -431,27 +431,27 @@ export default function Home() {
       <section className="py-20 md:py-28 bg-ingco-dark border-t border-ingco-gray">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal className="text-center mb-14">
-            <span className="text-ingco-yellow text-sm font-semibold uppercase tracking-widest">Navigation</span>
+            <span className="text-ingco-yellow text-sm font-semibold uppercase tracking-widest">{t('home.explore.eyebrow')}</span>
             <h2 className="text-3xl md:text-5xl font-extrabold mt-3 mb-4">
-              <span className="text-white">Tout le site en </span>
-              <span className="text-ingco-yellow">un coup d&apos;œil</span>
+              <span className="text-white">{t('home.explore.title1')}</span>
+              <span className="text-ingco-yellow">{t('home.explore.title2')}</span>
             </h2>
             <p className="text-gray-400 max-w-2xl mx-auto">
-              Accédez directement à chaque espace : catalogue, formations, réseau revendeur et services.
+              {t('home.explore.subtitle')}
             </p>
           </Reveal>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {([
-              { href: '/categories', icon: 'grid', title: 'Catégories', text: 'Parcourir le catalogue par métier' },
-              { href: '/search', icon: 'search', title: 'Produits', text: 'Rechercher et comparer les outils' },
-              { href: '/chat', icon: 'chat', title: 'Assistant IA', text: 'Conseils et choix d\u2019outillage' },
-              { href: '/formations', icon: 'star', title: 'Formations', text: 'Montez en compétences' },
-              { href: '/revendeurs', icon: 'truck', title: 'Revendeurs', text: 'Rejoindre le réseau INGCO' },
-              { href: '/services', icon: 'wrench', title: 'Services', text: 'SAV, location et conseil' },
-              { href: '/blog', icon: 'blog', title: 'Blog', text: 'Guides et actualités outillage' },
-              { href: '/fondateur', icon: 'user', title: 'Le fondateur', text: 'Notre histoire et notre vision' },
-              { href: '/vendeur', icon: 'tools', title: 'Espace vendeur', text: 'Tableau de bord revendeur' },
+              { href: '/categories', icon: 'grid', title: t('home.explore.categories'), text: t('home.explore.categories.text') },
+              { href: '/search', icon: 'search', title: t('home.explore.products'), text: t('home.explore.products.text') },
+              { href: '/chat', icon: 'chat', title: t('home.explore.chat'), text: t('home.explore.chat.text') },
+              { href: '/formations', icon: 'star', title: t('home.explore.formations'), text: t('home.explore.formations.text') },
+              { href: '/revendeurs', icon: 'truck', title: t('home.explore.resellers'), text: t('home.explore.resellers.text') },
+              { href: '/services', icon: 'wrench', title: t('home.explore.services'), text: t('home.explore.services.text') },
+              { href: '/blog', icon: 'blog', title: t('home.explore.blog'), text: t('home.explore.blog.text') },
+              { href: '/fondateur', icon: 'user', title: t('home.explore.founder'), text: t('home.explore.founder.text') },
+              { href: '/vendeur', icon: 'tools', title: t('home.explore.vendor'), text: t('home.explore.vendor.text') },
             ] as const).map((s, i) => (
               <Reveal key={s.href} delay={(i % 3) * 70}>
                 <Link

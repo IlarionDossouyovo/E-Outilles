@@ -4,6 +4,7 @@ import ChatWidget from '@/lib/ai/ChatWidget'
 import ServiceWorkerRegister from '@/components/ServiceWorkerRegister'
 import SiteChrome from '@/components/SiteChrome'
 import MarketingTracker from '@/components/marketing/MarketingTracker'
+import { LanguageProvider } from '@/lib/i18n/LanguageProvider'
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://e-outilles.com'
@@ -44,10 +45,12 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body className="bg-ingco-black text-white antialiased">
-        <SiteChrome>{children}</SiteChrome>
-        <ChatWidget />
-        <ServiceWorkerRegister />
-        <MarketingTracker />
+        <LanguageProvider>
+          <SiteChrome>{children}</SiteChrome>
+          <ChatWidget />
+          <ServiceWorkerRegister />
+          <MarketingTracker />
+        </LanguageProvider>
       </body>
     </html>
   )

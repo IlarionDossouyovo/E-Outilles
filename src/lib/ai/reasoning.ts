@@ -1,13 +1,17 @@
-// Reasoning layer: two-pass generation for reasoning-capable agents.
-// Pass 1 analyses the request and, when useful, selects real catalog products.
-// Pass 2 produces the final answer grounded in that analysis.
+// Reasoning layer: a premium two-pass generation used by reasoning-capable
+// agents. Pass 1 analyses the request like a human expert would (intent,
+// missing information, plan, tone) and, when useful, selects real catalog
+// products. Pass 2 produces the final answer grounded in that analysis.
+//
+// The analysis stays internal: the user only ever sees the final answer.
 
 import { prisma } from '@/lib/db/prisma'
 import { generateText, extractJson, type ChatTurn, type InlineMedia } from './provider'
-import { AGENTS, reasoningInstruction, type AgentId } from './agents'
+import { AGENTS, reasoningInstruction, toneInstruction, type AgentId } from './agents'
 
 export interface ReasoningAnalysis {
   intent: string
+  sentiment: string
   missingInfo: string[]
   plan: string[]
   productQuery: string | null
@@ -16,6 +20,7 @@ export interface ReasoningAnalysis {
 
 interface AnalysisPayload {
   intent?: string
+  sentiment?: string
   missingInfo?: string[]
   plan?: string[]
   productQuery?: string | null
@@ -53,21 +58,23 @@ async function findProducts(query: string, limit = 3) {
   return products
 }
 
-// Pass 1: analyse intent and pick relevant catalog products.
+// Pass 1: analyse intent, sentiment and plan, and pick relevant catalog products.
 export async function analyze(
   message: string,
   history: ChatTurn[],
   agentId: AgentId
 ): Promise<ReasoningAnalysis> {
   const agent = AGENTS[agentId]
-  const analysisPrompt = `Tu es un moteur d'analyse pour l'agent "${agent.name}".
-Analyse le dernier message utilisateur et renvoie UNIQUEMENT un JSON valide:
+  const analysisPrompt = `Tu es le raisonnement interne de l'agent "${agent.name}" (${agent.department}).
+Analyse le dernier message utilisateur comme le ferait un expert humain, puis renvoie UNIQUEMENT un JSON valide:
 {
   "intent": "intention principale en une phrase",
+  "sentiment": "état émotionnel probable du client en un mot (neutre, pressé, inquiet, satisfait, frustré...)",
   "missingInfo": ["informations manquantes, max 3"],
   "plan": ["étapes de réponse, max 4"],
   "productQuery": "requête courte pour chercher dans le catalogue, ou null"
-}`
+}
+${toneInstruction(agentId)}`
 
   const result = await generateText(
     {
@@ -88,16 +95,22 @@ Analyse le dernier message utilisateur et renvoie UNIQUEMENT un JSON valide:
 
   const analysis: ReasoningAnalysis = {
     intent: parsed?.intent || message.slice(0, 120),
+    sentiment: parsed?.sentiment || 'neutre',
     missingInfo: Array.isArray(parsed?.missingInfo) ? parsed!.missingInfo!.slice(0, 3) : [],
     plan: Array.isArray(parsed?.plan) ? parsed!.plan!.slice(0, 4) : [],
     productQuery: parsed?.productQuery ?? null,
     products: [],
   }
 
-  // Tool use: only query the DB when the agent reasons and the model asked for it.
+  // Tool use: only query the DB when the model asked for it, or the agent
+  // reasons about products.
   const query = analysis.productQuery || (agent.reasoning ? searchTerms(message) : '')
   if (query) {
-    analysis.products = await findProducts(query)
+    try {
+      analysis.products = await findProducts(query)
+    } catch (err) {
+      console.error('Catalog lookup failed:', err)
+    }
   }
 
   return analysis
@@ -127,7 +140,7 @@ export async function generateAgentReply(input: GenerateAgentReplyInput): Promis
   const useReasoning = input.useReasoning ?? agent.reasoning
 
   let reasoning: ReasoningAnalysis | null = null
-  let catalogContext = ''
+  let context = `\n\n${toneInstruction(agentId)}`
 
   if (useReasoning && !media?.length) {
     // Skip the analysis pass when an image is attached: a vision turn is
@@ -135,12 +148,16 @@ export async function generateAgentReply(input: GenerateAgentReplyInput): Promis
     try {
       reasoning = await analyze(message, history, agentId)
       if (reasoning.products.length > 0) {
-        catalogContext = `\nProduits réels du catalogue pertinents (utilise ces prix exacts, ne les invente pas):\n${reasoning.products
+        context += `\nProduits réels du catalogue pertinents (utilise ces prix exacts, ne les invente pas):\n${reasoning.products
           .map((p) => `- ${p.name} — ${p.price.toFixed(2)}€`)
           .join('\n')}`
       }
-      if (reasoning.intent) {
-        catalogContext += `\nIntention détectée: ${reasoning.intent}.`
+      if (reasoning.intent) context += `\nIntention détectée: ${reasoning.intent}.`
+      if (reasoning.sentiment && reasoning.sentiment !== 'neutre') {
+        context += `\nÉtat émotionnel du client: ${reasoning.sentiment} — adapte ton ton en conséquence.`
+      }
+      if (reasoning.missingInfo.length > 0) {
+        context += `\nSi c'est nécessaire pour bien répondre, demande: ${reasoning.missingInfo.join(' ; ')}.`
       }
     } catch (err) {
       console.error('Reasoning pass failed, continuing without it:', err)
@@ -148,8 +165,8 @@ export async function generateAgentReply(input: GenerateAgentReplyInput): Promis
   }
 
   const systemPrompt = useReasoning
-    ? `${agent.systemPrompt}\n\n${reasoningInstruction()}${catalogContext}`
-    : `${agent.systemPrompt}${catalogContext}`
+    ? `${agent.systemPrompt}\n\n${reasoningInstruction()}${context}`
+    : `${agent.systemPrompt}${context}`
 
   const result = await generateText(
     {

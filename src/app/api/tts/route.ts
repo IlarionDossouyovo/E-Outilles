@@ -10,20 +10,44 @@ const TTS_MODEL_CANDIDATES = Array.from(
   new Set([TTS_MODEL, 'gemini-3.8-flash-tts', 'gemini-2.5-flash-preview-tts'])
 )
 
+// Maps a BCP-47 language tag to the language name Gemini should speak in, so a
+// visitor browsing in English hears an English voice instead of a French one.
+const LANGUAGE_NAMES: Record<string, string> = {
+  fr: 'français',
+  en: 'anglais',
+  es: 'espagnol',
+  pt: 'portugais',
+}
+
+function languageName(lang?: string): string | null {
+  if (!lang) return null
+  const base = lang.toLowerCase().split('-')[0]
+  return LANGUAGE_NAMES[base] ?? null
+}
+
 // The preview TTS models reject a bare transcript with 400 INVALID_ARGUMENT
 // ("model tried to generate text") unless the prompt explicitly asks for audio.
-function ttsPrompt(text: string, model: string): string {
-  return model.includes('preview-tts') ? `Lis ce texte à voix haute :\n${text}` : text
+// We also pin the spoken language when it is not French (the default market).
+function ttsPrompt(text: string, model: string, lang?: string): string {
+  const name = languageName(lang)
+  const instruction =
+    model.includes('preview-tts')
+      ? `Lis ce texte à voix haute${name && name !== 'français' ? ` en ${name}` : ''} :\n`
+      : name && name !== 'français'
+        ? `Prononce la réponse suivante en ${name}, avec un ton naturel et professionnel :\n`
+        : ''
+  return `${instruction}${text}`
 }
 
 interface TtsPayload {
   text?: string
   voice?: string
+  lang?: string
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const { text, voice }: TtsPayload = await request.json()
+    const { text, voice, lang }: TtsPayload = await request.json()
     const clean = (text || '').toString().trim()
 
     if (!clean) {
@@ -45,7 +69,7 @@ export async function POST(request: NextRequest) {
     let lastError = ''
     for (const model of TTS_MODEL_CANDIDATES) {
       const payload = JSON.stringify({
-        contents: [{ parts: [{ text: ttsPrompt(clean, model) }] }],
+        contents: [{ parts: [{ text: ttsPrompt(clean, model, lang) }] }],
         generationConfig: {
           responseModalities: ['AUDIO'],
           speechConfig: {

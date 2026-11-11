@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useVoice } from './useVoice'
 import { useAttachments } from './useAttachments'
 import { Icon } from '@/components/Icons'
+import { useLanguage } from '@/lib/i18n/LanguageProvider'
 
 interface Message {
   id: string
@@ -14,18 +15,19 @@ interface Message {
   fileName?: string
 }
 
+// Quick prompts are localised: labelKey is the short chip label, msgKey is the
+// full question actually sent to the assistant.
 const QUICK_PROMPTS = [
-  { label: 'Livraison', text: 'Quels sont vos délais de livraison ?' },
-  { label: 'Produits', text: 'Quels outils recommandez-vous pour percer du béton ?' },
-  { label: 'Paiement', text: 'Quels moyens de paiement acceptez-vous ?' },
-  { label: 'Garantie', text: 'Quelle est la garantie sur vos outils ?' },
+  { labelKey: 'chat.qp.delivery', msgKey: 'chat.qp.delivery.msg' },
+  { labelKey: 'chat.qp.products', msgKey: 'chat.qp.products.msg' },
+  { labelKey: 'chat.qp.payment', msgKey: 'chat.qp.payment.msg' },
+  { labelKey: 'chat.qp.warranty', msgKey: 'chat.qp.warranty.msg' },
 ]
 
 export default function ChatWidget() {
+  const { t } = useLanguage()
   const [isOpen, setIsOpen] = useState(false)
-  const [messages, setMessages] = useState<Message[]>([
-    { id: 'init', role: 'assistant', content: "Bonjour ! Je suis l'assistant E-Outilles. Comment puis-je vous aider ?" },
-  ])
+  const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [voiceReplies, setVoiceReplies] = useState(false)
@@ -34,6 +36,16 @@ export default function ChatWidget() {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { speak, stop, speaking, listen, stopListening, listening, supported } = useVoice()
   const { attachments, addFiles, remove, clear, error: attachError } = useAttachments()
+
+  // Seed (or refresh) the greeting so it follows the active locale, but never
+  // overwrite a real conversation.
+  useEffect(() => {
+    setMessages((prev) =>
+      prev.length === 0 || (prev.length === 1 && prev[0].id === 'init')
+        ? [{ id: 'init', role: 'assistant', content: t('chat.greeting') }]
+        : prev
+    )
+  }, [t])
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -100,10 +112,10 @@ export default function ChatWidget() {
     <>
       <button
         onClick={() => setIsOpen((v) => !v)}
-        aria-label="Ouvrir le chat IA"
+        aria-label={t('chat.open')}
         className="fixed bottom-5 right-5 z-[99999] w-16 h-16 rounded-full bg-ingco-yellow text-ingco-black text-3xl flex items-center justify-center border-[3px] border-white shadow-xl hover:scale-110 active:scale-95 transition-transform animate-float"
       >
-        {isOpen ? 'Fermer' : 'Chat'}
+        {isOpen ? t('common.close') : 'Chat'}
       </button>
 
       <div
@@ -115,9 +127,9 @@ export default function ChatWidget() {
           <div>
             <h3 className="text-white font-bold flex items-center gap-2 text-sm">
               <span className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse" />
-              Assistant E-Outilles
+              {t('chat.title')}
             </h3>
-            <p className="text-gray-400 text-[11px]">Voix & analyse photo · IA</p>
+            <p className="text-gray-400 text-[11px]">{t('chat.subtitle')}</p>
           </div>
           <div className="flex items-center gap-1">
             <Link href="/chat" title="Ouvrir en plein écran" className="text-gray-400 hover:text-ingco-yellow p-1">
@@ -126,7 +138,7 @@ export default function ChatWidget() {
             {supported.speak && (
               <button
                 onClick={toggleVoiceReplies}
-                title={voiceReplies ? 'Désactiver la voix' : 'Activer la voix'}
+                title={voiceReplies ? t('chat.voiceOff') : t('chat.voiceOn')}
                 className={`p-1 rounded-lg transition-colors ${
                   voiceReplies ? 'bg-ingco-yellow text-ingco-black' : 'bg-ingco-dark text-gray-400 hover:text-ingco-yellow'
                 }`}
@@ -153,7 +165,7 @@ export default function ChatWidget() {
                 )}
                 {msg.content}
                 {msg.role === 'assistant' && supported.speak && (
-                  <button onClick={() => speak(msg.content)} title="Écouter" className="mt-2 block text-ingco-yellow/80 hover:text-ingco-yellow">
+                  <button onClick={() => speak(msg.content)} title={t('common.listen')} className="mt-2 block text-ingco-yellow/80 hover:text-ingco-yellow">
                     <Icon name="volume" className="w-4 h-4" />
                   </button>
                 )}
@@ -196,11 +208,11 @@ export default function ChatWidget() {
         <div className="px-3 py-2 flex gap-2 flex-wrap border-t border-ingco-dark">
           {QUICK_PROMPTS.map((q) => (
             <button
-              key={q.label}
-              onClick={() => send(q.text)}
+              key={q.labelKey}
+              onClick={() => send(t(q.msgKey))}
               className="text-[11px] bg-ingco-gray px-3 py-1 rounded-full text-gray-300 hover:text-ingco-yellow hover:bg-ingco-gray/80 transition-colors"
             >
-              {q.label}
+              {t(q.labelKey)}
             </button>
           ))}
         </div>
@@ -209,7 +221,7 @@ export default function ChatWidget() {
           <input ref={fileInputRef} type="file" accept="image/*,application/pdf" multiple className="hidden" onChange={onPickFiles} />
           <button
             onClick={() => fileInputRef.current?.click()}
-            title="Joindre une photo ou un document"
+            title={t('chat.attach')}
             className="p-2 rounded-xl bg-ingco-gray text-gray-300 hover:text-ingco-yellow transition-colors"
           >
             <Icon name="paperclip" className="w-5 h-5" />
@@ -219,13 +231,13 @@ export default function ChatWidget() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && send(input)}
-            placeholder="Tapez votre message…"
+            placeholder={t('chat.placeholder')}
             className="flex-1 bg-ingco-gray border border-ingco-dark rounded-xl px-4 py-2 text-sm text-white placeholder-gray-500 focus:border-ingco-yellow focus:outline-none"
           />
           {supported.listen && (
             <button
               onClick={startListening}
-              title="Dicter un message"
+              title={t('chat.dictate')}
               className={`p-2 rounded-xl transition-colors ${
                 listening ? 'bg-red-500 text-white animate-pulse' : 'bg-ingco-gray text-gray-300 hover:text-ingco-yellow'
               }`}
@@ -237,7 +249,7 @@ export default function ChatWidget() {
             onClick={() => send(input)}
             disabled={loading}
             className="bg-ingco-yellow text-ingco-black p-2 rounded-xl hover:bg-yellow-400 transition-colors disabled:opacity-50"
-            aria-label="Envoyer"
+            aria-label={t('common.send')}
           >
             <Icon name="send" className="w-5 h-5" />
           </button>

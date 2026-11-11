@@ -17,23 +17,74 @@ import {
 const MAX_MEDIA_BYTES = 6 * 1024 * 1024
 const ALLOWED_MEDIA = /^(image\/(png|jpe?g|webp|gif|heic|heif)|application\/pdf)$/i
 
-// Deterministic offline responder so the assistant always answers.
-const demoResponses: Record<string, string> = {
-  perceuse: 'Nous avons plusieurs perceuses professionnelles. La Perceuse visseuse INGCO 20V à 89.99€ est notre bestseller : puissante, endurante et parfaite pour les travaux courants.',
-  marteau: 'Notre marteau perforateur SDS Max 18V à 289.99€ est idéal pour percer le béton, avec un moteur brushless performant.',
-  prix: 'Nos prix sont compétitifs et incluent la livraison au Bénin. Pour les gros achats, nous proposons des remises : contactez-nous pour un devis.',
-  livraison: 'Nous livrons dans tout le Bénin : gratuite à Cotonou, 48h dans les grandes villes, avec suivi par WhatsApp.',
-  garantie: 'Tous nos outils sont garantis 1 an minimum. Nous assurons le SAV et les pièces de rechange.',
-  contact: 'Contactez-nous par WhatsApp au +229 01 977 003 47 ou par email à contact@e-outilles.com.',
+// Deterministic offline responder so the assistant always answers with a
+// coherent, human-sounding reply, even when no AI provider is configured.
+// Answers are topic-aware (delivery, payment, warranty...) and department-aware
+// (each agent has its own opening), and end with a helpful next step.
+const TOPICS: { match: RegExp; answer: string }[] = [
+  {
+    match: /(livrais|délai|delai|expédi|expedi|colis|quand.*recev|48h)/i,
+    answer:
+      "Côté livraison, c'est simple : elle est gratuite à Cotonou, comptez environ 48h dans les grandes villes du Bénin, et un peu plus en zone rurale. Vous recevez un suivi par WhatsApp à chaque étape.",
+  },
+  {
+    match: /(paiement|payer|mobile money|mtn|moov|orange|stripe|carte|espèces|especes)/i,
+    answer:
+      "Vous pouvez payer par carte bancaire (Stripe, sécurisé), par Mobile Money (MTN, Moov, Orange) ou en espèces à la livraison. Dites-moi votre préférence et je vous indique la marche à suivre.",
+  },
+  {
+    match: /(garantie|sav|panne|réparation|reparation|pièce|piece)/i,
+    answer:
+      "Tous nos outils sont garantis 1 an minimum, pièces de rechange incluses. En cas de panne, on prend en charge le SAV : envoyez-nous une photo du problème et je vous guide pour la suite.",
+  },
+  {
+    match: /(retour|rembours|échange|echange|satisfait)/i,
+    answer:
+      "Vous disposez de 30 jours pour changer d'avis : retour ou échange possible si le produit est dans son état d'origine. Je peux lancer la démarche avec vous si vous me donnez le numéro de commande.",
+  },
+  {
+    match: /(perceuse|perforateur|percer|béton|beton|marteau)/i,
+    answer:
+      "Pour percer du béton, je recommande la Perceuse visseuse INGCO 20V (89,99€) pour les travaux courants, ou le Marteau perforateur SDS Max 1500W (249,99€) si vous percez souvent du béton armé. Le second est plus puissant et plus durable sur chantier.",
+  },
+  {
+    match: /(meuleuse|disque|ponceuse|scie|tronçonneuse|tronconneuse)/i,
+    answer:
+      "Nous avons des meuleuses, scies et tronçonneuses professionnelles INGCO. Pour bien vous orienter : quel matériau travaillez-vous (métal, bois, béton) et à quelle fréquence ? Je vous proposerai le modèle le plus adapté.",
+  },
+  {
+    match: /(prix|tarif|devis|remise|promo|budget|coût|cout|cher)/i,
+    answer:
+      "Nos prix sont déjà alignés sur le prix fabricant, et des remises s'appliquent sur les commandes en gros. Indiquez-moi les quantités souhaitées et je vous prépare une estimation.",
+  },
+  {
+    match: /(bonjour|salut|bonsoir|hello|hi|ça va|ca va)/i,
+    answer:
+      "Bonjour et bienvenue chez E-Outilles ! Dites-moi ce que vous recherchez (un outil précis, un budget, un type de chantier) et je vous oriente tout de suite.",
+  },
+]
+
+const DEPARTMENT_INTRO: Record<AgentId, string> = {
+  assistant: "Je suis votre assistant E-Outilles.",
+  sales: "Je vous accompagne pour choisir et commander au meilleur prix.",
+  support: "Je suis là pour résoudre votre souci rapidement.",
+  tracking: "Je vous aide à suivre votre commande.",
+  catalog: "Je connais la gamme INGCO par cœur.",
+  sourcing: "Côté approvisionnement, voici ce que je peux vous dire.",
+  project: "Pour organiser ça proprement, voici comment je vois les choses.",
+  analytics: "Regardons les chiffres ensemble.",
+  marketing: "Voici comment je formulerais ça pour convaincre.",
+  hr: "Côté RH, voici mon conseil.",
+  finance: "Sur le plan financier, voici l'essentiel.",
+  legal: "Sur le plan juridique, voici les points à retenir.",
 }
 
 function getDemoResponse(message: string, agentId: AgentId): string {
-  const lower = message.toLowerCase()
-  for (const [keyword, response] of Object.entries(demoResponses)) {
-    if (lower.includes(keyword)) return response
-  }
+  const topic = TOPICS.find((t) => t.match.test(message))
+  if (topic) return topic.answer
+
   const agent = AGENTS[agentId]
-  return `Bonjour ! Je suis ${agent.name} d'E-Outilles. ${agent.description}. Posez-moi votre question sur nos produits, prix, livraison ou garantie.`
+  return `${DEPARTMENT_INTRO[agentId]} Vous êtes en relation avec ${agent.name} (${agent.department}). Posez-moi votre question sur nos produits, la livraison, le paiement ou la garantie — je vous réponds concrètement.`
 }
 
 // Parses and validates an optional media array (images / PDF documents).

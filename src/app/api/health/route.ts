@@ -17,8 +17,10 @@ export async function GET() {
   }
 
   const resendKey = process.env.RESEND_API_KEY
+  const brevoKey = process.env.BREVO_API_KEY
   const agentCode = process.env.AGENT_ACCESS_CODE
   const resendConfigured = Boolean(resendKey?.startsWith('re_') && resendKey !== 're_placeholder_key')
+  const brevoConfigured = Boolean(brevoKey?.startsWith('xkeysib-'))
 
   return NextResponse.json({
     status: database === 'ok' ? 'ok' : 'degraded',
@@ -31,6 +33,7 @@ export async function GET() {
     },
     email: {
       resend: { configured: resendConfigured },
+      brevo: { configured: brevoConfigured },
       from: process.env.FROM_EMAIL || 'E-Outilles <noreply@eoutilles.com>',
     },
     stripe: {

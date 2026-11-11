@@ -10,11 +10,55 @@ interface EmailOptions {
   text?: string
 }
 
+// Brevo (ex-SendGrid FR) transactional API. Returns true on a 2xx response.
+async function sendWithBrevo(
+  apiKey: string,
+  fromEmail: string,
+  { to, subject, html, text }: EmailOptions
+): Promise<boolean> {
+  // Brevo wants { name, email }; accept "Name <email>" or a bare address.
+  const match = fromEmail.match(/^\s*(.*?)\s*<([^>]+)>\s*$/)
+  const sender = match
+    ? { name: match[1] || 'E-Outilles', email: match[2] }
+    : { name: 'E-Outilles', email: fromEmail }
+
+  try {
+    const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: { 'api-key': apiKey, 'content-type': 'application/json', accept: 'application/json' },
+      body: JSON.stringify({
+        sender,
+        to: [{ email: to }],
+        subject,
+        htmlContent: html,
+        textContent: text || html.replace(/<[^>]*>/g, ''),
+      }),
+    })
+
+    if (!res.ok) {
+      console.error('❌ Brevo error:', res.status, await res.text().catch(() => ''))
+      return false
+    }
+    console.log('✅ Email sent via Brevo')
+    return true
+  } catch (err) {
+    console.error('❌ Failed to send email via Brevo:', err)
+    return false
+  }
+}
+
 export async function sendEmail({ to, subject, html, text }: EmailOptions): Promise<boolean> {
   const resendKey = process.env.RESEND_API_KEY
+  const brevoKey = process.env.BREVO_API_KEY
   const fromEmail = process.env.FROM_EMAIL || 'E-Outilles <noreply@eoutilles.com>'
   
-  // Use Resend if API key is configured
+  // Brevo first: its sender is verified on this account, so it never fails on
+  // an unverified domain the way Resend does with a public mailbox.
+  if (brevoKey && brevoKey.startsWith('xkeysib-')) {
+    if (await sendWithBrevo(brevoKey, fromEmail, { to, subject, html, text })) return true
+  }
+
+  // Resend fallback (requires a verified sending domain).
   if (resendKey && resendKey.startsWith('re_') && resendKey !== 're_placeholder_key') {
     try {
       const resend = new Resend(resendKey)
@@ -29,14 +73,12 @@ export async function sendEmail({ to, subject, html, text }: EmailOptions): Prom
 
       if (error) {
         console.error('❌ Resend error:', error)
-        return false
+      } else {
+        console.log('✅ Email sent via Resend:', data?.id)
+        return true
       }
-
-      console.log('✅ Email sent via Resend:', data?.id)
-      return true
     } catch (err) {
       console.error('❌ Failed to send email via Resend:', err)
-      // Fall through to SMTP
     }
   }
 

@@ -6,6 +6,7 @@ import Logo from '@/components/Logo'
 import { Icon, type IconName } from '@/components/Icons'
 import { useVoice } from '@/lib/ai/useVoice'
 import { useAttachments } from '@/lib/ai/useAttachments'
+import { useLanguage } from '@/lib/i18n/LanguageProvider'
 
 interface Message {
   role: 'user' | 'assistant'
@@ -40,9 +41,8 @@ const FALLBACK_AGENTS: AgentOption[] = [
 ]
 
 export default function ChatPage() {
-  const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', content: "Bonjour ! Je suis l'assistant E-Outille By ELECTRON. Comment puis-je vous aider ?", agentId: 'assistant' },
-  ])
+  const { t } = useLanguage()
+  const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const [agentId, setAgentId] = useState('assistant')
@@ -60,6 +60,13 @@ export default function ChatPage() {
 
   const activeAgent = agents.find((a) => a.id === agentId) || agents[0]
   const canUseVision = activeAgent?.capabilities.includes('vision')
+
+  // Seed the greeting once, using the active locale.
+  useEffect(() => {
+    setMessages((prev) =>
+      prev.length === 0 ? [{ role: 'assistant', content: t('chat.greeting'), agentId: 'assistant' }] : prev
+    )
+  }, [t])
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -132,11 +139,9 @@ export default function ChatPage() {
 
   const newConversation = useCallback(() => {
     setConversationId(null)
-    setMessages([
-      { role: 'assistant', content: "Bonjour ! Je suis l'assistant E-Outille By ELECTRON. Comment puis-je vous aider ?", agentId: 'assistant' },
-    ])
+    setMessages([{ role: 'assistant', content: t('chat.greeting'), agentId: 'assistant' }])
     setHistoryOpen(false)
-  }, [])
+  }, [t])
 
   const sendMessage = useCallback(
     async (text?: string) => {
@@ -226,7 +231,7 @@ export default function ChatPage() {
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between py-6 border-b border-ingco-gray mb-6">
           <Link href="/" className="flex items-center gap-2 text-gray-400 hover:text-ingco-yellow transition-colors">
-            <Icon name="arrow-left" className="w-4 h-4" /> Retour
+            <Icon name="arrow-left" className="w-4 h-4" /> {t('chat.back')}
           </Link>
           <div className="flex items-center gap-2">
             <Logo variant="horizontal" size={36} />
@@ -238,7 +243,7 @@ export default function ChatPage() {
               className="flex items-center gap-1 text-sm px-3 py-2 rounded-lg bg-ingco-gray text-gray-300 hover:text-ingco-yellow transition-colors"
             >
               <Icon name="blog" className="w-4 h-4" />
-              Historique{conversations.length > 0 ? ` (${conversations.length})` : ''}
+              {t('chat.history')}{conversations.length > 0 ? ` (${conversations.length})` : ''}
             </button>
             <button
               onClick={newConversation}
@@ -246,18 +251,18 @@ export default function ChatPage() {
               className="flex items-center gap-1 text-sm px-3 py-2 rounded-lg bg-ingco-gray text-gray-300 hover:text-ingco-yellow transition-colors"
             >
               <Icon name="chat" className="w-4 h-4" />
-              Nouveau
+              {t('chat.new')}
             </button>
             {supported.speak && (
               <button
                 onClick={toggleVoice}
-                title={voiceReplies ? 'Désactiver la voix' : 'Activer la voix'}
+                title={voiceReplies ? t('chat.voiceOff') : t('chat.voiceOn')}
                 className={`flex items-center gap-1 text-sm px-3 py-2 rounded-lg transition-colors ${
                   voiceReplies ? 'bg-ingco-yellow text-ingco-black font-bold' : 'bg-ingco-gray text-gray-300 hover:text-ingco-yellow'
                 }`}
               >
                 <Icon name={voiceReplies ? 'volume' : 'volume-off'} className="w-4 h-4" />
-                {speaking ? 'Parle…' : voiceReplies ? 'Voix ON' : 'Voix OFF'}
+                {speaking ? t('chat.speaking') : voiceReplies ? t('chat.voiceOnShort') : t('chat.voiceOffShort')}
               </button>
             )}
           </div>
@@ -266,7 +271,7 @@ export default function ChatPage() {
         {historyOpen && (
           <div className="mb-4 bg-ingco-gray/60 border border-ingco-dark rounded-2xl p-3 max-h-60 overflow-y-auto">
             {conversations.length === 0 ? (
-              <p className="text-gray-400 text-sm text-center py-3">Aucune conversation enregistrée pour l&apos;instant.</p>
+              <p className="text-gray-400 text-sm text-center py-3">{t('chat.emptyHistory')}</p>
             ) : (
               <ul className="space-y-1">
                 {conversations.map((c) => (
@@ -291,7 +296,7 @@ export default function ChatPage() {
 
         {isFounder && (
           <div className="mb-4 text-xs text-purple-300 bg-purple-500/10 border border-purple-500/30 rounded-xl px-4 py-2">
-            Accès fondateur : les {agents.length} agents internes de l&apos;entreprise sont disponibles.
+            {t('chat.founderNotice').replace('{n}', String(agents.length))}
           </div>
         )}
 
@@ -332,7 +337,7 @@ export default function ChatPage() {
                 {msg.role === 'assistant' && supported.speak && (
                   <button
                     onClick={() => speak(msg.content)}
-                    title="Écouter"
+                    title={t('common.listen')}
                     className="mt-2 text-ingco-yellow/80 hover:text-ingco-yellow"
                   >
                     <Icon name="volume" className="w-4 h-4" />
@@ -376,7 +381,7 @@ export default function ChatPage() {
                 <button
                   onClick={() => remove(a.id)}
                   className="absolute top-1 right-1 text-gray-400 hover:text-red-400"
-                  aria-label="Retirer"
+                  aria-label={t('common.close')}
                 >
                   <Icon name="x" className="w-4 h-4" />
                 </button>
@@ -406,14 +411,14 @@ export default function ChatPage() {
             <>
               <button
                 onClick={() => fileInputRef.current?.click()}
-                title="Joindre une photo ou un document"
+                title={t('chat.attach')}
                 className="p-3 rounded-xl bg-ingco-gray text-gray-300 hover:text-ingco-yellow transition-colors"
               >
                 <Icon name="paperclip" className="w-5 h-5" />
               </button>
               <button
                 onClick={() => cameraInputRef.current?.click()}
-                title="Prendre une photo"
+                title={t('chat.attach')}
                 className="p-3 rounded-xl bg-ingco-gray text-gray-300 hover:text-ingco-yellow transition-colors"
               >
                 <Icon name="camera" className="w-5 h-5" />
@@ -425,7 +430,7 @@ export default function ChatPage() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyPress}
-            placeholder={canUseVision ? 'Posez votre question ou envoyez une photo…' : 'Posez votre question…'}
+            placeholder={canUseVision ? t('chat.placeholderVision') : t('chat.placeholderPlain')}
             className="flex-1 bg-ingco-gray border border-ingco-dark rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-ingco-yellow"
             disabled={loading}
           />
@@ -433,7 +438,7 @@ export default function ChatPage() {
             <>
               <button
                 onClick={startListening}
-                title="Dicter (une phrase)"
+                title={t('chat.dictateOne')}
                 className={`p-3 rounded-xl transition-colors ${
                   listening && !handsFree ? 'bg-red-500 text-white animate-pulse' : 'bg-ingco-gray text-gray-300 hover:text-ingco-yellow'
                 }`}
@@ -442,7 +447,7 @@ export default function ChatPage() {
               </button>
               <button
                 onClick={toggleHandsFree}
-                title="Mode mains libres (conversation continue)"
+                title={t('chat.handsFree')}
                 className={`p-3 rounded-xl transition-colors ${
                   handsFree ? 'bg-green-500 text-white animate-pulse' : 'bg-ingco-gray text-gray-300 hover:text-ingco-yellow'
                 }`}
@@ -455,20 +460,20 @@ export default function ChatPage() {
             onClick={() => sendMessage()}
             disabled={loading || (!input.trim() && attachments.length === 0)}
             className="bg-ingco-yellow hover:bg-yellow-400 disabled:bg-ingco-gray disabled:text-gray-500 text-ingco-black font-bold px-6 py-3 rounded-xl transition-all"
-            aria-label="Envoyer"
+            aria-label={t('common.send')}
           >
             <Icon name="send" className="w-5 h-5" />
           </button>
         </div>
 
         <div className="mt-4 flex flex-wrap gap-2 justify-center">
-          {['Comment commander ?', 'Délais de livraison ?', 'Garantie ?', 'Contact'].map((q) => (
+          {(['chat.qp.howto', 'chat.qp.delays', 'chat.qp.warranty', 'chat.qp.contact'] as const).map((key) => (
             <button
-              key={q}
-              onClick={() => sendMessage(q)}
+              key={key}
+              onClick={() => sendMessage(t(key))}
               className="bg-ingco-gray hover:bg-gray-700 px-3 py-1 rounded-full text-sm transition-colors"
             >
-              {q}
+              {t(key)}
             </button>
           ))}
         </div>

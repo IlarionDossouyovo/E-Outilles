@@ -4,8 +4,10 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { getSessionAction, logoutAction } from '@/app/actions'
 import type { SessionUser } from '@/lib/security/session'
+import { useLanguage } from '@/lib/i18n/LanguageProvider'
 
 export default function AuthButton() {
+  const { t } = useLanguage()
   const [user, setUser] = useState<SessionUser | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -27,7 +29,7 @@ export default function AuthButton() {
         href="/auth/login" 
         className="px-4 py-2 text-sm hover:text-ingco-yellow transition-colors"
       >
-        Connexion
+        {t('common.login')}
       </Link>
     )
   }
@@ -40,7 +42,7 @@ export default function AuthButton() {
             href="/admin"
             className="text-sm font-semibold text-ingco-yellow hover:text-yellow-400 transition-colors"
           >
-            Administration
+            {t('nav.admin')}
           </Link>
         )}
         {user.isFounder && (
@@ -48,17 +50,17 @@ export default function AuthButton() {
             href="/agent"
             className="text-sm font-semibold text-ingco-yellow hover:text-yellow-400 transition-colors"
           >
-            Agents IA
+            {t('nav.agents')}
           </Link>
         )}
         <Link href="/profile" className="text-sm hover:text-ingco-yellow transition-colors">
-          Mon compte
+          {t('common.account')}
         </Link>
         <button
           onClick={handleLogout}
           className="text-sm text-red-500 hover:text-red-400 transition-colors"
         >
-          Deconnexion
+          {t('common.logout')}
         </button>
       </div>
     )
@@ -69,7 +71,7 @@ export default function AuthButton() {
       href="/auth/login" 
       className="px-4 py-2 bg-ingco-yellow text-ingco-black rounded-xl font-medium hover:bg-yellow-400 transition-colors"
     >
-      Connexion
+      {t('common.login')}
     </Link>
   )
 }

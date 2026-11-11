@@ -5,30 +5,33 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import Logo from '@/components/Logo'
 import AuthButton from '@/components/AuthButton'
+import LanguageSwitcher from '@/components/LanguageSwitcher'
 import { Icon } from '@/components/Icons'
 import { getSessionAction } from '@/app/actions'
+import { useLanguage } from '@/lib/i18n/LanguageProvider'
 import { useCartStore } from '@/lib/store/cart'
 import { useWishlistStore } from '@/lib/store/wishlist'
 
 interface NavItem {
   href: string
-  label: string
+  key: string
 }
 
 const NAV: NavItem[] = [
-  { href: '/categories', label: 'Catégories' },
-  { href: '/search', label: 'Produits' },
-  { href: '/chat', label: 'Assistant IA' },
-  { href: '/formations', label: 'Formations' },
-  { href: '/revendeurs', label: 'Revendeurs' },
-  { href: '/blog', label: 'Blog' },
-  { href: '/services', label: 'Services' },
-  { href: '/contact', label: 'Contact' },
-  { href: '/fondateur', label: 'Le fondateur' },
+  { href: '/categories', key: 'nav.categories' },
+  { href: '/search', key: 'nav.products' },
+  { href: '/chat', key: 'nav.chat' },
+  { href: '/formations', key: 'nav.formations' },
+  { href: '/revendeurs', key: 'nav.resellers' },
+  { href: '/blog', key: 'nav.blog' },
+  { href: '/services', key: 'nav.services' },
+  { href: '/contact', key: 'nav.contact' },
+  { href: '/fondateur', key: 'nav.founder' },
 ]
 
 export default function Header() {
   const pathname = usePathname()
+  const { t } = useLanguage()
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [mounted, setMounted] = useState(false)
@@ -90,16 +93,16 @@ export default function Header() {
                     : 'text-gray-300 hover:text-ingco-yellow'
                 }`}
               >
-                {item.label}
+                {t(item.key)}
               </Link>
             ))}
           </nav>
-
           {/* Actions */}
           <div className="flex items-center gap-2 sm:gap-3">
+            <LanguageSwitcher />
             <Link
               href="/search"
-              aria-label="Rechercher"
+              aria-label={t('common.search')}
               className="p-2 rounded-lg text-gray-300 hover:text-ingco-yellow hover:bg-ingco-gray/60 transition-colors"
             >
               <Icon name="search" className="w-5 h-5" />
@@ -107,7 +110,7 @@ export default function Header() {
 
             <Link
               href="/wishlist"
-              aria-label="Favoris"
+              aria-label={t('common.wishlist')}
               className="relative p-2 rounded-lg text-gray-300 hover:text-ingco-yellow hover:bg-ingco-gray/60 transition-colors"
             >
               <Icon name="heart" className="w-5 h-5" />
@@ -120,7 +123,7 @@ export default function Header() {
 
             <Link
               href="/cart"
-              aria-label="Panier"
+              aria-label={t('common.cart')}
               className="relative p-2 rounded-lg text-gray-300 hover:text-ingco-yellow hover:bg-ingco-gray/60 transition-colors"
             >
               <Icon name="cart" className="w-5 h-5" />
@@ -139,13 +142,13 @@ export default function Header() {
               href="/cart"
               className="hidden md:inline-flex items-center gap-2 bg-ingco-yellow text-ingco-black px-4 py-2 rounded-xl font-semibold text-sm hover:bg-yellow-400 hover:shadow-lg hover:shadow-ingco-yellow/30 transition-all"
             >
-              Commander
+              {t('common.order')}
             </Link>
 
             <button
               type="button"
               onClick={() => setOpen((v) => !v)}
-              aria-label={open ? 'Fermer le menu' : 'Ouvrir le menu'}
+              aria-label={open ? t('common.menu.close') : t('common.menu.open')}
               aria-expanded={open}
               className="lg:hidden p-2 rounded-lg text-gray-200 hover:bg-ingco-gray/60 transition-colors"
             >
@@ -177,7 +180,7 @@ export default function Header() {
                   : 'text-gray-300 hover:bg-ingco-gray/60 hover:text-ingco-yellow'
               }`}
             >
-              {item.label}
+              {t(item.key)}
             </Link>
           ))}
           <Link
@@ -188,7 +191,7 @@ export default function Header() {
                 : 'text-gray-300 hover:bg-ingco-gray/60 hover:text-ingco-yellow'
             }`}
           >
-            Espace vendeur
+            {t('nav.vendor')}
           </Link>
           {isAdmin && (
             <Link
@@ -199,7 +202,7 @@ export default function Header() {
                   : 'text-gray-300 hover:bg-ingco-gray/60 hover:text-ingco-yellow'
               }`}
             >
-              Administration
+              {t('nav.admin')}
             </Link>
           )}
           {isFounder && (
@@ -211,7 +214,7 @@ export default function Header() {
                   : 'text-gray-300 hover:bg-ingco-gray/60 hover:text-ingco-yellow'
               }`}
             >
-              Agents IA
+              {t('nav.agents')}
             </Link>
           )}
           <div className="pt-3 mt-2 border-t border-ingco-gray flex items-center gap-3">
@@ -222,7 +225,7 @@ export default function Header() {
               href="/cart"
               className="inline-flex items-center gap-2 bg-ingco-yellow text-ingco-black px-5 py-2.5 rounded-xl font-semibold"
             >
-              <Icon name="cart" className="w-5 h-5" /> Panier
+              <Icon name="cart" className="w-5 h-5" /> {t('common.cart')}
             </Link>
           </div>
         </div>
