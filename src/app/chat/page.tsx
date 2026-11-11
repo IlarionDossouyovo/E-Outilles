@@ -240,7 +240,7 @@ export default function ChatPage() {
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between py-6 border-b border-ingco-gray mb-6">
           <Link href="/" className="flex items-center gap-2 text-gray-400 hover:text-ingco-yellow transition-colors">
-            <Icon name="arrow-left" className="w-4 h-4" /> {t('chat.back')}
+            <Icon name="arrow-left" className="w-4 h-4" /> <span className="hidden sm:inline">{t('chat.back')}</span>
           </Link>
           <div className="flex items-center gap-2">
             <Logo variant="horizontal" size={36} />
@@ -248,19 +248,19 @@ export default function ChatPage() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setHistoryOpen((v) => !v)}
-              title="Historique des conversations"
+              title={t('chat.history')}
               className="flex items-center gap-1 text-sm px-3 py-2 rounded-lg bg-ingco-gray text-gray-300 hover:text-ingco-yellow transition-colors"
             >
               <Icon name="blog" className="w-4 h-4" />
-              {t('chat.history')}{conversations.length > 0 ? ` (${conversations.length})` : ''}
+              <span className="hidden sm:inline">{t('chat.history')}{conversations.length > 0 ? ` (${conversations.length})` : ''}</span>
             </button>
             <button
               onClick={newConversation}
-              title="Nouvelle conversation"
+              title={t('chat.new')}
               className="flex items-center gap-1 text-sm px-3 py-2 rounded-lg bg-ingco-gray text-gray-300 hover:text-ingco-yellow transition-colors"
             >
               <Icon name="chat" className="w-4 h-4" />
-              {t('chat.new')}
+              <span className="hidden sm:inline">{t('chat.new')}</span>
             </button>
             {supported.speak && (
               <button
@@ -271,7 +271,7 @@ export default function ChatPage() {
                 }`}
               >
                 <Icon name={voiceReplies ? 'volume' : 'volume-off'} className="w-4 h-4" />
-                {speaking ? t('chat.speaking') : voiceReplies ? t('chat.voiceOnShort') : t('chat.voiceOffShort')}
+                <span className="hidden sm:inline">{speaking ? t('chat.speaking') : voiceReplies ? t('chat.voiceOnShort') : t('chat.voiceOffShort')}</span>
               </button>
             )}
           </div>
