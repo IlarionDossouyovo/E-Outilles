@@ -25,10 +25,10 @@ interface Order {
 }
 
 const statusColors: Record<string, string> = {
-  pending: 'bg-yellow-500',
-  processing: 'bg-blue-500',
+  pending: 'bg-gray-500',
+  processing: 'bg-amber-500',
   paid: 'bg-green-500',
-  shipped: 'bg-purple-500',
+  shipped: 'bg-yellow-500',
   delivered: 'bg-green-500',
   cancelled: 'bg-red-500'
 }

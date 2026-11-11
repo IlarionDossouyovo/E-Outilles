@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { generateAgentReply } from '@/lib/ai/reasoning'
-import { AGENTS, PUBLIC_AGENT_IDS, isAgentId, routeToAgent, agentSupportsVision, type AgentId } from '@/lib/ai/agents'
+import { AGENTS, PUBLIC_AGENT_IDS, isAgentId, routeToAgent, type AgentId } from '@/lib/ai/agents'
+import { effectiveAgent } from '@/lib/ai/agent-config'
 import type { ChatTurn, InlineMedia } from '@/lib/ai/provider'
 import { getSession } from '@/lib/security/auth'
 import { isFounderEmail } from '@/lib/security/founder'
@@ -151,6 +152,7 @@ interface MediaErrors {
   empty: string
   tooBig: string
   messageRequired: string
+  agentOffline: string
 }
 
 const MEDIA_ERRORS: Record<string, MediaErrors> = {
@@ -160,6 +162,7 @@ const MEDIA_ERRORS: Record<string, MediaErrors> = {
     empty: 'Pièce jointe vide.',
     tooBig: 'Pièce jointe trop volumineuse (max 6 Mo).',
     messageRequired: 'Message requis',
+    agentOffline: "Cet agent est momentanément hors ligne. Choisissez-en un autre ou réessayez plus tard.",
   },
   en: {
     tooMany: 'Maximum 3 attachments per message.',
@@ -167,6 +170,7 @@ const MEDIA_ERRORS: Record<string, MediaErrors> = {
     empty: 'Empty attachment.',
     tooBig: 'Attachment too large (max 6 MB).',
     messageRequired: 'Message required',
+    agentOffline: 'This agent is temporarily offline. Pick another one or try again later.',
   },
   es: {
     tooMany: 'Máximo 3 archivos adjuntos por mensaje.',
@@ -174,6 +178,7 @@ const MEDIA_ERRORS: Record<string, MediaErrors> = {
     empty: 'Archivo adjunto vacío.',
     tooBig: 'Archivo adjunto demasiado grande (máx. 6 MB).',
     messageRequired: 'Mensaje obligatorio',
+    agentOffline: 'Este agente está momentáneamente desconectado. Elige otro o vuelve a intentarlo más tarde.',
   },
   pt: {
     tooMany: 'Máximo de 3 anexos por mensagem.',
@@ -181,6 +186,7 @@ const MEDIA_ERRORS: Record<string, MediaErrors> = {
     empty: 'Anexo vazio.',
     tooBig: 'Anexo demasiado grande (máx. 6 MB).',
     messageRequired: 'Mensagem obrigatória',
+    agentOffline: 'Este agente está temporariamente offline. Escolha outro ou tente novamente mais tarde.',
   },
 }
 
@@ -237,9 +243,20 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    if (media.length > 0 && !agentSupportsVision(agentId)) {
+    // Founder overrides (instructions, tone, status, capabilities) merged on
+    // top of the registry definition.
+    const agent = await effectiveAgent(agentId)
+
+    if (agent.status === 'offline') {
       return NextResponse.json(
-        { error: `${AGENTS[agentId].name} ne prend pas en charge l'analyse d'image.` },
+        { error: (MEDIA_ERRORS[locale] || MEDIA_ERRORS.fr).agentOffline },
+        { status: 409 }
+      )
+    }
+
+    if (media.length > 0 && !agent.capabilities.includes('vision')) {
+      return NextResponse.json(
+        { error: `${agent.name} ne prend pas en charge l'analyse d'image.` },
         { status: 400 }
       )
     }
@@ -297,6 +314,7 @@ export async function POST(request: NextRequest) {
       media,
       fallback: getDemoResponse(effectiveMessage, agentId, locale),
       locale,
+      agent,
     })
 
     // Persist the assistant reply.

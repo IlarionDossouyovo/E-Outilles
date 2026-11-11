@@ -328,10 +328,6 @@ export function isAgentId(value: unknown): value is AgentId {
   return typeof value === 'string' && value in AGENTS
 }
 
-export function agentSupportsVision(agentId: AgentId): boolean {
-  return AGENTS[agentId].capabilities.includes('vision')
-}
-
 // Maps a user intent to the most relevant agent.
 export function routeToAgent(message: string): AgentId {
   const lower = message.toLowerCase()
@@ -342,9 +338,10 @@ export function routeToAgent(message: string): AgentId {
   return 'assistant'
 }
 
-// Tone guidance for the active agent, injected by the reasoning layer.
-export function toneInstruction(agentId: AgentId): string {
-  return TONE_GUIDE[AGENTS[agentId].tone]
+// Tone guidance for the active agent, injected by the reasoning layer. The
+// tone is passed directly because the founder may override it per agent.
+export function toneInstructionFor(tone: AgentTone): string {
+  return TONE_GUIDE[tone] ?? TONE_GUIDE.chaleureux
 }
 
 // Builds the reasoning instruction appended to reasoning-capable agents.

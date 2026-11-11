@@ -1,15 +1,19 @@
 import { NextResponse } from 'next/server'
 import { AGENTS, AGENT_LIST, PUBLIC_AGENT_IDS } from '@/lib/ai/agents'
+import { applyAgentConfig, getAgentConfigs } from '@/lib/ai/agent-config'
 import { getSession } from '@/lib/security/auth'
 import { isFounderEmail } from '@/lib/security/founder'
 
 // Returns the agents the current visitor is allowed to use.
 // Everyone gets the public agents; the founder additionally gets the internal
-// company agents (management, marketing, finance, ops).
+// company agents (management, marketing, finance, ops). Founder overrides
+// (status, capabilities) are merged so the UI reflects the live configuration.
 export async function GET() {
   const session = await getSession()
   const isFounder = isFounderEmail(session?.email)
-  const allowed = isFounder ? AGENT_LIST : PUBLIC_AGENT_IDS.map((id) => AGENTS[id])
+  const base = isFounder ? AGENT_LIST : PUBLIC_AGENT_IDS.map((id) => AGENTS[id])
+  const configs = await getAgentConfigs()
+  const allowed = base.map((a) => applyAgentConfig(a, configs[a.id]))
 
   return NextResponse.json({
     founder: isFounder,

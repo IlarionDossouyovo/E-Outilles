@@ -35,11 +35,11 @@ const statusLabels: Record<string, string> = {
 }
 
 const statusColors: Record<string, string> = {
-  pending: 'bg-yellow-600',
-  processing: 'bg-blue-600',
+  pending: 'bg-gray-500',
+  processing: 'bg-amber-500',
   paid: 'bg-green-600',
-  shipped: 'bg-indigo-600',
-  delivered: 'bg-emerald-600',
+  shipped: 'bg-yellow-600',
+  delivered: 'bg-green-600',
   cancelled: 'bg-red-600',
 }
 

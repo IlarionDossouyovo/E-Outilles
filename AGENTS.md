@@ -244,6 +244,34 @@ Persistent notes for working on the E-Outilles codebase.
   Stripe absent => card payment disabled at checkout (fallback: cash on delivery
   or Mobile Money). Ollama absent => the chatbot uses the demo fallback.
 
+## Agents config layer & palette audit (session 2026-11-11)
+- Agents are no longer hardcoded at runtime: `src/lib/ai/agent-config.ts`
+  persists per-agent overrides in the `Setting` table under key
+  `ai.agents.config` (JSON map `agentId -> {systemPrompt,tone,status,capabilities}`).
+  - `effectiveAgent(id)` returns the merged `AgentDefinition`; chat/reasoning/
+    `/api/ai/agents` all consume it, so a founder edit takes effect immediately.
+  - Founder-only CRUD: `GET/PUT/DELETE /api/agents/config`. PUT body
+    `{ id, config }`; DELETE takes the agent id as a **query param `?id=`**
+    (not `agentId`, not a body) — a wrong param returns 400 "Agent inconnu".
+  - Editor UI lives in `/agent` (modal: status, tone, capabilities, custom
+    system prompt). `npm run check:i18n` and `npm run build` must stay green.
+- Palette discipline: the only brand tokens are `ingco-yellow #FFC400`,
+  `ingco-black #121212`, `ingco-dark #1a1a1a`, `ingco-gray #2E2E2E`. Order-status
+  badges must use brand + semantic only (pending `gray-500`, processing
+  `amber-500`, paid/delivered `green-600`, shipped `yellow-600`, cancelled
+  `red-600`). Do NOT reintroduce `blue/indigo/purple/emerald/sky/teal` for UI
+  chrome (the Facebook/X share buttons in `blog/[slug]` keep their official
+  brand colors on purpose). Audit with:
+  `grep -rnoE "(bg|text|border|from|to|via|ring|shadow)-(purple|blue|indigo|violet|pink|teal|cyan|emerald|rose|fuchsia|lime|sky)-[0-9]{2,3}" src --include=*.tsx`
+- i18n auto-translation by country is live: `GET /api/geo` reads
+  `x-vercel-ip-country` / `cf-ipcountry` (works on Vercel/Cloudflare; falls back
+  to browser locale otherwise) and maps to `fr|en|es|pt` via
+  `localeForCountry`. Verified: ES->es, BR->pt, US->en, FR->fr.
+- `prisma/schema.prisma` is **postgresql** with `DATABASE_URL` (pooled) +
+  `DIRECT_URL` (direct). `.env.example` documents Neon accordingly. Prod
+  (Render `srv-dbq7ppl9fdbs73dkkmg0`, https://e-outilles.onrender.com) is live
+  and healthy. `npm run migrate:deploy` warms Neon before migrating (P1002).
+
 - Marketing system (`src/lib/marketing/`, `/admin/marketing`):
   - `channels.ts` defines the two channel families: SALES_CHANNELS (where a
     customer can buy) and TRAFFIC_CHANNELS (social, ads, SEO, email). Per-channel

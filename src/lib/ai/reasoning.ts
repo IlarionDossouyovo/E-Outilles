@@ -7,7 +7,14 @@
 
 import { prisma } from '@/lib/db/prisma'
 import { generateText, extractJson, type ChatTurn, type InlineMedia } from './provider'
-import { AGENTS, reasoningInstruction, toneInstruction, languageInstruction, type AgentId } from './agents'
+import {
+  AGENTS,
+  reasoningInstruction,
+  toneInstructionFor,
+  languageInstruction,
+  type AgentDefinition,
+  type AgentId,
+} from './agents'
 import { isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n/config'
 
 export interface ReasoningAnalysis {
@@ -63,9 +70,10 @@ async function findProducts(query: string, limit = 3) {
 export async function analyze(
   message: string,
   history: ChatTurn[],
-  agentId: AgentId
+  agentId: AgentId,
+  agentOverride?: AgentDefinition
 ): Promise<ReasoningAnalysis> {
-  const agent = AGENTS[agentId]
+  const agent = agentOverride ?? AGENTS[agentId]
   const analysisPrompt = `Tu es le raisonnement interne de l'agent "${agent.name}" (${agent.department}).
 Analyse le dernier message utilisateur comme le ferait un expert humain, puis renvoie UNIQUEMENT un JSON valide:
 {
@@ -75,7 +83,7 @@ Analyse le dernier message utilisateur comme le ferait un expert humain, puis re
   "plan": ["étapes de réponse, max 4"],
   "productQuery": "requête courte pour chercher dans le catalogue, ou null"
 }
-${toneInstruction(agentId)}`
+${toneInstructionFor(agent.tone)}`
 
   const result = await generateText(
     {
@@ -126,6 +134,8 @@ export interface GenerateAgentReplyInput {
   media?: InlineMedia[]
   fallback: string
   locale?: Locale
+  // Effective definition (founder overrides merged in). Falls back to the registry.
+  agent?: AgentDefinition
 }
 
 export interface AgentReply {
@@ -139,12 +149,12 @@ export interface AgentReply {
 // Pass 2: final answer, grounded in the analysis and real products.
 export async function generateAgentReply(input: GenerateAgentReplyInput): Promise<AgentReply> {
   const { agentId, message, history, media, fallback } = input
-  const agent = AGENTS[agentId]
+  const agent = input.agent ?? AGENTS[agentId]
   const useReasoning = input.useReasoning ?? agent.reasoning
   const locale: Locale = input.locale && isLocale(input.locale) ? input.locale : DEFAULT_LOCALE
 
   let reasoning: ReasoningAnalysis | null = null
-  let context = `\n\n${toneInstruction(agentId)}`
+  let context = `\n\n${toneInstructionFor(agent.tone)}`
   const langLine = languageInstruction(locale)
   if (langLine) context += `\n\n${langLine}`
 
@@ -152,7 +162,7 @@ export async function generateAgentReply(input: GenerateAgentReplyInput): Promis
     // Skip the analysis pass when an image is attached: a vision turn is
     // better answered directly, and the analysis model call would not see it.
     try {
-      reasoning = await analyze(message, history, agentId)
+      reasoning = await analyze(message, history, agentId, agent)
       if (reasoning.products.length > 0) {
         context += `\nProduits réels du catalogue pertinents (utilise ces prix exacts, ne les invente pas):\n${reasoning.products
           .map((p) => `- ${p.name} — ${p.price.toFixed(2)}€`)

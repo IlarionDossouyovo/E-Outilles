@@ -23,9 +23,9 @@ const statusOptions = ['pending', 'processing', 'paid', 'shipped', 'delivered', 
 
 const statusLabels: Record<string, { label: string; color: string }> = {
   pending: { label: 'En attente', color: 'bg-yellow-500' },
-  processing: { label: 'En traitement', color: 'bg-blue-500' },
+  processing: { label: 'En traitement', color: 'bg-amber-500' },
   paid: { label: 'Paye', color: 'bg-green-600' },
-  shipped: { label: 'Expedie', color: 'bg-purple-500' },
+  shipped: { label: 'Expedie', color: 'bg-yellow-600' },
   delivered: { label: 'Livre', color: 'bg-green-500' },
   cancelled: { label: 'Annule', color: 'bg-red-500' }
 }

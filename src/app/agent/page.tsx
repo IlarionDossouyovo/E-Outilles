@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import Logo from '@/components/Logo'
 import { Icon } from '@/components/Icons'
@@ -25,8 +25,17 @@ const allAgents = AGENT_LIST.map((a, index) => ({
   color: a.color,
 }))
 
-const agents = allAgents.filter(a => a.category === 'principal')
-const extraAgents = allAgents.filter(a => a.category !== 'principal')
+const TONES = ['chaleureux', 'expert', 'empathique', 'direct', 'institutionnel'] as const
+const CAPS = ['text', 'vision', 'voice', 'reasoning', 'tools'] as const
+
+type AgentConfigView = {
+  systemPrompt: string
+  defaultSystemPrompt: string
+  tone: string
+  status: 'online' | 'offline'
+  capabilities: string[]
+  customized: boolean
+}
 
 export default function AgentDashboard() {
   const [activeTab, setActiveTab] = useState('overview')
@@ -35,6 +44,10 @@ export default function AgentDashboard() {
   const [error, setError] = useState('')
   const [verifying, setVerifying] = useState(false)
   const [configAgent, setConfigAgent] = useState<typeof allAgents[number] | null>(null)
+  const [configs, setConfigs] = useState<Record<string, AgentConfigView>>({})
+  const [draft, setDraft] = useState<AgentConfigView | null>(null)
+  const [saving, setSaving] = useState(false)
+  const [saveMsg, setSaveMsg] = useState('')
   const [stats, setStats] = useState({
     totalConversations: 0,
     activeAgents: allAgents.filter(a => a.status === 'online').length,
@@ -84,6 +97,87 @@ export default function AgentDashboard() {
       })
       .catch(err => console.error('Error fetching agent stats:', err))
   }, [accessGranted])
+
+  // Load the founder's per-agent overrides once access is granted.
+  useEffect(() => {
+    if (!accessGranted) return
+    fetch('/api/agents/config')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (!data?.agents) return
+        const map: Record<string, AgentConfigView> = {}
+        for (const a of data.agents) {
+          map[a.id] = {
+            systemPrompt: a.systemPrompt,
+            defaultSystemPrompt: a.defaultSystemPrompt,
+            tone: a.tone,
+            status: a.status,
+            capabilities: a.capabilities,
+            customized: a.customized,
+          }
+        }
+        setConfigs(map)
+      })
+      .catch(() => {})
+  }, [accessGranted])
+
+  // Agents with the live status applied, so the badges reflect configuration.
+  const liveAgents = useMemo(
+    () => allAgents.map((a) => ({ ...a, status: configs[a.agentId]?.status ?? a.status })),
+    [configs]
+  )
+  const agents = liveAgents.filter((a) => a.category === 'principal')
+  const extraAgents = liveAgents.filter((a) => a.category !== 'principal')
+
+  const openConfig = (agentId: string) => {
+    const cfg = configs[agentId]
+    if (!cfg) return
+    setSaveMsg('')
+    setDraft({ ...cfg, capabilities: [...cfg.capabilities] })
+  }
+
+  const saveConfig = async () => {
+    if (!configAgent || !draft) return
+    setSaving(true)
+    setSaveMsg('')
+    try {
+      const res = await fetch('/api/agents/config', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: configAgent.agentId, config: draft }),
+      })
+      if (!res.ok) throw new Error()
+      setConfigs((prev) => ({ ...prev, [configAgent.agentId]: { ...draft } }))
+      setSaveMsg('Configuration enregistrée')
+    } catch {
+      setSaveMsg("Échec de l'enregistrement")
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const resetConfig = async () => {
+    if (!configAgent) return
+    setSaving(true)
+    try {
+      const res = await fetch(`/api/agents/config?id=${configAgent.agentId}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error()
+      const cfg = configs[configAgent.agentId]
+      setDraft({
+        ...cfg,
+        systemPrompt: cfg.defaultSystemPrompt,
+        tone: 'chaleureux',
+        status: 'online',
+        capabilities: ['text', 'vision', 'voice', 'reasoning'],
+        customized: false,
+      })
+      setSaveMsg('Réinitialisé au modèle par défaut')
+    } catch {
+      setSaveMsg('Échec de la réinitialisation')
+    } finally {
+      setSaving(false)
+    }
+  }
 
   const grantAccess = async () => {
     setVerifying(true)
@@ -167,7 +261,7 @@ export default function AgentDashboard() {
             <Icon name="arrow-left" className="w-4 h-4" /> Retour Admin
           </Link>
           <div className="flex items-center gap-2">
-            <Link href="/chat" className="bg-purple-500 text-white px-3 py-2 rounded-lg text-sm hover:bg-purple-600">Chat IA</Link>
+            <Link href="/chat" className="bg-ingco-yellow text-ingco-black px-3 py-2 rounded-lg text-sm font-semibold hover:bg-yellow-400">Chat IA</Link>
             <span className="text-gray-600">|</span>
             <Link href="/admin" className="text-gray-400 hover:text-ingco-yellow text-sm">Dashboard</Link>
           </div>
@@ -188,22 +282,22 @@ export default function AgentDashboard() {
               <div className="w-32 h-32 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-2xl flex items-center justify-center shadow-2xl shadow-yellow-500/30 animate-pulse">
                 <span className="text-6xl font-bold text-black">E</span>
               </div>
-              <div className="absolute -bottom-2 -right-2 bg-purple-500 text-white text-xs px-2 py-1 rounded">CEO</div>
+              <div className="absolute -bottom-2 -right-2 bg-ingco-black text-ingco-yellow text-xs px-2 py-1 rounded font-semibold">CEO</div>
             </div>
             <div className="flex-1 text-center md:text-left">
               <h2 className="text-3xl font-bold text-white">{founder.name}</h2>
-              <p className="text-purple-200 font-semibold text-lg">{founder.role}</p>
+              <p className="text-black/80 font-semibold text-lg">{founder.role}</p>
               <div className="flex flex-wrap justify-center md:justify-start gap-4 mt-3">
-                <a href={`mailto:${founder.email}`} className="flex items-center gap-2 text-purple-100 hover:text-white transition-colors">
+                <a href={`mailto:${founder.email}`} className="flex items-center gap-2 text-black/70 hover:text-black transition-colors">
                   <Icon name="chat" className="w-4 h-4" /> {founder.email}
                 </a>
-                <a href={`tel:${founder.phone}`} className="flex items-center gap-2 text-purple-100 hover:text-white transition-colors">
+                <a href={`tel:${founder.phone}`} className="flex items-center gap-2 text-black/70 hover:text-black transition-colors">
                   <Icon name="phone" className="w-4 h-4" /> {founder.phone}
                 </a>
               </div>
             </div>
             <div className="text-center md:text-right">
-              <p className="text-purple-200 text-sm">Fondé en {founder.since}</p>
+              <p className="text-black/70 text-sm">Fondé en {founder.since}</p>
               <p className="text-white font-medium mt-2 max-w-xs">{founder.vision}</p>
             </div>
           </div>
@@ -214,7 +308,7 @@ export default function AgentDashboard() {
           <div className="bg-ingco-gray rounded-2xl p-6">
             <div className="flex items-center justify-between mb-4">
               <span className="text-gray-400 text-sm">Total Agents</span>
-              <span className="w-10 h-10 bg-purple-500/20 rounded-xl flex items-center justify-center"><Icon name="chat" className="w-5 h-5 text-purple-400" /></span>
+              <span className="w-10 h-10 bg-ingco-yellow/20 rounded-xl flex items-center justify-center"><Icon name="chat" className="w-5 h-5 text-ingco-yellow" /></span>
             </div>
             <div className="text-3xl font-bold text-white">{stats.totalAgents}</div>
             <div className="text-gray-500 text-sm mt-1">Configurés</div>
@@ -232,7 +326,7 @@ export default function AgentDashboard() {
           <div className="bg-ingco-gray rounded-2xl p-6">
             <div className="flex items-center justify-between mb-4">
               <span className="text-gray-400 text-sm">Conversations</span>
-              <span className="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center"><Icon name="chat" className="w-5 h-5 text-blue-400" /></span>
+              <span className="w-10 h-10 bg-ingco-yellow/20 rounded-xl flex items-center justify-center"><Icon name="chat" className="w-5 h-5 text-ingco-yellow" /></span>
             </div>
             <div className="text-3xl font-bold text-white">{stats.totalConversations}</div>
             <div className="text-green-500 text-sm mt-1">+23% ce mois</div>
@@ -255,7 +349,7 @@ export default function AgentDashboard() {
             {agents.map((agent, index) => (
               <div 
                 key={agent.id} 
-                className="bg-ingco-dark p-4 rounded-xl hover:scale-105 hover:shadow-xl hover:shadow-purple-500/20 transition-all duration-300 cursor-pointer group"
+                className="bg-ingco-dark p-4 rounded-xl hover:scale-105 hover:shadow-xl hover:shadow-ingco-yellow/20 transition-all duration-300 cursor-pointer group"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
                 <div className="flex items-start gap-4">
@@ -267,15 +361,23 @@ export default function AgentDashboard() {
                         {agent.status === 'online' ? 'En ligne' : 'Hors ligne'}
                       </span>
                     </div>
-                    <p className="text-purple-400 text-sm font-medium mt-1">{agent.description}</p>
+                    <p className="text-ingco-yellow/80 text-sm font-medium mt-1">{agent.description}</p>
                     <p className="text-gray-500 text-sm mt-2">
                       {agent.features.slice(0, 3).map((f: string) => `• ${f}`).join('\n')}
                     </p>
                     <div className="flex items-center justify-between mt-3">
                       <span className="text-gray-400 text-sm">{agent.status === 'online' ? 'Actif' : 'Inactif'}</span>
-                      <Link href={`/chat?agent=${agent.agentId}`} className="text-ingco-yellow text-sm hover:underline">
-                        Tester <Icon name="arrow-right" className="w-4 h-4 inline" />
-                      </Link>
+                      <div className="flex items-center gap-3">
+                        <button
+                          onClick={() => { setConfigAgent(agent); openConfig(agent.agentId) }}
+                          className="text-gray-300 text-sm hover:text-ingco-yellow flex items-center gap-1"
+                        >
+                          <Icon name="settings" className="w-4 h-4" /> Config
+                        </button>
+                        <Link href={`/chat?agent=${agent.agentId}`} className="text-ingco-yellow text-sm hover:underline">
+                          Tester <Icon name="arrow-right" className="w-4 h-4 inline" />
+                        </Link>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -312,7 +414,7 @@ export default function AgentDashboard() {
                     <div className="mt-2 flex items-center justify-between">
                       <span className="text-white/60 text-xs">{agent.conversations} conv.</span>
                       <button
-                        onClick={() => setConfigAgent(agent)}
+                        onClick={() => { setConfigAgent(agent); openConfig(agent.agentId) }}
                         className="text-xs text-white underline"
                       >
                         Config <Icon name="arrow-right" className="w-4 h-4 inline" />
@@ -349,13 +451,13 @@ export default function AgentDashboard() {
         </div>
       </div>
 
-      {configAgent && (
+      {configAgent && draft && (
         <div
           className="fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
           onClick={() => setConfigAgent(null)}
         >
           <div
-            className="bg-ingco-gray rounded-2xl p-6 max-w-md w-full max-h-[85vh] overflow-y-auto"
+            className="bg-ingco-gray rounded-2xl p-6 max-w-lg w-full max-h-[88vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-start justify-between mb-4">
@@ -363,30 +465,127 @@ export default function AgentDashboard() {
                 <Icon name={configAgent.icon as never} className="w-8 h-8 text-ingco-yellow" />
                 <div>
                   <h3 className="text-lg font-bold text-white">{configAgent.name}</h3>
-                  <span className={`text-xs px-2 py-0.5 rounded ${configAgent.status === 'online' ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-400'}`}>
-                    {configAgent.status === 'online' ? 'En ligne' : 'Hors ligne'}
-                  </span>
+                  <p className="text-gray-400 text-xs">{configAgent.description}</p>
                 </div>
               </div>
               <button onClick={() => setConfigAgent(null)} className="text-gray-400 hover:text-white" aria-label="Fermer">
                 <Icon name="x" className="w-5 h-5" />
               </button>
             </div>
-            <p className="text-gray-300 text-sm mb-4">{configAgent.description}</p>
-            <p className="text-ingco-yellow text-sm font-semibold mb-2">Fonctionnalités</p>
-            <ul className="space-y-1 mb-6">
-              {configAgent.features.map((f: string) => (
-                <li key={f} className="text-gray-300 text-sm flex items-start gap-2">
-                  <Icon name="check" className="w-4 h-4 text-green-400 mt-0.5" /> {f}
-                </li>
-              ))}
-            </ul>
-            <Link
-              href={`/chat?agent=${configAgent.agentId}`}
-              className="block text-center bg-ingco-yellow text-ingco-black py-3 rounded-xl font-bold hover:bg-yellow-400"
-            >
-              Tester cet agent
-            </Link>
+
+            {/* Statut */}
+            <div className="mb-4">
+              <p className="text-ingco-yellow text-sm font-semibold mb-2">Statut</p>
+              <div className="flex gap-2">
+                {(['online', 'offline'] as const).map((st) => (
+                  <button
+                    key={st}
+                    onClick={() => setDraft({ ...draft, status: st })}
+                    className={`flex-1 py-2 rounded-lg text-sm font-semibold border transition-colors ${
+                      draft.status === st
+                        ? 'bg-ingco-yellow text-ingco-black border-ingco-yellow'
+                        : 'bg-ingco-dark text-gray-300 border-ingco-gray hover:border-ingco-yellow'
+                    }`}
+                  >
+                    {st === 'online' ? 'En ligne' : 'Hors ligne'}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Ton */}
+            <div className="mb-4">
+              <p className="text-ingco-yellow text-sm font-semibold mb-2">Ton du raisonnement</p>
+              <select
+                value={draft.tone}
+                onChange={(e) => setDraft({ ...draft, tone: e.target.value })}
+                className="w-full bg-ingco-dark text-white px-3 py-2 rounded-lg border border-ingco-gray focus:border-ingco-yellow outline-none"
+              >
+                {TONES.map((t) => (
+                  <option key={t} value={t}>{t}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Capacités */}
+            <div className="mb-4">
+              <p className="text-ingco-yellow text-sm font-semibold mb-2">Capacités</p>
+              <div className="flex flex-wrap gap-2">
+                {CAPS.map((c) => {
+                  const on = draft.capabilities.includes(c)
+                  return (
+                    <button
+                      key={c}
+                      onClick={() =>
+                        setDraft({
+                          ...draft,
+                          capabilities: on
+                            ? draft.capabilities.filter((x) => x !== c)
+                            : [...draft.capabilities, c],
+                        })
+                      }
+                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors ${
+                        on
+                          ? 'bg-ingco-yellow text-ingco-black border-ingco-yellow'
+                          : 'bg-ingco-dark text-gray-400 border-ingco-gray hover:border-ingco-yellow'
+                      }`}
+                    >
+                      {c}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+
+            {/* Instructions / prompt système */}
+            <div className="mb-2">
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-ingco-yellow text-sm font-semibold">Instructions du système (prompt)</p>
+                {configs[configAgent.agentId]?.customized && (
+                  <span className="text-xs text-amber-400">Personnalisé</span>
+                )}
+              </div>
+              <textarea
+                value={draft.systemPrompt}
+                onChange={(e) => setDraft({ ...draft, systemPrompt: e.target.value })}
+                rows={10}
+                spellCheck={false}
+                className="w-full bg-ingco-dark text-gray-200 text-xs font-mono px-3 py-2 rounded-lg border border-ingco-gray focus:border-ingco-yellow outline-none resize-y"
+              />
+              <p className="text-gray-500 text-xs mt-1">
+                Décrivez la mission, le périmètre et les règles de l&apos;agent. Les garde-fous
+                (anti-hallucination, ton humain, langue du visiteur) restent appliqués automatiquement.
+              </p>
+            </div>
+
+            {saveMsg && (
+              <p className={`text-sm mb-3 ${saveMsg.includes('Échec') ? 'text-red-400' : 'text-green-400'}`}>
+                {saveMsg}
+              </p>
+            )}
+
+            <div className="flex flex-wrap gap-2 mt-4">
+              <button
+                onClick={saveConfig}
+                disabled={saving}
+                className="flex-1 bg-ingco-yellow text-ingco-black py-3 rounded-xl font-bold hover:bg-yellow-400 disabled:opacity-50"
+              >
+                {saving ? 'Enregistrement...' : 'Enregistrer'}
+              </button>
+              <button
+                onClick={resetConfig}
+                disabled={saving}
+                className="px-4 py-3 rounded-xl font-semibold bg-ingco-dark text-gray-300 border border-ingco-gray hover:border-ingco-yellow disabled:opacity-50"
+              >
+                Réinitialiser
+              </button>
+              <Link
+                href={`/chat?agent=${configAgent.agentId}`}
+                className="px-4 py-3 rounded-xl font-semibold bg-ingco-dark text-ingco-yellow border border-ingco-gray hover:border-ingco-yellow"
+              >
+                Tester
+              </Link>
+            </div>
           </div>
         </div>
       )}

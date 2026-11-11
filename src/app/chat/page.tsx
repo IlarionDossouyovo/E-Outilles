@@ -236,7 +236,7 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-ingco-black via-[#171717] to-ingco-black text-white p-4">
+    <div className="min-h-screen bg-gradient-to-br from-ingco-black via-ingco-dark to-ingco-black text-white p-4">
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between py-6 border-b border-ingco-gray mb-6">
           <Link href="/" className="flex items-center gap-2 text-gray-400 hover:text-ingco-yellow transition-colors">
@@ -304,7 +304,7 @@ export default function ChatPage() {
         )}
 
         {isFounder && (
-          <div className="mb-4 text-xs text-purple-300 bg-purple-500/10 border border-purple-500/30 rounded-xl px-4 py-2">
+          <div className="mb-4 text-xs text-ingco-yellow bg-ingco-yellow/10 border border-ingco-yellow/30 rounded-xl px-4 py-2">
             {t('chat.founderNotice').replace('{n}', String(agents.length))}
           </div>
         )}

@@ -24,8 +24,8 @@ export interface AdminAnalyticsData {
 
 const statusLabels: Record<string, { label: string; color: string }> = {
   pending: { label: 'en attente', color: 'bg-yellow-500' },
-  processing: { label: 'traitement', color: 'bg-blue-500' },
-  shipped: { label: 'expédié', color: 'bg-purple-500' },
+  processing: { label: 'traitement', color: 'bg-amber-500' },
+  shipped: { label: 'expédié', color: 'bg-yellow-600' },
   delivered: { label: 'livré', color: 'bg-green-500' }
 }
 
