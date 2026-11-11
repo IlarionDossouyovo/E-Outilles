@@ -52,7 +52,7 @@ const BRAND_CONTEXT = `Contexte entreprise (E-Outilles By ELECTRON):
 - Contact: WhatsApp +229 01 977 003 47, email contact@e-outilles.com.
 - Paiement: carte (Stripe), Mobile Money (MTN, Moov, Orange), paiement à la livraison.
 - Garantie constructeur 1 an minimum, SAV et pièces de rechange assurés.
-Toujours répondre en français, de façon concise et professionnelle.`
+Réponds dans la langue de l'utilisateur (français par défaut), de façon concise et professionnelle.`
 
 // Shared behavioural contract: keeps every department human, coherent and safe.
 const HOUSE_STYLE = `Règles de style communes (à respecter dans toutes tes réponses):
@@ -83,7 +83,7 @@ export const AGENTS: Record<AgentId, AgentDefinition> = {
     status: 'online',
     description: 'Assistant conversationnel principal pour les clients',
     features: ['Recommandations produits', 'Questions techniques', 'Conseils utilisation', 'Suivi projet'],
-    color: 'from-purple-500 to-indigo-600',
+    color: 'from-yellow-500 to-amber-600',
     reasoning: true,
     capabilities: ['text', 'vision', 'voice', 'reasoning'],
     systemPrompt: `Tu es E-Outille Assistant, l'assistant virtuel principal.
@@ -106,7 +106,7 @@ Si la demande relève d'un autre agent (vente, SAV, suivi), oriente naturellemen
     status: 'online',
     description: 'Automatisation des ventes et conversion',
     features: ['Qualification leads', 'Closing automatique', 'Suivi panier abandonné', 'Promotions personnalisées'],
-    color: 'from-green-500 to-emerald-600',
+    color: 'from-amber-400 to-yellow-600',
     reasoning: true,
     capabilities: ['text', 'voice', 'reasoning', 'tools'],
     systemPrompt: `Tu es le Vendeur Bot d'E-Outilles, spécialisé dans la conversion.
@@ -128,7 +128,7 @@ Sois persuasif mais honnête: jamais de fausse promotion, jamais de promesse irr
     status: 'online',
     description: 'Support client automatisé 24/7',
     features: ['FAQ automatique', 'Ouverture tickets', 'Suivi résolution', 'Escalade humaine'],
-    color: 'from-blue-500 to-cyan-600',
+    color: 'from-yellow-400 to-amber-500',
     reasoning: true,
     capabilities: ['text', 'vision', 'voice', 'reasoning'],
     systemPrompt: `Tu es le Support Client d'E-Outilles.
@@ -171,7 +171,7 @@ Donne des étapes claires et, si le client a un numéro de commande, indique-lui
     status: 'online',
     description: 'Connaissance technique des produits INGCO',
     features: ['Fiches techniques', 'Compatibilités accessoires', 'Comparatifs', 'Identification par photo'],
-    color: 'from-cyan-500 to-blue-600',
+    color: 'from-amber-500 to-yellow-700',
     reasoning: true,
     capabilities: ['text', 'vision', 'reasoning', 'tools'],
     systemPrompt: `Tu es l'Expert Catalogue d'E-Outilles, spécialiste des produits INGCO.
@@ -212,7 +212,7 @@ Donne des estimations prudentes et signale toujours les hypothèses retenues.`,
     status: 'online',
     description: 'Gestion de projets et planification',
     features: ['Planification tâches', 'Suivi deadlines', 'Coordination équipe', 'Rapports avancement'],
-    color: 'from-indigo-500 to-purple-600',
+    color: 'from-yellow-600 to-amber-700',
     reasoning: true,
     capabilities: ['text', 'reasoning'],
     systemPrompt: `Tu es le Chef de Projet IA d'E-Outilles (usage interne, fondateur).
@@ -230,7 +230,7 @@ identifier les risques et proposer un planning réaliste. Réponds en français,
     status: 'online',
     description: 'Analyse des données business',
     features: ['Rapports ventes', 'Analyse tendances', 'Prévisions', 'Tableaux de bord'],
-    color: 'from-pink-500 to-rose-600',
+    color: 'from-amber-300 to-yellow-500',
     reasoning: true,
     capabilities: ['text', 'vision', 'reasoning', 'tools'],
     systemPrompt: `Tu es l'Analyste Data d'E-Outilles (usage interne, fondateur).
@@ -249,7 +249,7 @@ Si on t'envoie un tableau ou un export en photo/document, lis les valeurs et ana
     status: 'online',
     description: 'Automatisation marketing digital',
     features: ['Campagnes email', 'SEO optimisation', 'Réseaux sociaux', 'Contenu automatique'],
-    color: 'from-red-500 to-orange-600',
+    color: 'from-yellow-500 to-orange-500',
     reasoning: true,
     capabilities: ['text', 'vision', 'reasoning'],
     systemPrompt: `Tu es le Marketing Bot d'E-Outilles (usage interne, fondateur).
@@ -269,7 +269,7 @@ Propose toujours un titre accrocheur + un corps clair + un appel à l'action.`,
     status: 'online',
     description: 'Gestion des ressources humaines',
     features: ['Recrutement', 'Onboarding', 'Gestion congés', 'Formation'],
-    color: 'from-teal-500 to-cyan-600',
+    color: 'from-amber-200 to-yellow-400',
     reasoning: false,
     capabilities: ['text', 'vision'],
     systemPrompt: `Tu es l'Assistant RH d'E-Outilles (usage interne, fondateur).
