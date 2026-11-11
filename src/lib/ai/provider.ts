@@ -23,6 +23,10 @@ export interface GenerateOptions {
   maxOutputTokens?: number
   json?: boolean
   timeoutMs?: number
+  // When false, a failure does not trip the provider circuit breaker. Use for
+  // best-effort side calls (e.g. the reasoning analysis pass) so a single slow
+  // call cannot disable the provider for the main answer.
+  circuitBreaker?: boolean
 }
 
 export interface GenerateResult {
@@ -202,7 +206,7 @@ async function generateWithOllama(options: GenerateOptions): Promise<string> {
 // host, invalid key) from blocking every request for the full timeout. After a
 // failure we skip it for COOLDOWN_MS so the assistant stays responsive and
 // falls through to the next provider immediately.
-const COOLDOWN_MS = 60_000
+const COOLDOWN_MS = 15_000
 let googleDownUntil = 0
 let ollamaDownUntil = 0
 const now = () => Date.now()
@@ -217,7 +221,7 @@ export async function generateText(
       googleDownUntil = 0
       return { text, provider: 'google', model: GOOGLE_AI_MODEL }
     } catch (err) {
-      googleDownUntil = now() + COOLDOWN_MS
+      if (options.circuitBreaker !== false) googleDownUntil = now() + COOLDOWN_MS
       console.error('Google AI failed, trying fallback:', err)
     }
   }
@@ -228,7 +232,7 @@ export async function generateText(
       ollamaDownUntil = 0
       return { text, provider: 'ollama', model: OLLAMA_MODEL }
     } catch (err) {
-      ollamaDownUntil = now() + COOLDOWN_MS
+      if (options.circuitBreaker !== false) ollamaDownUntil = now() + COOLDOWN_MS
       console.error('Ollama failed, using demo fallback:', err)
     }
   }

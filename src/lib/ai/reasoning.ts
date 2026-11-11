@@ -87,6 +87,7 @@ ${toneInstruction(agentId)}`
       maxOutputTokens: 400,
       json: true,
       timeoutMs: 12000,
+      circuitBreaker: false,
     },
     ''
   )
