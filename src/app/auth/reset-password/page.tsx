@@ -4,8 +4,10 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import PasswordInput from '@/components/PasswordInput'
 import { Icon } from '@/components/Icons'
+import { useTranslation } from '@/lib/i18n/LanguageProvider'
 
 export default function ResetPasswordPage() {
+  const { t } = useTranslation()
   const [token, setToken] = useState('')
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
@@ -23,11 +25,11 @@ export default function ResetPasswordPage() {
     setError('')
 
     if (password.length < 6) {
-      setError('Le mot de passe doit contenir au moins 6 caractères')
+      setError(t('reset.tooShort'))
       return
     }
     if (password !== confirm) {
-      setError('Les mots de passe ne correspondent pas')
+      setError(t('reset.mismatch'))
       return
     }
 
@@ -40,12 +42,12 @@ export default function ResetPasswordPage() {
       })
       const data = await res.json().catch(() => ({}))
       if (!res.ok) {
-        setError(data.error || 'Une erreur est survenue')
+        setError(data.error || t('err.generic'))
         return
       }
       setDone(true)
     } catch {
-      setError('Erreur de connexion au serveur')
+      setError(t('err.server'))
     } finally {
       setLoading(false)
     }
@@ -57,13 +59,13 @@ export default function ResetPasswordPage() {
         <div className="max-w-md mx-auto px-4">
           <div className="bg-ingco-gray rounded-2xl p-8 text-center">
             <Icon name="check" className="w-14 h-14 text-green-400 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-white mb-4">Mot de passe modifié</h1>
-            <p className="text-gray-400 mb-6">Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.</p>
+            <h1 className="text-2xl font-bold text-white mb-4">{t('reset.done')}</h1>
+            <p className="text-gray-400 mb-6">{t('reset.doneText')}</p>
             <Link
               href="/auth/login"
               className="inline-block bg-ingco-yellow text-ingco-black px-6 py-3 rounded-xl font-bold hover:bg-yellow-400 transition-colors"
             >
-              Se connecter
+              {t('auth.signIn')}
             </Link>
           </div>
         </div>
@@ -75,12 +77,12 @@ export default function ResetPasswordPage() {
     <div className="min-h-screen bg-ingco-black pt-24 pb-16">
       <div className="max-w-md mx-auto px-4">
         <div className="bg-ingco-gray rounded-2xl p-8">
-          <h1 className="text-3xl font-bold text-white text-center mb-2">Nouveau mot de passe</h1>
-          <p className="text-gray-400 text-center mb-8">Choisissez un nouveau mot de passe sécurisé.</p>
+          <h1 className="text-3xl font-bold text-white text-center mb-2">{t('reset.title')}</h1>
+          <p className="text-gray-400 text-center mb-8">{t('reset.subtitle')}</p>
 
           {!token && (
             <div className="bg-red-500/20 border border-red-500 text-red-400 px-4 py-2 rounded-xl mb-4 text-sm">
-              Lien invalide : aucun jeton fourni.
+              {t('reset.noToken')}
             </div>
           )}
           {error && (
@@ -91,7 +93,7 @@ export default function ResetPasswordPage() {
 
           <form onSubmit={onSubmit} className="space-y-5">
             <PasswordInput
-              label="Nouveau mot de passe"
+              label={t('reset.new')}
               value={password}
               onChange={setPassword}
               placeholder="••••••••"
@@ -99,7 +101,7 @@ export default function ResetPasswordPage() {
               required
             />
             <PasswordInput
-              label="Confirmer le mot de passe"
+              label={t('reset.confirm')}
               value={confirm}
               onChange={setConfirm}
               placeholder="••••••••"
@@ -111,13 +113,13 @@ export default function ResetPasswordPage() {
               disabled={loading || !token}
               className="w-full bg-ingco-yellow text-ingco-black py-3 rounded-xl font-bold hover:bg-yellow-400 transition-colors disabled:opacity-50"
             >
-              {loading ? '⏳ Modification...' : 'Modifier le mot de passe'}
+              {loading ? t('reset.submitting') : t('reset.submit')}
             </button>
           </form>
 
           <div className="mt-6 text-center">
             <Link href="/auth/login" className="text-ingco-yellow hover:underline text-sm">
-              Retour à la connexion
+              {t('forgot.backToLogin')}
             </Link>
           </div>
         </div>

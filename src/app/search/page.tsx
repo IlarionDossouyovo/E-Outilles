@@ -8,6 +8,7 @@ import { NavigationArrows, Icon } from '@/components/Icons'
 import { categoryImage } from '@/lib/catalog'
 import { LocalizedText } from '@/components/LocalizedText'
 import { firstImage } from '@/lib/images'
+import { useTranslation } from '@/lib/i18n/LanguageProvider'
 
 export const dynamic = 'force-dynamic'
 
@@ -23,6 +24,7 @@ interface Product {
 }
 
 export default function SearchPage({ searchParams }: { searchParams: { category?: string } }) {
+  const { t } = useTranslation()
   const [products, setProducts] = useState<Product[]>([])
   const [categories, setCategories] = useState<{ name: string; slug: string }[]>([])
   const [search, setSearch] = useState('')
@@ -79,7 +81,7 @@ export default function SearchPage({ searchParams }: { searchParams: { category?
       )}
 
       <div className="pt-24 pb-16 max-w-7xl mx-auto px-4">
-        <h1 className="text-3xl font-bold text-white mb-8">Produits</h1>
+        <h1 className="text-3xl font-bold text-white mb-8">{t('search.title')}</h1>
 
         <div className="flex flex-col md:flex-row gap-4 mb-8">
           <div className="flex-1 relative">
@@ -199,8 +201,8 @@ export default function SearchPage({ searchParams }: { searchParams: { category?
         {!loading && filteredProducts.length === 0 && (
           <div className="text-center py-16">
             <Icon name="search" className="w-14 h-14 text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-400">Aucun produit trouvé</p>
-            <Link href="/search" className="text-ingco-yellow hover:underline mt-4 inline-block">Voir tout</Link>
+            <p className="text-gray-400">{t('search.empty')}</p>
+            <Link href="/search" className="text-ingco-yellow hover:underline mt-4 inline-block">{t('search.viewAll')}</Link>
           </div>
         )}
 

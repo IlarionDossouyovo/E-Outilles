@@ -102,7 +102,7 @@ export default function Footer() {
 
         <div className="border-t border-ingco-gray pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-gray-500 text-sm text-center md:text-left">
-            © 2026 E-Outilles. {t('footer.rights')} Projet dropshipping INGCO.
+            © 2026 E-Outilles. {t('footer.rights')} {t('footer.project')}
           </p>
           <div className="flex flex-wrap justify-center gap-4 text-sm">
             <Link href="/profile" className="text-gray-500 hover:text-ingco-yellow transition-colors">{t('footer.clientArea')}</Link>

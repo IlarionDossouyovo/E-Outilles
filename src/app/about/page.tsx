@@ -4,8 +4,10 @@ import Link from 'next/link'
 import { NavigationArrows, Icon } from '@/components/Icons'
 import Reveal from '@/components/Reveal'
 import PageNavigation from '@/components/PageNavigation'
+import { useTranslation } from '@/lib/i18n/LanguageProvider'
 
 export default function About() {
+  const { t } = useTranslation()
   return (
     <div className="min-h-screen bg-ingco-black">
       {/* Navigation */}
@@ -19,11 +21,11 @@ export default function About() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal className="text-center mb-16">
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              <span className="text-white">À propos de </span>
+              <span className="text-white">{t('about.title')}{' '}</span>
               <span className="text-ingco-yellow">E-Outilles</span>
             </h1>
             <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto">
-              Votre partenaire dropshipping international pour outillage professionnel INGCO
+              {t('about.subtitle')}
             </p>
           </Reveal>
 
@@ -31,98 +33,94 @@ export default function About() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
             <div className="bg-ingco-dark rounded-3xl p-8">
               <Icon name="grid" className="w-9 h-9 text-ingco-yellow mb-4" />
-              <h2 className="text-2xl font-bold text-white mb-4">Notre Mission</h2>
+              <h2 className="text-2xl font-bold text-white mb-4">{t('about.mission')}</h2>
               <p className="text-gray-400">
-                Permettre aux entrepreneurs Africans d'accéder à des outils professionnels de qualité 
-                sans investir dans un stock initial. Nous simplifions le commerce international 
-                avec une solution dropshipping clés en main.
+{t('about.missionText')}
               </p>
             </div>
             <div className="bg-ingco-dark rounded-3xl p-8">
               <Icon name="info" className="w-9 h-9 text-ingco-yellow mb-4" />
-              <h2 className="text-2xl font-bold text-white mb-4">Notre Vision</h2>
+              <h2 className="text-2xl font-bold text-white mb-4">{t('about.vision')}</h2>
               <p className="text-gray-400">
-                Devenir la plateforme de référence pour le dropshipping d'outils 
-                professionnels en Afrique francophone. Nous connectons les fabricants 
-                aux revendeurs locaux via une chaîne logistique optimisée.
+{t('about.visionText')}
               </p>
             </div>
           </div>
 
           {/* Chiffres clés */}
           <div className="bg-ingco-gray rounded-3xl p-8 md:p-12 mb-16">
-            <h2 className="text-2xl font-bold text-white text-center mb-8">E-Outilles en chiffres</h2>
+            <h2 className="text-2xl font-bold text-white text-center mb-8">{t('about.numbers')}</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               <div className="text-center">
                 <div className="text-3xl md:text-4xl font-bold text-ingco-yellow">70+</div>
-                <div className="text-gray-500">Produits</div>
+                <div className="text-gray-500">{t('about.stat.products')}</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl md:text-4xl font-bold text-ingco-yellow">50+</div>
-                <div className="text-gray-500">Pays livrés</div>
+                <div className="text-gray-500">{t('about.stat.countries')}</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl md:text-4xl font-bold text-ingco-yellow">200+</div>
-                <div className="text-gray-500">Revendeurs</div>
+                <div className="text-gray-500">{t('about.stat.resellers')}</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl md:text-4xl font-bold text-ingco-yellow">24h</div>
-                <div className="text-gray-500">Livraison moy.</div>
+                <div className="text-gray-500">{t('about.stat.delivery')}</div>
               </div>
             </div>
           </div>
 
           {/* Partenaires */}
           <div className="mb-16">
-            <h2 className="text-2xl font-bold text-white text-center mb-8">Nos Partenaires</h2>
+            <h2 className="text-2xl font-bold text-white text-center mb-8">{t('about.partners')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="bg-ingco-dark rounded-2xl p-6 text-center">
                 <div className="w-16 h-16 bg-ingco-yellow/20 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Icon name="tools" className="w-7 h-7 text-ingco-yellow" />
                 </div>
                 <h3 className="text-white font-semibold mb-2">INGCO</h3>
-                <p className="text-gray-500 text-sm">Fabricant officiel</p>
+                <p className="text-gray-500 text-sm">{t('about.partner.manufacturer')}</p>
               </div>
               <div className="bg-ingco-dark rounded-2xl p-6 text-center">
                 <div className="w-16 h-16 bg-ingco-yellow/20 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Icon name="card" className="w-7 h-7 text-ingco-yellow" />
                 </div>
                 <h3 className="text-white font-semibold mb-2">Stripe</h3>
-                <p className="text-gray-500 text-sm">Paiement sécurisé</p>
+                <p className="text-gray-500 text-sm">{t('about.partner.payment')}</p>
               </div>
               <div className="bg-ingco-dark rounded-2xl p-6 text-center">
                 <div className="w-16 h-16 bg-ingco-yellow/20 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Icon name="truck" className="w-7 h-7 text-ingco-yellow" />
                 </div>
                 <h3 className="text-white font-semibold mb-2">DHL/FedEx</h3>
-                <p className="text-gray-500 text-sm">Logistique mondiale</p>
+                <p className="text-gray-500 text-sm">{t('about.partner.logistics')}</p>
               </div>
             </div>
           </div>
 
           {/* Valeurs */}
           <div className="bg-gradient-to-r from-ingco-yellow/20 to-transparent rounded-3xl p-8 md:p-12">
-            <h2 className="text-2xl font-bold text-white text-center mb-8">Nos Valeurs</h2>
+            <h2 className="text-2xl font-bold text-white text-center mb-8">{t('about.values')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <div className="text-center">
                 <Icon name="user" className="w-7 h-7 text-ingco-yellow mx-auto mb-2" />
-                <h3 className="text-white font-semibold">Confiance</h3>
-                <p className="text-gray-500 text-sm">Relations durables</p>
+                <h3 className="text-white font-semibold">{t('about.value.trust')}</h3>
+                <p className="text-gray-500 text-sm">{t('about.value.trustText')}</p>
               </div>
               <div className="text-center">
                 <Icon name="zap" className="w-7 h-7 text-ingco-yellow mx-auto mb-2" />
-                <h3 className="text-white font-semibold">Rapiditié</h3>
-                <p className="text-gray-500 text-sm">Livraison express</p>
+                <h3 className="text-white font-semibold">{t('about.value.speed')}</h3>
+                <p className="text-gray-500 text-sm">{t('about.value.speedText')}</p>
               </div>
               <div className="text-center">
                 <Icon name="check" className="w-7 h-7 text-ingco-yellow mx-auto mb-2" />
-                <h3 className="text-white font-semibold">Qualité</h3>
-                <p className="text-gray-500 text-sm">Produits certifiés</p>
+                <h3 className="text-white font-semibold">{t('about.value.quality')}</h3>
+                <p className="text-gray-500 text-sm">{t('about.value.qualityText')}</p>
               </div>
               <div className="text-center">
                 <Icon name="star" className="w-7 h-7 text-ingco-yellow mx-auto mb-2" />
-                <h3 className="text-white font-semibold">Prix justes</h3>
-                <p className="text-gray-500 text-sm">Marges optimales</p>
+                <h3 className="text-white font-semibold">{t('about.value.price')}</h3>
+                <p className="text-gray-500 text-sm">{t('about.value.priceText')}</p>
               </div>
             </div>
           </div>
@@ -143,16 +141,15 @@ export default function About() {
                 </div>
                 <div className="flex-1 text-center md:text-left">
                   <p className="text-ingco-yellow font-bold tracking-widest text-xs uppercase mb-2">
-                    Le fondateur
+                    {t('about.founder.kicker')}
                   </p>
                   <h2 className="text-2xl font-bold text-white mb-2">Ilarion Dossou-Yovo Attiogbé</h2>
                   <p className="text-gray-400">
-                    Découvrez le parcours, la vision et l&apos;engagement du fondateur
-                    d&apos;E-Outilles pour l&apos;outillage professionnel en Afrique de l&apos;Ouest.
+                    {t('about.founder.text')}
                   </p>
                 </div>
                 <span className="inline-flex items-center gap-2 text-ingco-yellow font-semibold group-hover:gap-3 transition-all">
-                  En savoir plus <Icon name="arrow-right" className="w-4 h-4" />
+                  {t('about.founder.more')} <Icon name="arrow-right" className="w-4 h-4" />
                 </span>
               </div>
             </Link>
@@ -163,14 +160,14 @@ export default function About() {
       {/* CTA */}
       <section className="py-16 bg-ingco-dark">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl font-bold text-white mb-4">Prêt à démarrer?</h2>
-          <p className="text-gray-400 mb-8">Rejoignez notre réseau de revendeurs</p>
+          <h2 className="text-2xl font-bold text-white mb-4">{t('about.cta.title')}</h2>
+          <p className="text-gray-400 mb-8">{t('about.cta.text')}</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/auth/register" className="bg-ingco-yellow text-ingco-black px-8 py-4 rounded-xl font-bold hover:bg-yellow-400 transition-all">
-              Créer mon compte
+              {t('about.cta.register')}
             </Link>
             <Link href="/contact" className="border border-ingco-gray text-white px-8 py-4 rounded-xl font-bold hover:border-ingco-yellow hover:text-ingco-yellow transition-all">
-              Nous contacter
+              {t('about.cta.contact')}
             </Link>
           </div>
         </div>

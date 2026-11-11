@@ -7,8 +7,10 @@ import { useHydrated } from '@/lib/useHydrated'
 import Link from 'next/link'
 import PageNavigation from '@/components/PageNavigation'
 import { readAttribution } from '@/components/marketing/MarketingTracker'
+import { useTranslation } from '@/lib/i18n/LanguageProvider'
 
 export default function CheckoutPage() {
+  const { t } = useTranslation()
   const { items, getTotal, clearCart } = useCartStore()
   const hydrated = useHydrated()
   // Stripe readiness is resolved by the server: the secret key is not
@@ -142,7 +144,7 @@ export default function CheckoutPage() {
       setStep(3)
     } catch (err) {
       console.error('Order error:', err)
-      setError('Erreur de connexion au serveur. Veuillez reessayer.')
+      setError(t('co.error'))
     } finally {
       setLoading(false)
     }
@@ -159,38 +161,37 @@ export default function CheckoutPage() {
             <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
               <Icon name="check" className="w-10 h-10 text-green-400" />
             </div>
-            <h1 className="text-2xl font-bold text-white mb-4">Commande confirmée!</h1>
+            <h1 className="text-2xl font-bold text-white mb-4">{t('co.confirmed')}</h1>
             <div className="bg-ingco-dark rounded-xl p-3 mb-4">
-              <p className="text-gray-400 text-sm">Numéro de commande:</p>
+              <p className="text-gray-400 text-sm">{t('co.orderNumber')}</p>
               <p className="text-ingco-yellow font-bold text-lg">{orderId}</p>
             </div>
             <p className="text-gray-400 mb-6">
-              Merci {formData.name}! Votre commande a été enregistrée. 
-              Nous vous contacterons au {formData.phone} pour la livraison.
+              {t('co.thanks').replace('{name}', formData.name).replace('{phone}', formData.phone)}
             </p>
             <div className="bg-ingco-dark rounded-xl p-4 mb-6 text-left">
-              <p className="text-gray-400 text-sm">Mode de paiement:</p>
+              <p className="text-gray-400 text-sm">{t('co.paymentMode')}</p>
               <p className="text-white font-bold">
-                {paymentMethod === 'cod' && 'Paiement à la livraison'}
-                {paymentMethod === 'momo' && 'Mobile Money'}
-                {paymentMethod === 'card' && 'Carte bancaire'}
+                {paymentMethod === 'cod' && t('co.payCod')}
+                {paymentMethod === 'momo' && t('co.payMomo')}
+                {paymentMethod === 'card' && t('co.payCard')}
               </p>
             </div>
             <div className="bg-ingco-dark rounded-xl p-4 mb-6 text-left">
-              <p className="text-gray-400 text-sm">Résumé:</p>
-              <p className="text-white font-bold">{finalCount} produit(s)</p>
+              <p className="text-gray-400 text-sm">{t('co.summary')}</p>
+              <p className="text-white font-bold">{t('co.items').replace('{count}', String(finalCount))}</p>
               <p className="text-ingco-yellow font-bold text-xl">{finalTotal.toFixed(2)}€</p>
             </div>
             {momoNotice && (
               <div className="bg-ingco-dark border border-ingco-yellow/40 rounded-xl p-4 mb-6 text-left">
                 <p className="text-ingco-yellow font-bold mb-2 flex items-center gap-2">
-                  <Icon name="phone" className="w-4 h-4" /> Instruction de paiement
+                  <Icon name="phone" className="w-4 h-4" /> {t('co.paymentInstruction')}
                 </p>
                 <pre className="text-gray-300 text-sm whitespace-pre-wrap font-sans">{momoNotice}</pre>
               </div>
             )}
             <Link href="/" className="block bg-ingco-yellow text-ingco-black py-3 rounded-xl font-bold hover:bg-yellow-400">
-              Retour à l'accueil
+              {t('co.backHome')}
             </Link>
           </div>
         </div>
@@ -202,18 +203,18 @@ export default function CheckoutPage() {
     <div className="min-h-screen bg-ingco-black">
       <PageNavigation />
       <div className="pt-24 pb-16 max-w-4xl mx-auto px-4">
-        <h1 className="text-3xl font-bold text-white mb-8">Checkout</h1>
+        <h1 className="text-3xl font-bold text-white mb-8">{t('co.title')}</h1>
 
         {/* Progress Steps */}
         <div className="flex items-center justify-center gap-4 mb-8">
           <div className={`flex items-center gap-2 ${step >= 1 ? 'text-ingco-yellow' : 'text-gray-500'}`}>
             <span className="w-8 h-8 rounded-full bg-ingco-yellow/20 flex items-center justify-center">1</span>
-            <span className="hidden sm:inline">Livraison</span>
+            <span className="hidden sm:inline">{t('co.step.delivery')}</span>
           </div>
           <div className="w-8 h-0.5 bg-ingco-gray"></div>
           <div className={`flex items-center gap-2 ${step >= 2 ? 'text-ingco-yellow' : 'text-gray-500'}`}>
             <span className="w-8 h-8 rounded-full bg-ingco-yellow/20 flex items-center justify-center">2</span>
-            <span className="hidden sm:inline">Paiement</span>
+            <span className="hidden sm:inline">{t('co.step.payment')}</span>
           </div>
         </div>
 
@@ -223,21 +224,21 @@ export default function CheckoutPage() {
             <form onSubmit={handleSubmit} className="bg-ingco-gray rounded-2xl p-6">
               {step === 1 && (
                 <>
-                  <h2 className="text-xl font-bold text-white mb-6">Informations de livraison</h2>
+                  <h2 className="text-xl font-bold text-white mb-6">{t('co.shipping.title')}</h2>
                   <div className="space-y-4">
                     <div>
-                      <label className="text-gray-400 text-sm mb-2 block">Nom complet *</label>
+                      <label className="text-gray-400 text-sm mb-2 block">{t('co.name')}</label>
                       <input
                         type="text"
                         required
                         value={formData.name}
                         onChange={(e) => setFormData({...formData, name: e.target.value})}
                         className="w-full bg-ingco-black border border-ingco-dark rounded-xl px-4 py-3 text-white focus:border-ingco-yellow focus:outline-none"
-                        placeholder="Votre nom"
+                        placeholder={t('co.namePh')}
                       />
                     </div>
                     <div>
-                      <label className="text-gray-400 text-sm mb-2 block">Email *</label>
+                      <label className="text-gray-400 text-sm mb-2 block">{t('co.email')}</label>
                       <input
                         type="email"
                         required
@@ -248,7 +249,7 @@ export default function CheckoutPage() {
                       />
                     </div>
                     <div>
-                      <label className="text-gray-400 text-sm mb-2 block">WhatsApp *</label>
+                      <label className="text-gray-400 text-sm mb-2 block">{t('co.phone')}</label>
                       <input
                         type="tel"
                         required
@@ -259,19 +260,19 @@ export default function CheckoutPage() {
                       />
                     </div>
                     <div>
-                      <label className="text-gray-400 text-sm mb-2 block">Adresse *</label>
+                      <label className="text-gray-400 text-sm mb-2 block">{t('co.address')}</label>
                       <input
                         type="text"
                         required
                         value={formData.address}
                         onChange={(e) => setFormData({...formData, address: e.target.value})}
                         className="w-full bg-ingco-black border border-ingco-dark rounded-xl px-4 py-3 text-white focus:border-ingco-yellow focus:outline-none"
-                        placeholder="Adresse de livraison"
+                        placeholder={t('co.addressPh')}
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="text-gray-400 text-sm mb-2 block">Ville *</label>
+                        <label className="text-gray-400 text-sm mb-2 block">{t('co.city')}</label>
                         <input
                           type="text"
                           required
@@ -282,7 +283,7 @@ export default function CheckoutPage() {
                         />
                       </div>
                       <div>
-                        <label className="text-gray-400 text-sm mb-2 block">Pays</label>
+                        <label className="text-gray-400 text-sm mb-2 block">{t('co.country')}</label>
                         <select
                           value={formData.country}
                           onChange={(e) => setFormData({...formData, country: e.target.value})}
@@ -297,13 +298,13 @@ export default function CheckoutPage() {
                       </div>
                     </div>
                     <div>
-                      <label className="text-gray-400 text-sm mb-2 block">Note (optionnel)</label>
+                      <label className="text-gray-400 text-sm mb-2 block">{t('co.note')}</label>
                       <textarea
                         value={formData.note}
                         onChange={(e) => setFormData({...formData, note: e.target.value})}
                         className="w-full bg-ingco-black border border-ingco-dark rounded-xl px-4 py-3 text-white focus:border-ingco-yellow focus:outline-none"
                         rows={3}
-                        placeholder="Instructions spéciales..."
+                        placeholder={t('co.notePh')}
                       />
                     </div>
                   </div>
@@ -312,7 +313,7 @@ export default function CheckoutPage() {
 
               {step === 2 && (
                 <>
-                  <h2 className="text-xl font-bold text-white mb-6">Mode de paiement</h2>
+                  <h2 className="text-xl font-bold text-white mb-6">{t('co.payment.title')}</h2>
                   <div className="space-y-3">
                     <div 
                       onClick={() => setPaymentMethod('cod')}
@@ -320,10 +321,10 @@ export default function CheckoutPage() {
                     >
                       <input type="radio" name="payment" checked={paymentMethod === 'cod'} onChange={() => setPaymentMethod('cod')} className="w-5 h-5 accent-ingco-yellow" />
                       <div className="flex-1">
-                        <p className="text-white font-bold">Paiement à la livraison (COD)</p>
-                        <p className="text-gray-400 text-sm">Payez lorsque vous recevez votre commande</p>
-                        <p className="text-green-400 text-xs mt-1">Frais: 0€</p>
-                        {paymentMethod === 'cod' && <span className="inline-block mt-2 text-xs bg-ingco-yellow/20 text-ingco-yellow px-2 py-1 rounded">Sélectionné</span>}
+                        <p className="text-white font-bold">{t('co.cod')}</p>
+                        <p className="text-gray-400 text-sm">{t('co.codText')}</p>
+                        <p className="text-green-400 text-xs mt-1">{t('co.fees')}</p>
+                        {paymentMethod === 'cod' && <span className="inline-block mt-2 text-xs bg-ingco-yellow/20 text-ingco-yellow px-2 py-1 rounded">{t('co.selected')}</span>}
                       </div>
                       <Icon name="truck" className="w-6 h-6 text-ingco-yellow" />
                     </div>
@@ -333,8 +334,8 @@ export default function CheckoutPage() {
                     >
                       <input type="radio" name="payment" checked={paymentMethod === 'momo'} onChange={() => setPaymentMethod('momo')} className="w-5 h-5 accent-ingco-yellow" />
                       <div className="flex-1">
-                        <p className="text-white font-bold">Mobile Money</p>
-                        <p className="text-gray-400 text-sm">MTN, Moov, Orange Money</p>
+                        <p className="text-white font-bold">{t('co.momo')}</p>
+                        <p className="text-gray-400 text-sm">{t('co.momoText')}</p>
                       </div>
                       <Icon name="phone" className="w-6 h-6 text-ingco-yellow" />
                     </div>
@@ -350,12 +351,12 @@ export default function CheckoutPage() {
                     >
                       <input type="radio" name="payment" disabled={!stripeReady} checked={paymentMethod === 'card'} onChange={() => setPaymentMethod('card')} className="w-5 h-5 accent-ingco-yellow" />
                       <div className="flex-1">
-                        <p className="text-white font-bold">Carte bancaire</p>
-                        <p className="text-gray-400 text-sm">Visa, Mastercard</p>
+                        <p className="text-white font-bold">{t('co.card')}</p>
+                        <p className="text-gray-400 text-sm">{t('co.cardText')}</p>
                         {stripeReady
-                          ? <p className="text-green-400 text-xs mt-1">Paiement sécurisé par Stripe</p>
-                          : <p className="text-yellow-400 text-xs mt-1">Bientôt disponible</p>}
-                        {paymentMethod === 'card' && stripeReady && <span className="inline-block mt-2 text-xs bg-ingco-yellow/20 text-ingco-yellow px-2 py-1 rounded">Sélectionné</span>}
+                          ? <p className="text-green-400 text-xs mt-1">{t('co.cardStripe')}</p>
+                          : <p className="text-yellow-400 text-xs mt-1">{t('co.cardSoon')}</p>}
+                        {paymentMethod === 'card' && stripeReady && <span className="inline-block mt-2 text-xs bg-ingco-yellow/20 text-ingco-yellow px-2 py-1 rounded">{t('co.selected')}</span>}
                       </div>
                       <Icon name="card" className="w-6 h-6 text-ingco-yellow" />
                     </div>
@@ -364,23 +365,23 @@ export default function CheckoutPage() {
                   {/* Mobile Money Form */}
                   {paymentMethod === 'momo' && (
                     <div className="mt-6 p-4 bg-ingco-black rounded-xl border border-ingco-dark">
-                      <h3 className="text-white font-bold mb-4">Détails Mobile Money</h3>
+                      <h3 className="text-white font-bold mb-4">{t('co.momoDetails')}</h3>
                       <div className="space-y-4">
                         <div>
-                          <label className="text-gray-400 text-sm mb-2 block">Opérateur</label>
+                          <label className="text-gray-400 text-sm mb-2 block">{t('co.operator')}</label>
                           <select 
                             className="w-full bg-ingco-dark border border-ingco-gray rounded-xl px-4 py-3 text-white"
                             value={momoData.operator}
                             onChange={(e) => setMomoData({...momoData, operator: e.target.value})}
                           >
-                            <option value="">Sélectionner...</option>
+                            <option value="">{t('co.operatorSelect')}</option>
                             <option value="mtn">MTN Mobile Money</option>
                             <option value="moov">Moov Money</option>
                             <option value="orange">Orange Money</option>
                           </select>
                         </div>
                         <div>
-                          <label className="text-gray-400 text-sm mb-2 block">Numéro Mobile Money</label>
+                          <label className="text-gray-400 text-sm mb-2 block">{t('co.momoNumber')}</label>
                           <input
                             type="tel"
                             placeholder="+229 XX XXX XX XX"
@@ -390,7 +391,7 @@ export default function CheckoutPage() {
                           />
                         </div>
                         <p className="text-gray-400 text-sm">
-                          Un code de paiement vous sera envoyé sur ce numéro
+                          {t('co.momoCode')}
                         </p>
                       </div>
                     </div>
@@ -399,14 +400,13 @@ export default function CheckoutPage() {
                   {/* Card Payment Form */}
                   {paymentMethod === 'card' && stripeReady && (
                     <div className="mt-6 p-4 bg-ingco-black rounded-xl border border-ingco-dark">
-                      <h3 className="text-white font-bold mb-4">Paiement sécurisé</h3>
+                      <h3 className="text-white font-bold mb-4">{t('co.secure')}</h3>
                       <p className="text-gray-300 text-sm">
-                        Vous serez redirigé vers la page de paiement sécurisée Stripe pour saisir
-                        vos informations bancaires. E-Outilles ne stocke jamais vos données de carte.
+                        {t('co.secureText')}
                       </p>
                       <div className="flex items-center gap-2 mt-4">
                         <Icon name="shield" className="w-4 h-4 text-green-400" />
-                        <span className="text-gray-400 text-sm">Paiement chiffré et sécurisé par Stripe</span>
+                        <span className="text-gray-400 text-sm">{t('co.secureShort')}</span>
                       </div>
                     </div>
                   )}
@@ -418,7 +418,7 @@ export default function CheckoutPage() {
                 disabled={loading}
                 className="w-full mt-6 bg-ingco-yellow text-ingco-black py-4 rounded-xl font-bold hover:bg-yellow-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? '⏳ Traitement en cours...' : step === 1 ? 'Continuer vers paiement' : 'Confirmer la commande'}
+                {loading ? t('co.processing') : step === 1 ? t('co.continue') : t('co.confirm')}
               </button>
               {error && (
                 <div className="mt-4 bg-red-500/20 border border-red-500 text-red-400 px-4 py-3 rounded-xl text-sm">
@@ -432,7 +432,7 @@ export default function CheckoutPage() {
           <div className="bg-ingco-dark border-2 border-ingco-gray rounded-2xl p-6 h-fit sticky top-24">
             <div className="flex items-center gap-2 mb-4">
               <Icon name="cart" className="w-5 h-5 text-ingco-yellow" />
-              <h2 className="text-xl font-bold text-white">Votre commande</h2>
+              <h2 className="text-xl font-bold text-white">{t('co.order')}</h2>
             </div>
             <div className="space-y-3 mb-4 max-h-40 overflow-y-auto">
               {hydrated && items.map((item) => (
@@ -447,20 +447,20 @@ export default function CheckoutPage() {
             </div>
             <div className="border-t border-gray-700 pt-3 space-y-2">
               <div className="flex justify-between text-gray-400">
-                <span>Sous-total</span>
+                <span>{t('co.subtotal')}</span>
                 <span className="text-gray-300">{(hydrated ? getTotal() : 0).toFixed(2)}€</span>
               </div>
               <div className="flex justify-between text-gray-400">
-                <span>Livraison</span>
-                <span className="text-green-400 font-medium flex items-center gap-1"><Icon name="check" className="w-4 h-4" /> Gratuit</span>
+                <span>{t('co.shipping')}</span>
+                <span className="text-green-400 font-medium flex items-center gap-1"><Icon name="check" className="w-4 h-4" /> {t('co.free')}</span>
               </div>
               <div className="flex justify-between text-white font-bold text-xl pt-2 border-t border-gray-700">
-                <span>Total</span>
+                <span>{t('co.total')}</span>
                 <span className="text-ingco-yellow">{(hydrated ? getTotal() : 0).toFixed(2)}€</span>
               </div>
             </div>
             <Link href="/cart" className="inline-flex items-center justify-center gap-1 w-full text-gray-500 mt-4 text-sm hover:text-ingco-yellow transition-colors">
-              <Icon name="arrow-left" className="w-4 h-4" /> Retour au panier
+              <Icon name="arrow-left" className="w-4 h-4" /> {t('co.backToCart')}
             </Link>
           </div>
         </div>

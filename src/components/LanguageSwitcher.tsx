@@ -8,7 +8,7 @@ import { useLanguage } from '@/lib/i18n/LanguageProvider'
 // override the country-based automatic choice. The selection is persisted by
 // the LanguageProvider.
 export default function LanguageSwitcher({ className = '' }: { className?: string }) {
-  const { locale, setLocale } = useLanguage()
+  const { locale, setLocale, t } = useLanguage()
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
   const active = LOCALES.find((l) => l.code === locale) || LOCALES[0]
@@ -28,7 +28,7 @@ export default function LanguageSwitcher({ className = '' }: { className?: strin
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="listbox"
         aria-expanded={open}
-        aria-label="Changer de langue"
+        aria-label={t('common.language')}
         className="flex items-center gap-1.5 p-2 rounded-lg text-gray-300 hover:text-ingco-yellow hover:bg-ingco-gray/60 transition-colors"
       >
         <span aria-hidden className="text-base leading-none">{active.flag}</span>

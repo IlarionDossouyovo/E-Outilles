@@ -5,8 +5,10 @@ import { useHydrated } from '@/lib/useHydrated'
 import { Icon, NavigationArrows } from '@/components/Icons'
 import Link from 'next/link'
 import PageNavigation from '@/components/PageNavigation'
+import { useTranslation } from '@/lib/i18n/LanguageProvider'
 
 export default function CartPage() {
+  const { t } = useTranslation()
   const { items, updateQuantity, removeItem, getTotal, clearCart } = useCartStore()
   const hydrated = useHydrated()
 
@@ -19,16 +21,16 @@ export default function CartPage() {
           <PageNavigation />
           <Icon name="cart" className="w-16 h-16 text-gray-600 mx-auto mb-6" />
           <h1 className="text-3xl font-bold text-white mb-4">
-            {hydrated ? 'Votre panier est vide' : '\u00a0'}
+            {hydrated ? t('cart.empty') : '\u00a0'}
           </h1>
           {hydrated && (
             <>
-              <p className="text-gray-400 mb-8">Découvrez notre catalogue et ajoutez des produits</p>
+              <p className="text-gray-400 mb-8">{t('cart.emptyText')}</p>
               <Link
                 href="/search"
                 className="bg-ingco-yellow text-ingco-black px-8 py-3 rounded-xl font-bold hover:bg-yellow-400 transition-colors inline-block"
               >
-                Découvrir le catalogue
+                {t('cart.discover')}
               </Link>
             </>
           )}
@@ -41,7 +43,7 @@ export default function CartPage() {
     <div className="min-h-screen bg-ingco-black">
       <div className="pt-24 pb-16 max-w-7xl mx-auto px-4">
         <PageNavigation />
-        <h1 className="text-3xl font-bold text-white mb-8">Mon Panier</h1>
+        <h1 className="text-3xl font-bold text-white mb-8">{t('cart.title')}</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Cart Items */}
@@ -74,7 +76,7 @@ export default function CartPage() {
                 <button 
                   onClick={() => removeItem(item.id)}
                   className="text-red-500 hover:text-red-400"
-                  aria-label="Retirer du panier"
+                  aria-label={t('cart.remove')}
                 >
                   <Icon name="warning" className="w-5 h-5" />
                 </button>
@@ -84,29 +86,29 @@ export default function CartPage() {
 
           {/* Summary */}
           <div className="bg-ingco-gray rounded-2xl p-6 h-fit">
-            <h2 className="text-xl font-bold text-white mb-4">Résumé</h2>
+            <h2 className="text-xl font-bold text-white mb-4">{t('cart.summary')}</h2>
             <div className="space-y-3 mb-6">
               <div className="flex justify-between text-gray-400">
-                <span>Sous-total</span>
+                <span>{t('cart.subtotal')}</span>
                 <span>{getTotal().toFixed(2)}€</span>
               </div>
               <div className="flex justify-between text-gray-400">
-                <span>Livraison</span>
-                <span className="text-green-500">Gratuit</span>
+                <span>{t('cart.shipping')}</span>
+                <span className="text-green-500">{t('cart.free')}</span>
               </div>
               <div className="border-t border-ingco-dark pt-3 flex justify-between text-white font-bold text-xl">
-                <span>Total</span>
+                <span>{t('cart.total')}</span>
                 <span className="text-ingco-yellow">{getTotal().toFixed(2)}€</span>
               </div>
             </div>
             <Link href="/checkout" className="block w-full bg-ingco-yellow text-ingco-black py-3 rounded-xl font-bold hover:bg-yellow-400 transition-colors text-center">
-              Passer la commande
+              {t('cart.checkout')}
             </Link>
             <button 
               onClick={clearCart}
               className="w-full mt-3 border border-red-500 text-red-500 py-2 rounded-xl hover:bg-red-500 hover:text-white transition-colors"
             >
-              Vider le panier
+              {t('cart.clear')}
             </button>
           </div>
         </div>

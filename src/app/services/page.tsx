@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { NavigationArrows, Icon } from '@/components/Icons'
 import Reveal from '@/components/Reveal'
 import Link from 'next/link'
+import { useTranslation } from '@/lib/i18n/LanguageProvider'
+import { LocalizedText } from '@/components/LocalizedText'
 
 const services = [
   {
@@ -15,20 +17,20 @@ const services = [
     duration: '30 min',
     features: [
       'Analyse de vos besoins',
-      'Recommandations personnalisees',
-      'Devis detaille gratuit',
-      'Suivi personnalise',
+      'Recommandations personnalisées',
+      'Devis détaillé gratuit',
+      'Suivi personnalisé',
     ]
   },
   {
     id: 'installation',
     name: 'Installation & Montage',
     icon: 'tools',
-    description: 'Installation professionnelle de vos equipements',
-    price: 'A partir de 50€',
+    description: 'Installation professionnelle de vos équipements',
+    price: 'À partir de 50€',
     duration: 'Selon projet',
     features: [
-      'Installation a domicile',
+      'Installation à domicile',
       'Montage professionnel',
       'Mise en service',
       'Formation utilisateur',
@@ -36,10 +38,10 @@ const services = [
   },
   {
     id: 'maintenance',
-    name: 'Maintenance & Reparation',
+    name: 'Maintenance & Réparation',
     icon: 'wrench',
-    description: 'Entretien et reparation de vos outils',
-    price: 'A partir de 30€',
+    description: 'Entretien et réparation de vos outils',
+    price: 'À partir de 30€',
     duration: '24-48h',
     features: [
       'Diagnostic gratuit',
@@ -50,15 +52,15 @@ const services = [
   },
   {
     id: 'livraison',
-    name: 'Livraison a Domicile',
+    name: 'Livraison à Domicile',
     icon: 'truck',
-    description: 'Livraison rapide dans tout le Benin',
-    price: 'A partir de 5€',
+    description: 'Livraison rapide dans tout le Bénin',
+    price: 'À partir de 5€',
     duration: '24-72h',
     features: [
-      'Livraison partout au Benin',
-      'Suivi en temps reel',
-      'Emballage securise',
+      'Livraison partout au Bénin',
+      'Suivi en temps réel',
+      'Emballage sécurisé',
       'Assurance incluse',
     ]
   },
@@ -66,39 +68,40 @@ const services = [
     id: 'formation',
     name: 'Formation Utilisation',
     icon: 'star',
-    description: 'Apprenez a utiliser vos outils',
-    price: 'A partir de 25€',
+    description: 'Apprenez à utiliser vos outils',
+    price: 'À partir de 25€',
     duration: '2-4 heures',
     features: [
       'Formation sur mesure',
       'Support de cours',
       'Attestation',
-      'Mise a niveau gratuite',
+      'Mise à niveau gratuite',
     ]
   },
   {
     id: 'location',
-    name: 'Location de Materiel',
+    name: 'Location de Matériel',
     icon: 'key',
     description: 'Louez vos outils pour vos projets',
-    price: 'A partir de 10€/jour',
+    price: 'À partir de 10€/jour',
     duration: 'Flexible',
     features: [
-      'Large choix de materiel',
+      'Large choix de matériel',
       'Assurance incluse',
       'Livraison possible',
-      'Prix deduits achat',
+      'Prix déduits à l\'achat',
     ]
   },
 ]
 
 const testimonials = [
-  { name: 'Jean K.', text: 'Excellent service! Mon atelier est maintenant equipe.', rating: 5 },
-  { name: 'Marie D.', text: 'Livraison rapide et personnel tres competent.', rating: 5 },
-  { name: 'Paul O.', text: 'La maintenance m a fait economiser beaucoup.', rating: 5 },
+  { name: 'Jean K.', text: 'Excellent service ! Mon atelier est maintenant équipé.', rating: 5 },
+  { name: 'Marie D.', text: 'Livraison rapide et personnel très compétent.', rating: 5 },
+  { name: 'Paul O.', text: 'La maintenance m\'a fait économiser beaucoup.', rating: 5 },
 ]
 
 export default function ServicesPage() {
+  const { t } = useTranslation()
   const [activeService, setActiveService] = useState(services[0])
 
   return (
@@ -109,10 +112,10 @@ export default function ServicesPage() {
       <section className="pt-24 pb-12 bg-gradient-to-b from-ingco-gray to-ingco-black">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <h1 className="animate-fade-in-up text-4xl md:text-5xl font-bold text-white mb-4">
-            Nos Services <span className="text-ingco-yellow">Professionnels</span>
+            {t('services.title')} <span className="text-ingco-yellow">{t('services.titleHi')}</span>
           </h1>
           <p className="animate-fade-in-up stagger-1 text-gray-400 text-lg">
-            Des services complets pour accompagner tous vos projets
+            {t('services.subtitle')}
           </p>
         </div>
       </section>
@@ -130,15 +133,15 @@ export default function ServicesPage() {
               }`}
             >
               <Icon name={service.icon as never} className="w-9 h-9 text-ingco-yellow mb-4 card-icon" />
-              <h3 className="text-white font-bold text-xl mb-2">{service.name}</h3>
-              <p className="text-gray-400 text-sm mb-4">{service.description}</p>
+              <h3 className="text-white font-bold text-xl mb-2"><LocalizedText text={service.name} /></h3>
+              <p className="text-gray-400 text-sm mb-4"><LocalizedText text={service.description} /></p>
               <div className="flex items-center justify-between">
-                <span className="text-ingco-yellow font-bold">{service.price}</span>
-                <span className="text-gray-500 text-sm">{service.duration}</span>
+                <span className="text-ingco-yellow font-bold"><LocalizedText text={service.price} /></span>
+                <span className="text-gray-500 text-sm"><LocalizedText text={service.duration} /></span>
               </div>
               {activeService.id === service.id && (
                 <div className="mt-4 text-center text-ingco-yellow text-sm animate-pulse">
-                  <Icon name="arrow-left" className="w-4 h-4 inline" /> Cliquez pour voir les details
+                  <Icon name="arrow-left" className="w-4 h-4 inline" /> {t('services.details')}
                 </div>
               )}
             </button>
@@ -153,36 +156,36 @@ export default function ServicesPage() {
           <div className="flex items-center gap-4 mb-6">
             <Icon name={activeService.icon as never} className="w-12 h-12 text-ingco-yellow" />
             <div>
-              <h2 className="text-2xl font-bold text-white">{activeService.name}</h2>
-              <p className="text-gray-400">{activeService.description}</p>
+              <h2 className="text-2xl font-bold text-white"><LocalizedText text={activeService.name} /></h2>
+              <p className="text-gray-400"><LocalizedText text={activeService.description} /></p>
             </div>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div>
-              <h3 className="text-white font-semibold mb-4">Inclus dans le service :</h3>
+              <h3 className="text-white font-semibold mb-4">{t('services.included')}</h3>
               <ul className="space-y-3">
                 {activeService.features.map((feature, index) => (
                   <li key={index} className="flex items-center gap-3 text-gray-300">
                     <Icon name="check" className="w-4 h-4 text-green-500 shrink-0" />
-                    {feature}
+                    <LocalizedText text={feature} />
                   </li>
                 ))}
               </ul>
             </div>
             <div className="bg-ingco-black rounded-xl p-6">
-              <h3 className="text-white font-semibold mb-4">Informations :</h3>
+              <h3 className="text-white font-semibold mb-4">{t('services.info')}</h3>
               <div className="space-y-4">
                 <div>
-                  <span className="text-gray-500 text-sm">Prix</span>
-                  <p className="text-ingco-yellow font-bold text-xl">{activeService.price}</p>
+                  <span className="text-gray-500 text-sm">{t('services.price')}</span>
+                  <p className="text-ingco-yellow font-bold text-xl"><LocalizedText text={activeService.price} /></p>
                 </div>
                 <div>
-                  <span className="text-gray-500 text-sm">Duree</span>
-                  <p className="text-white">{activeService.duration}</p>
+                  <span className="text-gray-500 text-sm">{t('services.duration')}</span>
+                  <p className="text-white"><LocalizedText text={activeService.duration} /></p>
                 </div>
                 <button className="w-full bg-ingco-yellow text-ingco-black py-3 rounded-lg font-bold hover:bg-white transition-colors">
-                  Commander ce service
+                  {t('services.order')}
                 </button>
               </div>
             </div>
@@ -192,7 +195,7 @@ export default function ServicesPage() {
 
       {/* Testimonials */}
       <section className="max-w-4xl mx-auto px-4 pb-16">
-        <h2 className="text-2xl font-bold text-white text-center mb-8">Temoignages Clients</h2>
+        <h2 className="text-2xl font-bold text-white text-center mb-8">{t('services.testimonials')}</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {testimonials.map((testimonial, index) => (
             <div key={index} className="bg-ingco-gray rounded-xl p-6">
@@ -201,7 +204,7 @@ export default function ServicesPage() {
                   <Icon key={i} name="star" className="w-4 h-4 text-ingco-yellow" />
                 ))}
               </div>
-              <p className="text-gray-300 mb-4">"{testimonial.text}"</p>
+              <p className="text-gray-300 mb-4">&ldquo;<LocalizedText text={testimonial.text} />&rdquo;</p>
               <p className="text-white font-semibold">{testimonial.name}</p>
             </div>
           ))}
@@ -212,16 +215,16 @@ export default function ServicesPage() {
       <section className="max-w-4xl mx-auto px-4 pb-16">
         <div className="bg-gradient-to-r from-ingco-yellow to-yellow-600 rounded-2xl p-8 text-center">
           <h2 className="text-2xl font-bold text-ingco-black mb-4">
-            Besoin d'aide pour choisir ?
+            {t('services.cta.title')}
           </h2>
           <p className="text-gray-800 mb-6">
-            Nos experts sont disponibles pour vous conseiller
+            {t('services.cta.text')}
           </p>
           <Link
             href="/contact"
             className="inline-block bg-ingco-black text-white px-8 py-3 rounded-lg font-bold hover:bg-gray-800 transition-colors"
           >
-            Nous contacter
+            {t('services.cta.button')}
           </Link>
         </div>
       </section>

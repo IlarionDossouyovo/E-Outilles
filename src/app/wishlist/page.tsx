@@ -6,8 +6,10 @@ import { Icon, NavigationArrows } from '@/components/Icons'
 import { useCartStore } from '@/lib/store/cart'
 import Link from 'next/link'
 import PageNavigation from '@/components/PageNavigation'
+import { useTranslation } from '@/lib/i18n/LanguageProvider'
 
 export default function WishlistPage() {
+  const { t } = useTranslation()
   const { items, removeItem } = useWishlistStore()
   const addItem = useCartStore(state => state.addItem)
   const hydrated = useHydrated()
@@ -21,16 +23,16 @@ export default function WishlistPage() {
           <div className="text-center">
             <Icon name="heart" className="w-16 h-16 text-gray-600 mx-auto mb-6" />
             <h1 className="text-3xl font-bold text-white mb-4">
-              {hydrated ? 'Votre liste de favoris est vide' : '\u00a0'}
+              {hydrated ? t('wishlist.empty') : '\u00a0'}
             </h1>
             {hydrated && (
               <>
-                <p className="text-gray-400 mb-8">Ajoutez des produits pour les retrouver facilement</p>
+                <p className="text-gray-400 mb-8">{t('wishlist.emptyText')}</p>
                 <Link
                   href="/"
                   className="bg-ingco-yellow text-ingco-black px-8 py-3 rounded-xl font-bold hover:bg-yellow-400 transition-colors inline-block"
                 >
-                  Explorer le catalogue
+                  {t('wishlist.explore')}
                 </Link>
               </>
             )}
@@ -44,7 +46,7 @@ export default function WishlistPage() {
     <div className="min-h-screen bg-ingco-black pt-24 pb-16">
       <div className="max-w-7xl mx-auto px-4">
         <PageNavigation />
-        <h1 className="text-3xl font-bold text-white mb-8">Mes Favoris ({items.length})</h1>
+        <h1 className="text-3xl font-bold text-white mb-8">{t('wishlist.title')} ({items.length})</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {items.map((item) => (
@@ -62,12 +64,12 @@ export default function WishlistPage() {
                     onClick={() => addItem(item)}
                     className="flex-1 bg-ingco-yellow text-ingco-black py-2 rounded-lg font-medium hover:bg-yellow-400 transition-colors"
                   >
-                    Ajouter au panier
+                    {t('wishlist.addToCart')}
                   </button>
                   <button 
                     onClick={() => removeItem(item.id)}
                     className="px-4 border border-red-500 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-colors"
-                    aria-label="Retirer des favoris"
+                    aria-label={t('wishlist.remove')}
                   >
                     <Icon name="warning" className="w-5 h-5" />
                   </button>

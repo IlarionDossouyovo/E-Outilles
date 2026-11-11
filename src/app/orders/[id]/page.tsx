@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { NavigationArrows, Icon } from '@/components/Icons'
+import { useTranslation } from '@/lib/i18n/LanguageProvider'
 
 interface OrderItem {
   id: string
@@ -23,15 +24,6 @@ interface Order {
   notes?: string | null
   createdAt: string
   items: OrderItem[]
-}
-
-const statusLabels: Record<string, string> = {
-  pending: 'En attente',
-  processing: 'En préparation',
-  paid: 'Payée',
-  shipped: 'Expédiée',
-  delivered: 'Livrée',
-  cancelled: 'Annulée',
 }
 
 const statusColors: Record<string, string> = {
@@ -54,6 +46,15 @@ function firstImage(images?: string): string | null {
 }
 
 export default function OrderDetailPage() {
+  const { t } = useTranslation()
+  const statusLabels: Record<string, string> = {
+    pending: t('order.status.pending'),
+    processing: t('order.status.processing'),
+    paid: t('order.status.paid'),
+    shipped: t('order.status.shipped'),
+    delivered: t('order.status.delivered'),
+    cancelled: t('order.status.cancelled'),
+  }
   const params = useParams<{ id: string }>()
   const router = useRouter()
   const [order, setOrder] = useState<Order | null>(null)
@@ -82,7 +83,7 @@ export default function OrderDetailPage() {
       <div className="max-w-4xl mx-auto px-4">
         <div className="mb-6">
           <Link href="/profile" className="inline-flex items-center gap-2 text-ingco-yellow hover:text-yellow-400 transition-colors">
-            <Icon name="arrow-left" className="w-4 h-4" /> Mes commandes
+            <Icon name="arrow-left" className="w-4 h-4" /> {t('order.myOrders')}
           </Link>
         </div>
 
@@ -93,16 +94,16 @@ export default function OrderDetailPage() {
         ) : error || !order ? (
           <div className="bg-ingco-gray rounded-2xl p-10 text-center">
             <Icon name="warning" className="w-12 h-12 text-red-400 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-white mb-2">Commande introuvable</h1>
+            <h1 className="text-2xl font-bold text-white mb-2">{t('order.notFound')}</h1>
             <p className="text-gray-400 mb-6">{error}</p>
-            <Link href="/profile" className="text-ingco-yellow hover:underline">Retour au profil</Link>
+            <Link href="/profile" className="text-ingco-yellow hover:underline">{t('order.backToProfile')}</Link>
           </div>
         ) : (
           <>
             <div className="bg-ingco-gray rounded-2xl p-6 sm:p-8 mb-6 animate-fade-in-up">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <h1 className="text-2xl font-bold text-white">Commande</h1>
+                  <h1 className="text-2xl font-bold text-white">{t('order.title')}</h1>
                   <p className="text-gray-500 text-sm break-all">{order.id}</p>
                   <p className="text-gray-400 text-sm mt-1">
                     {new Date(order.createdAt).toLocaleDateString('fr-FR', {
@@ -117,7 +118,7 @@ export default function OrderDetailPage() {
             </div>
 
             <div className="bg-ingco-gray rounded-2xl p-6 sm:p-8 mb-6 animate-fade-in-up">
-              <h2 className="text-lg font-bold text-white mb-4">Articles</h2>
+              <h2 className="text-lg font-bold text-white mb-4">{t('order.items')}</h2>
               <div className="space-y-4">
                 {order.items.map((item) => {
                   const img = firstImage(item.product?.images)
@@ -132,8 +133,8 @@ export default function OrderDetailPage() {
                         )}
                       </div>
                       <div className="flex-1">
-                        <p className="text-white font-semibold">{item.product?.name || 'Produit'}</p>
-                        <p className="text-gray-500 text-sm">Quantité : {item.quantity}</p>
+                        <p className="text-white font-semibold">{item.product?.name || t('order.product')}</p>
+                        <p className="text-gray-500 text-sm">{t('order.qty')} {item.quantity}</p>
                       </div>
                       <p className="text-ingco-yellow font-bold">{(item.price * item.quantity).toFixed(2)}€</p>
                     </div>
@@ -141,19 +142,19 @@ export default function OrderDetailPage() {
                 })}
               </div>
               <div className="flex justify-between items-center mt-6 pt-4 border-t border-white/10">
-                <span className="text-white font-bold">Total</span>
+                <span className="text-white font-bold">{t('order.total')}</span>
                 <span className="text-ingco-yellow font-bold text-2xl">{order.total.toFixed(2)}€</span>
               </div>
             </div>
 
             <div className="grid sm:grid-cols-2 gap-6">
               <div className="bg-ingco-gray rounded-2xl p-6 animate-fade-in-up">
-                <h2 className="text-lg font-bold text-white mb-4">Livraison</h2>
+                <h2 className="text-lg font-bold text-white mb-4">{t('order.shipping')}</h2>
                 <p className="text-gray-300">{order.shippingAddress || '—'}</p>
                 <p className="text-gray-300">{order.shippingCity} {order.shippingCountry}</p>
               </div>
               <div className="bg-ingco-gray rounded-2xl p-6 animate-fade-in-up">
-                <h2 className="text-lg font-bold text-white mb-4">Paiement</h2>
+                <h2 className="text-lg font-bold text-white mb-4">{t('order.payment')}</h2>
                 <p className="text-gray-300">{order.paymentMethod || '—'}</p>
                 {order.notes && <p className="text-gray-500 text-sm mt-2">{order.notes}</p>}
               </div>

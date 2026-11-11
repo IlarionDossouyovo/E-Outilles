@@ -4,8 +4,10 @@ import { useEffect, useState } from 'react'
 import { NavigationArrows, Icon } from '@/components/Icons'
 import Link from 'next/link'
 import Logo from '@/components/Logo'
+import { useTranslation } from '@/lib/i18n/LanguageProvider'
 
 export default function DownloadPage() {
+  const { t } = useTranslation()
   const [siteUrl, setSiteUrl] = useState('')
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
   const [installed, setInstalled] = useState(false)
@@ -40,11 +42,10 @@ export default function DownloadPage() {
 
         <div className="text-center mb-12 animate-fade-in-up">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">
-            Téléchargez l&apos;application E-Outilles
+            {t('download.title')}
           </h1>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            Scannez le QR code ou installez l&apos;application directement sur votre téléphone.
-            Accès rapide, fonctionnement hors-ligne et notifications.
+            {t('download.subtitle')}
           </p>
         </div>
 
@@ -59,14 +60,14 @@ export default function DownloadPage() {
                 <div className="w-[280px] h-[280px] bg-gray-100 animate-pulse rounded-xl" />
               )}
             </div>
-            <p className="text-ingco-black font-bold mt-4">Scannez pour ouvrir l&apos;application</p>
+            <p className="text-ingco-black font-bold mt-4">{t('download.scan')}</p>
             <p className="text-gray-500 text-sm break-all">{siteUrl}</p>
             <a
               href={qrSrc}
               download="e-outilles-qr.png"
               className="inline-block mt-3 text-sm text-ingco-black underline"
             >
-              Télécharger le QR code
+              {t('download.qr')}
             </a>
           </div>
 
@@ -77,31 +78,31 @@ export default function DownloadPage() {
               disabled={!deferredPrompt}
               className="w-full bg-ingco-yellow text-ingco-black py-4 rounded-2xl font-bold text-lg hover:bg-yellow-400 transition-all hover:scale-[1.02] disabled:opacity-60 animate-fade-in-up"
             >
-              {installed ? 'Application installée' : 'Installer l\'application'}
+              {installed ? t('download.installed') : t('download.install')}
             </button>
 
             <div className="bg-ingco-gray rounded-2xl p-6 animate-fade-in-up">
-              <h2 className="text-white font-bold mb-3 flex items-center gap-2"><Icon name="download" className="w-5 h-5 text-ingco-yellow" /> Sur Android (Chrome)</h2>
+              <h2 className="text-white font-bold mb-3 flex items-center gap-2"><Icon name="download" className="w-5 h-5 text-ingco-yellow" /> {t('download.android')}</h2>
               <ol className="text-gray-300 text-sm space-y-2 list-decimal list-inside">
-                <li>Ouvrez le site dans Chrome</li>
-                <li>Menu ⋮ puis « Ajouter à l&apos;écran d&apos;accueil »</li>
-                <li>Confirmez l&apos;installation</li>
+                <li>{t('download.a1')}</li>
+                <li>{t('download.a2')}</li>
+                <li>{t('download.a3')}</li>
               </ol>
             </div>
 
             <div className="bg-ingco-gray rounded-2xl p-6 animate-fade-in-up">
-              <h2 className="text-white font-bold mb-3 flex items-center gap-2"><Icon name="download" className="w-5 h-5 text-ingco-yellow" /> Sur iPhone (Safari)</h2>
+              <h2 className="text-white font-bold mb-3 flex items-center gap-2"><Icon name="download" className="w-5 h-5 text-ingco-yellow" /> {t('download.ios')}</h2>
               <ol className="text-gray-300 text-sm space-y-2 list-decimal list-inside">
-                <li>Ouvrez le site dans Safari</li>
-                <li>Bouton Partager</li>
-                <li>« Sur l&apos;écran d&apos;accueil » puis « Ajouter »</li>
+                <li>{t('download.i1')}</li>
+                <li>{t('download.i2')}</li>
+                <li>{t('download.i3')}</li>
               </ol>
             </div>
 
             <div className="bg-ingco-gray rounded-2xl p-6 animate-fade-in-up">
-              <h2 className="text-white font-bold mb-3 flex items-center gap-2"><Icon name="download" className="w-5 h-5 text-ingco-yellow" /> Sur ordinateur</h2>
+              <h2 className="text-white font-bold mb-3 flex items-center gap-2"><Icon name="download" className="w-5 h-5 text-ingco-yellow" /> {t('download.desktop')}</h2>
               <p className="text-gray-300 text-sm">
-                Cliquez sur l&apos;icône d&apos;installation dans la barre d&apos;adresse de votre navigateur.
+                {t('download.d1')}
               </p>
             </div>
           </div>
@@ -109,7 +110,7 @@ export default function DownloadPage() {
 
         <div className="text-center mt-12">
           <Link href="/" className="text-ingco-yellow hover:underline inline-flex items-center gap-1">
-            <Icon name="arrow-left" className="w-4 h-4" /> Retour à l&apos;accueil
+            <Icon name="arrow-left" className="w-4 h-4" /> {t('download.back')}
           </Link>
         </div>
       </div>
