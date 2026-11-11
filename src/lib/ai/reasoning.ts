@@ -12,6 +12,7 @@ import {
   reasoningInstruction,
   toneInstructionFor,
   languageInstruction,
+  departmentLens,
   type AgentDefinition,
   type AgentId,
 } from './agents'
@@ -20,12 +21,16 @@ import { isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n/config'
 export interface ReasoningAnalysis {
   intent: string
   sentiment: string
+  // How time-sensitive the request is; drives the answer's pace and priority.
+  urgency: string
   missingInfo: string[]
   plan: string[]
   // Concrete next step the agent commits to, so the answer ends on an action.
   nextAction: string
   // Facts the agent must not assert (no data to back them): kept out of the reply.
   unknowns: string[]
+  // Self-check the agent runs on its own draft before sending.
+  selfCheck: string
   productQuery: string | null
   products: { name: string; price: number; slug: string }[]
 }
@@ -33,10 +38,12 @@ export interface ReasoningAnalysis {
 interface AnalysisPayload {
   intent?: string
   sentiment?: string
+  urgency?: string
   missingInfo?: string[]
   plan?: string[]
   nextAction?: string
   unknowns?: string[]
+  selfCheck?: string
   productQuery?: string | null
 }
 
@@ -88,15 +95,17 @@ Analyse le dernier message utilisateur, puis renvoie UNIQUEMENT un JSON valide:
 {
   "intent": "intention principale en une phrase",
   "sentiment": "état émotionnel probable du client en un mot (neutre, pressé, inquiet, satisfait, frustré...)",
+  "urgency": "niveau d'urgence: faible, moyen ou élevé",
   "missingInfo": ["informations manquantes, max 3"],
   "plan": ["étapes de réponse, max 4"],
   "nextAction": "l'action concrète que tu proposes au client à la fin, en une phrase",
   "unknowns": ["faits que tu ne peux pas affirmer faute de données (prix exact, délai précis, référence...), max 3"],
+  "selfCheck": "vérification finale de ta réponse avant envoi: cohérence, ton, aucune invention, aucune promesse non tenable (en une phrase)",
   "productQuery": "requête courte pour chercher dans le catalogue, ou null"
 }
 Sois rigoureux: si une information n'est pas dans le contexte entreprise, mets-la dans "unknowns"
 plutôt que de l'inventer.
-${toneInstructionFor(agent.tone)}`
+${toneInstructionFor(agent.tone)}${departmentLens(agent)}`
 
   const result = await generateText(
     {
@@ -119,10 +128,12 @@ ${toneInstructionFor(agent.tone)}`
   const analysis: ReasoningAnalysis = {
     intent: parsed?.intent || message.slice(0, 120),
     sentiment: parsed?.sentiment || 'neutre',
+    urgency: parsed?.urgency || 'moyen',
     missingInfo: Array.isArray(parsed?.missingInfo) ? parsed!.missingInfo!.slice(0, 3) : [],
     plan: Array.isArray(parsed?.plan) ? parsed!.plan!.slice(0, 4) : [],
     nextAction: parsed?.nextAction || '',
     unknowns: Array.isArray(parsed?.unknowns) ? parsed!.unknowns!.slice(0, 3) : [],
+    selfCheck: parsed?.selfCheck || '',
     productQuery: parsed?.productQuery ?? null,
     products: [],
   }
@@ -169,7 +180,7 @@ export async function generateAgentReply(input: GenerateAgentReplyInput): Promis
   const locale: Locale = input.locale && isLocale(input.locale) ? input.locale : DEFAULT_LOCALE
 
   let reasoning: ReasoningAnalysis | null = null
-  let context = `\n\n${toneInstructionFor(agent.tone)}`
+  let context = `\n\n${toneInstructionFor(agent.tone)}${departmentLens(agent)}`
   const langLine = languageInstruction(locale)
   if (langLine) context += `\n\n${langLine}`
 
@@ -187,6 +198,13 @@ export async function generateAgentReply(input: GenerateAgentReplyInput): Promis
       if (reasoning.sentiment && reasoning.sentiment !== 'neutre') {
         context += `\nÉtat émotionnel du client: ${reasoning.sentiment} — adapte ton ton en conséquence.`
       }
+      if (reasoning.urgency && reasoning.urgency !== 'moyen') {
+        context += `\nUrgence: ${reasoning.urgency} — ${
+          reasoning.urgency === 'élevé'
+            ? 'réponds de façon directe, va à l\'essentiel et propose immédiatement la solution ou l\'escalade.'
+            : 'prends le temps de bien expliquer, sans précipitation.'
+        }`
+      }
       if (reasoning.missingInfo.length > 0) {
         context += `\nSi c'est nécessaire pour bien répondre, demande: ${reasoning.missingInfo.join(' ; ')}.`
       }
@@ -198,6 +216,9 @@ export async function generateAgentReply(input: GenerateAgentReplyInput): Promis
       }
       if (reasoning.unknowns.length > 0) {
         context += `\nNe présente jamais comme certain (dis simplement que tu vérifies ou poses la question): ${reasoning.unknowns.join(' ; ')}.`
+      }
+      if (reasoning.selfCheck) {
+        context += `\nContrôle final avant envoi (applique-le silencieusement): ${reasoning.selfCheck}.`
       }
     } catch (err) {
       console.error('Reasoning pass failed, continuing without it:', err)

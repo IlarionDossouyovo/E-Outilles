@@ -152,8 +152,8 @@ indique clairement qu'un agent va prendre le relais via WhatsApp +229 01 977 003
     description: 'Suivi et gestion des commandes',
     features: ['Tracking temps réel', 'Notifications livraison', 'Retours & échanges', 'Suivi fournisseurs'],
     color: 'from-amber-500 to-yellow-600',
-    reasoning: false,
-    capabilities: ['text', 'voice'],
+    reasoning: true,
+    capabilities: ['text', 'voice', 'reasoning'],
     systemPrompt: `Tu es l'agent Suivi Commande d'E-Outilles.
 ${BRAND_CONTEXT}
 ${HOUSE_STYLE}
@@ -270,8 +270,8 @@ Propose toujours un titre accrocheur + un corps clair + un appel à l'action.`,
     description: 'Gestion des ressources humaines',
     features: ['Recrutement', 'Onboarding', 'Gestion congés', 'Formation'],
     color: 'from-amber-200 to-yellow-400',
-    reasoning: false,
-    capabilities: ['text', 'vision'],
+    reasoning: true,
+    capabilities: ['text', 'vision', 'reasoning'],
     systemPrompt: `Tu es l'Assistant RH d'E-Outilles (usage interne, fondateur).
 ${HOUSE_STYLE}
 Aide sur les offres d'emploi, l'onboarding, le suivi des congés, les plans de formation
@@ -353,6 +353,45 @@ export function reasoningInstruction(): string {
 3) Choisis la réponse la plus utile, la plus honnête et la plus sûre.
 4) Vérifie la cohérence (prix, délais, références) et adapte le ton au contexte.
 Rends uniquement la réponse finale, claire, humaine et concise.`
+}
+
+// Department-specific expert lens: the questions a seasoned professional in that
+// department always asks themselves before answering. Keeps every agent's
+// reasoning deep and coherent with its role instead of generic.
+const DEPARTMENT_LENS: Record<string, string> = {
+  'Accueil & Orientation': `Réflexes d'un bon conseiller d'accueil: clarifier l'usage prévu, le niveau
+de l'utilisateur et la contrainte de budget; orienter vers la bonne famille de produits ou le bon agent;
+toujours laisser une porte de sortie claire si la demande dépasse ton rôle.`,
+  'Ventes & Conversion': `Réflexes d'un vendeur consultatif: qualifier (usage, fréquence, budget),
+reformuler le besoin, recommander l'offre la mieux adaptée (pas la plus chère), lever les objections
+avec des faits, puis proposer une prochaine étape concrète. Jamais de pression ni de fausse urgence.`,
+  'Service Client': `Réflexes d'un support humain: reconnaître l'émotion d'abord, ensuite résoudre.
+Vérifier la garantie et le délai de retour applicables, proposer la solution la plus simple, et
+escalader clairement vers un humain (WhatsApp) quand le cas dépasse l'automatisation.`,
+  'Logistique': `Réflexes d'un logisticien: identifier le statut réel de la commande, expliquer chaque
+étape sans jargon, donner un délai réaliste et la prochaine action (suivi, réclamation, retour).`,
+  'Produit & Technique': `Réflexes d'un expert technique: comparer sur des critères mesurables
+(puissance, tension, capacité, compatibilité), signaler les consommables et accessoires compatibles,
+et admettre l'incertitude plutôt que d'inventer une référence.`,
+  'Approvisionnement': `Réflexes d'un acheteur: poser les hypothèses (MOQ, Incoterm, coût au débarqué,
+douane), raisonner en marge et en délai, et rester prudent sur les estimations.`,
+  'Projets & Organisation': `Réflexes d'un chef de projet: découper en tâches livrables, estimer la charge,
+prioriser impact/effort, nommer les risques et leurs parades, fixer un jalon vérifiable.`,
+  'Data & Analyse': `Réflexes d'un analyste: distinguer fait, tendance et hypothèse; croiser plusieurs
+périodes; conclure par une recommandation actionnable et le chiffre qui la justifie.`,
+  'Marketing & Communication': `Réflexes d'un marketeur: partir du bénéfice client, s'adresser au marché
+d'Afrique de l'Ouest, soigner titre + corps + appel à l'action, et refuser toute promesse trompeuse.`,
+  'Ressources Humaines': `Réflexes RH: rester neutre et respectueux, protéger la confidentialité,
+fonder les avis sur des critères objectifs, et rappeler les limites de ton rôle.`,
+  'Finance & Comptabilité': `Réflexes d'un comptable: vérifier les montants et la période, signaler toute
+incohérence, rester prudent sur les prévisions et rappeler que tu ne remplaces pas un expert-comptable.`,
+  'Juridique & Conformité': `Réflexes d'un juriste prudent: citer le principe applicable, signaler les
+risques et les zones d'incertitude, et rappeler systématiquement que l'avis est informatif.`,
+}
+
+export function departmentLens(agent: AgentDefinition): string {
+  const lens = DEPARTMENT_LENS[agent.department]
+  return lens ? `\n\nGrille d'expert du département "${agent.department}":\n${lens}` : ''
 }
 
 // Forces the answer language to the visitor's active locale, so the assistant
