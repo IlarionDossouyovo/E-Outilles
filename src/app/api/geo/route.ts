@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { localeForCountry, DEFAULT_LOCALE, type Locale } from '@/lib/i18n/config'
+import {
+  localeForCountry,
+  localeForLanguageTag,
+  DEFAULT_LOCALE,
+  type Locale,
+} from '@/lib/i18n/config'
 
 // Country -> locale detection for the automatic page translation.
 //
@@ -23,9 +28,21 @@ function detectCountry(request: NextRequest): string | null {
   return null
 }
 
+// First supported language of an Accept-Language header ("es-ES,es;q=0.9" -> "es").
+function detectLanguage(request: NextRequest): Locale | null {
+  const header = request.headers.get('accept-language')
+  if (!header) return null
+  for (const part of header.split(',')) {
+    const locale = localeForLanguageTag(part.split(';')[0].trim())
+    if (locale) return locale
+  }
+  return null
+}
+
 export async function GET(request: NextRequest) {
   const country = detectCountry(request)
-  const locale: Locale = (country && localeForCountry(country)) || DEFAULT_LOCALE
+  const locale: Locale =
+    (country && localeForCountry(country)) || detectLanguage(request) || DEFAULT_LOCALE
 
   return NextResponse.json(
     { country, locale, detected: Boolean(country) },
