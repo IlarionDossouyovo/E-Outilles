@@ -275,36 +275,47 @@ export async function POST(request: NextRequest) {
     const effectiveMessage =
       message || "Analyse ce document/photo et décris ce que tu observes, puis réponds à ma demande."
 
-    // Resolve (or create) the conversation this turn belongs to.
-    const { userId, guestId, isNewGuest } = await resolveIdentity(request)
-    const requestedConversationId = typeof body?.conversationId === 'string' ? body.conversationId : null
+    // Persistence is best-effort: the assistant must still answer when the
+    // database is unreachable (offline dev, quota, cold start). A failure here
+    // only means the turn is not saved to history.
+    let conversationId: string | null = null
+    let isNewGuest = false
+    let guestId = ''
+    try {
+      const identity = await resolveIdentity(request)
+      guestId = identity.guestId
+      isNewGuest = identity.isNewGuest
+      const requestedConversationId = typeof body?.conversationId === 'string' ? body.conversationId : null
 
-    let conversation = requestedConversationId
-      ? await prisma.aiConversation.findFirst({
-          where: { id: requestedConversationId, ...ownerWhere(userId, guestId) },
+      let conversation = requestedConversationId
+        ? await prisma.aiConversation.findFirst({
+            where: { id: requestedConversationId, ...ownerWhere(identity.userId, identity.guestId) },
+          })
+        : null
+
+      if (!conversation) {
+        conversation = await prisma.aiConversation.create({
+          data: { userId: identity.userId, guestId: identity.guestId, agentId, title: null },
         })
-      : null
+      } else if (conversation.agentId !== agentId) {
+        conversation = await prisma.aiConversation.update({
+          where: { id: conversation.id },
+          data: { agentId },
+        })
+      }
 
-    if (!conversation) {
-      conversation = await prisma.aiConversation.create({
-        data: { userId, guestId, agentId, title: null },
+      await appendMessage(conversation.id, {
+        role: 'user',
+        content: effectiveMessage,
+        agentId,
+        hasAttachment: media.length > 0,
+        attachmentName: media.length > 0 ? String(body?.attachmentName || '').slice(0, 120) || null : null,
       })
-    } else if (conversation.agentId !== agentId) {
-      conversation = await prisma.aiConversation.update({
-        where: { id: conversation.id },
-        data: { agentId },
-      })
+      await ensureTitle(conversation.id, message || effectiveMessage)
+      conversationId = conversation.id
+    } catch (persistError) {
+      console.error('Conversation persistence skipped:', persistError)
     }
-
-    // Store the user turn before generating, so history is never lost.
-    await appendMessage(conversation.id, {
-      role: 'user',
-      content: effectiveMessage,
-      agentId,
-      hasAttachment: media.length > 0,
-      attachmentName: media.length > 0 ? String(body?.attachmentName || '').slice(0, 120) || null : null,
-    })
-    await ensureTitle(conversation.id, message || effectiveMessage)
 
     const reply = await generateAgentReply({
       agentId,
@@ -317,20 +328,25 @@ export async function POST(request: NextRequest) {
       agent,
     })
 
-    // Persist the assistant reply.
-    await appendMessage(conversation.id, {
-      role: 'assistant',
-      content: reply.text,
-      agentId: reply.agentId,
-      provider: reply.provider,
-    })
+    if (conversationId) {
+      try {
+        await appendMessage(conversationId, {
+          role: 'assistant',
+          content: reply.text,
+          agentId: reply.agentId,
+          provider: reply.provider,
+        })
+      } catch (persistError) {
+        console.error('Assistant reply not persisted:', persistError)
+      }
+    }
 
     const response = NextResponse.json({
       response: reply.text,
       agentId: reply.agentId,
       provider: reply.provider,
       model: reply.model,
-      conversationId: conversation.id,
+      conversationId,
     })
     return isNewGuest ? attachGuestCookie(response, guestId) : response
   } catch (error) {
