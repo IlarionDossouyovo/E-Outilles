@@ -347,3 +347,18 @@ Persistent notes for working on the E-Outilles codebase.
   the provider for the main answer. Circuit-breaker cooldown is 15s.
 - Palette: keep decorative gradients inside the INGCO yellow/amber/grey family.
   The homepage category cards and hero glows previously used purple/blue/teal.
+
+## Locale-aware assistant (session 2026-11-11)
+- The chat assistant answers in the visitor's language. Both clients
+  (`src/app/chat/page.tsx`, `src/lib/ai/ChatWidget.tsx`) send `locale` in the
+  `POST /api/chat` body; the route validates it with `isLocale` and passes it to
+  `generateAgentReply({ locale })`.
+- `languageInstruction(locale)` (`src/lib/ai/agents.ts`) is appended to the reply
+  prompt. `BRAND_CONTEXT` no longer says "Toujours répondre en français" — do not
+  reintroduce a hard-coded language, it contradicts the per-request instruction.
+- The offline responder (`getDemoResponse`), the API error strings (`CHAT_ERROR`,
+  `MEDIA_ERRORS`) and the client fallbacks (`chat.noReply` / `chat.error` in
+  `dictionaries.ts`) are all localised, so a provider outage never leaks French
+  into an English/Spanish/Portuguese session.
+- `POST /api/chat` never returns a non-200 for chat content (only 400 for invalid
+  input); the client reads `data.error || data.response`.
