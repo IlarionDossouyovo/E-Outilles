@@ -327,3 +327,23 @@ Persistent notes for working on the E-Outilles codebase.
   `Accept-Language` when no country header is present.
 - When adding catalogue content, add its French string to `content.ts` or it will
   render in French for every locale.
+
+## i18n coverage & AI provider quota (session 2026-11-11)
+- `npm run check:i18n` (`scripts/check-i18n.mjs`) verifies every product/category
+  name and description in the DB has a row in `src/lib/i18n/content.ts`. Run it
+  after seeding new catalogue data; it exits non-zero and lists the gaps.
+- The content table now holds 344 strings (UI + 71 products + 71 descriptions).
+  Product descriptions were machine-translated; spot-check tone when editing.
+- `prisma/seed.ts` had a corrupted product description (a Russian word,
+  `положений`, inside the French text) — re-run `npx prisma db seed` after fixing
+  it, since the DB is the source of truth for the catalogue.
+- Google AI key is on the **free tier**: ~20 generateContent requests/day *per
+  model*. When `gemini-3.5-flash` is exhausted the API returns HTTP 429
+  `RESOURCE_EXHAUSTED`; the lite models keep their own quota. The chat model
+  default is `gemini-3.5-flash` (reliable) with `gemini-3.1-flash-lite` as the
+  next candidate. Exhausted models fail fast (no retry) so the chain moves on.
+- The reasoning analysis pass is best-effort: it runs with
+  `circuitBreaker: false` so a single slow/failed analysis call cannot disable
+  the provider for the main answer. Circuit-breaker cooldown is 15s.
+- Palette: keep decorative gradients inside the INGCO yellow/amber/grey family.
+  The homepage category cards and hero glows previously used purple/blue/teal.
