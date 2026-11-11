@@ -7,7 +7,8 @@
 
 import { prisma } from '@/lib/db/prisma'
 import { generateText, extractJson, type ChatTurn, type InlineMedia } from './provider'
-import { AGENTS, reasoningInstruction, toneInstruction, type AgentId } from './agents'
+import { AGENTS, reasoningInstruction, toneInstruction, languageInstruction, type AgentId } from './agents'
+import { isLocale, DEFAULT_LOCALE, type Locale } from '@/lib/i18n/config'
 
 export interface ReasoningAnalysis {
   intent: string
@@ -124,6 +125,7 @@ export interface GenerateAgentReplyInput {
   useReasoning?: boolean
   media?: InlineMedia[]
   fallback: string
+  locale?: Locale
 }
 
 export interface AgentReply {
@@ -139,9 +141,12 @@ export async function generateAgentReply(input: GenerateAgentReplyInput): Promis
   const { agentId, message, history, media, fallback } = input
   const agent = AGENTS[agentId]
   const useReasoning = input.useReasoning ?? agent.reasoning
+  const locale: Locale = input.locale && isLocale(input.locale) ? input.locale : DEFAULT_LOCALE
 
   let reasoning: ReasoningAnalysis | null = null
   let context = `\n\n${toneInstruction(agentId)}`
+  const langLine = languageInstruction(locale)
+  if (langLine) context += `\n\n${langLine}`
 
   if (useReasoning && !media?.length) {
     // Skip the analysis pass when an image is attached: a vision turn is

@@ -4,6 +4,7 @@ import { AGENTS, PUBLIC_AGENT_IDS, isAgentId, routeToAgent, agentSupportsVision,
 import type { ChatTurn, InlineMedia } from '@/lib/ai/provider'
 import { getSession } from '@/lib/security/auth'
 import { isFounderEmail } from '@/lib/security/founder'
+import { isLocale } from '@/lib/i18n/config'
 import { prisma } from '@/lib/db/prisma'
 import {
   resolveIdentity,
@@ -79,12 +80,62 @@ const DEPARTMENT_INTRO: Record<AgentId, string> = {
   legal: "Sur le plan juridique, voici les points à retenir.",
 }
 
-function getDemoResponse(message: string, agentId: AgentId): string {
-  const topic = TOPICS.find((t) => t.match.test(message))
-  if (topic) return topic.answer
+// Localised openings / closings for the offline responder so it stays coherent
+// with the auto-translated UI. Internal (founder-only) agents keep the French
+// wording — the founder works in French.
+const DEMO_CLOSING: Record<string, string> = {
+  fr: "Posez-moi votre question sur nos produits, la livraison, le paiement ou la garantie — je vous réponds concrètement.",
+  en: "Ask me about our products, delivery, payment or warranty — I'll give you a concrete answer.",
+  es: "Pregúntame por nuestros productos, la entrega, el pago o la garantía — te respondo con concreción.",
+  pt: "Pergunte-me sobre os produtos, a entrega, o pagamento ou a garantia — respondo-lhe de forma concreta.",
+}
 
+const PUBLIC_INTRO: Record<string, Partial<Record<AgentId, string>>> = {
+  fr: {
+    assistant: "Je suis votre assistant E-Outilles.",
+    sales: "Je vous accompagne pour choisir et commander au meilleur prix.",
+    support: "Je suis là pour résoudre votre souci rapidement.",
+    tracking: "Je vous aide à suivre votre commande.",
+    catalog: "Je connais la gamme INGCO par cœur.",
+  },
+  en: {
+    assistant: "I am your E-Outilles assistant.",
+    sales: "I help you choose and order at the best price.",
+    support: "I am here to solve your issue quickly.",
+    tracking: "I help you track your order.",
+    catalog: "I know the INGCO range by heart.",
+  },
+  es: {
+    assistant: "Soy tu asistente de E-Outilles.",
+    sales: "Te acompaño para elegir y pedir al mejor precio.",
+    support: "Estoy aquí para resolver tu problema rápidamente.",
+    tracking: "Te ayudo a seguir tu pedido.",
+    catalog: "Conozco la gama INGCO de memoria.",
+  },
+  pt: {
+    assistant: "Sou o seu assistente E-Outilles.",
+    sales: "Acompanho-o a escolher e encomendar ao melhor preço.",
+    support: "Estou aqui para resolver o seu problema rapidamente.",
+    tracking: "Ajudo-o a acompanhar a sua encomenda.",
+    catalog: "Conheço a gama INGCO de cor.",
+  },
+}
+
+function demoIntro(agentId: AgentId, locale: string): string {
+  return PUBLIC_INTRO[locale]?.[agentId] || DEPARTMENT_INTRO[agentId]
+}
+
+function getDemoResponse(message: string, agentId: AgentId, locale: string = 'fr'): string {
   const agent = AGENTS[agentId]
-  return `${DEPARTMENT_INTRO[agentId]} Vous êtes en relation avec ${agent.name} (${agent.department}). Posez-moi votre question sur nos produits, la livraison, le paiement ou la garantie — je vous réponds concrètement.`
+  const intro = demoIntro(agentId, locale)
+  const closing = DEMO_CLOSING[locale] || DEMO_CLOSING.fr
+  // Topic answers exist in French only; use them for French, otherwise fall
+  // back to the localised generic reply so the language stays coherent.
+  if (locale === 'fr') {
+    const topic = TOPICS.find((t) => t.match.test(message))
+    if (topic) return topic.answer
+  }
+  return `${intro} ${agent.name} (${agent.department}). ${closing}`
 }
 
 // Parses and validates an optional media array (images / PDF documents).
@@ -196,6 +247,7 @@ export async function POST(request: NextRequest) {
       useReasoning,
       media,
       fallback: getDemoResponse(effectiveMessage, agentId),
+      locale: isLocale(body?.locale) ? body.locale : undefined,
     })
 
     // Persist the assistant reply.

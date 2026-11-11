@@ -41,7 +41,7 @@ const FALLBACK_AGENTS: AgentOption[] = [
 ]
 
 export default function ChatPage() {
-  const { t } = useLanguage()
+  const { t, locale } = useLanguage()
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
@@ -172,6 +172,7 @@ export default function ChatPage() {
             media,
             conversationId,
             attachmentName: attachments[0]?.name,
+            locale,
           }),
         })
         const data = await res.json()
@@ -190,7 +191,7 @@ export default function ChatPage() {
         setLoading(false)
       }
     },
-    [input, attachments, loading, messages, agentId, voiceReplies, speak, clear, conversationId, loadConversations]
+    [input, attachments, loading, messages, agentId, voiceReplies, speak, clear, conversationId, loadConversations, locale]
   )
 
   const handleKeyPress = (e: React.KeyboardEvent) => {

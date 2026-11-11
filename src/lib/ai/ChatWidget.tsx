@@ -25,7 +25,7 @@ const QUICK_PROMPTS = [
 ]
 
 export default function ChatWidget() {
-  const { t } = useLanguage()
+  const { t, locale } = useLanguage()
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
@@ -72,7 +72,7 @@ export default function ChatWidget() {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: clean, history, media, conversationId }),
+        body: JSON.stringify({ message: clean, history, media, conversationId, locale }),
       })
       const data = await res.json()
       const reply = data.error || data.response || "Désolé, je n'ai pas pu répondre."

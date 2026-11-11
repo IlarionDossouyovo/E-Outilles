@@ -357,3 +357,18 @@ export function reasoningInstruction(): string {
 4) Vérifie la cohérence (prix, délais, références) et adapte le ton au contexte.
 Rends uniquement la réponse finale, claire, humaine et concise.`
 }
+
+// Forces the answer language to the visitor's active locale, so the assistant
+// stays coherent with the auto-translated UI.
+const LANGUAGE_NAMES: Record<string, string> = {
+  fr: 'français',
+  en: 'anglais',
+  es: 'espagnol',
+  pt: 'portugais',
+}
+
+export function languageInstruction(locale: string): string {
+  const name = LANGUAGE_NAMES[locale]
+  if (!name || locale === 'fr') return ''
+  return `Langue de réponse: réponds intégralement en ${name}, quelle que soit la langue de la question. Garde les noms de produits, références et unités tels quels.`
+}
