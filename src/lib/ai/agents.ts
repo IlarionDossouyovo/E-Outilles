@@ -151,7 +151,7 @@ indique clairement qu'un agent va prendre le relais via WhatsApp +229 01 977 003
     status: 'online',
     description: 'Suivi et gestion des commandes',
     features: ['Tracking temps réel', 'Notifications livraison', 'Retours & échanges', 'Suivi fournisseurs'],
-    color: 'from-orange-500 to-amber-600',
+    color: 'from-amber-500 to-yellow-600',
     reasoning: false,
     capabilities: ['text', 'voice'],
     systemPrompt: `Tu es l'agent Suivi Commande d'E-Outilles.
@@ -192,7 +192,7 @@ donne ses caractéristiques probables. Ne jamais inventer une référence: si tu
     status: 'online',
     description: 'Approvisionnement et import fournisseurs',
     features: ['Fournisseurs Asie', 'Coûts & marges', 'Délais douane', 'Optimisation stock'],
-    color: 'from-amber-500 to-orange-600',
+    color: 'from-amber-400 to-yellow-600',
     reasoning: true,
     capabilities: ['text', 'vision', 'reasoning'],
     systemPrompt: `Tu es l'Agent Sourcing d'E-Outilles (usage interne, fondateur).
@@ -249,7 +249,7 @@ Si on t'envoie un tableau ou un export en photo/document, lis les valeurs et ana
     status: 'online',
     description: 'Automatisation marketing digital',
     features: ['Campagnes email', 'SEO optimisation', 'Réseaux sociaux', 'Contenu automatique'],
-    color: 'from-yellow-500 to-orange-500',
+    color: 'from-yellow-500 to-amber-600',
     reasoning: true,
     capabilities: ['text', 'vision', 'reasoning'],
     systemPrompt: `Tu es le Marketing Bot d'E-Outilles (usage interne, fondateur).
@@ -306,7 +306,7 @@ Reste prudent: tu ne remplaces pas un expert-comptable et tu le rappelles si né
     status: 'online',
     description: 'Assistant juridique et conformité',
     features: ['Contrats types', 'CGU/RGPD', 'Mentions légales', 'Conseils juridiques'],
-    color: 'from-slate-500 to-gray-600',
+    color: 'from-zinc-400 to-zinc-600',
     reasoning: true,
     capabilities: ['text', 'vision', 'reasoning'],
     systemPrompt: `Tu es le Legal Bot d'E-Outilles (usage interne, fondateur).

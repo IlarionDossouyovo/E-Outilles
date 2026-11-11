@@ -10,23 +10,25 @@ function ShareButtons({ title, slug }: { title: string; slug: string }) {
   const base = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://e-outilles.com'
   const url = `${base.replace(/\/$/, '')}/blog/${slug}`
   const enc = encodeURIComponent
+  // Share buttons stay on the brand palette (graphite + yellow on hover)
+  // instead of per-network colours, which broke the dark theme.
   const links = [
-    { label: 'Facebook', href: `https://www.facebook.com/sharer/sharer.php?u=${enc(url)}`, cls: 'bg-ingco-gray hover:bg-gray-700' },
-    { label: 'WhatsApp', href: `https://wa.me/?text=${enc(title + ' ' + url)}`, cls: 'bg-green-600 hover:bg-green-700' },
-    { label: 'X', href: `https://twitter.com/intent/tweet?text=${enc(title)}&url=${enc(url)}`, cls: 'bg-sky-500 hover:bg-sky-600' },
-    { label: 'LinkedIn', href: `https://www.linkedin.com/sharing/share-offsite/?url=${enc(url)}`, cls: 'bg-linkedin hover:opacity-90' },
+    { label: 'Facebook', href: `https://www.facebook.com/sharer/sharer.php?u=${enc(url)}` },
+    { label: 'WhatsApp', href: `https://wa.me/?text=${enc(title + ' ' + url)}` },
+    { label: 'X', href: `https://twitter.com/intent/tweet?text=${enc(title)}&url=${enc(url)}` },
+    { label: 'LinkedIn', href: `https://www.linkedin.com/sharing/share-offsite/?url=${enc(url)}` },
   ]
   return (
     <div className="flex flex-wrap gap-2">
       <span className="text-gray-500 mr-2">Partager :</span>
       {links.map((l) => (
         <a key={l.label} href={l.href} target="_blank" rel="noopener noreferrer"
-           className={`px-4 py-2 rounded-lg text-white transition-colors ${l.cls}`}>
+           className="px-4 py-2 rounded-lg bg-ingco-gray text-gray-200 hover:bg-ingco-yellow hover:text-ingco-black transition-colors">
           {l.label}
         </a>
       ))}
       <a href={`/api/qrcode?url=${enc(url)}`} download="article-qr.png"
-         className="px-4 py-2 bg-ingco-gray rounded-lg text-white hover:bg-gray-700 inline-flex items-center gap-2">
+         className="px-4 py-2 bg-ingco-gray rounded-lg text-gray-200 hover:bg-ingco-yellow hover:text-ingco-black transition-colors inline-flex items-center gap-2">
         <Icon name="qr" className="w-4 h-4" /> QR
       </a>
     </div>
