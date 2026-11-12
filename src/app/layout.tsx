@@ -18,21 +18,11 @@ export const metadata: Metadata = {
   title: SITE_TITLE,
   description: SITE_DESCRIPTION,
   manifest: '/manifest.json',
-  // Pages are locale-agnostic (language comes from ?lang > cookie > country), so
-  // hreflang alternates point at the same path with an explicit ?lang query.
-  alternates: {
-    canonical: '/',
-    // Absolute URLs: Next resolves relative alternate paths against
-    // metadataBase and drops the query string, which made every hreflang point
-    // at the same URL.
-    languages: {
-      fr: `${SITE_URL}/?lang=fr`,
-      en: `${SITE_URL}/?lang=en`,
-      es: `${SITE_URL}/?lang=es`,
-      pt: `${SITE_URL}/?lang=pt`,
-      'x-default': SITE_URL,
-    },
-  },
+  // No hreflang alternates: locales are query/cookie-driven, not path-based, and
+  // Next strips the query string from alternate URLs — every language would
+  // collapse to the same URL, which misleads crawlers. The crawler-visible
+  // signal is the Content-Language header set by the middleware.
+  alternates: { canonical: '/' },
   icons: {
     icon: [
       { url: '/logo/e-outilles-favicon.svg', type: 'image/svg+xml' },
