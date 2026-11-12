@@ -18,6 +18,18 @@ export const metadata: Metadata = {
   title: SITE_TITLE,
   description: SITE_DESCRIPTION,
   manifest: '/manifest.json',
+  // Pages are locale-agnostic (language comes from ?lang > cookie > country), so
+  // hreflang alternates point at the same path with an explicit ?lang query.
+  alternates: {
+    canonical: '/',
+    languages: {
+      fr: '/?lang=fr',
+      en: '/?lang=en',
+      es: '/?lang=es',
+      pt: '/?lang=pt',
+      'x-default': '/',
+    },
+  },
   icons: {
     icon: [
       { url: '/logo/e-outilles-favicon.svg', type: 'image/svg+xml' },
