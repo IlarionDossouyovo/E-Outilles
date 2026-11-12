@@ -634,3 +634,46 @@ Persistent notes for working on the E-Outilles codebase.
 - Migrations: `20261112122916_marketing_automation_partners`,
   `20261112123300_order_partner_code`. Schema is PostgreSQL (Neon); migrations
   are applied with `npx prisma migrate deploy`.
+
+## Deployment & cron (session 2026-11-12)
+- Both deploy targets build the same `main`: **Vercel** project `e-outilles`
+  (`prj_MDUOkTRVr6Bl6FyysSvBCV6FoNcR`, aliases `e-outilles-eta.vercel.app` /
+  `e-outilles-dossouyovoauguste-9539.vercel.app`) and **Render** service
+  `e-outilles` (`srv-dbq7ppl9fdbs73dkkmg0`, `e-outilles.onrender.com`).
+  Push to `main` auto-deploys both.
+- `.env` ids: `VERCEL_PROJECT_ID` and `RENDER_PROJECT_ID` must hold the ids
+  above. `RENDER_PROJECT_ID` is a **service** id (not a project id) — the API
+  path is `/v1/services/{id}`; a `prj_…` value 404s.
+- `vercel.json` registers a daily `0 6 * * *` cron on
+  `/api/internal/marketing/process`. Vercel sends `Authorization: Bearer
+  $CRON_SECRET`; the route accepts ANY of `MARKETING_CRON_TOKEN`,
+  `CRON_SECRET`, `EMAIL_RELAY_TOKEN` (a precedence chain let a stray
+  `CRON_SECRET` shadow the relay token → 401).
+- Adding/changing env vars does NOT reach a live deployment: redeploy
+  (`POST /v13/deployments` with `deploymentId`) or the value stays undefined.
+- `CRON_SECRET` must be its own env entry per target; a single upsert with
+  `target:['production','preview']` silently created only one target — set
+  each target separately.
+- Render env vars live at `GET/PUT /v1/services/{id}/env-vars`. **PUT replaces
+  the whole list**: always read the current list first, merge, then PUT. A
+  `GET` that returns `[]` means a previous PUT wiped them — restore from
+  `.env` (the 21 keys in the restore script) and redeploy.
+- `.env` `STRIPE_SECRET_KEY` / `STRIPE_WEBHOOK_SECRET` are still the
+  placeholders `sk_test_votre_cle_secrete` / `whsec_votre_secret_webhook`;
+  `isStripeConfigured()` rejects them, so card payment stays disabled at
+  checkout. Do NOT push them to Vercel/Render — replace them with real keys
+  first.
+
+## Production validation (session 2026-11-12)
+- Verified live on both hosts: `/api/health` (db ok, 71 products, google+resend+brevo
+  configured), `/api/geo` (country header wins over Accept-Language; US→en),
+  `/api/ai/agents` (5 public, 12 for the founder), `/api/chat` (Google
+  `gemini-3.1-flash-lite`, coherent FR answers with real catalogue prices),
+  `/api/tts` (200 `audio/wav`, ~150 KB), internal agents 403 for guests, admin
+  APIs (`/api/admin/settings`, `/api/customers`, `/api/marketing/analytics`),
+  partner API, cron endpoint 200 with the relay token, sitemap/robots 200.
+- Public routes that exist: `/categories`, `/search`, `/cart`, `/wishlist`,
+  `/checkout`, `/chat`, `/profile`, `/legal`, `/privacy`, `/terms`. `/produits`
+  and `/panier` are NOT routes (404) and nothing links to them — use `/search`
+  and `/cart`.
+- `/chat` now has a tiny `layout.tsx` for SEO metadata (client component).
