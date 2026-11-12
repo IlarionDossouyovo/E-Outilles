@@ -53,59 +53,44 @@ async function sendWithBrevo(
   }
 }
 
-export async function sendEmail({ to, subject, html, text }: EmailOptions): Promise<boolean> {
-  const resendKey = process.env.RESEND_API_KEY
-  const brevoKey = process.env.BREVO_API_KEY
-  const fromEmail = process.env.FROM_EMAIL || 'E-Outilles <noreply@eoutilles.com>'
-  
-  // Brevo first: its sender is verified on this account, so it never fails on
-  // an unverified domain the way Resend does with a public mailbox.
-  if (brevoKey && brevoKey.startsWith('xkeysib-')) {
-    if (await sendWithBrevo(brevoKey, fromEmail, { to, subject, html, text })) return true
-  }
-
-  // Resend fallback (requires a verified sending domain).
-  if (resendKey && resendKey.startsWith('re_') && resendKey !== 're_placeholder_key') {
-    try {
-      const resend = new Resend(resendKey)
-      
-      const { data, error } = await resend.emails.send({
-        from: fromEmail,
-        to: [to],
-        subject: subject,
-        html: html,
-        text: text || html.replace(/<[^>]*>/g, '')
-      })
-
-      if (error) {
-        console.error('❌ Resend error:', error)
-      } else {
-        console.log('✅ Email sent via Resend:', data?.id)
-        return true
-      }
-    } catch (err) {
-      console.error('❌ Failed to send email via Resend:', err)
+// Resend transactional API (needs a verified sending domain).
+async function sendWithResend(
+  apiKey: string,
+  fromEmail: string,
+  { to, subject, html, text }: EmailOptions
+): Promise<boolean> {
+  try {
+    const resend = new Resend(apiKey)
+    const { data, error } = await resend.emails.send({
+      from: fromEmail,
+      to: [to],
+      subject,
+      html,
+      text: text || html.replace(/<[^>]*>/g, ''),
+    })
+    if (error) {
+      console.error('❌ Resend error:', error)
+      return false
     }
+    console.log('✅ Email sent via Resend:', data?.id)
+    return true
+  } catch (err) {
+    console.error('❌ Failed to send email via Resend:', err)
+    return false
   }
+}
 
-  // Fallback to SMTP or development mode
+// SMTP relay (Brevo relay, Gmail, ...). Succeeds only from hosts whose egress IP
+// is on the provider's allowlist; otherwise the provider rejects the login.
+async function sendWithSmtp(
+  fromEmail: string,
+  { to, subject, html, text }: EmailOptions
+): Promise<boolean> {
   const smtpHost = process.env.SMTP_HOST
-  const smtpPort = process.env.SMTP_PORT || '1025'
+  const smtpPort = process.env.SMTP_PORT || '587'
   const smtpUser = process.env.SMTP_USER || ''
   const smtpPassword = process.env.SMTP_PASSWORD || ''
-
-  // Real SMTP delivery (Brevo relay, Gmail, etc.) via nodemailer. This is the
-  // transport that actually works from the sandbox and from Render, where the
-  // Brevo HTTP API is blocked for unlisted IPs and Resend needs a verified
-  // domain. Previously this branch called fetch() on a raw SMTP port, which can
-  // only ever fail ("bad port").
-  if (!smtpHost) {
-    console.log('📧 Email (development mode - logged only):')
-    console.log(`To: ${to}`)
-    console.log(`Subject: ${subject}`)
-    console.log(`Body: ${html.substring(0, 200)}...`)
-    return true
-  }
+  if (!smtpHost) return false
 
   try {
     const nodemailer = await import('nodemailer')
@@ -131,6 +116,65 @@ export async function sendEmail({ to, subject, html, text }: EmailOptions): Prom
     console.error('❌ Failed to send email via SMTP:', error)
     return false
   }
+}
+
+// Tries every provider directly. The relay endpoint uses this so it never
+// forwards a message to itself.
+export async function deliverEmail({ to, subject, html, text }: EmailOptions): Promise<boolean> {
+  const fromEmail = process.env.FROM_EMAIL || 'E-Outilles <noreply@eoutilles.com>'
+  const brevoKey = process.env.BREVO_API_KEY
+  const resendKey = process.env.RESEND_API_KEY
+
+  // Brevo first: its sender is verified on this account, so it never fails on
+  // an unverified domain the way Resend does with a public mailbox.
+  if (brevoKey && brevoKey.startsWith('xkeysib-')) {
+    if (await sendWithBrevo(brevoKey, fromEmail, { to, subject, html, text })) return true
+  }
+
+  if (resendKey && resendKey.startsWith('re_') && resendKey !== 're_placeholder_key') {
+    if (await sendWithResend(resendKey, fromEmail, { to, subject, html, text })) return true
+  }
+
+  if (await sendWithSmtp(fromEmail, { to, subject, html, text })) return true
+
+  // No provider configured at all: log so local development still shows mail.
+  if (!brevoKey && !resendKey && !process.env.SMTP_HOST) {
+    console.log('📧 Email (development mode - logged only):')
+    console.log(`To: ${to}`)
+    console.log(`Subject: ${subject}`)
+    console.log(`Body: ${html.substring(0, 200)}...`)
+    return true
+  }
+
+  return false
+}
+
+export async function sendEmail(options: EmailOptions): Promise<boolean> {
+  if (await deliverEmail(options)) return true
+
+  // Vercel's serverless egress IPs change per invocation and are rejected by the
+  // Brevo IP allowlist (HTTP 401 / SMTP 525). Hand the message to a deployment
+  // whose IP is allowlisted instead of dropping it silently.
+  const relayUrl = process.env.EMAIL_RELAY_URL
+  const relayToken = process.env.EMAIL_RELAY_TOKEN
+  if (relayUrl && relayToken) {
+    try {
+      const res = await fetch(`${relayUrl.replace(/\/+$/, '')}/api/internal/email`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', authorization: `Bearer ${relayToken}` },
+        body: JSON.stringify(options),
+      })
+      if (res.ok) {
+        console.log('✅ Email sent via relay')
+        return true
+      }
+      console.error('❌ Email relay error:', res.status, await res.text().catch(() => ''))
+    } catch (err) {
+      console.error('❌ Email relay failed:', err)
+    }
+  }
+
+  return false
 }
 
 // Order confirmation email template
