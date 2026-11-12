@@ -480,3 +480,34 @@ Persistent notes for working on the E-Outilles codebase.
   nothing while the page still renders. Fix: stop dev, `rm -rf .next`, restart
   `npm run dev`. Always check `/tmp/dev.log` for `GET /_next/static/... 404`
   before debugging "nothing happens when I click".
+
+## AI agent dashboard, founder access & live stats (session 2026-11-12)
+- `/agent` is founder-only via the signed-in session (`isFounderEmail` in
+  `src/lib/security/founder.ts`, founder = `FOUNDER_EMAIL` env or
+  `FOUNDER.email`). The old `AGENT_ACCESS_CODE` second factor is GONE: removed
+  from `POST /api/agent/verify` (now just returns `{valid:true}` for a founder,
+  403 otherwise), from `.env`, `.env.example` and every doc. Do not reintroduce
+  a shared code — a founder session is the only gate.
+- Founder account is `electronbusiness07@gmail.com` (password `999999999`,
+  seeded). The legacy `ilarion@e-outilles.com` admin is deleted by
+  `prisma/seed.ts` (`deleteMany`) and was purged from the Neon DB — it was an
+  unmonitored second admin. `src/lib/founder.ts` `FOUNDER.email` matches.
+- Live agent counters come from `GET /api/agents/stats` (founder-only, 403
+  otherwise): real `AiConversation`/`AiMessage` rows, `byAgent` map, 7-day
+  windows. The dashboard derives `totalAgents`/`activeAgents`/`offlineAgents`
+  from the configs, never from fabricated numbers (the old `+23% ce mois` and
+  the admin dashboard's `+12%/+8%/+156` are gone — admin now shows real
+  week-over-week deltas via `growth()` in `src/app/admin/page.tsx`).
+- Agent cards show the real `department`; the feature list is rendered as a
+  `<ul>` (never `join('\n')`, which printed a literal `\n`).
+- `/chat?agent=<id>`: an id outside the visitor's allowed list (e.g. an
+  internal agent opened by a non-founder) now falls back to the first allowed
+  agent, so the selector never points at an unreachable agent.
+- Prod AI: Google AI works on Render (key prefix `AQ.`), but a single chat turn
+  can exceed the 20s per-model timeout and fall back to `provider: demo` (the
+  deterministic responder in `src/app/api/chat/route.ts`). TTS on Render is fast
+  (~2s, real WAV). A failed chat trips a 15s circuit breaker (`COOLDOWN_MS`),
+  so the next turns go straight to demo — space retries ~20s apart.
+- Verification recipe: `npm run check:i18n`, `npm run check:search`,
+  `npx tsc --noEmit`, `npx next lint --dir src`, `npm run build`. After a build
+  the dev server needs `rm -rf .next` + restart (see stale-cache note above).
