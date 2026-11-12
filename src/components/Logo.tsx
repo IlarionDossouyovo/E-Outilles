@@ -43,9 +43,9 @@ export default function Logo({ variant = 'horizontal', size = 40, className = ''
     >
       <defs>
         <radialGradient id={bg} cx="42%" cy="30%" r="88%">
-          <stop offset="0%" stopColor="#262626" />
-          <stop offset="55%" stopColor="#141414" />
-          <stop offset="100%" stopColor="#080808" />
+          <stop offset="0%" stopColor="#2E2E2E" />
+          <stop offset="55%" stopColor="#1A1A1A" />
+          <stop offset="100%" stopColor="#121212" />
         </radialGradient>
         <linearGradient id={edge} x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stopColor="#FFE680" stopOpacity="0.85" />
