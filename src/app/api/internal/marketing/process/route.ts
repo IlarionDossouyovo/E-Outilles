@@ -4,10 +4,11 @@
 // publish queue: it generates the AI launch kit for products waiting on one and
 // dispatches the prepared assets to each configured channel.
 //
-// Protected by a bearer token (MARKETING_CRON_TOKEN) so it can run without an
-// admin session. Vercel Cron sends `Authorization: Bearer $CRON_SECRET`, so that
-// variable is honoured too, and the email relay token is the last fallback —
-// one shared secret already present on both hosts is enough.
+// Protected by a bearer token so it can run without an admin session. Any of
+// the configured shared secrets is accepted: a dedicated MARKETING_CRON_TOKEN,
+// Vercel Cron's own CRON_SECRET, or the email relay token already present on
+// both hosts. Accepting the whole set (rather than a precedence chain) matters
+// because a stray CRON_SECRET would otherwise shadow the relay token.
 import { NextRequest, NextResponse } from 'next/server'
 import { processQueue } from '@/lib/marketing/queue'
 
@@ -16,10 +17,13 @@ export const runtime = 'nodejs'
 export const maxDuration = 300
 
 async function handle(request: NextRequest) {
-  const expected =
-    process.env.MARKETING_CRON_TOKEN || process.env.CRON_SECRET || process.env.EMAIL_RELAY_TOKEN
+  const accepted = [
+    process.env.MARKETING_CRON_TOKEN,
+    process.env.CRON_SECRET,
+    process.env.EMAIL_RELAY_TOKEN,
+  ].filter((s): s is string => Boolean(s))
   const provided = request.headers.get('authorization')?.replace(/^Bearer\s+/i, '')
-  if (!expected || provided !== expected) {
+  if (accepted.length === 0 || !provided || !accepted.includes(provided)) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   }
   const url = new URL(request.url)
