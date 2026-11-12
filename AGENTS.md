@@ -695,3 +695,18 @@ Persistent notes for working on the E-Outilles codebase.
 - The brand logo (`src/components/Logo.tsx`) is already the premium inline SVG
   (metallic gear ring + "E"/bolt, gradient wordmark) — do not reintroduce a
   raster logo.
+
+## Backup procedure (session 2026-11-12)
+- The workspace clone was SHALLOW. `git bundle create --all` on a shallow repo
+  produces an INCOMPLETE bundle that fails to restore ("remote did not send all
+  necessary objects"). Run `git fetch --unshallow` first (299 commits).
+- Portable backups are written to `/workspace/backups/` (outside the repo):
+  `*.bundle` = full git history via `git bundle create <f> --all`;
+  `*-src.tar.gz` = working tree WITHOUT `node_modules`, `.next`, `.env*`,
+  `prisma/dev.db` and `.git`. Both are verified by test-restoring.
+- Verify a bundle with `git bundle verify <f>` and by
+  `git clone <f> /tmp/x && git -C /tmp/x log --oneline -1`.
+- Milestone tags: `v1.0.0-live` (founder password fix) and
+  `v1.1.0-home-premium` (homepage animations), both pushed.
+- Never include `.env` in an archive: it holds live Stripe/Resend/Brevo/
+  Google/Vercel/Render secrets. `.env.example` has placeholders only.
