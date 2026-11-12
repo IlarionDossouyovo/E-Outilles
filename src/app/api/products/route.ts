@@ -3,6 +3,8 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db/prisma'
 import { requireAdmin } from '@/lib/security/auth'
 import { searchTerms } from '@/lib/search'
+import { enqueueProductKit } from '@/lib/marketing/queue'
+import { parseImages } from '@/lib/images'
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
@@ -65,6 +67,16 @@ export async function POST(request: Request) {
         categoryId
       }
     })
+
+    // Auto-launch: a product added with an image gets its AI marketing kit
+    // queued, then published across every configured channel by the worker.
+    if (parseImages(product.images).length > 0) {
+      try {
+        await enqueueProductKit(product.id, { channels: body.channels })
+      } catch (err) {
+        console.error('Failed to queue marketing kit:', err)
+      }
+    }
 
     return NextResponse.json(product, { status: 201 })
   } catch (error) {

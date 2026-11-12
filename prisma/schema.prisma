@@ -12,22 +12,23 @@ datasource db {
 
 // Utilisateur
 model User {
-  id            String    @id @default(cuid())
-  email         String    @unique
-  password     String
-  name          String?
-  phone         String?
-  address      String?
-  city          String?
-  country      String?
-  role          String    @default("customer") // customer, admin
+  id               String           @id @default(cuid())
+  email            String           @unique
+  password         String
+  name             String?
+  phone            String?
+  address          String?
+  city             String?
+  country          String?
+  role             String           @default("customer") // customer, admin
   resetTokenHash   String?
   resetTokenExpiry DateTime?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  orders        Order[]
-  wishlist      WishlistItem[]
-  conversations AiConversation[]
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  orders           Order[]
+  wishlist         WishlistItem[]
+  conversations    AiConversation[]
+  partners         Partner[]
 }
 
 // Catégorie de produits
@@ -40,31 +41,33 @@ model Category {
   color       String?
   image       String?
   parentId    String?
-  parent     Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
-  children   Category[] @relation("CategoryHierarchy")
-  products   Product[]
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
+  parent      Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryHierarchy")
+  products    Product[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 }
 
 // Produit
 model Product {
-  id           String   @id @default(cuid())
-  name         String
-  slug         String   @unique
-  description  String?
-  price        Float
-  comparePrice Float?
-  sku          String?  @unique
-  stock        Int      @default(0)
-  images       String   // JSON array of image URLs
-  features     String?  // JSON array of features
-  categoryId   String
-  category     Category @relation(fields: [categoryId], references: [id])
-  orderItems   OrderItem[]
+  id            String         @id @default(cuid())
+  name          String
+  slug          String         @unique
+  description   String?
+  price         Float
+  comparePrice  Float?
+  sku           String?        @unique
+  stock         Int            @default(0)
+  images        String // JSON array of image URLs
+  features      String? // JSON array of features
+  categoryId    String
+  category      Category       @relation(fields: [categoryId], references: [id])
+  orderItems    OrderItem[]
   wishlistItems WishlistItem[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  assets        ProductAsset[]
+  publishJobs   PublishJob[]
 }
 
 // Article dans une wishlist
@@ -87,7 +90,7 @@ model Order {
   status          String      @default("pending") // pending, paid, shipped, delivered, cancelled
   total           Float
   shippingAddress String?
-  shippingCity   String?
+  shippingCity    String?
   shippingCountry String?
   paymentMethod   String?
   paymentId       String?
@@ -96,6 +99,8 @@ model Order {
   utmSource       String?
   utmMedium       String?
   utmCampaign     String?
+  // Code partenaire (revendeur/affilié) qui a apporté la commande.
+  partnerCode     String?
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
   items           OrderItem[]
@@ -114,9 +119,9 @@ model OrderItem {
 
 // Article de blog
 model BlogPost {
-  id          String   @id @default(cuid())
-  title       String
-  slug        String   @unique
+  id         String   @id @default(cuid())
+  title      String
+  slug       String   @unique
   content    String
   excerpt    String?
   image      String?
@@ -125,9 +130,9 @@ model BlogPost {
   category   String?
   published  Boolean  @default(false)
   featured   Boolean  @default(false)
-  views      Int       @default(0)
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  views      Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 // Abonné newsletter
@@ -168,14 +173,14 @@ model ContactMessage {
 
 // Conversation avec un agent IA (persistée pour historique et reprise)
 model AiConversation {
-  id        String    @id @default(cuid())
+  id        String      @id @default(cuid())
   userId    String?
-  user      User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  user      User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
   guestId   String?
-  agentId   String    @default("assistant")
+  agentId   String      @default("assistant")
   title     String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
   messages  AiMessage[]
 
   @@index([userId])
@@ -220,4 +225,107 @@ model TrafficEvent {
 
   @@index([createdAt])
   @@index([utmSource])
+}
+
+// ── Marketing automation: assets générés par l'IA pour un produit ────────────
+// Une ligne par livrable (image, vidéo, description, post social, script...).
+// Alimenté automatiquement dès qu'une image produit est ajoutée/modifiée.
+model ProductAsset {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  kind      String // image | video | description | social_post | script | seo
+  channel   String? // facebook, instagram, tiktok, site, email... (null = générique)
+  locale    String   @default("fr")
+  title     String?
+  body      String? // texte principal (description, caption, script)
+  mediaUrl  String? // image/vidéo générée ou source
+  meta      String? // JSON libre (hashtags, durée, aspect ratio, CTA...)
+  status    String   @default("draft") // draft | ready | published | failed
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([productId])
+  @@index([status])
+}
+
+// ── File de publication multi-canal ─────────────────────────────────────────
+model PublishJob {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  assetId   String?
+  channel   String // sales/traffic channel id
+  action    String   @default("publish") // publish | update | unpublish
+  status    String   @default("queued") // queued | running | done | failed | skipped
+  payload   String? // JSON envoyé au canal
+  result    String? // JSON de réponse
+  error     String?
+  attempts  Int      @default(0)
+  runAfter  DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([channel])
+  @@index([productId])
+}
+
+// ── Partenaires (revendeurs + affiliés) ─────────────────────────────────────
+model Partner {
+  id            String            @id @default(cuid())
+  userId        String?
+  user          User?             @relation(fields: [userId], references: [id], onDelete: SetNull)
+  type          String            @default("reseller") // reseller | affiliate
+  name          String
+  company       String?
+  email         String            @unique
+  phone         String?
+  country       String?
+  city          String?
+  referralCode  String            @unique
+  commissionPct Float             @default(10) // pourcentage de commission
+  discountPct   Float             @default(0) // remise accordée à ses clients
+  status        String            @default("pending") // pending | active | suspended
+  // Quêtes/objectifs assignés (JSON: liste d'objectifs et récompenses)
+  quests        String?
+  tier          String            @default("bronze") // bronze | argent | or | platine
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  referrals     PartnerReferral[]
+  payouts       PartnerPayout[]
+
+  @@index([status])
+  @@index([type])
+}
+
+// ── Vente attribuée à un partenaire ─────────────────────────────────────────
+model PartnerReferral {
+  id         String   @id @default(cuid())
+  partnerId  String
+  partner    Partner  @relation(fields: [partnerId], references: [id], onDelete: Cascade)
+  orderId    String?
+  orderTotal Float
+  commission Float
+  status     String   @default("pending") // pending | approved | paid
+  note       String?
+  createdAt  DateTime @default(now())
+
+  @@index([partnerId])
+  @@index([status])
+}
+
+// ── Paiement de commissions à un partenaire ─────────────────────────────────
+model PartnerPayout {
+  id        String    @id @default(cuid())
+  partnerId String
+  partner   Partner   @relation(fields: [partnerId], references: [id], onDelete: Cascade)
+  amount    Float
+  method    String    @default("mobile_money") // mobile_money | virement | cash
+  status    String    @default("pending") // pending | paid
+  reference String?
+  createdAt DateTime  @default(now())
+  paidAt    DateTime?
+
+  @@index([partnerId])
 }

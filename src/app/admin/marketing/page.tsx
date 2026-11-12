@@ -13,6 +13,7 @@ import {
   buildCampaignUrl,
 } from '@/lib/marketing/channels'
 import { DEFAULT_MARKETING, type MarketingSettings } from '@/lib/settings/defaults'
+import AutomationPanel from '@/components/marketing/AutomationPanel'
 
 interface ChannelStat {
   id: string
@@ -192,6 +193,8 @@ export default function MarketingPage() {
             hint="configurés"
           />
         </div>
+
+        <AutomationPanel />
 
         {/* Campaign builder */}
         <section className="bg-ingco-gray rounded-2xl p-6 mb-10">

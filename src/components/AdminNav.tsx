@@ -12,6 +12,7 @@ const SECTIONS = [
   { href: '/admin/orders', label: 'Commandes' },
   { href: '/admin/customers', label: 'Clients' },
   { href: '/admin/resellers', label: 'Revendeurs' },
+  { href: '/admin/partners', label: 'Partenaires' },
   { href: '/admin/marketing', label: 'Marketing' },
   { href: '/admin/newsletter', label: 'Newsletter' },
   { href: '/admin/settings', label: 'Parametres' },

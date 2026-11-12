@@ -16,6 +16,9 @@ export interface Attribution {
   utmCampaign?: string
   utmContent?: string
   referrer?: string
+  // Referral code from ?ref=CODE (reseller/affiliate). First touch wins so a
+  // partner keeps credit for the visit that brought the customer.
+  partnerCode?: string
 }
 
 function isExternal(referrer: string): boolean {
@@ -56,8 +59,10 @@ export default function MarketingTracker() {
         const value = params.get(qsKey)
         if (value && !next[key]) next[key] = value.slice(0, 120)
       }
-      const ref = document.referrer
-      if (ref && !next.referrer && isExternal(ref)) next.referrer = ref.slice(0, 120)
+      const ref = params.get('ref')
+      if (ref && !next.partnerCode) next.partnerCode = ref.trim().toUpperCase().slice(0, 40)
+      const referrer = document.referrer
+      if (referrer && !next.referrer && isExternal(referrer)) next.referrer = referrer.slice(0, 120)
 
       sessionStorage.setItem(STORAGE_KEY, JSON.stringify(next))
 

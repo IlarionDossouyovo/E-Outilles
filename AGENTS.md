@@ -594,3 +594,43 @@ Persistent notes for working on the E-Outilles codebase.
 - hreflang alternates must be **absolute** URLs: Next resolves relative
   alternate paths against `metadataBase` and drops the query string, so
   `/?lang=fr` collapsed to the bare origin for every language.
+
+## Marketing automation & partners (session 2026-11-12)
+- `src/lib/marketing/automation.ts` builds a product's full launch kit with AI:
+  description, features, SEO, one social post per channel, and a 30s video
+  script, for every locale (`fr/en/es/pt`). `automateProduct()` is idempotent —
+  it upserts `ProductAsset` rows per `kind`+`channel`+`locale` so re-running
+  refreshes instead of duplicating.
+- When the product image is a raster file under `public/` (png/jpg/webp/gif),
+  a vision pass (`describeImage`) grounds the copy in the real photo; SVGs (the
+  catalog default) fall back to text-only generation. Provider down =>
+  `fallbackKit()` produces a deterministic, no-invention kit.
+- Trigger points: `POST /api/products` and `PUT /api/products/[id]` call
+  `enqueueProductKit()` when the product has an image (or name/description/
+  features changed). It only writes a `PublishJob` row (fast); the AI work runs
+  later. Next 14.2 has no `after()` from `next/server`, so do not await the kit
+  inside the request.
+- `src/lib/marketing/queue.ts` drains `PublishJob`:
+  `action='generate_kit'` (channel `__kit__`) builds the kit; `action='publish'`
+  dispatches the prepared asset to the channel. A channel value that is a
+  webhook URL (`/webhook|api|hook/i`) is POSTed; otherwise the job is marked
+  `done` with `mode: prepared` (content ready, no endpoint configured).
+- Worker entry points: `POST /api/marketing/queue` (admin) and
+  `POST|GET /api/internal/marketing/process` (bearer token:
+  `MARKETING_CRON_TOKEN` or falls back to `EMAIL_RELAY_TOKEN`). The cron
+  automation calls the internal one.
+- Admin UI: `AutomationPanel` on `/admin/marketing` (pick product, locales,
+  generate, drain queue, inspect assets/jobs). `GET /api/products/[id]/assets`
+  returns a product's assets + jobs.
+- Partners (`src/lib/marketing/partners.ts`): `Partner` (reseller|affiliate)
+  with a unique `referralCode`, tier (bronze→platine, auto from approved+paid
+  commission), quests (JSON), and `PartnerReferral`/`PartnerPayout`. Orders
+  capture `?ref=CODE` via `MarketingTracker` (`partnerCode` in sessionStorage)
+  → `Order.partnerCode` → `recordReferral()` (idempotent per orderId).
+- APIs: `GET/POST /api/partners`, `GET/PATCH /api/partners/[id]`,
+  `POST /api/partners/[id]/payout`, `POST /api/resellers/approve`
+  (request → active Partner). Admin page `/admin/partners` (link added to
+  `AdminNav`).
+- Migrations: `20261112122916_marketing_automation_partners`,
+  `20261112123300_order_partner_code`. Schema is PostgreSQL (Neon); migrations
+  are applied with `npx prisma migrate deploy`.

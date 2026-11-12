@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs'
 import { prisma } from '@/lib/db/prisma'
 import { getSession } from '@/lib/security/auth'
 import { sendOrderConfirmation } from '@/lib/email/sendEmail'
+import { findPartnerByCode, recordReferral } from '@/lib/marketing/partners'
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
@@ -58,6 +59,7 @@ export async function POST(request: Request) {
       utmSource,
       utmMedium,
       utmCampaign,
+      partnerCode,
     } = body
 
     if (!Array.isArray(items) || items.length === 0) {
@@ -72,6 +74,7 @@ export async function POST(request: Request) {
       utmSource: cleanUtm(utmSource),
       utmMedium: cleanUtm(utmMedium),
       utmCampaign: cleanUtm(utmCampaign),
+      partnerCode: cleanUtm(partnerCode),
     }
 
     const session = await getSession()
@@ -153,6 +156,19 @@ export async function POST(request: Request) {
       })
     } catch (err) {
       console.error('Order confirmation email failed:', err)
+    }
+
+    // Credit the partner (reseller/affiliate) whose referral code brought the
+    // sale. Idempotent per order, so a retried checkout never double-pays.
+    if (attribution.partnerCode) {
+      try {
+        const partner = await findPartnerByCode(attribution.partnerCode)
+        if (partner) {
+          await recordReferral({ partnerId: partner.id, orderId: order.id, orderTotal: order.total })
+        }
+      } catch (err) {
+        console.error('Partner referral failed:', err)
+      }
     }
 
     return NextResponse.json({ orderId: order.id, order }, { status: 201 })

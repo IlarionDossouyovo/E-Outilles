@@ -2,6 +2,8 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db/prisma'
 import { requireAdmin } from '@/lib/security/auth'
+import { enqueueProductKit } from '@/lib/marketing/queue'
+import { parseImages } from '@/lib/images'
 
 export async function GET(
   request: Request,
@@ -59,6 +61,17 @@ export async function PUT(
         ...(categoryId && { categoryId })
       }
     })
+
+    // Re-launch marketing when the image or core attributes changed: the kit is
+    // regenerated for the new visuals and re-queued on every channel.
+    const imageChanged = Boolean(images) && parseImages(images).length > 0
+    if (imageChanged || name || description || features) {
+      try {
+        await enqueueProductKit(product.id, { channels: body.channels, regenerate: imageChanged })
+      } catch (err) {
+        console.error('Failed to queue marketing kit:', err)
+      }
+    }
 
     return NextResponse.json(product)
   } catch (error) {

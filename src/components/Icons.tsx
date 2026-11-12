@@ -11,6 +11,7 @@ export type IconName =
   | 'check' | 'warning' | 'spinner' | 'star' | 'truck' | 'shield' | 'wrench' | 'zap'
   | 'camera' | 'image' | 'mic' | 'volume' | 'volume-off' | 'paperclip' | 'x' | 'send'
   | 'share' | 'facebook' | 'instagram' | 'tiktok' | 'youtube' | 'linkedin' | 'twitter' | 'whatsapp' | 'megaphone'
+  | 'target' | 'sparkles' | 'globe'
 
 const PATHS: Record<IconName, ReactNode> = {
   home: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10.5L12 3l9 7.5M5 9.5V21h5v-6h4v6h5V9.5" />,
@@ -52,6 +53,9 @@ const PATHS: Record<IconName, ReactNode> = {
   send: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />,
   share: <><circle cx="18" cy="5" r="2.5" strokeWidth={2} /><circle cx="6" cy="12" r="2.5" strokeWidth={2} /><circle cx="18" cy="19" r="2.5" strokeWidth={2} /><path strokeWidth={2} d="M8.2 10.8l7.6-4.2M8.2 13.2l7.6 4.2" /></>,
   megaphone: <><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 11v2a1 1 0 001 1h2l4 3V7L6 10H4a1 1 0 00-1 1z" /><path strokeLinecap="round" strokeWidth={2} d="M14 8a4 4 0 010 8M17 6a7 7 0 010 12" /></>,
+  target: <><circle cx="12" cy="12" r="8" strokeWidth={2} /><circle cx="12" cy="12" r="3.5" strokeWidth={2} /><path strokeLinecap="round" strokeWidth={2} d="M12 4V2M12 22v-2M4 12H2M22 12h-2" /></>,
+  sparkles: <><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3l1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6z" /><path strokeLinecap="round" strokeWidth={2} d="M18 15l.8 2.2L21 18l-2.2.8L18 21l-.8-2.2L15 18l2.2-.8z" /></>,
+  globe: <><circle cx="12" cy="12" r="9" strokeWidth={2} /><path strokeLinecap="round" strokeWidth={2} d="M3 12h18M12 3c2.5 2.6 2.5 15.4 0 18M12 3c-2.5 2.6-2.5 15.4 0 18" /></>,
   facebook: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 8.5V7a1.5 1.5 0 011.5-1.5H17V3h-2.5A3.5 3.5 0 0011 6.5v2H9v3h2V21h3v-9.5h2.2l.5-3H14z" />,
   instagram: <><rect x="3.5" y="3.5" width="17" height="17" rx="4.5" strokeWidth={2} /><circle cx="12" cy="12" r="3.8" strokeWidth={2} /><circle cx="17" cy="7" r="1" fill="currentColor" /></>,
   tiktok: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 4c.4 2.2 1.9 3.6 4 3.8v2.7c-1.5.1-2.9-.3-4-1.1v5.9a5.3 5.3 0 11-5.3-5.3c.3 0 .6 0 .9.1v2.8a2.5 2.5 0 101.7 2.4V4H15z" />,
