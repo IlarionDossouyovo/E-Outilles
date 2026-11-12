@@ -677,3 +677,21 @@ Persistent notes for working on the E-Outilles codebase.
   and `/panier` are NOT routes (404) and nothing links to them — use `/search`
   and `/cart`.
 - `/chat` now has a tiny `layout.tsx` for SEO metadata (client component).
+
+## Homepage premium animations (session 2026-11-12)
+- New primitives in `src/components/`: `CountUp.tsx` (scroll-triggered number
+  roll, renders the FINAL value server-side so no-JS/SEO never sees "0"),
+  `ScrollProgress.tsx` (top progress bar, transform-driven) and
+  `src/lib/useSpotlight.ts` (spread `onMouseMove={spotlight}` onto any element
+  carrying the `spotlight` class to get the cursor-following highlight).
+- CSS effects live in the "PREMIUM HOMEPAGE EFFECTS" block of `globals.css`:
+  `.animate-shimmer-text`, `.animate-gradient`, `.marquee-track`/`.marquee-mask`
+  (duplicated track translated -50% for a seamless loop, pauses on hover),
+  `.spotlight` (`--mx`/`--my` radial highlight) and `.scroll-progress`.
+- Homepage (`src/app/page.tsx`) uses all of them: shimmering hero headline,
+  CountUp stat row, marquee trust strip (6 `home.marquee.*` keys), spotlight on
+  category/product/explore cards, animated CTA gradient.
+- All new effects are disabled under `prefers-reduced-motion`.
+- The brand logo (`src/components/Logo.tsx`) is already the premium inline SVG
+  (metallic gear ring + "E"/bolt, gradient wordmark) — do not reintroduce a
+  raster logo.

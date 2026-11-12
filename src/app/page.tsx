@@ -3,9 +3,12 @@
 import Link from 'next/link'
 import { NavigationArrows, Icon } from '@/components/Icons'
 import Reveal from '@/components/Reveal'
+import CountUp from '@/components/CountUp'
+import ScrollProgress from '@/components/ScrollProgress'
 import { categoryImage } from '@/lib/catalog'
 import { useLanguage } from '@/lib/i18n/LanguageProvider'
 import { localizeText, localizeList } from '@/lib/i18n/content'
+import { useSpotlight } from '@/lib/useSpotlight'
 
 // Données des catégories par métier - 15 catégories INGCO
 const categories = [
@@ -143,8 +146,10 @@ const featuredProducts = [
 
 export default function Home() {
   const { t, locale } = useLanguage()
+  const spotlight = useSpotlight()
   return (
     <div className="bg-ingco-black">
+      <ScrollProgress />
       {/* HERO */}
       <section className="relative overflow-hidden min-h-[92vh] flex items-center pt-28 pb-20">
         <div className="absolute inset-0 bg-gradient-to-br from-ingco-dark via-ingco-gray/40 to-ingco-black">
@@ -184,7 +189,7 @@ export default function Home() {
 
               <h1 className="animate-fade-in-up stagger-1 text-4xl md:text-6xl xl:text-7xl font-extrabold leading-[1.05] mb-6">
                 <span className="text-white">{t('home.title1')}</span>
-                <span className="bg-gradient-to-r from-ingco-yellow via-yellow-300 to-ingco-yellow bg-clip-text text-transparent text-shadow-glow">
+                <span className="animate-shimmer-text bg-gradient-to-r from-ingco-yellow via-yellow-200 to-ingco-yellow bg-clip-text text-transparent text-shadow-glow">
                   {t('home.title2')}
                 </span>
                 <br />
@@ -213,13 +218,17 @@ export default function Home() {
 
               <div className="animate-fade-in-up stagger-4 grid grid-cols-2 md:grid-cols-4 gap-6 mt-14">
                 {[
-                  { value: '70+', label: t('home.stat.products') },
-                  { value: '50+', label: t('home.stat.countries') },
-                  { value: '24h', label: t('home.stat.delivery') },
-                  { value: '100%', label: t('home.stat.guarantee') },
+                  { value: 70, suffix: '+', label: t('home.stat.products') },
+                  { value: 50, suffix: '+', label: t('home.stat.countries') },
+                  { value: 24, suffix: 'h', label: t('home.stat.delivery') },
+                  { value: 100, suffix: '%', label: t('home.stat.guarantee') },
                 ].map((stat) => (
                   <div key={stat.label} className="text-center lg:text-left">
-                    <div className="text-3xl md:text-4xl font-extrabold text-ingco-yellow">{stat.value}</div>
+                    <CountUp
+                      to={stat.value}
+                      suffix={stat.suffix}
+                      className="block text-3xl md:text-4xl font-extrabold text-ingco-yellow"
+                    />
                     <div className="text-gray-500 text-sm">{stat.label}</div>
                   </div>
                 ))}
@@ -285,6 +294,30 @@ export default function Home() {
         </div>
       </section>
 
+      {/* MARQUEE STRIP */}
+      <section className="border-b border-ingco-gray bg-ingco-black overflow-hidden marquee-mask py-4">
+        <div className="marquee-track">
+          {[0, 1].map((copy) => (
+            <div key={copy} className="flex shrink-0" aria-hidden={copy === 1}>
+              {[
+                t('home.marquee.ingco'),
+                t('home.marquee.warranty'),
+                t('home.marquee.shipping'),
+                t('home.marquee.support'),
+                t('home.marquee.ai'),
+                t('home.marquee.payment'),
+              ].map((item) => (
+                <span key={item} className="flex items-center gap-3 px-6 text-sm text-gray-400">
+                  <Icon name="sparkles" className="w-4 h-4 text-ingco-yellow" />
+                  {item}
+                  <span className="ml-6 text-ingco-yellow/40">•</span>
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* CATEGORIES */}
       <section id="categories" className="py-20 md:py-28 bg-ingco-dark scroll-mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -304,7 +337,8 @@ export default function Home() {
               <Reveal key={category.id} delay={(i % 4) * 80}>
                 <Link
                   href={`/categories/${category.id}`}
-                  className="card-premium group h-full bg-ingco-gray rounded-2xl p-6 border border-white/5 hover:border-ingco-yellow/30 block"
+                  onMouseMove={spotlight}
+                  className="spotlight card-premium group h-full bg-ingco-gray rounded-2xl p-6 border border-white/5 hover:border-ingco-yellow/30 block"
                 >
                   <div className="w-full h-24 mb-4 flex items-center justify-center rounded-xl bg-ingco-dark overflow-hidden">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -359,7 +393,10 @@ export default function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {featuredProducts.map((product, i) => (
               <Reveal key={product.id} delay={(i % 3) * 100}>
-                <div className="card-premium group h-full bg-ingco-gray rounded-2xl overflow-hidden border border-white/5 hover:border-ingco-yellow/30">
+                <div
+                  onMouseMove={spotlight}
+                  className="spotlight card-premium group h-full bg-ingco-gray rounded-2xl overflow-hidden border border-white/5 hover:border-ingco-yellow/30"
+                >
                   <Link href={`/categories/${product.category}`} className="block h-48 bg-ingco-dark flex items-center justify-center overflow-hidden">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
@@ -402,6 +439,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-r from-ingco-yellow/15 via-transparent to-transparent" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <Reveal className="bg-ingco-gray rounded-3xl p-8 md:p-16 text-center border border-white/5 relative overflow-hidden">
+            <div className="absolute inset-0 animate-gradient bg-[linear-gradient(120deg,rgba(255,196,0,0.10),transparent_40%,rgba(255,196,0,0.10))]" />
             <div className="absolute -top-24 -right-24 w-64 h-64 bg-ingco-yellow/10 rounded-full blur-3xl" />
             <h2 className="text-3xl md:text-5xl font-extrabold mb-4 relative">
               <span className="text-white">{t('home.cta.title1')}</span>
@@ -457,7 +495,8 @@ export default function Home() {
               <Reveal key={s.href} delay={(i % 3) * 70}>
                 <Link
                   href={s.href}
-                  className="card-premium group h-full flex items-start gap-4 bg-ingco-gray rounded-2xl p-6 border border-white/5 hover:border-ingco-yellow/30"
+                  onMouseMove={spotlight}
+                  className="spotlight card-premium group h-full flex items-start gap-4 bg-ingco-gray rounded-2xl p-6 border border-white/5 hover:border-ingco-yellow/30"
                 >
                   <div className="w-11 h-11 shrink-0 rounded-xl bg-ingco-yellow/15 flex items-center justify-center">
                     <Icon name={s.icon} className="w-5 h-5 text-ingco-yellow" />
