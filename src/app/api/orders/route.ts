@@ -136,18 +136,24 @@ export async function POST(request: Request) {
       include: { items: { include: { product: true } } }
     })
 
-    // Best-effort confirmation email; never block or fail the order on email errors
-    sendOrderConfirmation({
-      id: order.id,
-      customerEmail: user.email,
-      customerName: user.name || 'Client',
-      total: order.total,
-      items: order.items.map((i) => ({
-        name: i.product?.name || 'Produit',
-        quantity: i.quantity,
-        price: i.price,
-      })),
-    }).catch((err) => console.error('Order confirmation email failed:', err))
+    // Awaited on purpose: serverless functions freeze as soon as the response is
+    // returned, so a fire-and-forget promise can be killed before the mail is
+    // sent. Failures are still swallowed so the order always succeeds.
+    try {
+      await sendOrderConfirmation({
+        id: order.id,
+        customerEmail: user.email,
+        customerName: user.name || 'Client',
+        total: order.total,
+        items: order.items.map((i) => ({
+          name: i.product?.name || 'Produit',
+          quantity: i.quantity,
+          price: i.price,
+        })),
+      })
+    } catch (err) {
+      console.error('Order confirmation email failed:', err)
+    }
 
     return NextResponse.json({ orderId: order.id, order }, { status: 201 })
   } catch (error) {
