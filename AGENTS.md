@@ -511,3 +511,16 @@ Persistent notes for working on the E-Outilles codebase.
 - Verification recipe: `npm run check:i18n`, `npm run check:search`,
   `npx tsc --noEmit`, `npx next lint --dir src`, `npm run build`. After a build
   the dev server needs `rm -rf .next` + restart (see stale-cache note above).
+- `POST /api/chat` reads the reply language from the BODY (`locale`), not from
+  the `eo_locale` cookie. Testing a locale with `curl -H 'Cookie: eo_locale=es'`
+  silently returns the French demo text — pass `"locale":"es"` in the JSON body.
+- Verified live (2026-11-12): i18n renders fully in fr/en/es/pt (`?lang=pt`
+  translated the whole homepage); geo detection maps BJ→fr, US→en, BR→pt,
+  ES→es, DE→en and sets `Content-Language`; all 120 sitemap URLs return 200;
+  TTS returns real WAV in the 4 locales; founder login → `/api/agents/stats`
+  (111 conv) → `/agent` 200 in production.
+- Integration credentials: `NEON_API_KEY` is valid (org `ELECTRON Business
+  Suite`, project `E-Outilles` `mute-base-60520292`, aws-eu-central-1, pg 18).
+  `VERCEL_TOKEN` returns 403 `invalidToken`. `BREVO_API_KEY` returns 401
+  `unrecognised IP` (IP allowlist, not a bad key). Render uses `RENDER_API_KEY`
+  (`srv-dbq7ppl9fdbs73dkkmg0`, branch `main`, autoDeploy on commit).
