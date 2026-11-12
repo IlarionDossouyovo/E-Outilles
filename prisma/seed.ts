@@ -12,7 +12,7 @@ const prisma = new PrismaClient()
 const seedUsers = [
   { email: 'admin@e-outilles.com', password: 'admin123', name: 'Admin', role: 'admin' },
   // Founder account: the ONLY account allowed to reach the AI agent system.
-  { email: 'electronbusiness07@gmail.com', password: '999999999', name: 'Ilarion Dossou-Yovo', role: 'admin' },
+  { email: 'electronbusiness07@gmail.com', password: 'E-Outilles@100%', name: 'Ilarion Dossou-Yovo', role: 'admin' },
   { email: 'demo@e-outilles.com', password: 'demo123', name: 'Demo User', role: 'customer' },
 ]
 

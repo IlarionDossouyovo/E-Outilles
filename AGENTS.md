@@ -138,8 +138,8 @@ Persistent notes for working on the E-Outilles codebase.
 - `/agent` is reserved to the founder. Access is decided by the signed-in
   session (`isFounderEmail`) alone — `/api/agent/verify` returns `{valid:true}`
   for the founder and 403 otherwise. The old `AGENT_ACCESS_CODE` second factor
-  is gone. The founder account is `electronbusiness07@gmail.com / 999999999`
-  (seeded as an admin); `FOUNDER_EMAIL` in `.env` must match it.
+  is gone. The founder account is `electronbusiness07@gmail.com` (password
+  `E-Outilles@100%`, seeded); `FOUNDER_EMAIL` in `.env` must match it.
 - DB seed (`prisma/seed.ts`) creates the admin + demo users; `dev.db` is
   gitignored and rebuilt by `npx prisma db seed`.
 - Discoverability: footer has an "Administration" link; the login page shows
@@ -492,7 +492,7 @@ Persistent notes for working on the E-Outilles codebase.
   from `POST /api/agent/verify` (now just returns `{valid:true}` for a founder,
   403 otherwise), from `.env`, `.env.example` and every doc. Do not reintroduce
   a shared code — a founder session is the only gate.
-- Founder account is `electronbusiness07@gmail.com` (password `999999999`,
+- Founder account is `electronbusiness07@gmail.com` (password `E-Outilles@100%`,
   seeded). The legacy `ilarion@e-outilles.com` admin is deleted by
   `prisma/seed.ts` (`deleteMany`) and was purged from the Neon DB — it was an
   unmonitored second admin. `src/lib/founder.ts` `FOUNDER.email` matches.
