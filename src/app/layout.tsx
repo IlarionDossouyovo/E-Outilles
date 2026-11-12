@@ -22,12 +22,15 @@ export const metadata: Metadata = {
   // hreflang alternates point at the same path with an explicit ?lang query.
   alternates: {
     canonical: '/',
+    // Absolute URLs: Next resolves relative alternate paths against
+    // metadataBase and drops the query string, which made every hreflang point
+    // at the same URL.
     languages: {
-      fr: '/?lang=fr',
-      en: '/?lang=en',
-      es: '/?lang=es',
-      pt: '/?lang=pt',
-      'x-default': '/',
+      fr: `${SITE_URL}/?lang=fr`,
+      en: `${SITE_URL}/?lang=en`,
+      es: `${SITE_URL}/?lang=es`,
+      pt: `${SITE_URL}/?lang=pt`,
+      'x-default': SITE_URL,
     },
   },
   icons: {

@@ -569,3 +569,28 @@ Persistent notes for working on the E-Outilles codebase.
   overwritten by Vercel's edge and cannot be used to simulate a country.
 - `Content-Language` is set by the middleware on every response and is the
   crawler-visible signal; it is independent of the static `lang` attribute.
+
+## Email delivery & serverless pitfalls (session 2026-11-12)
+- Brevo enforces an IP allowlist. Vercel's serverless egress IPs rotate per
+  invocation, so both the HTTP API (`401` "unrecognised IP address") and the
+  SMTP relay (`525 Unauthorized IP address`) are rejected there, while Render
+  (stable IP) and the sandbox deliver fine. Symptom: `/api/contact` returns
+  `emailDelivered:false` and no Brevo event is ever created.
+- Fix: `src/lib/email/sendEmail.ts` tries every provider directly first, then
+  falls back to an internal relay — `POST /api/internal/email` (bearer token
+  `EMAIL_RELAY_TOKEN`) hosted on the allowlisted deployment (`EMAIL_RELAY_URL`,
+  e.g. `https://e-outilles.onrender.com`). Set both vars on Render (target) and
+  Vercel (caller). `deliverEmail()` is the direct-only path used by the relay so
+  it can never forward to itself.
+- `emailDelivered:true` is not proof of delivery: check
+  `GET https://api.brevo.com/v3/smtp/statistics/events?limit=N&sort=desc` for the
+  `delivered` event.
+- Serverless freezes a function as soon as the response is returned, so a
+  fire-and-forget `sendEmail(...)` (no `await`) can be killed mid-send. All email
+  sends must be awaited; `/api/orders` now awaits `sendOrderConfirmation`.
+- Resend only sends to the account owner's address until a domain is verified
+  (`graphisme.bj` is currently `failed`), so Resend is not a usable Vercel
+  fallback yet.
+- hreflang alternates must be **absolute** URLs: Next resolves relative
+  alternate paths against `metadataBase` and drops the query string, so
+  `/?lang=fr` collapsed to the bare origin for every language.
