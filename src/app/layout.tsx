@@ -52,11 +52,26 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  // Kept static on purpose: reading cookies() here would opt every page out of
-  // static prerendering. The client provider (and the middleware cookie) handle
-  // the visitor's language; <html lang> is corrected on hydration.
+  // The element stays statically rendered with lang="fr" so reading cookies()
+  // here never opts pages out of prerendering. A tiny head script corrects the
+  // attribute before first paint from the locale the middleware already
+  // resolved (?lang= > cookie > browser), so crawlers and assistive tech see the
+  // visitor's language immediately instead of after hydration.
+  const htmlLangBootstrap = `(function(){try{
+var m=document.cookie.match(/(?:^|;\\s*)eo_locale=([^;]+)/);var c=m?decodeURIComponent(m[1]):null;
+var q=new URLSearchParams(location.search).get('lang');
+var l=localStorage.getItem('eoutilles.locale');
+var p={fr:'fr-FR',en:'en-US',es:'es-ES',pt:'pt-PT'};
+var v=[q,l,c].find(function(x){return x&&p[x]});
+if(!v){var n=(navigator.language||'').slice(0,2).toLowerCase();if(p[n])v=n}
+if(v)document.documentElement.lang=p[v];
+}catch(e){}})()`
+
   return (
     <html lang="fr">
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: htmlLangBootstrap }} />
+      </head>
       <body className="bg-ingco-black text-white antialiased">
         <LanguageProvider>
           <SiteChrome>{children}</SiteChrome>
