@@ -9,7 +9,11 @@ Persistent notes for working on the E-Outilles codebase.
 
 ## Commands
 - Build: `npm run build` — must pass before any commit.
-- Dev server: `npm run dev` (port 3003).
+- Dev server: `npm run dev` (port 3003). In the agent sandbox, run it on the
+  preview port instead (`npx next dev --port 12000`, exposed at
+  `https://work-1-<id>.prod-runtime.all-hands.dev`); the platform proxy only
+  forwards the declared work-host ports, so 3003 is reachable only as
+  `localhost:3003` from inside the container.
 - Prisma: `npx prisma generate`, `npx prisma migrate deploy`, `npx prisma db seed`.
 - Lint: `.eslintrc.json` extends `next/core-web-vitals` and disables
   `react/no-unescaped-entities` (French copy uses raw `'`/`"`). `npm run lint`
