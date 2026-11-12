@@ -525,6 +525,47 @@ Persistent notes for working on the E-Outilles codebase.
   (111 conv) → `/agent` 200 in production.
 - Integration credentials: `NEON_API_KEY` is valid (org `ELECTRON Business
   Suite`, project `E-Outilles` `mute-base-60520292`, aws-eu-central-1, pg 18).
-  `VERCEL_TOKEN` returns 403 `invalidToken`. `BREVO_API_KEY` returns 401
-  `unrecognised IP` (IP allowlist, not a bad key). Render uses `RENDER_API_KEY`
-  (`srv-dbq7ppl9fdbs73dkkmg0`, branch `main`, autoDeploy on commit).
+  `BREVO_API_KEY` works once the caller IP is allowlisted at
+  https://app.brevo.com/security/authorised_ips (the sandbox egress IP is
+  `34.29.175.97`; Render/Vercel serverless IPs need no entry for transactional
+  send). Render uses `RENDER_API_KEY` (`srv-dbq7ppl9fdbs73dkkmg0`, branch
+  `main`, autoDeploy on commit).
+
+## Vercel deployment (session 2026-11-12)
+- Vercel project `e-outilles` (`prj_MDUOkTRVr6Bl6FyysSvBCV6FoNcR`, team
+  `team_8CTGirwmwkNXnaQdguhGFuc3`) is Git-linked to `IlarionDossouyovo/E-Outilles`
+  on `main`, so every push auto-deploys. Production alias:
+  **https://e-outilles-eta.vercel.app**. `VERCEL_TOKEN` (scope `vcp_`) can list
+  projects/deployments; `/v2/user` returns 404 for a team-scoped token — that is
+  normal, not a bad token.
+- The project had **zero environment variables**, so the first live build was
+  `status: degraded / database: error`. Push them with the REST API
+  (`POST /v10/projects/{id}/env?teamId=…&upsert=true`, `type: encrypted`,
+  `target: [production, preview, development]`). Never push CI/CD-only keys the
+  app does not read (`RENDER_*`, `NEON_*`, `AWS_*`, `VERCEL_TOKEN`) — that would
+  only expose them. `NEXT_PUBLIC_APP_URL`/`NEXT_PUBLIC_BASE_URL` are overridden
+  per platform (`http://localhost:3003` locally, the Vercel/Render domain there).
+- Do not push placeholder secrets: `STRIPE_SECRET_KEY=sk_test_votre_cle…` is
+  filtered by `isStripeConfigured()` anyway, and a literal placeholder is worse
+  than an absent var. Stripe stays unconfigured until a real key is set.
+- After adding vars, redeploy so they take effect:
+  `POST /v13/deployments` with
+  `{name, project, target:'production', gitSource:{type:'github', repoId, ref:'main'}}`.
+  A `forceNew` field is rejected (400); the plain body works.
+- Verified after redeploy: `/api/health` `status ok`, db ok, 71 products, Google
+  AI + Resend + Brevo configured, Stripe off; founder login → `/api/agents/stats`
+  → `/agent` 200; sitemap 120 URLs; TTS returns RIFF WAV in fr/en/es/pt.
+
+## i18n `<html lang>` (session 2026-11-12)
+- `src/app/layout.tsx` keeps `<html lang="fr">` statically (reading `cookies()`
+  there would opt every page out of prerendering) and injects a synchronous
+  `<head>` script that rewrites `document.documentElement.lang` to the right
+  BCP-47 value before first paint. It reads, in order: `?lang=` → the stored
+  choice → the `eo_locale` cookie the middleware wrote → `navigator.language`.
+- Detection priority is **country first** (`x-vercel-ip-country`/`cf-ipcountry`),
+  then `Accept-Language`, then default. So a US egress IP resolves `en` even when
+  the request sends `Accept-Language: es` — this is intended. Test the mapping
+  via `GET /api/geo`; a spoofed `x-vercel-ip-country` request header is
+  overwritten by Vercel's edge and cannot be used to simulate a country.
+- `Content-Language` is set by the middleware on every response and is the
+  crawler-visible signal; it is independent of the static `lang` attribute.
