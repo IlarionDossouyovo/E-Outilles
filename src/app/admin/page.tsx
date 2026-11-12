@@ -35,8 +35,23 @@ function statusInfo(status: string) {
   return statusLabels[status] || { label: status, color: 'bg-gray-500' }
 }
 
+// Percentage change between two windows, formatted for the header cards.
+// Returns a neutral label when there is no baseline to compare against
+// (avoids "∞%" or a made-up growth number).
+function growth(current: number, previous: number): string {
+  if (previous <= 0) return current > 0 ? 'Nouveau' : '—'
+  const pct = Math.round(((current - previous) / previous) * 100)
+  return `${pct >= 0 ? '+' : ''}${pct}% vs sem. dernière`
+}
+
 export default function AdminDashboard() {
   const [stats, setStats] = useState({ totalOrders: 0, totalRevenue: 0, activeProducts: 0, subscribers: 0 })
+  const [trends, setTrends] = useState<{ orders: string; revenue: string; subscribers: string; products: string }>({
+    orders: '—',
+    revenue: '—',
+    subscribers: '—',
+    products: '—',
+  })
   const [recentOrders, setRecentOrders] = useState<RecentOrder[]>([])
   const [topProducts, setTopProducts] = useState<TopProduct[]>([])
 
@@ -59,6 +74,26 @@ export default function AdminDashboard() {
         totalRevenue: Math.round(revenue * 100) / 100,
         activeProducts: products.length,
         subscribers: subs.length,
+      })
+
+      // Real week-over-week deltas so the header cards never show fabricated
+      // growth figures. Orders/revenue/new products/subscribers over the last
+      // 7 days compared to the 7 days before.
+      const day = 24 * 60 * 60 * 1000
+      const now = Date.now()
+      const inWindow = (iso: string, from: number, to: number) => {
+        const t = new Date(iso).getTime()
+        return t >= from && t < to
+      }
+      const last7 = orders.filter((o: { createdAt: string }) => inWindow(o.createdAt, now - 7 * day, now))
+      const prev7 = orders.filter((o: { createdAt: string }) => inWindow(o.createdAt, now - 14 * day, now - 7 * day))
+      const rev = (list: { total?: number; status?: string }[]) =>
+        list.filter((o) => o.status !== 'cancelled').reduce((s, o) => s + (o.total || 0), 0)
+      setTrends({
+        orders: growth(last7.length, prev7.length),
+        revenue: growth(rev(last7), rev(prev7)),
+        subscribers: `${subs.filter((s: { createdAt: string }) => inWindow(s.createdAt, now - 7 * day, now)).length} cette semaine`,
+        products: `${products.filter((p: { createdAt: string }) => inWindow(p.createdAt, now - 7 * day, now)).length} nouveaux`,
       })
 
       setRecentOrders(orders.slice(0, 5).map((o: {
@@ -138,7 +173,7 @@ export default function AdminDashboard() {
               <span className="w-10 h-10 bg-ingco-yellow/20 rounded-xl flex items-center justify-center"><Icon name="truck" className="w-5 h-5 text-ingco-yellow" /></span>
             </div>
             <div className="text-3xl font-bold text-white">{stats.totalOrders.toLocaleString()}</div>
-            <div className="text-green-500 text-sm mt-1">+12% ce mois</div>
+            <div className="text-gray-500 text-sm mt-1">{trends.orders}</div>
           </div>
 
           <div className="bg-ingco-gray rounded-2xl p-6">
@@ -147,7 +182,7 @@ export default function AdminDashboard() {
               <span className="w-10 h-10 bg-ingco-yellow/20 rounded-xl flex items-center justify-center"><Icon name="card" className="w-5 h-5 text-ingco-yellow" /></span>
             </div>
             <div className="text-3xl font-bold text-ingco-yellow">{stats.totalRevenue.toLocaleString()}€</div>
-            <div className="text-green-500 text-sm mt-1">+8% ce mois</div>
+            <div className="text-gray-500 text-sm mt-1">{trends.revenue}</div>
           </div>
 
           <div className="bg-ingco-gray rounded-2xl p-6">
@@ -156,7 +191,7 @@ export default function AdminDashboard() {
               <span className="w-10 h-10 bg-ingco-yellow/20 rounded-xl flex items-center justify-center"><Icon name="tools" className="w-5 h-5 text-ingco-yellow" /></span>
             </div>
             <div className="text-3xl font-bold text-white">{stats.activeProducts}</div>
-            <div className="text-gray-500 text-sm mt-1">5 nouveaux ce mois</div>
+            <div className="text-gray-500 text-sm mt-1">{trends.products}</div>
           </div>
 
           <div className="bg-ingco-gray rounded-2xl p-6">
@@ -165,7 +200,7 @@ export default function AdminDashboard() {
               <span className="w-10 h-10 bg-ingco-yellow/20 rounded-xl flex items-center justify-center"><Icon name="chat" className="w-5 h-5 text-ingco-yellow" /></span>
             </div>
             <div className="text-3xl font-bold text-white">{stats.subscribers.toLocaleString()}</div>
-            <div className="text-green-500 text-sm mt-1">+156 ce mois</div>
+            <div className="text-gray-500 text-sm mt-1">{trends.subscribers}</div>
           </div>
         </div>
 

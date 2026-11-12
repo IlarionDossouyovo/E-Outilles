@@ -18,7 +18,6 @@ export async function GET() {
 
   const resendKey = process.env.RESEND_API_KEY
   const brevoKey = process.env.BREVO_API_KEY
-  const agentCode = process.env.AGENT_ACCESS_CODE
   const resendConfigured = Boolean(resendKey?.startsWith('re_') && resendKey !== 're_placeholder_key')
   const brevoConfigured = Boolean(brevoKey?.startsWith('xkeysib-'))
 
@@ -40,6 +39,6 @@ export async function GET() {
       configured: isStripeConfigured(),
       webhookConfigured: isStripeWebhookConfigured(),
     },
-    agent: { accessCodeConfigured: Boolean(agentCode && agentCode.length >= 8) },
+    agent: { founderEmailConfigured: Boolean((process.env.FOUNDER_EMAIL || '').includes('@')) },
   })
 }

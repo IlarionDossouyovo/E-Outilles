@@ -1,36 +1,17 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { timingSafeEqual } from 'crypto'
+import { NextResponse } from 'next/server'
 import { requireFounder } from '@/lib/security/auth'
 
-// Constant-time comparison to avoid leaking the access code via timing.
-function safeEqual(a: string, b: string): boolean {
-  const bufA = Buffer.from(a)
-  const bufB = Buffer.from(b)
-  if (bufA.length !== bufB.length) return false
-  return timingSafeEqual(bufA, bufB)
-}
-
-export async function POST(request: NextRequest) {
-  // The agent dashboard exposes internal automation data: founder only.
+// The AI agent dashboard exposes internal company data: it is reserved to the
+// company founder. Access is decided by the signed-in session alone — the
+// founder logs in with their e-mail/password and the page unlocks. No shared
+// access code is required (the old AGENT_ACCESS_CODE second factor is gone).
+export async function POST() {
   const founder = await requireFounder()
   if (!founder) {
     return NextResponse.json(
-      { error: "Accès réservé au fondateur de l'entreprise" },
+      { valid: false, error: "Accès réservé au fondateur de l'entreprise" },
       { status: 403 }
     )
   }
-
-  const { code } = await request.json().catch(() => ({ code: '' }))
-  const expected = process.env.AGENT_ACCESS_CODE
-
-  // A signed-in founder is trusted; the code is only a second factor when set.
-  if (!expected) {
-    return NextResponse.json({ valid: true })
-  }
-
-  if (!code || !safeEqual(String(code), expected)) {
-    return NextResponse.json({ valid: false }, { status: 401 })
-  }
-
   return NextResponse.json({ valid: true })
 }

@@ -20,6 +20,7 @@ const allAgents = AGENT_LIST.map((a, index) => ({
   icon: a.icon,
   conversations: 0,
   category: a.category,
+  department: a.department,
   description: a.description,
   features: a.features,
   color: a.color,
@@ -38,11 +39,8 @@ type AgentConfigView = {
 }
 
 export default function AgentDashboard() {
-  const [activeTab, setActiveTab] = useState('overview')
   const [accessGranted, setAccessGranted] = useState(false)
-  const [codeInput, setCodeInput] = useState('')
-  const [error, setError] = useState('')
-  const [verifying, setVerifying] = useState(false)
+  const [accessError, setAccessError] = useState('')
   const [configAgent, setConfigAgent] = useState<typeof allAgents[number] | null>(null)
   const [configs, setConfigs] = useState<Record<string, AgentConfigView>>({})
   const [draft, setDraft] = useState<AgentConfigView | null>(null)
@@ -50,52 +48,49 @@ export default function AgentDashboard() {
   const [saveMsg, setSaveMsg] = useState('')
   const [stats, setStats] = useState({
     totalConversations: 0,
-    activeAgents: allAgents.filter(a => a.status === 'online').length,
-    totalAgents: allAgents.length,
-    offlineAgents: allAgents.filter(a => a.status !== 'online').length,
-    messagesToday: 0,
-    satisfaction: 0,
+    conversationsLast7d: 0,
+    totalMessages: 0,
+    messagesLast7d: 0,
+    byAgent: {} as Record<string, number>,
   })
 
-  // Access is validated server-side (founder session + optional AGENT_ACCESS_CODE).
-  // A signed-in founder is unlocked automatically; the code is only required
-  // when AGENT_ACCESS_CODE is set as a second factor.
+  // Access is validated server-side from the signed-in founder session: no
+  // shared code is required. A founder is unlocked automatically; anyone else
+  // is rejected by /api/agent/verify (403).
   useEffect(() => {
     if (sessionStorage.getItem('agent_access') === 'granted') {
       setAccessGranted(true)
       return
     }
-    fetch('/api/agent/verify', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code: '' }),
-    })
+    fetch('/api/agent/verify', { method: 'POST' })
       .then(async (res) => {
         const data = await res.json().catch(() => ({}))
         if (res.ok && data.valid) {
           sessionStorage.setItem('agent_access', 'granted')
           setAccessGranted(true)
+        } else {
+          setAccessError(data.error || "Accès réservé au fondateur de l'entreprise")
         }
       })
-      .catch(() => {})
+      .catch(() => setAccessError('Erreur de connexion au serveur'))
   }, [])
 
-  // Real agent counters derived from the orders data.
+  // Live agent counters derived from the real AiConversation / AiMessage rows.
   useEffect(() => {
     if (!accessGranted) return
-    fetch('/api/orders')
-      .then(res => res.ok ? res.json() : [])
+    fetch('/api/agents/stats')
+      .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
-        const orders = Array.isArray(data) ? data : []
-        const today = new Date().toDateString()
-        const todayOrders = orders.filter((o: { createdAt: string }) => new Date(o.createdAt).toDateString() === today)
-        setStats(prev => ({
-          ...prev,
-          totalConversations: orders.length,
-          messagesToday: todayOrders.length,
-        }))
+        if (!data) return
+        setStats({
+          totalConversations: data.totalConversations ?? 0,
+          conversationsLast7d: data.conversationsLast7d ?? 0,
+          totalMessages: data.totalMessages ?? 0,
+          messagesLast7d: data.messagesLast7d ?? 0,
+          byAgent: data.byAgent ?? {},
+        })
       })
-      .catch(err => console.error('Error fetching agent stats:', err))
+      .catch((err) => console.error('Error fetching agent stats:', err))
   }, [accessGranted])
 
   // Load the founder's per-agent overrides once access is granted.
@@ -121,13 +116,23 @@ export default function AgentDashboard() {
       .catch(() => {})
   }, [accessGranted])
 
-  // Agents with the live status applied, so the badges reflect configuration.
+  // Agents with the live status and real conversation counts applied, so the
+  // badges and counters reflect the actual configuration and usage.
   const liveAgents = useMemo(
-    () => allAgents.map((a) => ({ ...a, status: configs[a.agentId]?.status ?? a.status })),
-    [configs]
+    () =>
+      allAgents.map((a) => ({
+        ...a,
+        status: configs[a.agentId]?.status ?? a.status,
+        conversations: stats.byAgent[a.agentId] ?? 0,
+      })),
+    [configs, stats.byAgent]
   )
   const agents = liveAgents.filter((a) => a.category === 'principal')
   const extraAgents = liveAgents.filter((a) => a.category !== 'principal')
+
+  const totalAgents = liveAgents.length
+  const activeAgents = liveAgents.filter((a) => a.status === 'online').length
+  const offlineAgents = totalAgents - activeAgents
 
   const openConfig = (agentId: string) => {
     const cfg = configs[agentId]
@@ -179,61 +184,27 @@ export default function AgentDashboard() {
     }
   }
 
-  const grantAccess = async () => {
-    setVerifying(true)
-    setError('')
-    try {
-      const res = await fetch('/api/agent/verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code: codeInput }),
-      })
-      const data = await res.json().catch(() => ({}))
-      if (res.ok && data.valid) {
-        sessionStorage.setItem('agent_access', 'granted')
-        setAccessGranted(true)
-      } else if (res.status === 403) {
-        setError('Accès réservé aux administrateurs connectés')
-      } else if (res.status === 500) {
-        setError(data.error || "Code d'accès non configuré")
-      } else {
-        setError('Code secret incorrect')
-      }
-    } catch {
-      setError('Erreur de connexion au serveur')
-    } finally {
-      setVerifying(false)
-    }
-  }
-
   // Page d'accès si pas autorisé
   if (!accessGranted) {
     return (
       <div className="min-h-screen bg-ingco-black flex items-center justify-center p-4">
-        <div className="bg-ingco-gray rounded-2xl p-8 max-w-md w-full">
-          <div className="text-center mb-6">
-            <Icon name="shield" className="w-12 h-12 text-ingco-yellow mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-white">Accès Réservé</h1>
-            <p className="text-gray-400 mt-2">Entrez votre code secret pour accéder aux agents IA</p>
+        <div className="bg-ingco-gray rounded-2xl p-8 max-w-md w-full text-center">
+          <Icon name="shield" className="w-12 h-12 text-ingco-yellow mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-white">Accès Réservé</h1>
+          <p className="text-gray-400 mt-2">
+            Ce tableau de bord est strictement réservé au fondateur de l&apos;entreprise.
+          </p>
+          <p className="text-gray-500 text-sm mt-4">
+            {accessError || 'Vérification de votre session en cours…'}
+          </p>
+          <div className="flex flex-col gap-2 mt-6">
+            <Link href="/auth/login" className="w-full bg-ingco-yellow text-ingco-black py-3 rounded-xl font-bold hover:bg-yellow-400">
+              Se connecter
+            </Link>
+            <Link href="/" className="block text-center text-gray-500 text-sm hover:text-ingco-yellow">
+              <span className="inline-flex items-center gap-1"><Icon name="arrow-left" className="w-4 h-4" /> Retour à l&apos;accueil</span>
+            </Link>
           </div>
-          <input
-            type="password"
-            value={codeInput}
-            onChange={(e) => setCodeInput(e.target.value)}
-            placeholder="Code secret..."
-            className="w-full bg-ingco-dark text-white px-4 py-3 rounded-xl mb-4 border border-ingco-gray focus:border-ingco-yellow outline-none"
-          />
-          {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-          <button
-            onClick={grantAccess}
-            disabled={verifying}
-            className="w-full bg-ingco-yellow text-ingco-black py-3 rounded-xl font-bold hover:bg-yellow-400 disabled:opacity-50"
-          >
-            {verifying ? '⏳ Vérification...' : 'Valider'}
-          </button>
-          <Link href="/" className="block text-center text-gray-500 text-sm mt-4 hover:text-ingco-yellow">
-            <span className="inline-flex items-center gap-1"><Icon name="arrow-left" className="w-4 h-4" /> Retour à l'accueil</span>
-          </Link>
         </div>
       </div>
     )
@@ -310,7 +281,7 @@ export default function AgentDashboard() {
               <span className="text-gray-400 text-sm">Total Agents</span>
               <span className="w-10 h-10 bg-ingco-yellow/20 rounded-xl flex items-center justify-center"><Icon name="chat" className="w-5 h-5 text-ingco-yellow" /></span>
             </div>
-            <div className="text-3xl font-bold text-white">{stats.totalAgents}</div>
+            <div className="text-3xl font-bold text-white">{totalAgents}</div>
             <div className="text-gray-500 text-sm mt-1">Configurés</div>
           </div>
 
@@ -319,7 +290,7 @@ export default function AgentDashboard() {
               <span className="text-gray-400 text-sm">Agents actifs</span>
               <span className="w-10 h-10 bg-green-500/20 rounded-xl flex items-center justify-center"><Icon name="check" className="w-5 h-5 text-green-500" /></span>
             </div>
-            <div className="text-3xl font-bold text-green-500">{stats.activeAgents}/{stats.totalAgents}</div>
+            <div className="text-3xl font-bold text-green-500">{activeAgents}/{totalAgents}</div>
             <div className="text-gray-500 text-sm mt-1">En ligne</div>
           </div>
 
@@ -329,7 +300,9 @@ export default function AgentDashboard() {
               <span className="w-10 h-10 bg-ingco-yellow/20 rounded-xl flex items-center justify-center"><Icon name="chat" className="w-5 h-5 text-ingco-yellow" /></span>
             </div>
             <div className="text-3xl font-bold text-white">{stats.totalConversations}</div>
-            <div className="text-green-500 text-sm mt-1">+23% ce mois</div>
+            <div className="text-gray-500 text-sm mt-1">
+              {stats.conversationsLast7d} cette semaine · {stats.totalMessages} messages
+            </div>
           </div>
 
           <div className="bg-ingco-gray rounded-2xl p-6">
@@ -337,7 +310,7 @@ export default function AgentDashboard() {
               <span className="text-gray-400 text-sm">Hors ligne</span>
               <span className="w-10 h-10 bg-gray-500/20 rounded-xl flex items-center justify-center"><Icon name="user" className="w-5 h-5 text-gray-400" /></span>
             </div>
-            <div className="text-3xl font-bold text-gray-400">{stats.offlineAgents}</div>
+            <div className="text-3xl font-bold text-gray-400">{offlineAgents}</div>
             <div className="text-gray-500 text-sm mt-1">À activer</div>
           </div>
         </div>
@@ -361,12 +334,17 @@ export default function AgentDashboard() {
                         {agent.status === 'online' ? 'En ligne' : 'Hors ligne'}
                       </span>
                     </div>
-                    <p className="text-ingco-yellow/80 text-sm font-medium mt-1">{agent.description}</p>
-                    <p className="text-gray-500 text-sm mt-2">
-                      {agent.features.slice(0, 3).map((f: string) => `• ${f}`).join('\n')}
-                    </p>
+                    <p className="text-ingco-yellow/80 text-sm font-medium mt-1">{agent.department}</p>
+                    <p className="text-gray-500 text-sm mt-1">{agent.description}</p>
+                    <ul className="text-gray-500 text-sm mt-2 space-y-0.5">
+                      {agent.features.slice(0, 3).map((f: string, i: number) => (
+                        <li key={i}>• {f}</li>
+                      ))}
+                    </ul>
                     <div className="flex items-center justify-between mt-3">
-                      <span className="text-gray-400 text-sm">{agent.status === 'online' ? 'Actif' : 'Inactif'}</span>
+                      <span className="text-gray-400 text-sm">
+                        {agent.status === 'online' ? 'Actif' : 'Inactif'} · {agent.conversations} conv.
+                      </span>
                       <div className="flex items-center gap-3">
                         <button
                           onClick={() => { setConfigAgent(agent); openConfig(agent.agentId) }}

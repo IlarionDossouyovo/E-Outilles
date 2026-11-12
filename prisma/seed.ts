@@ -11,8 +11,8 @@ const prisma = new PrismaClient()
 // Seed users (passwords hashed with bcrypt)
 const seedUsers = [
   { email: 'admin@e-outilles.com', password: 'admin123', name: 'Admin', role: 'admin' },
-  // Founder account: the only account allowed to reach the AI agent system.
-  { email: 'ilarion@e-outilles.com', password: 'fondateur2026', name: 'Ilarion Dossou-Yovo', role: 'admin' },
+  // Founder account: the ONLY account allowed to reach the AI agent system.
+  { email: 'electronbusiness07@gmail.com', password: '999999999', name: 'Ilarion Dossou-Yovo', role: 'admin' },
   { email: 'demo@e-outilles.com', password: 'demo123', name: 'Demo User', role: 'customer' },
 ]
 
@@ -1580,17 +1580,28 @@ async function main() {
 
   // Create users (hashed passwords)
   for (const u of seedUsers) {
+    const hashed = await bcrypt.hash(u.password, 10)
     await prisma.user.upsert({
       where: { email: u.email },
-      update: { name: u.name, role: u.role },
+      // Re-assert name, role AND password so a re-seed restores the documented
+      // credentials (the founder password must match the one in the docs).
+      update: { name: u.name, role: u.role, password: hashed },
       create: {
         email: u.email,
         name: u.name,
         role: u.role,
-        password: await bcrypt.hash(u.password, 10),
+        password: hashed,
       },
     })
     console.log(`✓ Created user: ${u.email}`)
+  }
+
+  // Remove the legacy founder account that used to hold admin rights. Access to
+  // the AI agents dashboard is now bound to FOUNDER_EMAIL only, so leaving this
+  // second admin behind would be an unmonitored back door.
+  const legacyFounder = await prisma.user.deleteMany({ where: { email: 'ilarion@e-outilles.com' } })
+  if (legacyFounder.count > 0) {
+    console.log('✓ Removed legacy founder account ilarion@e-outilles.com')
   }
 
   // Create categories

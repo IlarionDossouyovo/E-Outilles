@@ -107,7 +107,7 @@ if (-not (Test-Path "node_modules")) {
 if (-not (Test-Path ".env")) {
     if (Test-Path ".env.example") {
         Copy-Item ".env.example" ".env"
-        Write-Host ".env cree depuis .env.example - renseignez STRIPE_*, AGENT_ACCESS_CODE et GOOGLE_AI_API_KEY." -ForegroundColor Yellow
+        Write-Host ".env cree depuis .env.example - renseignez STRIPE_* et GOOGLE_AI_API_KEY." -ForegroundColor Yellow
     } else {
         Write-Host ".env manquant et pas de .env.example." -ForegroundColor Red
         exit 1

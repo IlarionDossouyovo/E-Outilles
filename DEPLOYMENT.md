@@ -39,7 +39,6 @@ SMTP_PORT=587
 SMTP_USER=<brevo login>
 SMTP_PASSWORD=<brevo smtp key>
 FOUNDER_EMAIL=<founder account email>
-AGENT_ACCESS_CODE=<shared code for /agent>
 NODE_VERSION=20
 ```
 

@@ -32,7 +32,7 @@ Write-Host "== 3/7 Configuration (.env) ==" -ForegroundColor Cyan
 if (-not (Test-Path ".env")) {
     if (Test-Path ".env.example") {
         Copy-Item ".env.example" ".env"
-        Write-Host "Fichier .env cree depuis .env.example - renseignez STRIPE_*, AGENT_ACCESS_CODE et GOOGLE_AI_API_KEY." -ForegroundColor Yellow
+        Write-Host "Fichier .env cree depuis .env.example - renseignez STRIPE_* et GOOGLE_AI_API_KEY." -ForegroundColor Yellow
     }
 } else {
     Write-Host ".env deja present - conserve." -ForegroundColor Yellow
@@ -63,31 +63,11 @@ if (-not $secretOk) {
     Write-Host "SESSION_SECRET genere dans .env." -ForegroundColor Green
 }
 
-# AGENT_ACCESS_CODE : code du tableau de bord Agents IA. On en genere un si
-# absent/placeholder et on l'affiche, sinon l'admin ne peut pas valider l'acces.
-$envLines = @(Get-Content ".env" -ErrorAction SilentlyContinue)
-$codeLine = -1
-$codeOk = $false
-for ($i = 0; $i -lt $envLines.Count; $i++) {
-    if ($envLines[$i] -match "^\s*AGENT_ACCESS_CODE\s*=\s*(.*)$") {
-        $codeLine = $i
-        $value = $Matches[1].Trim()
-        if ($value -and $value -notmatch "changez|votre|CHANGE|code-secret") { $codeOk = $true; $agentCode = $value }
-    }
-}
-if (-not $codeOk) {
-    $chars = (48..122) | ForEach-Object { [char]$_ } | Where-Object { $_ -match "[A-Za-z0-9]" }
-    $agentCode = -join (1..16 | ForEach-Object { $chars | Get-Random })
-    if ($codeLine -ge 0) {
-        $envLines[$codeLine] = "AGENT_ACCESS_CODE=$agentCode"
-        Set-Content ".env" $envLines
-    } else {
-        Add-Content ".env" "AGENT_ACCESS_CODE=$agentCode"
-    }
-    Write-Host ""
-    Write-Host "Code d'acces Agents IA genere : $agentCode" -ForegroundColor Yellow
-    Write-Host "Notez-le : il faudra le saisir sur la page /agent." -ForegroundColor Yellow
-    Write-Host ""
+# Fondateur : seul cet e-mail peut ouvrir le tableau de bord Agents IA (/agent).
+# L'acces est decide par la session de connexion (plus de code partage).
+if (-not (Select-String -Path ".env" -Pattern "^\s*FOUNDER_EMAIL\s*=\s*\S+@" -Quiet)) {
+    Add-Content ".env" "FOUNDER_EMAIL=electronbusiness07@gmail.com"
+    Write-Host "FOUNDER_EMAIL renseigne dans .env (compte fondateur)." -ForegroundColor Green
 }
 
 # OLLAMA_API_URL : le chatbot utilise Ollama en secours de Google AI. Si un

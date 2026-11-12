@@ -131,9 +131,11 @@ Persistent notes for working on the E-Outilles codebase.
 - Discovery gap fixed: `AuthButton` now shows an Admin link when
   `user.role === 'admin'`, and `/profile` shows "Tableau de bord admin" /
   "Agents IA" buttons for admins.
-- `/agent` requires an extra shared code (`AGENT_ACCESS_CODE`, verified in
-  `/api/agent/verify`), separate from the admin role. `scripts/update.ps1`
-  generates it into `.env` when missing/placeholder and prints it at the end.
+- `/agent` is reserved to the founder. Access is decided by the signed-in
+  session (`isFounderEmail`) alone — `/api/agent/verify` returns `{valid:true}`
+  for the founder and 403 otherwise. The old `AGENT_ACCESS_CODE` second factor
+  is gone. The founder account is `electronbusiness07@gmail.com / 999999999`
+  (seeded as an admin); `FOUNDER_EMAIL` in `.env` must match it.
 - DB seed (`prisma/seed.ts`) creates the admin + demo users; `dev.db` is
   gitignored and rebuilt by `npx prisma db seed`.
 - Discoverability: footer has an "Administration" link; the login page shows
@@ -186,8 +188,8 @@ Persistent notes for working on the E-Outilles codebase.
   founder. `requireFounder()` / `isFounderEmail()` in
   `src/lib/security/founder.ts` (founder = `FOUNDER_EMAIL` env or
   `FOUNDER.email`). Middleware sends a non-founder signed-in user to
-  `/profile?error=founder_only`. The optional `AGENT_ACCESS_CODE` is only a
-  second factor.
+  `/profile?error=founder_only`. No access code is needed: the founder's
+  session is enough.
 - AI capabilities: agents declare `capabilities` (`text`/`vision`/`voice`/
   `reasoning`/`tools`). `GET /api/ai/agents` returns the agents allowed for the
   current visitor (public vs founder). Vision (`POST /api/chat` with `media[]`)

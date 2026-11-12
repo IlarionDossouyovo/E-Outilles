@@ -101,6 +101,15 @@ export default function ChatPage() {
     if (requested) setAgentId(requested)
   }, [])
 
+  // If the requested agent is not in the visitor's allowed list (e.g. an
+  // internal agent opened by a non-founder), fall back to the first allowed
+  // agent so the selector never points at an unreachable agent.
+  useEffect(() => {
+    if (agents.length && !agents.some((a) => a.id === agentId)) {
+      setAgentId(agents[0].id)
+    }
+  }, [agents, agentId])
+
   const loadConversations = useCallback(() => {
     fetch('/api/conversations')
       .then((res) => (res.ok ? res.json() : null))

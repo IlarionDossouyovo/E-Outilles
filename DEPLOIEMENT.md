@@ -137,8 +137,8 @@ BREVO_API_KEY="xkeysib-..."
 FROM_EMAIL="E-Outilles <noreply@e-outilles.fr>"
 
 # --- Accès fondateur ---
-FOUNDER_EMAIL="ilarion@e-outilles.com"
-AGENT_ACCESS_CODE="<code secret>"
+# Seul cet e-mail peut ouvrir le tableau de bord Agents IA (/agent).
+FOUNDER_EMAIL="electronbusiness07@gmail.com"
 
 # --- Optionnel ---
 OLLAMA_API_URL="http://localhost:11434"

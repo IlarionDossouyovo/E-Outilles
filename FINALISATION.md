@@ -12,9 +12,9 @@ commandes pour répliquer le projet en local et le mettre en production.
 
 ### Sécurité / RBAC
 - `middleware.ts` déplacé dans `src/` (sinon jamais exécuté avec un projet en `src/`).
-- `/admin` et `/agent` : admins uniquement. `/vendeur` : tout utilisateur connecté.
+- `/admin` : admins uniquement. `/agent` : fondateur uniquement (session, `FOUNDER_EMAIL`). `/vendeur` : tout utilisateur connecté.
 - `POST /api/products`, `PATCH /api/orders/[id]`, `GET /api/newsletter` : admins uniquement.
-- Tableau de bord `/agent` : accès vérifié côté serveur via `AGENT_ACCESS_CODE` (plus de code en dur).
+- Tableau de bord `/agent` : accès vérifié côté serveur via la session du fondateur (`isFounderEmail`) ; aucun code partagé.
 
 ### Paiements Stripe
 - `POST /api/payments/stripe/create-checkout-session` construit la session depuis
@@ -85,7 +85,7 @@ Copier `.env.example` vers `.env` et renseigner :
 | `GOOGLE_AI_MODEL` | optionnel | Modèle Gemini (défaut `gemini-flash-lite-latest`) |
 | `GOOGLE_AI_TTS_MODEL` / `GOOGLE_AI_TTS_VOICE` | optionnel | Synthèse vocale (défaut `gemini-3.8-flash-tts`, voix `Kore`) |
 | `OLLAMA_API_URL` / `OLLAMA_CHAT_MODEL` | optionnel | Repli IA local (mode démo sinon) |
-| `AGENT_ACCESS_CODE` | recommandé | Accès au tableau de bord agents |
+| `FOUNDER_EMAIL` | recommandé | E-mail du fondateur : accès aux agents IA internes |
 
 Les clés `sk_test_votre_cle_secrete` / `whsec_votre_secret_webhook` sont des
 placeholders : l'application les détecte et reste en mode hors-ligne.

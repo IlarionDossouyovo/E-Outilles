@@ -24,7 +24,7 @@ export const FOUNDER = {
   shortName: 'Ilarion Dossou-Yovo',
   initials: 'ID',
   role: 'Fondateur & PDG',
-  email: 'ilarion@e-outilles.com',
+  email: 'electronbusiness07@gmail.com',
   phone: '+229 01 977 003 47',
   whatsapp: '+229 01 977 003 47',
   since: '2024',

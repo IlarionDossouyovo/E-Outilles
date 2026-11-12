@@ -92,7 +92,7 @@ Copier `.env.example` vers `.env`, puis renseigner :
 | `STRIPE_SECRET_KEY` / `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | paiements | oui |
 | `STRIPE_WEBHOOK_SECRET` | confirmation des paiements | oui |
 | `RESEND_API_KEY` + `FROM_EMAIL` | emails transactionnels | recommandé |
-| `AGENT_ACCESS_CODE` | accès tableau de bord agents IA | non |
+| `FOUNDER_EMAIL` | e-mail du fondateur : seul accès aux agents IA internes | oui |
 | `NEXT_PUBLIC_APP_URL` / `NEXT_PUBLIC_BASE_URL` | URL publique | oui |
 
 Sans `GOOGLE_AI_API_KEY`, le chatbot bascule sur Ollama puis sur un mode démo.
